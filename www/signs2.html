@@ -1,0 +1,360 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
+<title>SignS: Signatures for survival data</title>
+
+<script Language="Javascript">
+function getArgs(  ) {
+    var args = new Object(  );
+    var query = location.search.substring(1);      // Get query string
+    var pairs = query.split("&");                  // Break at &
+    for(var i = 0; i < pairs.length; i++) {
+        var pos = pairs[i].indexOf('=');          // Look for "name=value"
+        if (pos == -1) continue;                  // If not found, skip
+        var argname = pairs[i].substring(0,pos);  // Extract the name
+        var value = pairs[i].substring(pos+1);    // Extract the value
+        args[argname] = unescape(value);          // Store as a property
+       						  // In JavaScript 1.5, use decodeURIComponent(  ) 
+					          // instead of escape(  )
+    }
+    return args;     // Return the object
+}
+</script>
+
+</head>
+
+<BODY background="fondo3.jpg">
+
+<form action="http://signs.bioinfo.cnio.es/cgi-bin/signsR.cgi"
+enctype="multipart/form-data" method="POST">
+
+
+<center>
+<table border=0 cellspacing=0 width="100%">
+<!--   <tr bgcolor="#54C571"> -->
+  <tr bgcolor="#C85A17">
+    <td rowspan="3" align=center width=140>
+      <a href="http://signs.bioinfo.cnio.es">
+      <img SRC="signs_logo.png"
+      border=0
+      alt="signs">
+      </a>
+    </td>  
+    <td bgcolor="#7E2217" align=center width="100%">
+<!--     <td bgcolor="#254117" align=center width="100%"> -->
+      <a href="http://bioinfo.cnio.es" STYLE="text-decoration:none">
+      <font color=white>
+      <b>Bioinformatics Unit</b>
+      </font>
+      </a>
+        -  
+      <a href="http://www.cnio.es" STYLE="text-decoration:none">
+      <font color=white>
+      <b>CNIO</b>
+      </font>
+      </a>
+    </td>
+    <td rowspan="3" align=center width=124>
+      <a href="http://bioinfo.cnio.es">
+      <img src="bioinfo.png" border=0>
+      </a>
+    </td>
+  </tr>
+  <tr>  
+<!--     <td bgcolor="#54C571" align=center valign=middle  STYLE="font-size:12"> -->
+    <td bgcolor="#C85A17" align=center valign=middle  STYLE="font-size:12">
+      <br>
+      <font size=5>
+      <b> SignS</b>
+      </font>
+      <br> 
+    </td>
+  </tr>
+  <tr>
+    <td bgcolor="#7E2217" align=center>
+<!--     <td bgcolor="#254117" align=center> the dark color-->
+       
+    </td>
+  </tr>
+</table>
+</center>
+<br><br>
+
+
+<h2>SignS: molecular signatures with survival and censored data</h2>
+
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans"> SignS is a
+    web tool for gene selection and signature finding in problems where
+    the dependent variable is patient survival or, more generally, a 
+    right-censored variable. Two approaches have been implemented: the
+    <b>threshold gradient descent method</b>
+    of <cite>Gui & Li (2005)</cite> and a method that uses a combination of
+    gene <b>filtering, clustering and survival model building</b>, very similar
+    to the one used in <cite>Dave et al. (2004)</a>.
+
+
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans">To use this web
+tool you need to provide three files, one with the gene expression data,
+  another with the survival time (time to event, e.g., time to death) and a
+  a third one indicating whether the event was observed or
+  not (the later are the censored cases).</p>
+
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans">If you have a
+validation data set, you can also include the expression data, the
+survival time and the censored status of the validation data. However, DO
+NOT (I repeat DO NOT) keep playing around with the parameters until things
+look nice with the validation data. That would be a <b>serious case of
+overfitting</b>. You can play, to your hearts content, with the parameters
+using the training data (ONLY the training data). Then, once you are
+satisfied, run again with the very same parameters the training and
+validation data. The validation data are just that, validation data, and
+should be used to validate a model (not to find good settings of the
+parameters).</p>
+
+
+<hr>
+
+<br>
+
+<h2>Input files (<a href="./help/signs-help.html#input">help</a>)</h2>
+
+<b>Covariate file:</b>  
+<script Language="Javascript">
+var args = getArgs();
+if (args.data_url) {
+  document.write(args.data_url);
+  document.write("<input type=\"hidden\" value =" + args.data_url + " name=\"covariate\", size = \"40\" maxlength =\"200\">");
+}else {
+  document.write("<input type=\"FILE\" name=\"covariate\", size = \"40\" maxlength =\"200\">");
+}
+</script>
+
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans; font-size: 9pt">
+A tab-separated text file with the covariates; generally the gene 
+    expression data. In this file, rows represent variables (generally genes),
+    and columns represent subjects, or samples, or arrays. If you want to
+    <b>name your arrays</b> place a line that starts with "&#035;", after
+    the "&#035;" put "Name" or "NAME" or "name" and write the array names
+    (separated by tabs).  The <b>first column</b> is assumed to contain the ID
+    information for genes, marker, or whatever. This will be used to label the
+    output and thus this first column is not used in the
+    analyses. Note that <b>gene names and array names MUST be unique</b> and
+      <b>missing values are NOT allowed</b>. For further details see the
+<a href="./help/signs-help.html#input" target="help_window">help</a>.</p>
+
+<br>
+
+<b>Survival time file: </b> <input type="FILE" name="time", size = "40" maxlength = "200">
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans; font-size: 9pt">
+A tab-separated text file with the survival or duration time (e.g., time
+to death, time to relapse).  These data can be right-censored. For further
+details see the
+<a href="./help/signs-help.html#input" target="help_window">help</a>.</p>
+
+<br>
+
+
+<b>Survival status (event) file: </b> <input type="FILE" name="event", size = "40" maxlength = "200">
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans; font-size: 9pt">
+A tab-separated text file indicating if the event (e.g., death, relapse)
+was actually observed (this is indicated with a 1) or not (a 0); cases for
+which the event was not observed are the right-censored cases. For further
+details see the
+<a href="./help/signs-help.html#input" target="help_window">help</a>.</p>
+
+<hr>
+<h3>Validation data</h3>
+<p><INPUT TYPE=CHECKBOX NAME="validation">Use validation data</p>
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans; font-size: 9pt">
+If you have gene expression, survival time and survival status data for a
+validation data set, check above and enter them. Please, read the warning above and in the 
+<a href="./help/signs-help.html#validation" target="help_window">help</a>.</p>
+
+<p><b>Validation covariate file:</b>     <input type="FILE" name="validationcovariate", size = "40" maxlength =
+"200"></p>
+<p><b>Validation survival time file: </b> <input type="FILE" name="validationtime", size = "40" maxlength = "200"></p>
+<p><b>Validation survival status (event) file: </b> <input type="FILE" name="validationevent", size = "40" maxlength = "200"></p>
+
+
+
+
+<hr>
+
+<h2>Method (<a href="./help/signs-help.html#methods">help</a>)</h2>
+
+<p>
+<input type="RADIO" name="methodSurv" checked value="FCMS"><FONT COLOR="#CC00FF" SIZE=+1><b>FCMS</b></FONT>: Filter, Cluster,
+and Stepwise model selection (as in Dave et al.).<br>
+
+<!-- <table> -->
+<!-- <tr><td width="100"></td><td>Settings for -->
+<!--     FCMS</td></tr>  -->
+<!-- </table> -->
+<!-- <br> -->
+<table>
+  <tr><td width="100"></td><td width="400">Minimum gene-wise Cox p-value
+    in gene filtering step</td>
+  <td><input type="TEXT" name="Minp" value="0.1" size="5"
+    maxlength="5"></td></tr>
+
+<tr><td width="100"></td><td width="470"> Max. number of genes
+  in a cluster</td><td> <input type="TEXT" name="MaxSize" value="100" size="5" maxlength="5"> </td></tr>
+<tr><td width="100"></td><td width="470">Min. number of genes
+  in a cluster</td><td><input type="TEXT" name="MinSize" value="10"
+  size="5" maxlength="5"></td></tr>
+<tr><td width="100"></td><td width="470">Min. correlation of genes in a
+    cluster</td>
+  <td><input type="TEXT" name="MinCor" value="0.5" size="5"
+    maxlength="5"></td></tr>
+    
+</table>
+
+
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans; font-size: 9pt">
+The "Filter, cluster, and stepwise model selection" uses a series of
+  steps, very similar to those in Dave et al. First, genes are filtered,
+  using a univariate (gene-by-gene) Cox model. Only genes with a p-value
+  (not adjusted for multiple comparisons) smaller than <b>Minimum
+  gene-wise Cox p-value</b> are retained for further analyses. The genes
+  that fulfill this requirement are divided into two groups: those with 
+  positive coefficients in the Cox model and
+  those with negative coefficients (increase in the gene associated to
+  increased survival). These two groups of genes are clustered separately,
+  using complete-linkage hierarchical clustering with 1 - correlation as the
+  distance measure. A potential signature is a group of genes that show a
+  minimal correlation among themselves of <b>Min. correlation of genes in
+  a cluster</b>, and that have between <b>Min. number of genes in a
+  cluster</b> and <b>Max. number of genes in a cluster</b>. All the
+  potential signatures are then input into a multivariate Cox model
+  and subject to stepwise variable selection using the AIC criterion; the
+  starting model is the best (largest likelihood) two-signatures model.</p>
+
+<br>
+<input type="RADIO" name="methodSurv" value="TGD"><FONT COLOR="#CC00FF" SIZE=+1><b>TGD:</b></FONT> Threshold Gradient
+Descent (Li and Gui).<br>
+<br>
+
+
+<!-- <table> -->
+<!-- <tr><td width="100"></td><td>Settings for -->
+<!--     TGD (It is unlikely you'll want to change them).</td></tr>  -->
+<!-- </table> -->
+<!-- <br> -->
+<table>
+<tr><td width="100"></td><td width="270">Maximum number of 
+    iterations</td><td width="50">
+<input type="TEXT" name="maxiter" value="10000" size="7"
+  maxlength="7"></td></tr>
+<tr><td width="100"></td><td>&#8710;&#951; (Delta nu)</td><td> <input type="TEXT" name="epi"
+						 value="5e-06" size="7"
+						 maxlength="7"></td></tr>
+</table>
+
+
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans; font-size: 9pt">
+The threshold gradient descent method has been developed by J.Gui and
+  H. Li, and it uses a penalized likelihood approach (like ridge
+  regression or the Lasso). It is unlikely you will want to change the
+  parameters; the default for <b>Maximum iterations</b> should be large
+  enough, and you should never see a case reaching it. It limits the
+  number of iterations of the threshold gradient descent
+  algorithm. <b>&#8710;&#951; (Delta nu)</b> is an infinitesimal increment
+  that affects the rate of change of the coefficients at each iteration of
+  the algorithm, as shown in p. 276 of the original paper. You want
+  this small (but if you set it way too small, you will spend many
+  iterations moving virtually nothing, and you can hit Maximum iterations).</p>
+
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans; font-size: 9pt">
+Please note that, compared to FCMS, this is a much <b><FONT color="RED">slower</FONT></b> method 
+(see the <a href="./help/signs-help.html#speed" target="help_window">help</a>.)</p>
+
+<hr/ >
+<h2>Type of gene identifier and species</h2>
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans; font-size: 9pt">
+This information is used to provide clickable links (that take you to the one-query-version of our 
+<a href="http://idconverter.bioinfo.cnio.es">IDConverter</a>) in the results.</p>
+
+<table>
+  <tr><td width="100"></td><td width="400"><b>Type of ID for gene names</b></td>
+    <td width="400"><b>Organism</b></td></tr>
+  <tr><td></td><td>
+      <input type="RADIO" name="idtype" value="affy">  Affymetrix ID</input>
+    </td><td>
+      <input type="RADIO" name="organism" value="Hs">  Human (<i>Home sapiens</i>)</input>
+  </td></tr>
+  
+  <tr><td></td><td>
+      <input type="RADIO" name="idtype" value="clone">  Clone ID (IMAGE Consortium)</input>
+    </td><td>
+      <input type="RADIO" name="organism" value="Mm">  Mouse (<i>Mus musculus</i>)</input>
+  </td></tr>
+  <tr><td></td><td>
+      <input type="RADIO" name="idtype" value="acc">  GenBank Accession</input>
+    </td><td>
+      <input type="RADIO" name="organism" value="Rn">  Rat (<i>Rattus norvegicus</i>)</input>
+  </td></tr>
+  <tr><td></td><td>
+      <input type="RADIO" name="idtype" value="ensembl">  Ensembl Gene</input>
+    </td><td>
+      <input type="RADIO" name="organism" checked value="None">  None of the above</input>
+  </td></tr>
+  <tr><td></td><td>
+      <input type="RADIO" name="idtype" value="ug">  Unigene cluster</input>
+    </td><td></td></tr>
+  <tr><td></td><td>
+      <input type="RADIO" name="idtype" value="entrez">  Entrez Gene</input>
+    </td><td></td></tr>
+  <tr><td></td><td>
+      <input type="RADIO" name="idtype" value="cnio">  CNIO ID</input>
+    </td><td></td></tr>
+  <tr><td></td><td>
+      <input type="RADIO" name="idtype" checked value="None">  None of the above</input>
+    </td><td></td></tr>
+</table>
+
+
+
+
+<hr />
+
+
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans; font-size: 9pt"><b>Note:</b>
+<b>Floating-point numbers</b>, such as 0.001, can be specified as either "0.001",
+"1e-3" or "1E-3" (without the "", of course). Anything else will produce
+an error. </p>
+<hr>
+<input value="Submit" type = "SUBMIT">
+<br>
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans; font-size: 9pt">
+Click "Submit" to send the data to the server and start execution. If the
+servers are too busy, you will be asked to try again later.</p>
+<hr>
+
+
+<a href="./help/signs-help.html" target="help_window">Help</a>
+
+
+
+
+</form>
+
+<hr />
+<p>
+<a href="http://www.python.org/">
+<img src="PythonPowered.gif" align=top width=110
+     height=44 alt="[Python Powered]" border=0>
+</a>
+
+<a href="http://www.r-project.org/">
+<img src="Rlogo-5.png" align=top width=100
+     height=76 alt="[R Project for Statistical Computing]" border=0>
+</a>
+</p>
+
+
+<address>Send comments to <a href="mailto:rdiaz@cnio.es">webmaster</a></address>
+<!-- hhmts start -->Last modified: Wed Sep 28 17:10:47 CEST 2005 <!-- hhmts end -->
+</body> </html>
+
+

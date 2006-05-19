@@ -1,0 +1,115 @@
+#!/usr/bin/python2.4
+
+import sys
+
+def permutation_indices(data):
+    """ Title: list permutation order indices
+    Submitter: Andrew Dalke
+    # Based on a post by Peter Otten on comp.lang.python 2004/09/04.
+    # This uses the 'key' option to sort and the 'sorted' function, both
+    # new in Python 2.4.
+    From python cookbook page """
+    return sorted(range(len(data)), key = data.__getitem__)
+
+def permutation_indices_reverse(data):
+    """ Title: list permutation order indices
+    Submitter: Andrew Dalke
+    # Based on a post by Peter Otten on comp.lang.python 2004/09/04.
+    # This uses the 'key' option to sort and the 'sorted' function, both
+    # new in Python 2.4.
+    From python cookbook page """
+    return sorted(range(len(data)), key = data.__getitem__, reverse = True)
+
+def for_print_p_value(x):
+    if x < 1e-7:
+        return '< 0.0000001'
+    else:
+        return str(round(x, 7))
+    
+def table_gen_sort(l1, l2, l3, l4, order, idtype, organism, fileout = 'tabla.html'):
+    fout = open(fileout, mode = 'w')
+    fout.write('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">')
+    fout.write('\n<html><head><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">')
+    fout.write('\n<title>Single gene Cox model p-values and coefficients </title>')
+    fout.write('<body> <h1>Single gene Cox model p-values and coefficients </h1>\n')
+    fout.write('<table frame="box">')
+    outstring = ''.join(['<tr><td width=150>Gene Name</td><td width=150>p-value',
+                         '</td><td width=100>Coefficient</td><td width=100>Absolute value of coefficient</td></tr>\n'])
+    fout.write(outstring)
+    for i in range(len(df11)-1):
+	if (l2[order[i]] > 98):
+	    outstring = ''.join(['<tr><td>', linkGene(l1[order[i]], idtype, organism),
+                            '</td><td>', 'NA',
+                            '</td><td>', 'NA',
+                            '</td><td>', 'NA', '</td></tr>\n'])
+	else:
+	    outstring = ''.join(['<tr><td>', linkGene(l1[order[i]], idtype, organism),
+                            '</td><td>',for_print_p_value(l2[order[i]]),
+                            '</td><td>',str(round(l3[order[i]], 4)),
+                            '</td><td>',str(round(l4[order[i]], 4)), '</td></tr>\n'])
+        fout.write(outstring)
+    fout.write('</table></body></html>')
+
+
+def linkGene(geneName, idtype, organism):
+    if idtype == 'None' or organism == 'None':
+        return geneName
+    else:
+        return ''.join(['<a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=',
+                        idtype, '&id=', geneName, '&internal=0&org=',
+                        organism,'" target="icl_window">',geneName,'</a>'])
+
+
+idtype = sys.argv[1]
+organism = sys.argv[2]
+
+df1 = open("p.values.coeffs.txt", mode = 'r')
+df11 = df1.read().splitlines()
+
+l1=[]
+l2=[]
+l3=[]
+l4=[]
+
+for i in range(1, len(df11)): ## skip first line
+    splitted = df11[i].split('\t')
+    l1.append(splitted[0])
+    l2.append(float(splitted[1]))
+    l3.append(float(splitted[2]))
+    l4.append(float(splitted[3]))
+
+df1.close()
+
+
+
+
+
+nameAscending = permutation_indices(l1)
+nameDescending = permutation_indices_reverse(l1)
+pvAscending = permutation_indices(l2)
+pvDescending = permutation_indices_reverse(l2)
+coefAscending = permutation_indices(l3)
+coefDescending = permutation_indices_reverse(l3)
+acoeAscending = permutation_indices(l4)
+acoeDescending = permutation_indices_reverse(l4)
+
+table_gen_sort(l1, l2, l3, l4, nameAscending, idtype, organism, fileout = "p.v.sort.name.a.html")
+table_gen_sort(l1, l2, l3, l4, nameDescending, idtype, organism, fileout ="p.v.sort.name.d.html")   
+table_gen_sort(l1, l2, l3, l4, pvAscending, idtype, organism, fileout ="p.v.sort.pv.a.html")     
+table_gen_sort(l1, l2, l3, l4, pvDescending, idtype, organism, fileout ="p.v.sort.pv.d.html")    
+table_gen_sort(l1, l2, l3, l4, coefAscending, idtype, organism, fileout ="p.v.sort.coef.a.html")   
+table_gen_sort(l1, l2, l3, l4, coefDescending, idtype, organism, fileout ="p.v.sort.coef.d.html")   
+table_gen_sort(l1, l2, l3, l4, acoeAscending, idtype, organism, fileout ="p.v.sort.abscoef.a.html")
+table_gen_sort(l1, l2, l3, l4, acoeDescending, idtype, organism, fileout ="p.v.sort.abscoef.d.html")
+
+
+##def table_gen(l1, l2, l3, l4, fileout = 'tabla.html'):
+##    fout = open(fileout, mode = 'w')
+##    fout.write('<table frame="box">')
+##    for i in range(len(df11)):
+##        outstring = ''.join(['<tr><td>', l1[i],
+##                            '</td><td>',l2[i],
+##                            '</td><td>',l3[i],
+##                            '</td><td>',l4[i],'</td></tr>\n'])
+##        fout.write(outstring)
+##    fout.write('</table>')

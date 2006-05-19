@@ -1,0 +1,330 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+  <style type="text/css">
+    div.color {
+    background: #D4D4D4;
+    padding: 1.5em;
+    border: none;
+    font-weight: bold;
+    color: #A52A2A;
+    border-color: black;
+    border-style: solid;
+    }
+  </style>
+
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
+<title>SignS: Signatures for survival data</title>
+<script type="text/javascript" language="javascript">
+	function getArgs(  ) {
+	    var args = new Object(  );
+	    var query = location.search.substring(1);      // Get query string
+	    var pairs = query.split("&");                  // Break at &
+	    for(var i = 0; i < pairs.length; i++) {
+	        var pos = pairs[i].indexOf('=');          // Look for "name=value"
+	        if (pos == -1) continue;                  // If not found, skip
+	        var argname = pairs[i].substring(0,pos);  // Extract the name
+	        var value = pairs[i].substring(pos+1);    // Extract the value
+	        args[argname] = unescape(value);          // Store as a property
+       						  // In JavaScript 1.5, use decodeURIComponent(  ) 
+					          // instead of escape(  )
+    	    }
+	    return args;     // Return the object
+	}	
+
+</script>
+
+
+
+</head>
+
+<body>
+<BODY background="fondo3.jpg">
+
+<form action="http://signs.bioinfo.cnio.es/cgi-bin/signsR.cgi"
+enctype="multipart/form-data" method="POST">
+
+
+
+
+<center>
+<table border=0 cellspacing=0 width="100%">
+<!--   <tr bgcolor="#54C571"> -->
+  <tr bgcolor="#C85A17">
+    <td rowspan="3" align=center width=140>
+      <a href="http://signs.bioinfo.cnio.es">
+      <img SRC="signs_logo.png"
+      border=0
+      alt="signs">
+      </a>
+    </td>  
+    <td bgcolor="#7E2217" align=center width="100%">
+<!--     <td bgcolor="#254117" align=center width="100%"> -->
+      <a href="http://bioinfo.cnio.es" STYLE="text-decoration:none">
+      <font color=white>
+      <b>Bioinformatics Unit</b>
+      </font>
+      </a>
+        -  
+      <a href="http://www.cnio.es" STYLE="text-decoration:none">
+      <font color=white>
+      <b>CNIO</b>
+      </font>
+      </a>
+    </td>
+    <td rowspan="3" align=center width=124>
+      <a href="http://bioinfo.cnio.es">
+      <img src="bioinfo.png" border=0>
+      </a>
+    </td>
+  </tr>
+  <tr>  
+<!--     <td bgcolor="#54C571" align=center valign=middle  STYLE="font-size:12"> -->
+    <td bgcolor="#C85A17" align=center valign=middle  STYLE="font-size:12">
+      <br>
+      <font size=5>
+      <b> SignS</b>
+      </font>
+      <br> 
+    </td>
+  </tr>
+  <tr>
+    <td bgcolor="#7E2217" align=center>
+<!--     <td bgcolor="#254117" align=center> the dark color-->
+       
+    </td>
+  </tr>
+</table>
+</center>
+<br><br>
+
+
+<h2>SignS: molecular signatures with survival and censored data</h2>
+
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans"> SignS is a
+    web tool for gene selection and signature finding in problems where
+    the dependent variable is patient survival or, more generally, a 
+    right-censored variable. Two approaches have been implemented: the
+    <b>threshold gradient descent method</b>
+    of <cite>Gui & Li (2005)</cite> and a method that uses a combination of
+    gene <b>filtering, clustering and survival model building</b>, very similar
+    to the one used in <cite>Dave et al. (2004)</a>. (Note: TGD is
+    disabled for now, until we are able to make it computationally much faster).
+
+
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans">To use this web
+tool you need to provide three files, one with the gene expression data,
+  another with the survival time (time to event, e.g., time to death) and a
+  a third one indicating whether the event was observed or
+  not (the later are the censored cases).</p>
+
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans">If you have a
+validation data set, you can also include the expression data, the
+survival time and the censored status of the validation data. However, DO
+NOT (I repeat DO NOT) keep playing around with the parameters until things
+look nice with the validation data. That would be a <b>serious case of
+overfitting</b>.</p>
+
+
+<hr>
+
+<br>
+
+<h2>Input files (<a href="./help/signs-help.html#input">help</a>)</h2>
+
+
+<table>
+<tr><td>
+<b>Expression data file (<a href="./help/signs-help.html#input"
+			    target="help_window">?</a>)</b>
+</td><td>
+<script Language="Javascript">
+    var args = getArgs();
+    if (args.datadir) {
+      document.write("<span style=\"color: red\">Input Data from <i>pre</i>P</b></span><input type=\"hidden\" value =" + args.datadir + "  name=\"covariate2\">");
+    }else {
+      document.write("<input type=\"FILE\" name=\"covariate\" size = \"40\" maxlength =\"200\">");
+    }
+</script>
+</td></tr>
+<tr><td>
+<b>Survival time file (<a href="./help/signs-help.html#input"
+			  target="help_window">?</a>) </b> 
+</td><td>
+<input type="FILE" name="time", size = "40" maxlength = "200">
+</td></tr>
+<tr><td>
+<b>Survival status (event) file
+  (<a href="./help/signs-help.html#input"
+      target="help_window">?</a>) </b> 
+</td><td>
+<input type="FILE" name="event", size = "40" maxlength = "200">
+</td></tr>
+</table>
+
+<hr>
+<h3>Validation data (<a href="./help/signs-help.html#validation" target="help_window">?</a>)</h3>
+<p><INPUT TYPE=CHECKBOX NAME="validation">Use validation data</p>
+
+<table>
+<tr><td>
+<b>Validation covariate file:</b>
+</td><td>
+<input type="FILE" name="validationcovariate", size = "40" maxlength
+       ="200">
+</td></tr><tr><td>
+<b>Validation survival time file: </b>
+</td><td>
+     <input type="FILE" name="validationtime", size = "40" maxlength = "200">
+</td></tr><tr><td>
+<b>Validation survival status (event) file: </b> 
+</td><td>
+<input type="FILE" name="validationevent", size = "40" maxlength =
+       "200">
+</td></tr></table>
+
+
+
+
+<hr>
+
+<h2>Method (<a href="./help/signs-help.html#methods">help</a>)</h2>
+
+<p>
+<input type="RADIO" name="methodSurv" checked value="FCMS"><FONT COLOR="#CC00FF" SIZE=+1><b>FCMS</b></FONT>: Filter, Cluster,
+and Stepwise model selection (as in Dave et al.).<br>
+
+<table>
+  <tr><td width="100"></td><td width="400">Minimum gene-wise Cox p-value
+    in gene filtering step</td>
+  <td><input type="TEXT" name="Minp" value="0.1" size="5"
+    maxlength="5"></td></tr>
+
+<tr><td width="100"></td><td width="470"> Max. number of genes
+  in a cluster</td><td> <input type="TEXT" name="MaxSize" value="100" size="5" maxlength="5"> </td></tr>
+<tr><td width="100"></td><td width="470">Min. number of genes
+  in a cluster</td><td><input type="TEXT" name="MinSize" value="10"
+  size="5" maxlength="5"></td></tr>
+<tr><td width="100"></td><td width="470">Min. correlation of genes in a
+    cluster</td>
+  <td><input type="TEXT" name="MinCor" value="0.5" size="5"
+    maxlength="5"></td></tr>
+    
+</table>
+
+<br>
+
+<!-- <input type="RADIO" name="methodSurv" value="TGD"><FONT COLOR="#CC00FF" SIZE=+1><b>TGD:</b></FONT> Threshold Gradient -->
+<!-- Descent (Li and Gui).<br> -->
+<!-- <br> -->
+
+
+<!-- <table> -->
+<!-- <tr><td width="100"></td><td width="270">Maximum number of  -->
+<!--     iterations</td><td width="50"> -->
+<!-- <input type="TEXT" name="maxiter" value="10000" size="7" -->
+<!--   maxlength="7"></td></tr> -->
+<!-- <tr><td width="100"></td><td>&#8710;&#951; (Delta nu)</td><td> <input type="TEXT" name="epi" -->
+<!-- 						 value="5e-06" size="7" -->
+<!-- 						 maxlength="7"></td></tr> -->
+<!-- </table> -->
+
+
+<!-- <p style="font-family: 'Bitstream Vera Sans',Verdana,sans; font-size: 9pt"> -->
+<!-- Please note that, compared to FCMS, this is a <b><FONT color="RED">MUCH SLOWER</FONT></b> method  -->
+<!-- (see the <a href="./help/signs-help.html#speed" -->
+<!-- target="help_window">help</a>.). We are working on improving speed.</p> -->
+
+<hr/ >
+<h2>Type of gene identifier and species</h2>
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans; font-size: 9pt">
+This information is used to provide clickable links (that take you to the one-query-version of our 
+<a href="http://idconverter.bioinfo.cnio.es">IDConverter</a>) in the results.</p>
+
+<table>
+  <tr><td width="100"></td><td width="400"><b>Type of ID for gene names</b></td>
+    <td width="400"><b>Organism</b></td></tr>
+  <tr><td></td><td>
+      <input type="RADIO" name="idtype" value="affy">  Affymetrix ID</input>
+    </td><td>
+      <input type="RADIO" name="organism" value="Hs">  Human (<i>Homo sapiens</i>)</input>
+  </td></tr>
+  
+  <tr><td></td><td>
+      <input type="RADIO" name="idtype" value="clone">  Clone ID (IMAGE Consortium)</input>
+    </td><td>
+      <input type="RADIO" name="organism" value="Mm">  Mouse (<i>Mus musculus</i>)</input>
+  </td></tr>
+  <tr><td></td><td>
+      <input type="RADIO" name="idtype" value="acc">  GenBank Accession</input>
+    </td><td>
+      <input type="RADIO" name="organism" value="Rn">  Rat (<i>Rattus norvegicus</i>)</input>
+  </td></tr>
+  <tr><td></td><td>
+      <input type="RADIO" name="idtype" value="ensembl">  Ensembl Gene</input>
+    </td><td>
+      <input type="RADIO" name="organism" checked value="None">  None of the above</input>
+  </td></tr>
+  <tr><td></td><td>
+      <input type="RADIO" name="idtype" value="ug">  Unigene cluster</input>
+    </td><td></td></tr>
+  <tr><td></td><td>
+      <input type="RADIO" name="idtype" value="entrez">  Entrez Gene</input>
+    </td><td></td></tr>
+  <tr><td></td><td>
+      <input type="RADIO" name="idtype" value="cnio">  CNIO ID</input>
+    </td><td></td></tr>
+  <tr><td></td><td>
+      <input type="RADIO" name="idtype" checked value="None">  None of the above</input>
+    </td><td></td></tr>
+</table>
+
+
+
+
+<hr />
+
+
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans; font-size: 9pt"><b>Note:</b>
+<b>Floating-point numbers</b>, such as 0.001, can be specified as either "0.001",
+"1e-3" or "1E-3" (without the "", of course). Anything else will produce
+an error. </p>
+<hr>
+<input value="Submit" type = "SUBMIT">
+<br>
+<p style="font-family: 'Bitstream Vera Sans',Verdana,sans; font-size: 9pt">
+Click "Submit" to start execution.</p>
+<hr>
+
+
+<a href="./help/signs-help.html" target="help_window">Help</a>
+
+
+
+
+</form>
+
+<hr />
+<p>
+<a href="http://www.python.org/">
+<img src="PythonPowered.gif" align=top width=110
+     height=44 alt="[Python Powered]" border=0>
+</a>
+
+<a href="http://www.r-project.org/">
+<img src="Rlogo-5.png" align=top width=100
+     height=76 alt="[R Project for Statistical Computing]" border=0>
+</a>
+</p>
+<TABLE width="100%"><TR>
+<TD align="right" width="200"><a href="http://asterias.bioinfo.cnio.es"><img src="asterias_app.png" width="200" height="40" border="0"></a></TD>
+</TR>
+</TABLE>
+
+<address>Send comments to <a href="mailto:rdiaz@cnio.es">webmaster</a></address>
+<!-- hhmts start -->Last modified: 9 January 2006 <!-- hhmts end -->
+</body> </html>
+
+

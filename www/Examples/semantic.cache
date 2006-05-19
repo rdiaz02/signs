@@ -1,0 +1,17 @@
+;; Object Examples/
+;; SEMANTICDB Tags save file
+(semanticdb-project-database-file "Examples/"
+  :tables (list 
+   (semanticdb-table "index.html"
+    :major-mode 'html-mode
+    :tags '(("SignS: Signatures for survival data: examples and data sets" section nil nil [836 920]) ("SignS: Signatures for survival data: examples and data sets" section nil nil [920 927]) ("SignS: Signatures for survival data: examples and data sets" section (:members (("SignS: Signatures for survival data: examples and data sets" section (:members (("Examples for FCMS" section (:members (("Fully commented example" section (:members (("here" section nil nil [1123 1231]))) nil [1084 1231]) ("An example of reversal of sign coefficients" section (:members (("Here<a> is a textbook
+example of what can happen as a result of high correlation between
+independent variables." section nil nil [1287 1704]))) nil [1231 1704]) ("Why overfitting can be a serious problem" section nil nil [1704 1905]) ("What does validation do?" section nil nil [1905 2221]) ("DLBCL with training and validation" section (:members (("Here" section nil nil [2268 2421]))) nil [2221 2421]) ("Named genes: an example of clickable dendrograms etc" section (:members (("This" section nil nil [2486 2874]))) nil [2421 2874]))) nil [1056 2874]) ("Examples for TGD" section nil nil [2874 2926]) ("Data sets" section (:members (("Download" section nil nil [3378 3920]) ("7-zip" section nil nil [3920 4022]))) nil [2926 4022]) ("Copyright and license" section nil nil [4022 4025]))) nil [960 963]))) nil [927 933]))
+    :file "index.html"
+    :pointmax 4886
+    )
+   )
+  :file "semantic.cache"
+  :semantic-tag-version "2.0pre3"
+  :semanticdb-version "2.0pre3"
+  )

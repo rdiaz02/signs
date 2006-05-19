@@ -1,0 +1,162 @@
+%PDF-1.1
+%Å‚Å„ÅœÅ”
+1 0 obj
+<<
+/CreationDate (D:20051024104545)
+/ModDate (D:20051024104545)
+/Title (R Graphics Output)
+/Producer (R 2.1.1)
+/Creator (R)
+>>
+endobj
+2 0 obj
+<<
+/Type /Catalog
+/Pages 3 0 R
+>>
+endobj
+5 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F1
+/BaseFont /ZapfDingbats
+>>
+endobj
+6 0 obj
+<<
+/Type /Page
+/Parent 3 0 R
+/Contents 7 0 R
+/Resources 4 0 R
+>>
+endobj
+7 0 obj
+<<
+/Length 8 0 R
+>>
+stream
+q
+Q q
+Q q
+0.000 0.000 0.000 RG
+0.75 w
+[] 0 d
+1 J
+1 j
+10.00 M
+59.04 73.44 m
+617.76 73.44 l
+617.76 588.96 l
+59.04 588.96 l
+59.04 73.44 l
+S
+Q q 59.04 73.44 558.72 515.52 re W n
+BT
+0.000 0.000 0.000 rg
+/F2 1 Tf 12.00 0.00 -0.00 12.00 220.16 423.62 Tm (There are no genes with positive coefficients) Tj
+/F2 1 Tf 12.00 0.00 -0.00 12.00 237.37 328.12 Tm (that satisfy the p, minimum correlation) Tj
+/F2 1 Tf 12.00 0.00 -0.00 12.00 283.72 231.52 Tm (and size restrictions.) Tj
+ET
+Q
+endstream
+endobj
+8 0 obj
+474
+endobj
+3 0 obj
+<<
+/Type /Pages
+/Kids [
+6 0 R
+]
+/Count 1
+/MediaBox [0 0 648 648]
+>>
+endobj
+4 0 obj
+<<
+/ProcSet [/PDF /Text]
+/Font << /F1 5 0 R /F2 10 0 R /F3 11 0 R /F4 12 0 R /F5 13 0 R /F6 14 0 R >>
+/ExtGState << >>
+>>
+endobj
+9 0 obj
+<<
+/Type /Encoding
+/BaseEncoding /WinAnsiEncoding
+/Differences [ 45/minus 96/quoteleft
+144/dotlessi /grave /acute /circumflex /tilde /macron /breve /dotaccent
+/dieresis /.notdef /ring /cedilla /.notdef /hungarumlaut /ogonek /caron /space]
+>>
+endobj
+10 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F2
+/BaseFont /Helvetica
+/Encoding 9 0 R
+>>
+endobj
+11 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F3
+/BaseFont /Helvetica-Bold
+/Encoding 9 0 R
+>>
+endobj
+12 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F4
+/BaseFont /Helvetica-Oblique
+/Encoding 9 0 R
+>>
+endobj
+13 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F5
+/BaseFont /Helvetica-BoldOblique
+/Encoding 9 0 R
+>>
+endobj
+14 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F6
+/BaseFont /Symbol
+>>
+endobj
+xref
+0 15
+0000000000 65535 f 
+0000000020 00000 n 
+0000000162 00000 n 
+0000000920 00000 n 
+0000001003 00000 n 
+0000000211 00000 n 
+0000000294 00000 n 
+0000000374 00000 n 
+0000000901 00000 n 
+0000001140 00000 n 
+0000001397 00000 n 
+0000001494 00000 n 
+0000001596 00000 n 
+0000001701 00000 n 
+0000001810 00000 n 
+trailer
+<<
+/Size 15
+/Info 1 0 R
+/Root 2 0 R
+>>
+startxref
+1888
+%%EOF

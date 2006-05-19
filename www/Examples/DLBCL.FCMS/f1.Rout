@@ -1,0 +1,1011 @@
+> invisible(options(echo = TRUE))
+> ##############################################
+> ##############################################
+> ######                              ##########
+> ######       Program starts         ##########
+> ######                              ##########
+> ##############################################
+> ##############################################
+> 
+> rm(list = ls())
+> 
+> ##.Last <- function() {cat("\n\n Normal termination\n")}
+> 
+> ## From: http://ace.acadiau.ca/math/ACMMaC/Rmpi/sample.html
+> # In case R exits unexpectedly, have it automatically clean up 
+> # resources  taken up by Rmpi (slaves, memory, etc...)
+> ## But does it really do it??
+> .Last <- function(){ 
++     if (is.loaded("mpi_initialize")){ 
++         if (mpi.comm.size(1) > 0){ 
++ 	    try(print("Please use mpi.close.Rslaves() to close slaves."), silent = TRUE)
++ 	    try(mpi.close.Rslaves() , silent = TRUE)
++         } 
++         try(print("Please use mpi.quit() to quit R"), silent = TRUE)
++         cat("\n\n Normal termination\n")
++         try(stopCluster(TheCluster), silent = TRUE)
++ ##        .Call("mpi_finalize")
++         try(mpi.quit(save = "no"), silent = TRUE)
++     }
++     try(stopCluster(TheCluster), silent = TRUE)
++     cat("\n\n Normal termination\n")
++     try(mpi.quit(save = "no"), silent = TRUE)
++ }
+> 
+> 
+> startExecTime <- format(Sys.time())
+> 
+> pid <- Sys.getpid()
+> write.table(file = "pid.txt", pid,
++             row.names = FALSE,
++             col.names = FALSE)
+> 
+> 
+> library(CGIwithR)
+> library(Rmpi)
+> library(survival)
+Loading required package: splines
+> library(combinat)
+> library(MASS)
+> library(SurvSignature)
+> library(papply)
+
+Attaching package: 'papply'
+
+
+	The following object(s) are masked _by_ .GlobalEnv :
+
+	 .Last 
+
+> library(snow)
+> 
+> png.width = 7
+> png.height = 6
+> png.pointsize = 14
+> png.family = "Helvetica"
+> graphDir <- paste(getwd(), "/", sep = "")
+> 
+> 
+> 
+> maxNodeNumber <- 57
+> nfold <- 10
+> currentNode <-
++     as.numeric(strsplit(system("hostname", intern = TRUE), split = "prot")[[1]][2])
+> if(currentNode <= 25) { ## make it 26 when we have 23 back
++     mpiHosts <- seq(from = (currentNode * 2) - 2, length = nfold)
++ } else {
++     h1 <- seq(from = ((currentNode - 1) * 2) - 2, to = maxNodeNumber)
++     h2 <- seq(from = 0, length = (nfold - length(h1)))
++     mpiHosts <- c(h1, h2)
++ }
+> 
+> 
+> ##############################################
+> ##############################################
+> ######                              ##########
+> ######         Error checking       ##########
+> ######                              ##########
+> ##############################################
+> ##############################################
+> 
+> 
+> caughtUserError <- function(message) {
++     webPNG("ErrorFigure.png", width = png.width,
++            height = png.height, 
++            pointsize = png.pointsize,
++            family = png.family)
++     plot(x = c(0, 1), y = c(0, 1),
++          type = "n", axes = FALSE, xlab = "", ylab = "")
++     box()
++     text(0.5, 0.7, "There was a PROBLEM with your data.")
++     text(0.5, 0.5,
++     "Please read carefully the error messages,")
++     
++     text(0.5, 0.3, "fix the problem, and try again.")
++     dev.off()
++     sink(file = "results.txt")
++     cat(message)
++     sink()
++     sink(file = "exitStatus")
++     cat("Error\n\n")
++     cat(message)
++     sink()
++     quit(save = "no", status = 11, runLast = TRUE)
++ }
+> 
+> 
+> caughtOurError <- function(message) {
++     webPNG("ErrorFigure.png", width = png.width,
++            height = png.height, 
++            pointsize = png.pointsize,
++            family = png.family)
++     plot(x = c(0, 1), y = c(0, 1),
++          type = "n", axes = FALSE, xlab = "", ylab = "")
++     box()
++     text(0.5, 0.7, "There was a PROBLEM with the code.")
++     text(0.5, 0.5,
++     "Please let us know (send us the URL),")
++     
++     text(0.5, 0.3, "so that we can fix it.")
++     dev.off()
++     sink(file = "results.txt")
++     cat(message)
++     sink()
++     sink(file = "exitStatus")
++     cat("Error\n\n")
++     cat(message)
++     sink()
++     quit(save = "no", status = 11, runLast = TRUE)
++ }
+> 
+> 
+> 
+> 
+> methodSurv <- scan("methodSurv", what = "", n = 1)
+Read 1 item
+> if( methodSurv == "TGD") {
++     epi <- scan("epi", what = double(0), n = 1)
++     maxiter <- scan("maxiter", what = double(0), n = 1)
++ } else if (methodSurv == "FCMS") {
++     MaxSize <- scan("MaxSize", what = double(0), n = 1)
++     MinSize <- scan("MinSize", what = double(0), n = 1)
++     MinCor <- scan("MinCor", what = double(0), n = 1)
++     Minp <- scan("Minp", what = double(0), n = 1)
++ } else { ## nothing else for now
++     caughtUserError("This method is not yet implemented.")
++ }
+Read 1 item
+Read 1 item
+Read 1 item
+Read 1 item
+> 
+> useValidation <- try(scan("usevalidation", what = "", n = 1))
+Read 1 item
+> 
+> 
+> 
+> 
+> trytime <- try(
++              Time <- scan("time", sep = "\t", strip.white = TRUE))
+Read 161 items
+> if(class(trytime) == "try-error")
++     caughtUserError("The time file is not of the appropriate format\n")
+> 
+> ## to prevent problems with a space at end of classes
+> if(is.na(Time[length(Time)])) Time <- Time[-length(Time)]
+> 
+> tryevent <- 
++     try(Event <- scan("event", sep = "\t", strip.white = TRUE))
+Read 161 items
+> if(class(tryevent) == "try-error")
++     caughtUserError("The status file is not of the appropriate format\n")
+> 
+> ## to prevent problems with a space at end of classes
+> if(is.na(Event[length(Event)])) Event <- Event[-length(Event)]
+> 
+> if(length(Time) < 10) {
++     caughtUserError(paste("Your data should contain at least ten (10) samples\n",
++                        "but your data have only", length(Time), ".\n"))
++ }
+> 
+> num.cols.covariate <- count.fields("covariate", sep = "\t",
++                                    quote = "",
++                                    comment.char = "#")
+> 
+> if(length(unique(num.cols.covariate)) > 1) {
++     message <-
++     paste("The number of columns in your covariate file\n",
++           "is not the same for all rows (genes).\n",
++           "We find the following number of columns\n",
++           paste(num.cols.covariate, collapse = ""))
++     caughtUserError(message)
++ }
+> 
+> tryxdata <- try(
++                 xdata <- read.table("covariate", header = FALSE, sep = "\t",
++                                     strip.white = TRUE,
++                                     comment.char = "#",
++                                     quote = ""))
+> if(class(tryxdata) == "try-error")
++     caughtUserError("The covariate file is not of the appropriate format\n")
+> 
+> geneNames <- xdata[, 1]
+> xdata <- xdata[, -1]
+> 
+> if(length(unique(geneNames)) < length(geneNames)) {
++     dupnames <- which(duplicated(geneNames))
++     message <- paste("Gene names are not unique.\n",
++                       "Please change them so that they are unique.\n",
++                       "The duplicated names are in rows", dupnames, "\n")
++     caughtUserError(message)
++ }
+>     
+> rownames(xdata) <- geneNames
+> 
+> arrayNames <- scan("arrayNames", sep = "\t", what = "char", quote = "")
+Read 161 items
+> 
+> if(length(arrayNames) > 0) {
++     arrayNames <- arrayNames[-1]
++     if(length(unique(arrayNames)) < length(arrayNames)) {
++         dupnames <- which(duplicated(arrayNames))
++         message <- paste("Array names are not unique.\n",
++                           "Please change them so that they are unique.\n",
++                           "The duplicated names are ", dupnames, "\n")
++         caughtUserError(message)
++     }
++     colnames(xdata) <- arrayNames
++ }
+> xdata <- t(xdata)
+> 
+> 
+> if(length(Time) != dim(xdata)[1]) {
++     message <- paste("The survival time file and the covariate file\n",
++                       "do not agree on the number of arrays: \n",
++                       length(Time), " arrays according to the survival time file but \n",
++                       dim(xdata)[1], " arrays according to the covariate data.\n",
++                       "Please fix this problem and try again.\n")
++     caughtUserError(message)  
++ }
+> 
+> if(length(Event) != dim(xdata)[1]) {
++     message <- paste("The survival status file and the covariate file\n",
++                       "do not agree on the number of arrays: \n",
++                       length(Event), " arrays according to the survival time file but \n",
++                       dim(xdata)[1], " arrays according to the covariate data.\n",
++                       "Please fix this problem and try again.\n")
++     caughtUserError(message)  
++ }
+> 
+> if(methodSurv == "FCMS")
++     if((ncol(xdata) < MinSize)) {
++         caughtUserError(paste("You have requested an impossible situation:\n",
++                               "your minimal cluster size ", MinSize," is larger than the \n",
++                               "number of genes ", ncol(xdata), ".\n"))
++     }
+> 
+> if(!(is.numeric(xdata))) {
++     caughtUserError("Your covariate file contains non-numeric data. \n That is not allowed.\n")
++ }
+> if(any(is.na(xdata))) {
++     caughtUserError("Your covariate file contains missing values. \n That is not allowed.\n")
++ }
+> if(!(is.numeric(Time))) {
++     caughtUserError("Your survival time file contains non-numeric data. \n That is not allowed.\n")
++ }
+> if(any(is.na(Time))) {
++     caughtUserError("Your survival status file contains missing values. \n That is not allowed.\n")
++ }
+> if(!(is.numeric(Event))) {
++     caughtUserError("Your survival status file contains non-numeric data. \n That is not allowed.\n")
++ }
+> if(any(is.na(Event))) {
++     caughtUserError("Your survival status file contains missing values. \n That is not allowed.\n")
++ }
+> 
+> 
+> 
+> if(useValidation == "yes") {
++     trytime <- try(
++                    validationTime <- scan("validationtime", sep = "\t", strip.white = TRUE))
++     if(class(trytime) == "try-error")
++         caughtUserError("The validation time file is not of the appropriate format\n")
++     
++     ## to prevent problems with a space at end of classes
++     if(is.na(validationTime[length(validationTime)])) validationTime <- validationTime[-length(validationTime)]
++     
++     tryevent <- 
++         try(validationEvent <- scan("validationevent", sep = "\t", strip.white = TRUE))
++     if(class(tryevent) == "try-error")
++         caughtUserError("The validation status file is not of the appropriate format\n")
++     
++     ## to prevent problems with a space at end of classes
++     if(is.na(validationEvent[length(validationEvent)])) validationEvent <- validationEvent[-length(validationEvent)]
++     
++     
++     num.cols.validationcovariate <- count.fields("validationcovariate", sep = "\t",
++                                        quote = "",
++                                        comment.char = "#")
++     
++     if(length(unique(num.cols.validationcovariate)) > 1) {
++         message <-
++             paste("The number of columns in your validation covariate file\n",
++                   "is not the same for all rows (genes).\n",
++                   "We find the following number of columns\n",
++                   paste(num.cols.validationcovariate, collapse = ""))
++         caughtUserError(message)
++     }
++     
++     tryxdata <- try(
++                     validationxdata <- read.table("validationcovariate", header = FALSE, sep = "\t",
++                                         strip.white = TRUE,
++                                         comment.char = "#",
++                                         quote = ""))
++     if(class(tryxdata) == "try-error")
++         caughtUserError("The validation covariate file is not of the appropriate format\n")
++     
++     validationgeneNames <- validationxdata[, 1]
++     validationxdata <- validationxdata[, -1]
++     
++     if(length(unique(validationgeneNames)) < length(validationgeneNames)) {
++         dupnames <- which(duplicated(validationgeneNames))
++         message <- paste("validation Gene names are not unique.\n",
++                          "Please change them so that they are unique.\n",
++                          "The duplicated names are in rows", dupnames, "\n")
++         caughtUserError(message)
++     }
++     
++     rownames(validationxdata) <- validationgeneNames
++     
++     validationarrayNames <- scan("validationarrayNames", sep = "\t", what = "char", quote = "")
++     
++     if(length(validationarrayNames) > 0) {
++         validationarrayNames <- validationarrayNames[-1]
++         if(length(unique(validationarrayNames)) < length(validationarrayNames)) {
++             dupnames <- which(duplicated(validationarrayNames))
++             message <- paste("validation Array names are not unique.\n",
++                              "Please change them so that they are unique.\n",
++                              "The duplicated names are ", dupnames, "\n")
++             caughtUserError(message)
++         }
++         colnames(validationxdata) <- validationarrayNames
++     }
++     validationxdata <- t(validationxdata)
++     
++     
++     if(length(validationTime) != dim(validationxdata)[1]) {
++         message <- paste("The validation survival time file and the covariate file\n",
++                          "do not agree on the number of arrays: \n",
++                          length(validationTime), " arrays according to the survival time file but \n",
++                          dim(validationxdata)[1], " arrays according to the covariate data.\n",
++                          "Please fix this problem and try again.\n")
++         caughtUserError(message)  
++     }
++     
++     if(length(validationEvent) != dim(validationxdata)[1]) {
++         message <- paste("The validation survival status file and the covariate file\n",
++                          "do not agree on the number of arrays: \n",
++                          length(validationEvent), " arrays according to the survival time file but \n",
++                          dim(validationxdata)[1], " arrays according to the covariate data.\n",
++                          "Please fix this problem and try again.\n")
++         caughtUserError(message)  
++     }
++     
++     if(!(is.numeric(validationxdata))) {
++         caughtUserError("Your validation covariate file contains non-numeric data. \n That is not allowed.\n")
++     }
++     if(any(is.na(validationxdata))) {
++         caughtUserError("Your validation covariate file contains missing values. \n That is not allowed.\n")
++     }
++     if(!(is.numeric(validationTime))) {
++         caughtUserError("Your validation survival time file contains non-numeric data. \n That is not allowed.\n")
++     }
++     if(any(is.na(validationTime))) {
++         caughtUserError("Your validation survival status file contains missing values. \n That is not allowed.\n")
++     }
++     if(!(is.numeric(validationEvent))) {
++         caughtUserError("Your validation survival status file contains non-numeric data. \n That is not allowed.\n")
++     }
++     if(any(is.na(validationEvent))) {
++         caughtUserError("Your validation survival status file contains missing values. \n That is not allowed.\n")
++     }
++ 
++ 
++     if(!(identical(colnames(xdata), colnames(validationxdata)))) {
++         caughtUserError("Gene names for the validation and training data MUST be the same. ")
++     }
++ }
+Read 80 items
+Read 80 items
+Read 81 items
+> 
+> 
+> options(warn = -1)
+> 
+> if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
++ 
++     xdata <- scale(xdata, center = TRUE, scale = TRUE)
++     
++     TheCluster <- makeCluster(60, "MPI")
++     
++ ##     mpiSpawnThis(hosts = mpiHosts)
++ 
++     thresGrid <- 6
++     thres <- c(0, 1)
++     checkEvery <- 2000
++ 
++     tce <- maxiter %/% checkEvery
++     maxiter <- tce * checkEvery
++     
++     clusterExport(TheCluster, c("lik1", "tgd1InternalSnow", "tgdTrain", "tgdPieceInternalSnow"))
++ 
++ 
++     trycode <- try(
++                    allDataRun <- tauBestP(xdata, Time, Event,
++                                           thres,
++                                           epi, thresGrid, 
++                                           maxiter, checkEvery,
++                                           nfold)
++                    )
++     if(class(trycode) == "try-error")
++         caughtOurError(paste("Function tauBestP bombed unexpectedly with error",
++                              trycode, ". \n Please let us know so we can fix the code."))
++                        
++ 
++     trycode <- try(
++                    cvTGDResults <- cvTGDP(xdata, Time, Event,
++                                           thres,
++                                           epi, thresGrid, 
++                                           maxiter, checkEvery,
++                                           nfold) ## 4000 segundos en breast.covar[, 100:1000]
++                    )
++ 
++     if(class(trycode) == "try-error")
++         caughtOurError(paste("Function cvTGDP bombed unexpectedly with error",
++                              trycode, ". \n Please let us know so we can fix the code."))
++     
++ 
++     webPNG(file = "kmplot-honest.png", width = png.width,
++         height = png.height,
++         pointsize = png.pointsize,
++         family = png.family)
++     KM.visualize(cvTGDResults$OOB.scores, Time,
++                  Event, ngroups = 2, addmain = NULL) ## Good   ####  Fig 1
++     dev.off()
++     webPNG(file = "kmplot-overfitt.png", width = png.width,
++         height = png.height,
++         pointsize = png.pointsize,
++         family = png.family)
++     KM.visualize(allDataRun$tgd.alldata$scores, Time,          ####  Fig 2
++                  Event, ngroups = 2) ## Overfitt
++     dev.off()
++ 
++     pdf(file = "kmplot-honest.pdf", width = png.width,
++         height = png.height)
++     KM.visualize(cvTGDResults$OOB.scores, Time,
++                  Event, ngroups = 2, addmain = NULL) ## Good   ####  Fig 1
++     dev.off()
++     pdf(file = "kmplot-overfitt.pdf", width = png.width,
++         height = png.height)
++     KM.visualize(allDataRun$tgd.alldata$scores, Time,          ####  Fig 2
++                  Event, ngroups = 2) ## Overfitt
++     dev.off()
++ 
++ 
++ 
++ 
++     webPNG(file = "kmplot4-honest.png", width = png.width,
++            height = png.height,
++            pointsize = png.pointsize,
++            family = png.family)
++     KM.visualize4(cvTGDResults$OOB.scores, Time,
++                  Event, ngroups = 2, addmain = NULL) ## Good   ####  Fig 1.4
++     dev.off()
++     webPNG(file = "kmplot4-overfitt.png", width = png.width,
++         height = png.height,
++         pointsize = png.pointsize,
++         family = png.family)
++     KM.visualize4(allDataRun$tgd.alldata$scores, Time,          ####  Fig 2.4
++                  Event, ngroups = 2) ## Overfitt
++     dev.off()
++ 
++     pdf(file = "kmplot4-honest.pdf", width = png.width,
++         height = png.height)
++     KM.visualize4(cvTGDResults$OOB.scores, Time,
++                  Event, ngroups = 2, addmain = NULL) ## Good   ####  Fig 1.4
++     dev.off()
++     pdf(file = "kmplot4-overfitt.pdf", width = png.width,
++         height = png.height)
++     KM.visualize4(allDataRun$tgd.alldata$scores, Time,          ####  Fig 2.4
++                  Event, ngroups = 2) ## Overfitt
++     dev.off()
++ 
++ 
++ 
++ 
++ 
++     
++ 
++     webPNG(file = "cvpl.png", width = png.width,
++            height = png.height,
++            pointsize = png.pointsize,
++            family = png.family)
++     plot.cvpl(allDataRun$cvpl.mat, epi,                        ####  Fig 3
++               thres, thresGrid)
++     dev.off()
++ 
++ 
++     pdf(file = "cvpl.pdf", width = png.width,
++            height = png.height)
++     plot.cvpl(allDataRun$cvpl.mat, epi,                        ####  Fig 3
++               thres, thresGrid)
++     dev.off()
++ 
++     sink(file = "results.txt")
++     cat("\n\n  Analyses using  Threshold Gradient Descent (Li & Gui)\n")
++     cat("===================================================================================\n")
++ 
++     cat("\n\n\n********************************************************************************\n")
++     cat("********************************************************************************\n")
++     cat("********************                                        ********************\n")
++     cat("********************        Model fitted to all data        ********************\n")
++     cat("********************                                        ********************\n")
++     cat("********************************************************************************\n")
++     cat("********************************************************************************\n\n")
++     
++ 
++ 
++     trycode <- try(
++                    outm <- summaryTGDrun(xdata, Time, Event, allDataRun,
++                                          epi, thres, thresGrid, plot = TRUE,
++                                          genesOut = TRUE,
++                                          outfile = "genes.all.out") )          #### Fig 4: fstdgrun
++ 
++ 
++     if(class(trycode) == "try-error")
++         caughtOurError(paste("Function summaryTGDrun bombed unexpectedly with error",
++                              trycode, ". \n Please let us know so we can fix the code."))
++ 
++     
++     cat("\n\n\n********************************************************************************\n")
++     cat("********************************************************************************\n")
++     cat("********************                                        ********************\n")
++     cat("********************        Cross-validation runs           ********************\n")
++     cat("********************                                        ********************\n")
++     cat("********************************************************************************\n")
++     cat("********************************************************************************\n\n")
++     trycode <- try(
++                    summary.cvTGD(cvTGDResults, allDataRun, rownames(xdata))
++                    )
++     if(class(trycode) == "try-error")
++         caughtOurError(paste("Function summary.cvTGD bombed unexpectedly with error",
++                              trycode, ". \n Please let us know so we can fix the code."))
++ 
++ 
++ ##     try(mpi.close.Rslaves())
++ ##     mpi.quit(save = "no")
++ 
++ 
++ 
++     if(useValidation == "yes") {
++         
++         cat("\n\n\n********************************************************************************\n")
++         cat("********************************************************************************\n")
++         cat("********************                                        ********************\n")
++         cat("********************        Validation data                 ********************\n")
++         cat("********************                                        ********************\n")
++         cat("********************************************************************************\n")
++         cat("********************************************************************************\n\n")
++         
++         valpred <- validationxdata %*% allDataRun$betas
++        
++         cat("\n\n Scores (linear predictor) for validation data\n")
++         print(valpred)
++         
++     }      
++     
++     sink()
++ 
++     
++     if(useValidation == "yes") {
++         pdf(file = "kmplot-validation.pdf", width = png.width,
++             height = png.height)
++         KM.visualize(valpred, validationTime,
++                      validationEvent, ngroups = 2, addmain = NULL)
++         dev.off()
++         webPNG(file = "kmplot-validation.png", width = png.width,
++                height = png.height, pointsize = png.pointsize,
++                family = png.family)
++         KM.visualize(valpred, validationTime,                         
++                      validationEvent, ngroups = 2, addmain = NULL)
++         dev.off()
++ 
++         pdf(file = "kmplot4-validation.pdf", width = png.width,
++             height = png.height)
++         KM.visualize4(valpred, validationTime,
++                      validationEvent, ngroups = 2, addmain = NULL)
++         dev.off()
++         webPNG(file = "kmplot4-validation.png", width = png.width,
++                height = png.height, pointsize = png.pointsize,
++                family = png.family)
++         KM.visualize4(valpred, validationTime,                         
++                      validationEvent, ngroups = 2, addmain = NULL)
++         dev.off()
++         
++     }
++     
++     stopCluster(TheCluster)
++     save.image()
++     
++     
++ } else if(methodSurv == "FCMS") {
++     MaxIterationsCox <- 200
++     
++     ## initialize clusters
++     mpiSpawnAll()
++     
++     trycode <- try(
++                    all.res1 <- dStep1.parallel(xdata, Time, Event,
++                                                Minp, MaxIterationsCox)
++                    )
++ 
++     if(class(trycode) == "try-error")
++         caughtOurError(paste("Function dStep1.parallel bombed unexpectedly with error",
++                              trycode, ". \n Please let us know so we can fix the code."))
++ 
++ 
++     trycode <- try(
++     all.res3 <- fitDave.res1Given(xdata, Time, Event,              #### Fig 01:
++                                   res1 = all.res1,             #### Fig 02
++                                   Minp, MaxSize,                  ### ClusterNegativeCoeffs
++                                   MinSize, MinCor,             ### ClusterPositiveCoeffs
++                                   MaxIterationsCox,
++                                   plot = TRUE,
++                                   interactive = TRUE)
++                    )
++ 
++     if(class(trycode) == "try-error")
++         caughtOurError(paste("Function fitDave.res1Given bombed unexpectedly with error",
++                              trycode, ". \n Please let us know so we can fix the code."))
++ 
++     trycode <- try(
++                    cvDaveRun <- cvDave.parallel3(x = xdata, time = Time,
++                                                  event = Event,
++                                                  p = Minp, maxSize = MaxSize,
++                                                  minSize = MinSize,
++                                                  minCor = MinCor,
++                                                  MaxIterationsCox = MaxIterationsCox,
++                                                  nfold = nfold,
++                                                  mpiHosts = mpiHosts)
++                    )
++     
++     if(class(trycode) == "try-error")
++         caughtOurError(paste("Function cvDaveRun bombed unexpectedly with error",
++                              trycode, ". \n Please let us know so we can fix the code."))
++ 
++ 
++     
++     pdf(file = "kmplot-honest.pdf", width = png.width,
++         height = png.height)
++     KM.visualize(cvDaveRun$OOB.scores, Time,
++                  Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1
++     dev.off()
++     pdf(file = "kmplot-overfitt.pdf", width = png.width,
++         height = png.height)
++     KM.visualize(all.res3$scores, Time,                         
++                  Event, ngroups = 2) ## Overfitt                   #### Fig 2
++     dev.off()
++     
++     webPNG(file = "kmplot-honest.png", width = png.width,
++            height = png.height, pointsize = png.pointsize,
++            family = png.family)
++     KM.visualize(cvDaveRun$OOB.scores, Time,
++                  Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1
++     dev.off()
++     webPNG(file = "kmplot-overfitt.png", width = png.width,
++         height = png.height, pointsize = png.pointsize,
++         family = png.family)
++     KM.visualize(all.res3$scores, Time,                         
++                  Event, ngroups = 2) ## Overfitt                   #### Fig 2
++     dev.off()
++     
++ 
++ 
++     pdf(file = "kmplot4-honest.pdf", width = png.width,
++         height = png.height)
++     KM.visualize4(cvDaveRun$OOB.scores, Time,
++                  Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1.4
++     dev.off()
++     pdf(file = "kmplot4-overfitt.pdf", width = png.width,
++         height = png.height)
++     KM.visualize4(all.res3$scores, Time,                         
++                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.4
++     dev.off()
++     
++     webPNG(file = "kmplot4-honest.png", width = png.width,
++         height = png.height, pointsize = png.pointsize,
++         family = png.family)
++     KM.visualize4(cvDaveRun$OOB.scores, Time,
++                  Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1.4
++     dev.off()
++     webPNG(file = "kmplot4-overfitt.png", width = png.width,
++         height = png.height, pointsize = png.pointsize,
++         family = png.family)
++     KM.visualize4(all.res3$scores, Time,                         
++                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.4
++     dev.off()
++ 
++ 
++ 
++ 
++     
++ 
++     sink(file = "results.txt")
++ 
++     cat("\n\n  Analyses using  Filter, Cluster, and Stepwise model selection (as in Dave et al.)\n")
++     cat("===================================================================================\n")
++ 
++     cat("\n\n\n")
++     cat("\n\n\n********************************************************************************\n")
++     cat("********************************************************************************\n")
++     cat("********************                                        ********************\n")
++     cat("********************        Model fitted to all data        ********************\n")
++     cat("********************                                        ********************\n")
++     cat("********************************************************************************\n")
++     cat("********************************************************************************\n\n")
++     
++     trycode <- try(
++                    all.res.out <- selectedSignatures(all.res3, colnames(xdata),
++                                                      print = TRUE, out = TRUE)
++                    )
++     
++     if(class(trycode) == "try-error")
++         caughtOurError(paste("Function selectedSignatures bombed unexpectedly with error",
++                              trycode, ". \n Please let us know so we can fix the code."))
++ 
++     
++     cat("\n\n\n********************************************************************************\n")
++     cat("********************************************************************************\n")
++     cat("********************                                        ********************\n")
++     cat("********************        Cross-validation runs           ********************\n")
++     cat("********************                                        ********************\n")
++     cat("********************************************************************************\n")
++     cat("********************************************************************************\n\n")
++     trycode <- try(
++                    summary.cvDave(cvDaveRun, all.res.out, rownames(xdata),
++                                   colnames(xdata))
++                    )
++ 
++     if(class(trycode) == "try-error")
++         caughtOurError(paste("Function summary.cvDave bombed unexpectedly with error",
++                              trycode, ". \n Please let us know so we can fix the code."))
++ 
++ 
++ 
++     if(useValidation == "yes") {
++         
++         cat("\n\n\n********************************************************************************\n")
++         cat("********************************************************************************\n")
++         cat("********************                                        ********************\n")
++         cat("********************        Validation data                 ********************\n")
++         cat("********************                                        ********************\n")
++         cat("********************************************************************************\n")
++         cat("********************************************************************************\n\n")
++         trycode <- try(
++                        valpred <- dPredictNew(all.res3, validationxdata)
++                        )
++         if(class(trycode) == "try-error")
++             caughtOurError(paste("Function dPredictNew bombed unexpectedly with error",
++                                  trycode, ". \n Please let us know so we can fix the code."))
++ 
++         
++         cat("\n\n Scores (linear predictor) for validation data\n")
++         print(valpred)
++        
++     }      
++ 
++     sink()
++ 
++     
++     if(useValidation == "yes") {
++         pdf(file = "kmplot-validation.pdf", width = png.width,
++             height = png.height)
++         KM.visualize(valpred, validationTime,
++                      validationEvent, ngroups = 2, addmain = NULL)
++         dev.off()
++         webPNG(file = "kmplot-validation.png", width = png.width,
++                height = png.height, pointsize = png.pointsize,
++                family = png.family)
++         KM.visualize(valpred, validationTime,                         
++                      validationEvent, ngroups = 2, addmain = NULL)
++         dev.off()
++ 
++         pdf(file = "kmplot4-validation.pdf", width = png.width,
++             height = png.height)
++         KM.visualize4(valpred, validationTime,
++                      validationEvent, ngroups = 2, addmain = NULL)
++         dev.off()
++         webPNG(file = "kmplot4-validation.png", width = png.width,
++                height = png.height, pointsize = png.pointsize,
++                family = png.family)
++         KM.visualize4(valpred, validationTime,                         
++                      validationEvent, ngroups = 2, addmain = NULL)
++         dev.off()
++         
++     }
++     
++     
++ 
++     save.image()
++ ##    try(mpi.close.Rslaves())
++ ##    mpi.quit(save = "no")
++ }
+	60 slaves are spawned successfully. 0 failed.
+master  (rank 0 , comm 1) of size 61 is running on: prot17 
+slave1  (rank 1 , comm 1) of size 61 is running on: prot02 
+slave2  (rank 2 , comm 1) of size 61 is running on: prot02 
+slave3  (rank 3 , comm 1) of size 61 is running on: prot02 
+slave4  (rank 4 , comm 1) of size 61 is running on: prot03 
+slave5  (rank 5 , comm 1) of size 61 is running on: prot03 
+slave6  (rank 6 , comm 1) of size 61 is running on: prot03 
+slave7  (rank 7 , comm 1) of size 61 is running on: prot04 
+slave8  (rank 8 , comm 1) of size 61 is running on: prot04 
+slave9  (rank 9 , comm 1) of size 61 is running on: prot04 
+slave10 (rank 10, comm 1) of size 61 is running on: prot05 
+slave11 (rank 11, comm 1) of size 61 is running on: prot05 
+slave12 (rank 12, comm 1) of size 61 is running on: prot05 
+slave13 (rank 13, comm 1) of size 61 is running on: prot06 
+slave14 (rank 14, comm 1) of size 61 is running on: prot06 
+slave15 (rank 15, comm 1) of size 61 is running on: prot06 
+slave16 (rank 16, comm 1) of size 61 is running on: prot07 
+slave17 (rank 17, comm 1) of size 61 is running on: prot07 
+slave18 (rank 18, comm 1) of size 61 is running on: prot07 
+slave19 (rank 19, comm 1) of size 61 is running on: prot08 
+slave20 (rank 20, comm 1) of size 61 is running on: prot08 
+slave21 (rank 21, comm 1) of size 61 is running on: prot08 
+slave22 (rank 22, comm 1) of size 61 is running on: prot09 
+slave23 (rank 23, comm 1) of size 61 is running on: prot09 
+slave24 (rank 24, comm 1) of size 61 is running on: prot09 
+slave25 (rank 25, comm 1) of size 61 is running on: prot10 
+slave26 (rank 26, comm 1) of size 61 is running on: prot10 
+slave27 (rank 27, comm 1) of size 61 is running on: prot10 
+slave28 (rank 28, comm 1) of size 61 is running on: prot11 
+slave29 (rank 29, comm 1) of size 61 is running on: prot11 
+slave30 (rank 30, comm 1) of size 61 is running on: prot12 
+slave31 (rank 31, comm 1) of size 61 is running on: prot12 
+slave32 (rank 32, comm 1) of size 61 is running on: prot13 
+slave33 (rank 33, comm 1) of size 61 is running on: prot13 
+slave34 (rank 34, comm 1) of size 61 is running on: prot14 
+slave35 (rank 35, comm 1) of size 61 is running on: prot14 
+slave36 (rank 36, comm 1) of size 61 is running on: prot15 
+slave37 (rank 37, comm 1) of size 61 is running on: prot15 
+slave38 (rank 38, comm 1) of size 61 is running on: prot16 
+slave39 (rank 39, comm 1) of size 61 is running on: prot16 
+slave40 (rank 40, comm 1) of size 61 is running on: prot17 
+slave41 (rank 41, comm 1) of size 61 is running on: prot17 
+slave42 (rank 42, comm 1) of size 61 is running on: prot18 
+slave43 (rank 43, comm 1) of size 61 is running on: prot18 
+slave44 (rank 44, comm 1) of size 61 is running on: prot19 
+slave45 (rank 45, comm 1) of size 61 is running on: prot19 
+slave46 (rank 46, comm 1) of size 61 is running on: prot20 
+slave47 (rank 47, comm 1) of size 61 is running on: prot20 
+slave48 (rank 48, comm 1) of size 61 is running on: prot21 
+slave49 (rank 49, comm 1) of size 61 is running on: prot21 
+slave50 (rank 50, comm 1) of size 61 is running on: prot22 
+slave51 (rank 51, comm 1) of size 61 is running on: prot22 
+slave52 (rank 52, comm 1) of size 61 is running on: prot27 
+slave53 (rank 53, comm 1) of size 61 is running on: prot27 
+slave54 (rank 54, comm 1) of size 61 is running on: prot28 
+slave55 (rank 55, comm 1) of size 61 is running on: prot28 
+slave56 (rank 56, comm 1) of size 61 is running on: prot29 
+slave57 (rank 57, comm 1) of size 61 is running on: prot29 
+slave58 (rank 58, comm 1) of size 61 is running on: prot30 
+slave59 (rank 59, comm 1) of size 61 is running on: prot30 
+slave60 (rank 60, comm 1) of size 61 is running on: prot30 
+SPRNG has been initialized on all slaves.
+Start:  AIC= 786.13 
+ sobject ~ P.185 + N.88 
+
+        Df    AIC
++ N.167  1 783.15
++ P.247  1 785.93
+<none>     786.13
++ N.149  1 787.48
++ P.181  1 787.68
++ P.250  1 787.85
++ P.241  1 787.95
++ P.231  1 787.99
++ P.230  1 788.01
++ P.187  1 788.03
++ P.248  1 788.04
++ P.234  1 788.06
++ N.171  1 788.07
++ P.183  1 788.08
++ P.228  1 788.08
++ P.249  1 788.09
++ P.175  1 788.11
++ P.184  1 788.12
+- N.88   1 799.76
+- P.185  1 800.38
+
+Step:  AIC= 783.15 
+ sobject ~ P.185 + N.88 + N.167 
+
+        Df    AIC
++ P.247  1 783.02
+<none>     783.15
++ N.149  1 784.20
++ N.171  1 784.60
++ P.181  1 784.65
++ P.241  1 784.73
++ P.250  1 784.80
++ P.249  1 784.84
++ P.248  1 784.88
++ P.234  1 784.99
++ P.230  1 785.05
++ P.175  1 785.05
++ P.187  1 785.11
++ P.184  1 785.13
++ P.228  1 785.13
++ P.231  1 785.13
++ P.183  1 785.14
+- N.167  1 786.13
+- P.185  1 793.78
+- N.88   1 796.68
+
+Step:  AIC= 783.02 
+ sobject ~ P.185 + N.88 + N.167 + P.247 
+
+        Df    AIC
+<none>     783.02
+- P.247  1 783.15
++ P.231  1 783.54
++ P.181  1 783.67
++ P.230  1 783.78
++ P.228  1 783.94
++ P.184  1 784.04
++ N.149  1 784.30
++ P.234  1 784.31
++ P.250  1 784.37
++ P.241  1 784.47
++ N.171  1 784.63
++ P.249  1 784.66
++ P.187  1 784.72
++ P.248  1 784.79
++ P.183  1 784.99
++ P.175  1 785.02
+- N.167  1 785.93
+- P.185  1 786.59
+- N.88   1 796.90
+
+
+ Computing gene-wise cox p-value
+
+  ....  fold  1
+  ....  fold  2
+  ....  fold  3
+  ....  fold  4
+  ....  fold  5
+  ....  fold  6
+  ....  fold  7
+  ....  fold  8
+  ....  fold  9
+  ....  fold  10
+
+ Cleaning up MPI space, and setting up a new one
+
+	10 slaves are spawned successfully. 0 failed.
+master  (rank 0 , comm 1) of size 11 is running on: prot17 
+slave1  (rank 1 , comm 1) of size 11 is running on: prot13 
+slave2  (rank 2 , comm 1) of size 11 is running on: prot14 
+slave3  (rank 3 , comm 1) of size 11 is running on: prot14 
+slave4  (rank 4 , comm 1) of size 11 is running on: prot15 
+slave5  (rank 5 , comm 1) of size 11 is running on: prot15 
+slave6  (rank 6 , comm 1) of size 11 is running on: prot16 
+slave7  (rank 7 , comm 1) of size 11 is running on: prot16 
+slave8  (rank 8 , comm 1) of size 11 is running on: prot17 
+slave9  (rank 9 , comm 1) of size 11 is running on: prot17 
+slave10 (rank 10, comm 1) of size 11 is running on: prot18 
+SPRNG has been initialized on all slaves.
+
+
+ Sending objects to MPI space
+
+
+
+ Computing the rest
+
+
+ Cleaning up and closing MPI
+> 
+> 
+> 
+> 
+> 
+> proc.time()
+[1] 169.15  38.72 282.95   0.59   0.25
+> 
+[1] "Please use mpi.quit() to quit R"
+
+
+ Normal termination

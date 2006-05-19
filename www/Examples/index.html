@@ -1,0 +1,151 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<style type="text/css">
+                 body { margin-left: 10%; margin-right: 10%; color: black;} 
+<!--                  body { margin-left: 10%; margin-right: 10%; color: black; background="fondo3.jpg";} -->
+                 <!-- h1 { margin-left: -8%;} -->
+                 h2,h3,h4,h5,h6 { margin-left: -4%; }
+div.box { border: solid; border-width: thin; width: 100%; padding: 0.2em; }
+div.color {background: rgb(204,204,255);
+           padding: 0.5em;
+           border: none;
+           }
+body { font-family: Verdana, sans-serif; }
+h1,h2 { font-family: Verdana, sans-serif; }
+pre { font-family: monospace; }
+               </style>
+
+
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
+<title>SignS: Signatures for survival data: examples and data sets</title>
+</head>
+
+<body>
+<BODY background="fondo3.jpg">
+
+
+<h2><center>SignS: Signatures for survival data: examples and data sets</center></h2>
+
+<br />
+
+
+<h3>Examples for FCMS</h3>
+
+<h4>Fully commented example</h4>
+<p>Go <a href="./CommentedExample/results.html">here</a> for detailed
+discussion of one particular example.</p>
+
+
+<h4>An example of reversal of sign coefficients</h4>
+<p><a href="./InversionSignsCoeffs/results.html">Here<a> is a textbook
+example of what can happen as a result of high correlation between
+independent variables.</p>
+
+
+
+<p>(The data for the first two commented examples are from experiments
+of the molecular pathology group at CNIO. I thank A. Rodriguez,
+R. Villuendas, and M.A. Piris for permission to use these examples,
+and for bringing them up to my attention.)</p>
+
+
+<h4>Why overfitting can be a serious problem</h4>
+<p>Using the AML data from below, <a
+href="./AML.FCMS/results.html">here</a> you see how the "in-sample"
+predictions can be severely overffit.</p>
+
+
+
+
+<h4>What does validation do?</h4>
+<p>Sure enough, if you use the same data for validation as for
+training, the "validation" results should be the same as the results
+from the overfitt curves in the training data. <a
+href="./Breast.FCMS/results.html">Here</a> you can see an example with
+the breast data set.</p>
+
+
+
+
+<h4>DLBCL with training and validation</h4>
+<p><a href="./DLBCL.FCMS/results.html">Here</a> is a standard set of
+results. The training set included 160 subjects, the validation set 80
+subjects.</p>
+
+
+<h4>Named genes: an example of clickable dendrograms etc</h4>
+<p><a href="./NamedGenes/results.html">This</a> is an example with
+  fictitious data (based on the lung data set, with noise added, and a
+  bunch of Mouse Unigene identifiers). The only purpose of this example is
+  to show the output of the new (2005-12-28) version of SignS, with
+  clickable identifiers in the dendrograms and lists of genes, plus a few
+  other visual enhancements.</p>
+
+
+
+<h3>Examples for TGD</h3>
+<p>Comming soon.</p>
+
+
+
+
+
+<h3>Data sets</h3>
+
+<p>The following data sets are ready to be downloaded to your machine and from
+there be sent to SignS. They were obtained from the appendices of the paper
+<a
+href="http://biology.plosjournals.org/perlserv/?request=get-document&doi=10.1371/journal.pbio.0020118">
+"Predicting Cancer Patient Survival with Gene Expression Data"</a> by
+Bair and Tibshirani in PLOS, and then reformatted to conform to the
+requirements of SignS.</p>
+
+
+<p><a href="example.data.sets.SignS.tar.gz">Download</a> three example
+data sets (DLBCL, Breast, AML); this is a 7.1 MB tar.gz compressed
+file. (In Linux, if using a shell, create a directory for the data and
+decompress the file there: ej: 
+<pre> 
+mkdir SignsExampleData 
+cd SignsExampleData 
+mv ../example.data.sets.SignS.tar.gz .  
+tar -zxvf example.data.sets.SignS.tar.gz 
+</pre>
+If you are using some GUI for file management, well, use whatever the
+GUI says to do. In Windows,
+WinZIP and WinRAR both understand tar.gz; the free and LGPL'ed 
+<a href="http://www.7-zip.org/">7-zip</a> understads those (and many
+more) too.</p>
+
+
+<br />
+<hr />
+
+
+<h3>Copyright and license</h3>
+<p>The text of this document and the comments added to the output are
+copyright © 2005 Ramón Díaz-Uriarte. You can, however, do quite a bit
+of things with all the text, since this document is licensed under a
+<a rel="license"
+href="http://creativecommons.org/licenses/by-nc-sa/2.0/">Creative
+Commons</a> license, as shown below (click on the links to read the
+terms of the license).</p>
+
+
+
+<p>
+<br/ >
+<center>
+<!-- Creative Commons License -->
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/"><img alt="Creative Commons License" border="0" src="somerights20.gif" /></a><br />
+<span class="license">This document is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">Creative Commons License</a></span>.
+<!-- /Creative Commons License -->
+</center>
+
+
+</body> </html>
+
+

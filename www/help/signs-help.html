@@ -1,0 +1,817 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Help - SignS</title>
+<style type="text/css">
+                 body { margin-left: 10%; margin-right: 10%; color: black;} 
+<!--                  body { margin-left: 10%; margin-right: 10%; color: black; background="fondo3.jpg";} -->
+                 <!-- h1 { margin-left: -8%;} -->
+                 h2,h3,h4,h5,h6 { margin-left: -4%; }
+div.box { border: solid; border-width: thin; width: 100%; padding: 0.2em; }
+div.color {background: rgb(204,204,255);
+           padding: 0.5em;
+           border: none;
+           }
+body { font-family: Verdana, sans-serif; }
+h1,h2 { font-family: Verdana, sans-serif; }
+pre { font-family: monospace; }
+               </style>
+  </head>
+<body background="fondo3.jpg"> 
+
+
+
+<br />
+
+<center>
+<!-- Creative Commons License -->
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/"><img alt="Creative Commons License" border="0" src="somerights20.gif" /></a><br />
+<span class="license">This document is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">Creative Commons License</a></span>.
+<!-- /Creative Commons License -->
+</center>
+<!--
+
+<rdf:RDF xmlns="http://web.resource.org/cc/"
+xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"> <Work rdf:about="">
+<dc:title>Signatures for survival data</dc:title>
+<dc:date>2005</dc:date>
+<dc:description>Help for SignS: molecular signatures with survival and censored data.</dc:description>
+<dc:creator><Agent>
+<dc:title>Ramón Díaz-Uriarte</dc:title>
+</Agent></dc:creator>
+<dc:rights><Agent>
+<dc:title>Ramón Díaz-Uriarte</dc:title>
+</Agent></dc:rights>
+<dc:type
+rdf:resource="http://purl.org/dc/dcmitype/Text"
+/>
+<license
+rdf:resource="http://creativecommons.org/licenses/by-nc-sa/2.0/"
+/>
+</Work>
+
+<License
+rdf:about="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+<permits
+rdf:resource="http://web.resource.org/cc/Reproduction"
+/>
+<permits
+rdf:resource="http://web.resource.org/cc/Distribution"
+/>
+<requires
+rdf:resource="http://web.resource.org/cc/Notice"
+/>
+<requires
+rdf:resource="http://web.resource.org/cc/Attribution"
+/>
+<prohibits
+rdf:resource="http://web.resource.org/cc/CommercialUse"
+/>
+<permits
+rdf:resource="http://web.resource.org/cc/DerivativeWorks"
+/>
+<requires
+rdf:resource="http://web.resource.org/cc/ShareAlike"
+/>
+</License>
+
+</rdf:RDF>
+
+-->
+<br />
+
+<hr>
+<center>
+<h1>SignS: Signatures for survival and censored data</h1>
+</center>
+
+
+    
+    <hr>
+    <ol>
+      <li><a href="#intro">Introduction and purpose</a></li>
+      <li><a href="#methods">Methods</a>
+	<ul>
+	  <li><a href="#FCMS">"Filter, cluster, and stepwise model selection" as in
+	      Dave et al.  (FCMS)</a></li>
+	  <li><a href="#TGD">Threshold gradient descent for censored data of Gui and
+	      Li (TGD)</a></li>
+	  <li><a href="#errorstab">Assessment of predictive performance and stability</a></li>
+	</ul>
+      </li>
+      <li><a href="#usage">Usage</a>
+    <ul>
+      <li><a href="#input">Input</a></li>
+      <li><a href="#output">Output</a></li>
+</ul> 
+</li>
+       <li><a href="#speed">How long does it take?</a></li> 
+       <li><a href="#examples">Examples</a></li> 
+  
+    <li><a href="#authors">Author and Acknowledgements</a></li>
+    <li><a href="#terms.use">Terms of use</a></li>
+    <li><a href="#privacy">Privacy and	Security</a></li>
+        <li><a href="#warranty">Disclaimer</a></li>  
+    <li><a href="#refs">References</a></li>
+  </ol>
+<hr>
+
+<h2><a name="intro">Introduction and purpose</a></h2>
+
+<p>SignS is web-based tool for gene selection and signature finding in
+    problems where the dependent variable is patient survival or, more
+    generally, a right-censored variable. Two approaches have been
+    implemented: the <b>threshold gradient descent
+    method (TGD)</b> of <cite>Gui & Lui (2005)</cite> and a method that uses a
+    combination of gene filtering, clustering and survival model building (FCMS),
+    very similar to the one used in <cite>Dave et al. (2004)</cite>.</p>
+
+<p>There are other approaches that will analyze gene expression (in
+      general, high-dimensional) data when the response is a
+      right-censored variable. However, few other methods explicitly
+      attempt to recover subsets of the original genes, preserving
+      relevant genes even when these are highly correlated. Other
+      approaches (e.g., PLS) will return predictive models, but offer
+      little guidance as to selection of genes (i.e., prediction will be
+      based on the complete set of original variables ---genes), or be
+      intrinsically limited as to the maximum number of genes that can be
+      used for fitting (such as the lasso). </p>
+
+<p>These two approaches are, thus, promising regarding the above
+      objectives (recovery of molecular signatures). It should be noted,
+      though, that neither these, nor any other, approaches are still
+      widely used, and that there have not been extensive studies
+      comparing relative performance and characteristics. Thus, in
+      contrast to other of our tools (e.g., <a
+      href="http://pomelo.bioinfo.cnio.es">Pomelo</a>, <a
+      href="http://tnasas.bioinfo.cnio.es">Tnasas</a>, or <a
+      href="http://genesrf.bioinfo.cnio.es">GeneSrF</a>) the nature and
+      status of these methods is much more experimental.   In addition,
+      the implementation of this tool is still <b>largely experimental</b>. In
+      particular, it is not obvious how to set one of the parameters for
+      the threshold gradient descent method, and we are working on
+      implementing several additional ideas for selecting the "best
+      solution". Moreover, TGD is also very computationally demanding, and
+      we are experimenting with different approaches to speed it up. Right
+      now most of the execution is parallelized over 60 CPUs, but additional
+      tricks and shortcuts could allow faster execution. In addition, it
+      is not clear what is the most useful presentation of results, so we
+      are of course open to comments and suggestions. Finally, we provide
+      little checking of lack of convergence and similar problems; we are
+      trying to figure out the best way to return this information to the user.</p>
+
+<p>Regardless of the caveats, please enjoy and let us know your
+      suggestions, comments and complaints.</p>
+
+
+<h2><a name="methods">Methods implemented</a></h2>
+
+<h3><a name="FCMS">"Filter, cluster, and stepwise model selection" as in
+	Dave et al.  (FCMS)</a></h3>
+<p>The "Filter, cluster, and stepwise model selection" method uses a
+series of steps very similar to those in Dave et al. </p>
+    <ol>
+      <li>Genes are filtered, using a univariate (gene-by-gene) Cox
+	model. Only genes with a p-value (not adjusted for multiple
+	comparisons) smaller than <b>Minimum gene-wise Cox p-value</b> are
+	retained for further analyses. </li> 
+
+      <li>Genes that fulfill the previous requirement are divided into two
+	groups, those with a positive coefficient in the Cox model (i.e.,
+	those genes for which an increase in their value is associated
+	with a decrease in survival) and those with negative coefficients
+	(increase in the gene associated to increased survival). (Yes,
+	this is not a typo: the Cox model is a model of the hazard rate or
+	hazard function ---the "instantaneous risk of death"; positive
+	coefficients indicate a (relative) increase in the hazard, and
+	thus a decrease in survival).</li>
+
+      <li> Each of these two groups of genes is clustered separately. We
+	have used complete-linkage hierarchical clustering with (1 -
+	correlation) as the distance measure. This is a reasonable
+	clustering method for genes (e.g., <cite>Simon et al.,
+	2003</cite>) and eases the implementation of a correlation-based
+	criterion for cluster selection (see next).</li>
+
+
+      <li>A potential signature is a roup of genes that show a minimal
+	correlation among themselves of <b>Min. correlation of genes in a
+	cluster</b>, and that have between <b>Min. number of genes in a
+	cluster</b> and <b>Max. number of genes in a cluster</b>. </li>
+
+
+      <li>Note that the default settings for Min. and Max. numbers of
+      genes in a cluster (10 and 100) are different from those used in
+      Dave et al. (25 and 50). Other than interpretability and prior
+      assumptions about size of "paths", I see no reason to use any
+      particular set of values.</li>
+
+      <li>The numeric values of a component (signature in the sense of
+      Dave et al) are obtained by taking the average of the expression levels
+      of all the genes in a given compnent.</li>
+
+      <li>All possible pairs of signatures are then jointly fitted with a
+      Cox model (i.e., a Cox model with two variables). The best
+      two-signature model is retained (we choose as best the model with
+      the largest likelihood) for the next step.</li>
+
+      <li>We carry out stepwise variable selection using as starting point
+      (and allowing both addition and deletion of terms) the best
+      two-signature model from the step above. From the descriptions in
+      the supplementary material of Dave et al., it seems they use
+      p-values to retain or eliminate terms. We have used, instead, the
+      AIC, a criterion which might be more suited for model selection. The
+      components retained in the final models are used as the final
+      selected components.</li>
+    </ol>
+
+
+<h3><a name="TGD">Threshold gradient descent for censored data of Gui and
+	Li (TGD)</a></h3>
+
+<p>This method, developed by Gui and Li, uses penalized likelihood, a
+      general approach (with other examples such as the lasso and ridge
+      regression) for obtaining estimates of the regression coefficients
+      in high-dimensional spaces such as these (few subjects, thousands of
+      features). This approach has close connections to the Lasso, but
+      should overcome some of its limitations; for instance, the largest
+      number of genes that can be selected by the Lasso can be no larger
+      than the number of cases, and it tends to return only one of a set
+      of genes that show high correlations.</p>
+
+<p>Two parameters have to be set for this method: a threshold parameter
+      &#964; (tau) and an infinitesimal increment &#8710;&#951; (Delta
+      nu). The threshold parameter (where 0 &#8804; &#964; &#8804; 1) is
+      related to the amount of penalization, and larger values lead to
+      larger numbers of coefficients being set to 0. Delta nu is an
+      infinitesimal increment that affects the rate of change of the
+      coefficients at each iteration of the algorithm. </p>
+
+<p>In <a href = "http://helix-web.stanford.edu/psb05/gui.pdf">their
+	paper</a>, Gui and Li suggest using cross-validation to choose
+	&#964; and &#951;. Actually, an operational approach is to decide
+	in advance on a set of &#964; to examine (in our case, 0, 0.2,
+	0.4, 0.6, 0.8, 1), and use cross-validation to select the &#951;
+	for each of the pre-specified &#964;. For each &#964;, we will
+	chose the &#951; that minimizes the cross-validated partial
+	likelihood (CVPL), a function of the difference in the log Cox's partial
+	likelihoods for the models with and without the the ith group of
+	subjects. Once we find the &#951; for a given &#964;, it is
+	inmediate to obtain the fitted coefficients for the genes and the
+	scores for subjects not in the sample.</p>
+
+<p>From the <a href =
+	"http://helix-web.stanford.edu/psb05/gui.pdf">original paper</a>,
+	it seems that the authors used the CVPL to find the &#951; for a
+	given &#964;, but it is not clear that this is the criterion
+	ultimately used to select among &#964;. Rather, in the example
+	discussed in their paper, the authors choose the final model based
+	on the area under the ROC curve, and they use a set of data that
+	includes both training and testing data subsets. We have (so far)
+	only implemented selection based on the CVPL. Using roc curves has
+	not yet been implemented, because of the additional computational
+	demands, but we are working on the implementation of this (and
+	another) approach for selecting the final &#964;, which can be
+	used when we have no external testing data set.</p>
+
+<p>Note that we scale (subtract the mean and divide by the standard
+      deviation) each gene to prevent numerical problems that arise with
+      some data sets when exponentiating the score function. This is in
+      contrast to the <a href="http://dna.ucdavis.edu/~hli/gd1.SSC">R
+      code</a> from the authors, which performed no scaling or
+      centering. In the future, this scaling of the data will be optional,
+      possibly based on the existence of numerical problems. Note that
+      when using scaled data the interpretation of the effects of
+      coefficients does not depend on the variance of a gene, and all
+      coefficients refer to the effect of a change in 1 s.d. unit of the
+      gene.</p>
+
+
+<h3><a name="errorstab">Assessment</a> of predictive performance and stability</h3>
+
+<p>Assessing predictive performance with censored data is more complex
+      than with, say, classification data, and several alternative
+      approaches have been suggested. Here, we provide a simple graphical
+      approach, popular in the gene expression literature: for each case,
+      we obtaine its out-of-bag cross-validated prediction (i.e., the
+      prediction from a model in which that subject was not used at all in
+      any of the steps of the model building). Using the out-of-bag
+      predictions we divide all subject into two groups, those with high
+      scores and those with low scores (i.e. we split them into two
+      equally sized groups). Then, we <a name="kmplot">plot the survival curves</a>and compare
+      the survival of the two groups with a log-rank test.</p>
+
+<p>It must be emphasized that these are out-of-bag predictions, so these
+      are predictions for each subject obtained from a <b>complete</b>
+      model building process where that subject was not involved. For
+      comparison, we also provide the "overfitt" plots where the scores
+      used to split the subjects are "resubstitution" scores.</p>
+
+
+<p>Stability is assessed showing the parameters chosen in each
+      crossvalidation run (for TGD) and
+      the signatures, their coefficients, and the composing genes (for
+      FCMS). For both methods we show the frequency with which each
+      selected gene appears in the output, and the percentage of
+      coincidence between the different runs. (See <a
+      href="#output">output</a> section, below).</p>
+
+ 
+
+    <h2><a name="usage">Usage</a></h2>
+    
+    <h3><a name="input">Input</a></h3>
+
+    <h4><a name="covariates">Expression data file</a></h4>
+    <p>The file with the covariates; generally the gene 
+    expression data. In this file, rows represent variables (generally genes),
+    and columns represent subjects, or samples, or arrays.</p>
+
+    <p> The file for the covariates should be <a name="requirements">formated</a> as:</p> 
+    <ul> 
+      <li>Data should conform to the "genes in rows,  patients (or arrays) in columns". 
+          In other words, each row of the data file is supposed to represent a different gene 
+          or variable.</li> 
+      <li>Use tab (\t) as the field separator within rows.</li> 
+      <li>Use newline or carriage return (\n) between rows. It is also convenient to finish a 
+              file with one carriage return (\n).</li> 
+      <li>Array names: if you want to name your arrays (useful for the output of
+	the analyses) do as follows:
+	<ol>
+	  <li>Place a line that starts with "&#035;";</li>
+	  <li>After the "&#035;" put "Name" or "NAME" or "name" (don't say we
+	    don't give you choices);</li>
+	  <li>Write the array names (separated by tabs).</li>
+	</ol>
+      <li>The first column is assumed to contain the ID information for genes, marker, 
+        or whatever. This will be used to label the output (but it also means that whatever is 
+        in the first column is not used in the analyses). Please note that
+        shorter names work better when labeling dendrograms.</li> 
+      <li>You can have an arbitrary number of rows with comments. These rows must always start 
+        with an "&#035;".</li>
+	    <li><b>Gene names and array names MUST be unique</b>. If
+	      they are not, the program will let you know. If you do
+	      not want to provide array names, that is OK, and we will
+	      name them with sequential integers starting at 1. If you
+	      do not want to provide gene names, then put some
+	      arbitrary labels on the first column (e.g., fill it with
+	      a sequence of integers).
+	      Why do we need gene and array names to be unique?
+	      Because in many steps, we need to provide either where
+	      we classify a given array (and what should we do if two
+	      or more arrays are named "A"?), or the genes used in the
+	      classifier (and what should we do if two or more genes
+	      are named "gene B"?).</li>
+
+      <li><b>Missing values are NOT allowed</b>. You can use the 
+	      <a href="http://gepas.bioinfo.cnio.es/cgi-bin/preprocess">preprocessor</a> and do
+	      several things with your data before sending it
+	      to Tnasas. We would probably recommend you do imputation after
+	      eliminating genes with too many (more than, say, 20&#037;?) missing. Anyway,
+	      how best to deal with missing values is not a trivial issue and is outside
+	      the scope of this help file.
+      
+      <li> This is a small covariate data file: 
+        <div class="color"> 
+          <pre> 
+#Name     ge1      ge2      ge1      ge1      ge2 
+gene1   23.4    45.6    44      76      85.6 
+genW@   3      34      23      56      13 
+geneX#  23      25.6    29.4    13.2    1.98   </pre> </div> 
+        </li> 
+
+    </ul>
+    
+
+    
+    <h4><a name="time">Survival time file</a></h4> 
+
+    <p>A tab-separated text file with the survival or duration time (e.g.,
+time to death, time to relapse).  These data can be
+right-censored. Separate values by tab (\t), and finish the file with a
+carriage return or newline.  No missing values are allowed here.</p>
+
+    <p>Please note that we do not allow any data set with 10 or fewer
+    cases. In terms of statistical analysis, the "true sample size" of
+    right-censored data is often much smaller than the number of cases,
+    and even 20 cases are way too few.</p>
+
+        <p>It is your responsability to make sure the assumptions for
+      these data hold. The models work for right-censored data. See usual
+      caveats/discussions on other types of censoring, informative
+      censoring, etc. </p>
+
+    <h4><a name="event">Survival status (event) file</a></h4> 
+<p>A tab-separated text file indicating if the event (e.g., death, relapse)
+was actually observed (this is indicated with a 1) or not (a 0); cases for
+which the event was not observed are the right-censored cases. </p>
+
+<p>Same format as above:  Separate values by tab (\t), and finish the file with a
+carriage return or newline.  No missing values are allowed.</p>
+
+
+    <h4><a name="validation">Validation data</a></h4> 
+      <p>If you have
+    validation data, you can enter them here. It is rarely a good idea to
+    keep a fraction of the data for validation; statistics has shown
+    repeatedly that cross-validation and the bootstrap are much better
+    procedures (specially in terms of variance of estimates) than setting
+    appart a chunck of the data. (A quick, and not quite fully correct,
+    explanation: Setting appart a chunk of the data is, if you think of
+    it, like a "poor man's cross-validation", because you do once what
+    10-fold CV does 10 times; and means of 10 samples have smaller
+    variances than one sample). Thus, unless you have a very good reason, 
+      <b>do not use the validation data option</b>.
+
+      <p>But there are situations when you might have validation
+      data. Suppose you have a sample of 200 from a study, and another
+      sample of, say, 100 from a similar study but with samples from a
+      different hospital or different country. It is probably a bad idea
+      to put together all 300 cases as if they were a homogenous
+      sample. You can, instead, train your model with the 200 samples and
+      validate it on the 100. This provides also some indication about
+      whether what you find on the first hospital/country is useful for
+      the second hospital/country.</p>
+
+    <p>However, DO
+      NOT (I repeat DO NOT) keep playing around with the parameters until things
+      look nice with the validation data. That would be a <b>serious case of
+	overfitting</b>. Why? Well, obviusly because you would be using
+      your validation sample to choose the "best parameters", and
+      thus the validation sample would not be validating anything at all.</p>
+
+
+    <p>Of coruse, you can play, to your hearts content, with the
+      parameters using the training data (ONLY the training data). You can
+      do this as many times as you wish (or you have patience for). Then,
+      once you are satisfied with the parameters found with your training
+      data, run SignS, using training and validation data, with the very
+      same parameters you just found. </p>
+
+    <p>Please remember that the validation data are just that, validation
+      data, and should be used to validate a model (not to find good
+      settings of the parameters). Of course, we cannot prevent you from
+      doing this, and the problem of this tool is that it is open to
+      abuse. But if you do abuse it, you must be fully aware that this is
+      a clear case of overfitting and cannot be called validation. </p>
+
+<h4><a name="idc">Type of gene identifier and species</a></h4>
+<p>If you use any of the currently standard identifiers for your gene IDs
+for either human, mouse, or rat genomes, you can obtain additional
+information by clicking on the names in the output figures. This
+information is returned from <a
+href="http://idclight.bioinfo.cnio.es">IDClight</a> based on that provided
+by our <a href="http://idconverter.bioinfo.cnio.es">IDConverter</a>
+tool.</p>
+
+
+    
+    <h3><a name="output">Output</a></h3>
+    <h4><a name="outputPlots">Plots</a></h4>
+
+    <p> The plots depend on the method used. For both TGD and FCMS we show
+    the <a name="outKM">survival</a> plots as explained <a href="#kmplots">above</a>. </p>
+    
+    <p>For <a name="out.fcms">FCMS</a> we also show the dendrograms
+    from the clustering of the positive and negative coefficient genes
+    (after the p-value filtering), indicating with colors the groups
+    that meet the restrictions of size and minimum correlation. Again,
+    these are the clusters that survive the filtering for p-value. And
+    we use color to show those that suvive the filtering in terms of
+    maximum and minimum size of clusters. All, some, or none of these
+    might be finally selected by the Cox model.</p>
+
+    <p>Additionally, no particular meaning is to be assigned to the
+    cluster names. We simply name all clusters for genes with positive
+    coefficients starting with a "P", and those for genes with
+    negative coefficients starting with a "N". But the numbers
+    themselves mean nothing in particular (they have to do with depth
+    and layout in the plot). Please do not try to interpret or assign
+    any meaning to them; they are just names.</p>
+
+    <p>Few "automatically generated" and static dendrograms are to
+    everybody's satisfaction; how well things look depends on the
+    dendrogram, whether or not we annotate with labels, the size of the
+    labels, etc. <b>NEW</b> We now provide dendrograms with all nodes
+    labeled or only the selected clusters labeled. In addition, you can
+    get additional information about each node by clicking on it, if you
+    provided information about the organism and the type of id (and those
+    identifiers are among the ones used
+    by <a
+    href="http://idconverter.bioinfo.cnio.es">IDConverter</a>). Moreover,
+    you can choose among three different sizes for the dendrograms. The names of the
+    cluster/signature in the labels of the figures correspond to the names
+    in the textual output. </p>
+    
+    <p>For TGD we show a plot of the CVPL (cross-validate partial
+    likelihood) versus &#951; for different values of &#964;. You would
+    want to see six U shaped lines, with the bottom of the U far from the
+    maximum you set for <b>Maximum iterations</b>; note that this maximum
+    might not be shown in the figure. You might see that different lines
+    finish at differetn &#951;: one algorithm we have implemented (and
+    which might be running when you use the program) allows
+    for "early stopping" when it is obvious we are getting away from the
+    best &#951;, and this is likely to happen at different &#951; for
+    different &#964;. For TGD we also showm, following the <a href =
+    "http://helix-web.stanford.edu/psb05/gui.pdf">original paper</a> of
+    Gui and Li, the values of the coefficients for different settings of
+    &#964;, to allow to obtain a quick idea of the amount of
+    regularization and sets of genes likely to be important.</p>
+
+
+    <h4><a name="outputText">Textual output</a></h4>
+    <h5>Single-gene statistics and p-values</h5>
+    <p><b>NEW</b> We now provide several tables (ordered using different
+    criteria) that show the p-values and coefficients for the single-gene
+    (or gene-by-gene) Cox models that are the first part of the FCMS method.</p>
+
+    <h5><a name="f1">OOB predictions</a></h5>
+    
+    <h5><a name="f2">OOB predictions</a></h5>
+    <p>For each sample, its out-of-bag score. This is just the matrix
+    product of the coefficients and the value of the covariates. It is
+    unlikely to provide any insight by itself, but allows to order cases,
+    see which are very far away from others, etc. Again, we emphasize that 
+      these are out-of-bag predictions, so these
+      are predictions for each subject obtained from a <b>complete</b>
+      model building process where that subject was not involved. In other
+    words, as in <a href="http://tnasas.bioinfo.cnio.es">Tnasas</a> and <a
+    href="http://genesrf.bioinfo.cnio.es">GeneSrF</a> we do what is
+    sometimes called "double or full cross-valdation".</p>
+
+    
+    <h5>Model results and parameters</h5>
+    <p>Each of TGD and FCMS have somewhat slightly different output,
+    that shows the results of the models fitted, parameters used,
+    etc. The output should be self-explanatory. (If it is not, please
+    let me know, and I'll do my best to fix it).</p>
+
+    <p>Some explanatory notes for FCMS:</p>
+
+    <ul>
+    <li> The names of clusters in different runs are not
+    comparable. For instance, a cluster called N.2 in the original run
+    and a cluster called N.2 in the first CV run might, or might not,
+    be somewhat similar, but in general they will be very different
+    things (the only common feature is that they both group genes with
+    negative coefficients).</li> 
+
+    <li> The coefficients shown always refer to the Cox-model
+    coefficient of each specific cluster and, again, are not
+    comparable among different runs. For instance, do not try to
+    compare the coefficient for component P.4 in CVrun1 and in CV
+    run3. That would not make any sense.</li>
+
+    <li>The number of clusters obtained (before any Cox-model
+    building) that survive the filtering steps need not be the same in
+    different CV runs. In fact, this information is unlikely to be of
+    much use, and thus it is not provided.</li>
+
+    <li>The number of genes per cluster can be completely different in
+    different runs (CV and all data). Of course, all of the finally
+    selected clusters in any run will satisfy the restrictions you set
+    when running the application in terms of maximum and minum number
+    of genes per cluster, and minimal correlation between any two
+    genes in a cluster. But it is possible that, say, in one run you
+    get two clusters, all of possitive coefficients, each with 8
+    genes, in another run you get one cluster of nine genes with
+    negative coefficients, and in another run you get one cluster with
+    six genes with negative coefficietns and one cluster of 15 genes
+    with positive coefficients.</li>
+
+    <li>All these differences between runs and lack of comparability
+    might seem confussing: they are here because it is perfectly
+    possible to get many great results, but which share very little
+    (in terms of genes and clusters) among them. Part of the point of
+    showing the results from the CV runs is to alert you to this
+    fact. With some data sets results tend to be very stable from run
+    to run; with some others they don't.</li>
+
+    
+    </ul>
+
+
+
+    <p>For TGD, the complete list of all the genes selected for the six
+    different values of the threshold (tau) are listed in the file
+    "genes.all.out", which you can download with the rest of the output
+    (see <a href="#download">below</a>).</p>
+    
+    <h5><b>Stability assessments</b></h5>
+    <ol>
+      <li>Genes selected in each of the cross-validation runs.</li>
+      <li>Number of shared genes. The number of genes selected in
+	common between any two runs (e.g., between the run with the
+	complete sample and the 2nd cross-validated run, or between
+	the 4th and 7th cv run). Of course, this is a symmetric matrix.</li>
+      <li>Proportion of shared genes (relative to row total). This
+	is the above table divided by the total number of gene
+	selected by the procedure of the given row. So suppose the
+	third row, the 2nd cv run, selected 20 genes. Then the third
+	row of this table is the same as the third row of the table
+	above divided by 20. Thus, this is not a symmetric
+	matrix.</li>
+      <li>Gene freqs. in cross-validated runs of genes selected in
+	model with all data. Take each of the genes selected from the
+	complete data run, and count how many times it shows up in
+	the selections from the cross-validation runs.</li>
+      <li>Gene frequencies in cross-validated runs. Count how many
+	times any gene (that shows up at least once in the
+	cross-validation runs) appeared among the selected ones in
+	the cross-validation runs.</li>
+    </ol>
+
+<h5>Validation data</h5>
+<p>We provide the linear scores; these are just the matrix product of
+    the coefficients times the value of the covariates (i.e., the
+    selected clusters). It is unlikely to provide any insight by
+    itself, but allows to order cases, see which are very far away
+    from others, etc.</p>
+
+<h4><a name="download">Download figures and results</a></h4> <p>You can download a single
+compressed file with all figures, in both the png format showed in the web
+results as well as in pdf format ---which gives better quality for
+printing---, and results (a single text file). The format is tar.gz,
+understood by GNU's tar, standard in GNU/Linux distributions, and also
+understood by the common uncompressors/unzipers/etc in other operating
+systems.</p>
+
+
+
+ <h3><a name="speed">How long does it take?</a></h3> 
+
+<p>With the default
+settings, FCMS takes about 5 minutes on the 78 patients by 4751 genes
+breast cancer data set of van't Veer et al. (2002, Nature, 415: 530--536),
+and the 160 patients and 7399 genes DLBCL data set of
+Rosenwald et al. (2002, N. Eng. J. Med, 346: 1937--1947). With the default settings, TGD 
+takes about 2 hours with the van't Veer data set (and about 4 with the DLBCL data set).
+These are timings when the server was moderately loaded
+      (about 50% of the CPUs being completely busy with another task).</p>
+
+
+
+<h3><a name="examples">Examples</a></h3>
+<p>Examples of several runs, one with fully commented results, are available 
+<a href="http://signs.bioinfo.cnio.es/Examples/index.html">here</a>.
+
+
+
+
+    <h2><a name="authors">Author and Acknowledgements</a></h2>
+    
+    <p>This program was developped by <a
+      href="http://bioinfo.cnio.es/~rdiaz" target="_blank">Ramón
+      Díaz-Uriarte</a>, from the <a href="http://bioinfo.cnio.es"
+      target="_blank">Bioinformatics Unit</a> at <a
+      href="http://www.cnio.es" target="_blank">CNIO</a>.  This tool uses
+      <a href="http://www.python.org">Python</a> for the CGI and <a
+      href="http://www.r-project.org">R</a> for the computations.  The
+      code for the FCMS approach was written from scracth by Ramón
+      Díaz-Uriarte, with collaboration from David Casado de Lucas. For
+      TGD, I started with the <a
+      href="http://dna.ucdavis.edu/~hli/gd1.SSC">R code</a> provided by Li
+      and Gui, and rewrote large parts of it to increase its speed and
+      parallelize it (using Rmpi and Snow, see below), and to add
+      additional functionality. I have also used the following R packages: <a
+      href="http://www.warwick.ac.uk/go/cgiwithr">CGIwithR</a> by David
+      Firth, <a
+      href="http://cran.r-project.org/src/contrib/Descriptions/snow.html">snow</a>,
+      by Luke Tierney, A. J. Rossini, Na Li and H. Sevcikova, <a
+      href="http://www.stats.uwo.ca/faculty/yu/Rmpi">Rmpi</a>, by Hao Yu,
+      and <a
+      href="http://cran.r-project.org/src/contrib/Descriptions/rsprng.html">rsprng</a>,
+      by Na (Michael) Li,  <a
+	href="http://cran.r-project.org/src/contrib/Descriptions/VR.html">class</a>
+      by W. Venables and B. Ripley,
+      <a
+      href="http://cran.r-project.org/src/contrib/Descriptions/survival.html">survival</a>,
+      S original by Terry Therneau, ported by Thomas Lumley, 
+<a href="http://www.rosuda.org/R/GDD/">GDD</a> by Simon Urbanek,
+<a href="http://www.maths.lancs.ac.uk/Software/Imagemap/">imagemap</a> by
+Barry Rowlingson, 
+<a
+   href="http://cran.r-project.org/src/contrib/Descriptions/R2HTML.html">R2HTML</a>
+   by Eric Lecoutre,
+<a
+      href="http://cran.r-project.org/src/contrib/Descriptions/papply.html">papply</a>,
+      by D. Currie, and 
+<a
+      href="http://cran.r-project.org/src/contrib/Descriptions/combinat.html">combinat</a>,
+      by S. Chasalow. We have also
+      used the JavaScript <a
+      href="http://www.kryogenix.org/code/browser/aqlists/">aqtree</a>
+      code by   Stuart Langridge, for the expandable lists.</p>. 
+    
+    
+<p>This application is running on a cluster of machines using <a
+href="http://www.debian.org">Debian GNU/Linux</a> as operating system, <a
+href="http://www.apache.org">Apache</a> as web server, <a
+href="http://www.linuxvirtualserver.org">Linux Virtual Server</a> for web server load-balancing, and <a
+href="http://www.lam-mpi.org">LAM/MPI</a> for parallelization.</p>
+
+
+<p>We want to thank the authors and contributors of these great (and open
+source) tools that they have made available for all to use. If you find this
+useful, and since R and Bioconductor are developed by a team of volunteers, we
+suggest you consider making a donation to the <a
+href="http://www.R-project.org/foundation/main.html"> R foundation for
+statistical computing</a>.</p>
+
+
+<p><b>Funding</b> partially provided by Project TIC2003-09331-C02-02 of the
+Spanish Ministry of Education and Science. This application is running on a
+cluster of machines purchased with funds from the 
+<a href="http://www.rticcc.org/">RTICCC</a>.</p> 
+
+
+      
+      
+    <h2><a name="terms.use">Terms of use</a></h2>
+    <ul>
+      <li>You acknowledge that this Software is experimental in nature
+	and is supplied "AS IS", without obligation by the authors, the CNIO's
+	Bioinformatics Unit or the CNIO to provide accompanying
+	services or support. The entire risk as to the quality and performance of the
+	Software is with you. The CNIO and the authors expressly disclaim any and all
+	warranties regarding the software, whether express or implied, including but
+	not limited to warranties pertaining to merchantability or fitness for a
+	particular purpose.</li>
+      <li>If you use SignS for any publication, we would appreciate if you
+	could let us know and if you cite our program (you know, "credit where
+	credit is due"). For now, you can give the main web site:
+	<a href="http://signs.bioinfo.cnio.es">http://signs.bioinfo.cnio.es</a>).</li>
+    <li>We appreciate if you give us feedback concerning bugs, errors or misconfigurations.
+	Complaints or suggestions are welcome.</li>
+    </ul>
+    <br>
+    
+    <h2><a name="privacy">Privacy and	Security</a></h2>
+    <p>Uploaded data set are saved in temporary directories in the server and are
+      accessible through the web until they are erased after some time. Anybody can
+      access those directories, nevertheless the name of the directories are not
+      trivial, thus it is not easy for a third person to access your data.</p>
+    <p>In any case, you should keep in mind that communications between the client
+      (your computer) and the server are not encripted at all, thus it is also
+      possible for somebody else to look at your data while you are uploading or
+      dowloading them.</p>
+      <br>
+      
+    <h2><a name="warranty">Disclaimer</a></h2>
+    <p>This software is experimental in nature and is supplied "AS IS", without
+      obligation by the authors or the CNIO the to provide accompanying services or
+      support. The entire risk as to the quality and performance of the software is
+      with you. The authors expressly disclaim any and all warranties regarding the
+      software, whether express or implied, including but not limited to warranties
+      pertaining to merchantability or fitness for a particular purpose.<br>
+      
+      <!--     (If you are lost using these types of applications, or new, you -->
+      <!--       might want to read  -->
+      <!--       <a href="http://www.catb.org/~esr/faqs/smart-questions.html"> -->
+      <!-- 	How To Ask Questions The Smart Way</a>, by Eric Raymond.) -->
+      
+      
+      
+    <h2><a name="refs">References</a></h2>
+
+
+
+
+<p>Dave, SS, Wrigth, G, Tan B, Rosenwald A, Gascoyne RD, et
+      al. (2004). Prediction of survival in follicular lymphoma based on
+      molecualr features of tumor-inflitrating immune cells. <i>New
+      England Journal of Medicine</i> 351: 2159--219.</p>
+
+<p>Gui J, Li H. (2005) Threshold Gradient Descent Method for Censored Data
+ Regression with Applications in Pharmacogenomics. Pacific Symposium on
+ Biocomputing. <a href = "http://helix-web.stanford.edu/psb05/gui.pdf">pdf</a>.</p>
+
+
+<p> Simon, R. M., E. L. Korn, L. M. McShane, M. D. Radmacher,
+    G. W. Wright, and Y. Zhao (2003).  <i>Design and analysis of DNA
+    microarray investigations</i>.  New York: Springer.</p>
+
+
+
+<h3>Copyright</h3>
+This document is copyrighted. Copyright © 2005 Ramón Díaz-Uriarte.
+<hr>
+
+<!-- <\!-- Created: Wed Jul 24 15:37:41 CEST 2002 -\-> -->
+<!-- <\!-- hhmts start -\->Last modified: Thu Aug  4 19:00:07 CEST 2005 <\!-- hhmts end -\-> -->
+
+<hr>
+<p>
+      <a href="http://validator.w3.org/check/referer"><img border="0"
+          src="valid-html401.png"
+          alt="Valid HTML 4.01!" height="31" width="88"></a>
+<a href="http://www.anybrowser.org/campaign/">
+	<img src="anybrowser3.gif"
+	  width="88"
+	  height="31"
+	  alt="Viewable With Any Browser" border="0"></a>
+
+  </body>
+</html>

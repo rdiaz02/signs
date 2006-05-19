@@ -1,0 +1,18 @@
+[1] 1
+[1] 1
+[1] 1
+[1] 1
+	Host: prot09 	Rank(ID): 49 	of Size: 67 on comm 1 
+Loading required package: rsprng
+Loading required package: splines
+Start:  AIC= 168.47 
+ sobject ~ N.11 + N.29 
+
+       Df    AIC
+<none>    168.47
++ N.4   1 170.11
++ N.1   1 170.42
+- N.29  1 171.25
+- N.11  1 171.49
+[1] "Done"
+[1] 1
