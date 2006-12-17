@@ -13,8 +13,8 @@ import dircache
 import whrandom
 ##import re
 from stat import ST_SIZE
-#import cgitb
-#cgitb.enable() ## zz: eliminar for real work?
+import cgitb
+cgitb.enable() ## zz: eliminar for real work?
 sys.stderr = sys.stdout
 
 MAX_signs = 4 ## MAX_genesrf + 1 = Maximum number of R processes running at same time.

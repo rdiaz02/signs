@@ -96,9 +96,9 @@ imClose <- function (im) {
 		
 
 
-png.width = 7
-png.height = 6
-png.pointsize = 12
+png.width <- 400
+png.height = 350
+png.pointsize <- 12
 png.family = "Helvetica"
 graphDir <- paste(getwd(), "/", sep = "")
 
@@ -129,10 +129,10 @@ nfold <- 10
 
 
 caughtUserError <- function(message) {
-    webPNG("ErrorFigure.png", width = png.width,
-           height = png.height, 
-           pointsize = png.pointsize,
-           family = png.family)
+    webPNG("ErrorFigure.png", width = 400,
+           height = 350, ps = png.pointsize)
+##           pointsize = png.pointsize,
+##           family = png.family)
     plot(x = c(0, 1), y = c(0, 1), 
          type = "n", axes = FALSE, xlab = "", ylab = "")
     box()
@@ -154,10 +154,10 @@ caughtUserError <- function(message) {
 
 
 caughtOurError <- function(message) {
-    webPNG("ErrorFigure.png", width = png.width,
-           height = png.height, 
-           pointsize = png.pointsize,
-           family = png.family)
+    webPNG("ErrorFigure.png", width = 400,
+           height = 350, ps = png.pointsize)
+#           pointsize = png.pointsize,
+#           family = png.family)
     plot(x = c(0, 1), y = c(0, 1),
          type = "n", axes = FALSE, xlab = "", ylab = "")
     box()
@@ -546,16 +546,16 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
     
 
     webPNG(file = "kmplot-honest.png", width = png.width,
-        height = png.height,
-        pointsize = png.pointsize,
-        family = png.family)
+        height = png.height, ps = png.pointsize)
+#        pointsize = png.pointsize,
+#        family = png.family)
     KM.visualize(cvTGDResults$OOB.scores, Time,
                  Event, ngroups = 2, addmain = NULL) ## Good   ####  Fig 1
     dev.off()
     webPNG(file = "kmplot-overfitt.png", width = png.width,
-        height = png.height,
-        pointsize = png.pointsize,
-        family = png.family)
+        height = png.height, ps = png.pointsize)
+##        pointsize = png.pointsize,
+##        family = png.family)
     KM.visualize(allDataRun$tgd.alldata$scores, Time,          ####  Fig 2
                  Event, ngroups = 2) ## Overfitt
     dev.off()
@@ -575,16 +575,16 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
 
 
     webPNG(file = "kmplot4-honest.png", width = png.width,
-           height = png.height,
-           pointsize = png.pointsize,
-           family = png.family)
+           height = png.height,ps = png.pointsize)
+#           pointsize = png.pointsize,
+#           family = png.family)
     KM.visualize4(cvTGDResults$OOB.scores, Time,
                  Event, ngroups = 2, addmain = NULL) ## Good   ####  Fig 1.4
     dev.off()
     webPNG(file = "kmplot4-overfitt.png", width = png.width,
-        height = png.height,
-        pointsize = png.pointsize,
-        family = png.family)
+        height = png.height,ps = png.pointsize)
+#        pointsize = png.pointsize,
+#        family = png.family)
     KM.visualize4(allDataRun$tgd.alldata$scores, Time,          ####  Fig 2.4
                  Event, ngroups = 2) ## Overfitt
     dev.off()
@@ -607,9 +607,9 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
     
 
     webPNG(file = "cvpl.png", width = png.width,
-           height = png.height,
-           pointsize = png.pointsize,
-           family = png.family)
+           height = png.height,ps = png.pointsize)
+#           pointsize = png.pointsize,
+#           family = png.family)
     plot.cvpl(allDataRun$cvpl.mat, epi,                        ####  Fig 3
               thres, thresGrid)
     dev.off()
@@ -694,8 +694,8 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
                      validationEvent, ngroups = 2, addmain = NULL)
         dev.off()
         webPNG(file = "kmplot-validation.png", width = png.width,
-               height = png.height, pointsize = png.pointsize,
-               family = png.family)
+               height = png.height, ps = png.pointsize)
+#               family = png.family)
         KM.visualize(valpred, validationTime,                         
                      validationEvent, ngroups = 2, addmain = NULL)
         dev.off()
@@ -706,8 +706,9 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
                      validationEvent, ngroups = 2, addmain = NULL)
         dev.off() 
         webPNG(file = "kmplot4-validation.png", width = png.width,
-               height = png.height, pointsize = png.pointsize,
-               family = png.family)
+               height = png.height,ps = png.pointsize)
+#               pointsize = png.pointsize,
+#               family = png.family)
         KM.visualize4(valpred, validationTime,                         
                      validationEvent, ngroups = 2, addmain = NULL)
         dev.off()
