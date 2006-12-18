@@ -17,13 +17,37 @@ import re
 import glob
 import tarfile
 
-#import cgitb
-#cgitb.enable() ## zz: eliminar for real work?
+import cgitb
+cgitb.enable() ## zz: eliminar for real work?
 sys.stderr = sys.stdout ## eliminar?
 
 R_MAX_time = 8 * 3600 ## 4 hours is max duration allowd for any process
 
 ## For redirections, from Python Cookbook
+
+def clean_for_PaLS(file_in, file_out):
+    """ Make sure no file has two consecutive lines that start with '#',
+    so there are not lists without genes."""
+    f1 = open(file_in, mode = 'r').readlines()
+    f2 = open(file_out, mode = 'w')
+    maxi = len(f1) - 1
+    i = 0
+    tmp1 = f1[i]
+    while True:
+        if i == maxi:
+            break
+        tmp2 = f1[i + 1]
+        if not tmp1.startswith('#'):
+            f2.write(tmp1)
+        elif not tmp2.startswith('#'):
+            f2.write(tmp1)
+        tmp1 = tmp2
+        i += 1
+
+    ### make sure last one is written if not a "#"
+    if not tmp2.startswith('#'):
+        f2.write(tmp2)
+    f2.close()
 
 
 def extract_for_PaLS_from_Signs(file_in, file_out, all_runs = True):
@@ -103,9 +127,7 @@ def extract_for_PaLS_from_Signs(file_in, file_out, all_runs = True):
             i = i + 2
             ltmp = f1[i]
             while not end_run(ltmp):
-                print 'i is ' + str(i)
                 if not another_component(ltmp):
-                    print 'f1[i].lstrip is ' + ltmp
                     f2.write(ltmp.lstrip())
                 elif another_component(ltmp):
                     k += 1
@@ -485,8 +507,7 @@ def printOKRun():
             extract_for_PaLS_from_Signs('Results.txt',
                                         'Selected.and.CV.selected.txt',
                                         all_runs = True)
-            outf.write(outf.write(printPalsURL(newDir, tmpDir))
-
+            outf.write(printPalsURL(newDir, tmpDir))
             outf.write("</body></html>")
             outf.close()
             shutil.copyfile(tmpDir + "/pre-results.html", tmpDir + "/results.html")

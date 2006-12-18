@@ -96,8 +96,8 @@ imClose <- function (im) {
 		
 
 
-png.width <- 400
-png.height = 350
+png.width <- 500
+png.height <- 500
 png.pointsize <- 12
 png.family = "Helvetica"
 graphDir <- paste(getwd(), "/", sep = "")
@@ -129,8 +129,8 @@ nfold <- 10
 
 
 caughtUserError <- function(message) {
-    GDD("ErrorFigure.png", width = 400,
-           height = 350, ps = png.pointsize)
+    GDD("ErrorFigure.png", width = 600,
+           height = 500, ps = png.pointsize)
 ##           pointsize = png.pointsize,
 ##           family = png.family)
     plot(x = c(0, 1), y = c(0, 1), 
@@ -154,8 +154,8 @@ caughtUserError <- function(message) {
 
 
 caughtOurError <- function(message) {
-    GDD("ErrorFigure.png", width = 400,
-           height = 350, ps = png.pointsize)
+    GDD("ErrorFigure.png", width = 600,
+           height = 500, ps = png.pointsize)
 #           pointsize = png.pointsize,
 #           family = png.family)
     plot(x = c(0, 1), y = c(0, 1),

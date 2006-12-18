@@ -1,0 +1,939 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head>
+ <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
+ <SCRIPT type="text/javascript" SRC="../../aqtree3clickable.js"></SCRIPT> 
+ <LINK REL="stylesheet" HREF="../../aqtree3clickable.css"> 
+ <LINK REL="stylesheet" HREF="../../style1.css"> 
+ <title>SignS results </title></head><body>
+<h2> Results using FCMS (filter, cluster, and model selection, as in Dave et al.)</h2> <br /><hr><hr>
+<h2>1. Single gene statistics and p-values</h2>
+<ul class="aqtree3clickable">
+<li><a>Single-gene Cox model p-values and statistics</a><ul>
+<li><a href="p.v.sort.pv.a.html" target="pv_window">Sorted by p-value, ascending</a><li><a href="p.v.sort.pv.d.html" target="pv_window">Sorted by p-value, descending</a><li><a href="p.v.sort.coef.d.html" target="pv_window">Sorted by coefficient, descending</a><li><a href="p.v.sort.coef.a.html" target="pv_window">Sorted by coefficient, ascending</a><li><a href="p.v.sort.abscoef.a.html" target="pv_window">Sorted by absolute value of coefficient, ascending</a><li><a href="p.v.sort.abscoef.d.html" target="pv_window">Sorted by absolute value of coefficient, descending</a><li><a href="p.v.sort.name.d.html" target="pv_window">Sorted by name, descending</a><li><a href="p.v.sort.name.a.html" target="pv_window">Sorted by name, ascending</a></ul></ul></ul><hr><h2>2. Survival plots</h2><h3>2.1. Survival plots using scores from final model</h3>
+<h4>Two groups</h4>
+<IMG BORDER="0" SRC="kmplot-honest.png"><IMG BORDER="0" SRC="kmplot-overfitt.png"><p>Please, DO NOT use the overfitt one, except for pedagogic purposes to show consequencues of overfitting and not doing cross-validation.</p><h4>Three groups</h4>
+<IMG BORDER="0" SRC="kmplot3-honest.png"><IMG BORDER="0" SRC="kmplot3-overfitt.png"><h4>Four groups</h4>
+<IMG BORDER="0" SRC="kmplot4-honest.png"><IMG BORDER="0" SRC="kmplot4-overfitt.png"><br /> <br /> <hr><h2>3. Dendrograms of gene clusters</h2><p>(If needed, click on the "+" to expand the list. Then, clik on the figure you want to open. Once a dendrogram is opened, click on the node name, or close to where the name would be placed, to see additional information for each gene.)</p><ul class="aqtree3clickable">
+<li><a>Dendrograms for genes with positive coefficients</a><ul>
+<p>There are no genes with positive coefficients that satisfy the p, minimum correlation and size restrictions.</p></ul><li><a>Dendrograms for genes with negative coefficients</a><ul>
+<li><a>All genes named</a><ul>
+<li><a href="dend.N.factor0.5.alllabelsTRUE.html" target="dend_window">Half size</a><li><a href="dend.N.factor1.alllabelsTRUE.html" target="dend_window">Normal (1200x800) size</a><li><a href="dend.N.factor2.alllabelsTRUE.html" target="dend_window">Double size</a></ul><li><a>Only cluster genes named</a><ul>
+<li><a href="dend.N.factor0.5.alllabelsFALSE.html" target="dend_window">Half size</a><li><a href="dend.N.factor1.alllabelsFALSE.html" target="dend_window">Normal (1200x800) size</a><li><a href="dend.N.factor2.alllabelsFALSE.html" target="dend_window">Double size</a></ul></ul></ul><br /><br /> <hr><h2>4. Model fitted to all data</h2>
+<h3>4.1. Components, genes, coefficients</h3>
+
+<p> Total of  2 signature components selected and  26 genes.</p>
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=150>Component name</th> <th width=200>Genes</th> <th width=80>Coefficient</th></tr>
+<tbody>
+ <tr align=center>
+<th> <b> N.16 </b></th><th></th><th><b> -0.0039 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.22682&internal=0&org=Mm" target="icl_window" >Mm.22682</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.252145&internal=0&org=Mm" target="icl_window" >Mm.252145</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.29488&internal=0&org=Mm" target="icl_window" >Mm.29488</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.219544&internal=0&org=Mm" target="icl_window" >Mm.219544</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.361949&internal=0&org=Mm" target="icl_window" >Mm.361949</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.1645&internal=0&org=Mm" target="icl_window" >Mm.1645</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.87663&internal=0&org=Mm" target="icl_window" >Mm.87663</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.4922&internal=0&org=Mm" target="icl_window" >Mm.4922</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.3410&internal=0&org=Mm" target="icl_window" >Mm.3410</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.10406&internal=0&org=Mm" target="icl_window" >Mm.10406</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.220417&internal=0&org=Mm" target="icl_window" >Mm.220417</a> </td><td></td></tr>
+</tbody>
+
+<tbody>
+ <tr align=center>
+<th> <b> N.62 </b></th><th></th><th><b> -0.0031 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.290657&internal=0&org=Mm" target="icl_window" >Mm.290657</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.209232&internal=0&org=Mm" target="icl_window" >Mm.209232</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.25138&internal=0&org=Mm" target="icl_window" >Mm.25138</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.2103&internal=0&org=Mm" target="icl_window" >Mm.2103</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.41930&internal=0&org=Mm" target="icl_window" >Mm.41930</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.268504&internal=0&org=Mm" target="icl_window" >Mm.268504</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.21596&internal=0&org=Mm" target="icl_window" >Mm.21596</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.282743&internal=0&org=Mm" target="icl_window" >Mm.282743</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.217027&internal=0&org=Mm" target="icl_window" >Mm.217027</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.253156&internal=0&org=Mm" target="icl_window" >Mm.253156</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.826&internal=0&org=Mm" target="icl_window" >Mm.826</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.257762&internal=0&org=Mm" target="icl_window" >Mm.257762</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.280013&internal=0&org=Mm" target="icl_window" >Mm.280013</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.45683&internal=0&org=Mm" target="icl_window" >Mm.45683</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.260601&internal=0&org=Mm" target="icl_window" >Mm.260601</a> </td><td></td></tr>
+</tbody>
+
+</TABLE>
+
+ <hr align="left" width=80><h3>4.2. <a href="correlationMatrixClusters.html" target="CorMatrix_window">View</a> correlation matrix of clusters</h3><h3>4.3. <a href="stepAIC.output.html" target="stepAIC_window">View</a> steps of variable selection</h3>
+<hr><h2>5. Cross-validation runs</h2>
+
+<h3>5.1. <a href="scores.oob.html" target="scores_window">View</a> out-of-bag scores.</h3>
+
+
+ <h3>5.2 Selected components, genes and coefficients in cross-validation runs</h3>
+
+
+ <h4>CV run  1 </h4>
+
+<p> Total of  3 signature components selected and  54 genes.</p>
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=150>Component name</th> <th width=200>Genes</th> <th width=80>Coefficient</th></tr>
+<tbody>
+ <tr align=center>
+<th> <b> N.3 </b></th><th></th><th><b> -0.0014 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.27218&internal=0&org=Mm" target="icl_window" >Mm.27218</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.276291&internal=0&org=Mm" target="icl_window" >Mm.276291</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.22990&internal=0&org=Mm" target="icl_window" >Mm.22990</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.1287&internal=0&org=Mm" target="icl_window" >Mm.1287</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.4644&internal=0&org=Mm" target="icl_window" >Mm.4644</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.5106&internal=0&org=Mm" target="icl_window" >Mm.5106</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.17322&internal=0&org=Mm" target="icl_window" >Mm.17322</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.40085&internal=0&org=Mm" target="icl_window" >Mm.40085</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.207048&internal=0&org=Mm" target="icl_window" >Mm.207048</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.158107&internal=0&org=Mm" target="icl_window" >Mm.158107</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.257474&internal=0&org=Mm" target="icl_window" >Mm.257474</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.5104&internal=0&org=Mm" target="icl_window" >Mm.5104</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.7060&internal=0&org=Mm" target="icl_window" >Mm.7060</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.30173&internal=0&org=Mm" target="icl_window" >Mm.30173</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.57009&internal=0&org=Mm" target="icl_window" >Mm.57009</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.27383&internal=0&org=Mm" target="icl_window" >Mm.27383</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.250359&internal=0&org=Mm" target="icl_window" >Mm.250359</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.293030&internal=0&org=Mm" target="icl_window" >Mm.293030</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.213417&internal=0&org=Mm" target="icl_window" >Mm.213417</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.287857&internal=0&org=Mm" target="icl_window" >Mm.287857</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.44176&internal=0&org=Mm" target="icl_window" >Mm.44176</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.75049&internal=0&org=Mm" target="icl_window" >Mm.75049</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.168854&internal=0&org=Mm" target="icl_window" >Mm.168854</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.240510&internal=0&org=Mm" target="icl_window" >Mm.240510</a> </td><td></td></tr>
+</tbody>
+
+<tbody>
+ <tr align=center>
+<th> <b> N.59 </b></th><th></th><th><b> -0.0058 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.271648&internal=0&org=Mm" target="icl_window" >Mm.271648</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.319011&internal=0&org=Mm" target="icl_window" >Mm.319011</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.39617&internal=0&org=Mm" target="icl_window" >Mm.39617</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.233471&internal=0&org=Mm" target="icl_window" >Mm.233471</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.154121&internal=0&org=Mm" target="icl_window" >Mm.154121</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.28507&internal=0&org=Mm" target="icl_window" >Mm.28507</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.5267&internal=0&org=Mm" target="icl_window" >Mm.5267</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.158733&internal=0&org=Mm" target="icl_window" >Mm.158733</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.378801&internal=0&org=Mm" target="icl_window" >Mm.378801</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.25504&internal=0&org=Mm" target="icl_window" >Mm.25504</a> </td><td></td></tr>
+</tbody>
+
+<tbody>
+ <tr align=center>
+<th> <b> N.48 </b></th><th></th><th><b> -0.0021 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.372687&internal=0&org=Mm" target="icl_window" >Mm.372687</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.24661&internal=0&org=Mm" target="icl_window" >Mm.24661</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.290657&internal=0&org=Mm" target="icl_window" >Mm.290657</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.209232&internal=0&org=Mm" target="icl_window" >Mm.209232</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.25138&internal=0&org=Mm" target="icl_window" >Mm.25138</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.2103&internal=0&org=Mm" target="icl_window" >Mm.2103</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.41930&internal=0&org=Mm" target="icl_window" >Mm.41930</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.268504&internal=0&org=Mm" target="icl_window" >Mm.268504</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.21596&internal=0&org=Mm" target="icl_window" >Mm.21596</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.282743&internal=0&org=Mm" target="icl_window" >Mm.282743</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.217027&internal=0&org=Mm" target="icl_window" >Mm.217027</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.253156&internal=0&org=Mm" target="icl_window" >Mm.253156</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.103636&internal=0&org=Mm" target="icl_window" >Mm.103636</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.313558&internal=0&org=Mm" target="icl_window" >Mm.313558</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.24115&internal=0&org=Mm" target="icl_window" >Mm.24115</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.826&internal=0&org=Mm" target="icl_window" >Mm.826</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.257762&internal=0&org=Mm" target="icl_window" >Mm.257762</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.280013&internal=0&org=Mm" target="icl_window" >Mm.280013</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.45683&internal=0&org=Mm" target="icl_window" >Mm.45683</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.260601&internal=0&org=Mm" target="icl_window" >Mm.260601</a> </td><td></td></tr>
+</tbody>
+
+</TABLE>
+
+ <hr align="left" width=80>
+
+ <h4>CV run  2 </h4>
+
+<p> Total of  2 signature components selected and  24 genes.</p>
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=150>Component name</th> <th width=200>Genes</th> <th width=80>Coefficient</th></tr>
+<tbody>
+ <tr align=center>
+<th> <b> N.7 </b></th><th></th><th><b> -0.0011 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.12815&internal=0&org=Mm" target="icl_window" >Mm.12815</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.22990&internal=0&org=Mm" target="icl_window" >Mm.22990</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.5106&internal=0&org=Mm" target="icl_window" >Mm.5106</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.40717&internal=0&org=Mm" target="icl_window" >Mm.40717</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.2681&internal=0&org=Mm" target="icl_window" >Mm.2681</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.44106&internal=0&org=Mm" target="icl_window" >Mm.44106</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.257765&internal=0&org=Mm" target="icl_window" >Mm.257765</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.27383&internal=0&org=Mm" target="icl_window" >Mm.27383</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.250359&internal=0&org=Mm" target="icl_window" >Mm.250359</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.287857&internal=0&org=Mm" target="icl_window" >Mm.287857</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.168854&internal=0&org=Mm" target="icl_window" >Mm.168854</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.105583&internal=0&org=Mm" target="icl_window" >Mm.105583</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.240510&internal=0&org=Mm" target="icl_window" >Mm.240510</a> </td><td></td></tr>
+</tbody>
+
+<tbody>
+ <tr align=center>
+<th> <b> N.60 </b></th><th></th><th><b> -0.0031 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.46539&internal=0&org=Mm" target="icl_window" >Mm.46539</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.209232&internal=0&org=Mm" target="icl_window" >Mm.209232</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.2103&internal=0&org=Mm" target="icl_window" >Mm.2103</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.41930&internal=0&org=Mm" target="icl_window" >Mm.41930</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.21596&internal=0&org=Mm" target="icl_window" >Mm.21596</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.217027&internal=0&org=Mm" target="icl_window" >Mm.217027</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.253156&internal=0&org=Mm" target="icl_window" >Mm.253156</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.826&internal=0&org=Mm" target="icl_window" >Mm.826</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.280013&internal=0&org=Mm" target="icl_window" >Mm.280013</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.46715&internal=0&org=Mm" target="icl_window" >Mm.46715</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.260601&internal=0&org=Mm" target="icl_window" >Mm.260601</a> </td><td></td></tr>
+</tbody>
+
+</TABLE>
+
+ <hr align="left" width=80>
+
+ <h4>CV run  3 </h4>
+
+<p> Total of  2 signature components selected and  34 genes.</p>
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=150>Component name</th> <th width=200>Genes</th> <th width=80>Coefficient</th></tr>
+<tbody>
+ <tr align=center>
+<th> <b> N.15 </b></th><th></th><th><b> -0.0033 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.22682&internal=0&org=Mm" target="icl_window" >Mm.22682</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.2442&internal=0&org=Mm" target="icl_window" >Mm.2442</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.252145&internal=0&org=Mm" target="icl_window" >Mm.252145</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.29488&internal=0&org=Mm" target="icl_window" >Mm.29488</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.369847&internal=0&org=Mm" target="icl_window" >Mm.369847</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.285295&internal=0&org=Mm" target="icl_window" >Mm.285295</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.5071&internal=0&org=Mm" target="icl_window" >Mm.5071</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.219544&internal=0&org=Mm" target="icl_window" >Mm.219544</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.20928&internal=0&org=Mm" target="icl_window" >Mm.20928</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.361949&internal=0&org=Mm" target="icl_window" >Mm.361949</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.1645&internal=0&org=Mm" target="icl_window" >Mm.1645</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.87663&internal=0&org=Mm" target="icl_window" >Mm.87663</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.4922&internal=0&org=Mm" target="icl_window" >Mm.4922</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.3410&internal=0&org=Mm" target="icl_window" >Mm.3410</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.347699&internal=0&org=Mm" target="icl_window" >Mm.347699</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.10406&internal=0&org=Mm" target="icl_window" >Mm.10406</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.20169&internal=0&org=Mm" target="icl_window" >Mm.20169</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.220417&internal=0&org=Mm" target="icl_window" >Mm.220417</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.195649&internal=0&org=Mm" target="icl_window" >Mm.195649</a> </td><td></td></tr>
+</tbody>
+
+<tbody>
+ <tr align=center>
+<th> <b> N.55 </b></th><th></th><th><b> -0.0033 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.215394&internal=0&org=Mm" target="icl_window" >Mm.215394</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.388&internal=0&org=Mm" target="icl_window" >Mm.388</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.290657&internal=0&org=Mm" target="icl_window" >Mm.290657</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.209232&internal=0&org=Mm" target="icl_window" >Mm.209232</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.25138&internal=0&org=Mm" target="icl_window" >Mm.25138</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.253984&internal=0&org=Mm" target="icl_window" >Mm.253984</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.268504&internal=0&org=Mm" target="icl_window" >Mm.268504</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.282743&internal=0&org=Mm" target="icl_window" >Mm.282743</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.217027&internal=0&org=Mm" target="icl_window" >Mm.217027</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.103636&internal=0&org=Mm" target="icl_window" >Mm.103636</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.313558&internal=0&org=Mm" target="icl_window" >Mm.313558</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.24115&internal=0&org=Mm" target="icl_window" >Mm.24115</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.93759&internal=0&org=Mm" target="icl_window" >Mm.93759</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.257762&internal=0&org=Mm" target="icl_window" >Mm.257762</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.45683&internal=0&org=Mm" target="icl_window" >Mm.45683</a> </td><td></td></tr>
+</tbody>
+
+</TABLE>
+
+ <hr align="left" width=80>
+
+ <h4>CV run  4 </h4>
+
+<p> Total of  2 signature components selected and  30 genes.</p>
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=150>Component name</th> <th width=200>Genes</th> <th width=80>Coefficient</th></tr>
+<tbody>
+ <tr align=center>
+<th> <b> N.4 </b></th><th></th><th><b> -0.0014 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.27218&internal=0&org=Mm" target="icl_window" >Mm.27218</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.278357&internal=0&org=Mm" target="icl_window" >Mm.278357</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.237085&internal=0&org=Mm" target="icl_window" >Mm.237085</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.4644&internal=0&org=Mm" target="icl_window" >Mm.4644</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.17322&internal=0&org=Mm" target="icl_window" >Mm.17322</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.40085&internal=0&org=Mm" target="icl_window" >Mm.40085</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.257474&internal=0&org=Mm" target="icl_window" >Mm.257474</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.5104&internal=0&org=Mm" target="icl_window" >Mm.5104</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.57009&internal=0&org=Mm" target="icl_window" >Mm.57009</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.268504&internal=0&org=Mm" target="icl_window" >Mm.268504</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.41558&internal=0&org=Mm" target="icl_window" >Mm.41558</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.27990&internal=0&org=Mm" target="icl_window" >Mm.27990</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.213417&internal=0&org=Mm" target="icl_window" >Mm.213417</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.287857&internal=0&org=Mm" target="icl_window" >Mm.287857</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.44176&internal=0&org=Mm" target="icl_window" >Mm.44176</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.35399&internal=0&org=Mm" target="icl_window" >Mm.35399</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.168854&internal=0&org=Mm" target="icl_window" >Mm.168854</a> </td><td></td></tr>
+</tbody>
+
+<tbody>
+ <tr align=center>
+<th> <b> N.18 </b></th><th></th><th><b> -0.0038 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.2442&internal=0&org=Mm" target="icl_window" >Mm.2442</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.21645&internal=0&org=Mm" target="icl_window" >Mm.21645</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.36217&internal=0&org=Mm" target="icl_window" >Mm.36217</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.369847&internal=0&org=Mm" target="icl_window" >Mm.369847</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.285295&internal=0&org=Mm" target="icl_window" >Mm.285295</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.342279&internal=0&org=Mm" target="icl_window" >Mm.342279</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.6246&internal=0&org=Mm" target="icl_window" >Mm.6246</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.278997&internal=0&org=Mm" target="icl_window" >Mm.278997</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.212927&internal=0&org=Mm" target="icl_window" >Mm.212927</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.232593&internal=0&org=Mm" target="icl_window" >Mm.232593</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.314576&internal=0&org=Mm" target="icl_window" >Mm.314576</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.261609&internal=0&org=Mm" target="icl_window" >Mm.261609</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.195649&internal=0&org=Mm" target="icl_window" >Mm.195649</a> </td><td></td></tr>
+</tbody>
+
+</TABLE>
+
+ <hr align="left" width=80>
+
+ <h4>CV run  5 </h4>
+
+<p> Total of  2 signature components selected and  30 genes.</p>
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=150>Component name</th> <th width=200>Genes</th> <th width=80>Coefficient</th></tr>
+<tbody>
+ <tr align=center>
+<th> <b> N.16 </b></th><th></th><th><b> -0.0015 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.2442&internal=0&org=Mm" target="icl_window" >Mm.2442</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.21645&internal=0&org=Mm" target="icl_window" >Mm.21645</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.235300&internal=0&org=Mm" target="icl_window" >Mm.235300</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.219544&internal=0&org=Mm" target="icl_window" >Mm.219544</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.278997&internal=0&org=Mm" target="icl_window" >Mm.278997</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.293591&internal=0&org=Mm" target="icl_window" >Mm.293591</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.10406&internal=0&org=Mm" target="icl_window" >Mm.10406</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.232593&internal=0&org=Mm" target="icl_window" >Mm.232593</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.35546&internal=0&org=Mm" target="icl_window" >Mm.35546</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.195649&internal=0&org=Mm" target="icl_window" >Mm.195649</a> </td><td></td></tr>
+</tbody>
+
+<tbody>
+ <tr align=center>
+<th> <b> N.49 </b></th><th></th><th><b> -0.0039 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.46539&internal=0&org=Mm" target="icl_window" >Mm.46539</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.290657&internal=0&org=Mm" target="icl_window" >Mm.290657</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.25138&internal=0&org=Mm" target="icl_window" >Mm.25138</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.1269&internal=0&org=Mm" target="icl_window" >Mm.1269</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.2103&internal=0&org=Mm" target="icl_window" >Mm.2103</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.41930&internal=0&org=Mm" target="icl_window" >Mm.41930</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.268504&internal=0&org=Mm" target="icl_window" >Mm.268504</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.21596&internal=0&org=Mm" target="icl_window" >Mm.21596</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.282743&internal=0&org=Mm" target="icl_window" >Mm.282743</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.253156&internal=0&org=Mm" target="icl_window" >Mm.253156</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.103636&internal=0&org=Mm" target="icl_window" >Mm.103636</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.313558&internal=0&org=Mm" target="icl_window" >Mm.313558</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.221235&internal=0&org=Mm" target="icl_window" >Mm.221235</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.257762&internal=0&org=Mm" target="icl_window" >Mm.257762</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.280013&internal=0&org=Mm" target="icl_window" >Mm.280013</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.45683&internal=0&org=Mm" target="icl_window" >Mm.45683</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.46715&internal=0&org=Mm" target="icl_window" >Mm.46715</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.35399&internal=0&org=Mm" target="icl_window" >Mm.35399</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.260601&internal=0&org=Mm" target="icl_window" >Mm.260601</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.74636&internal=0&org=Mm" target="icl_window" >Mm.74636</a> </td><td></td></tr>
+</tbody>
+
+</TABLE>
+
+ <hr align="left" width=80>
+
+ <h4>CV run  6 </h4>
+
+<p> Total of  2 signature components selected and  26 genes.</p>
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=150>Component name</th> <th width=200>Genes</th> <th width=80>Coefficient</th></tr>
+<tbody>
+ <tr align=center>
+<th> <b> N.3 </b></th><th></th><th><b> -0.001 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.27218&internal=0&org=Mm" target="icl_window" >Mm.27218</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.278357&internal=0&org=Mm" target="icl_window" >Mm.278357</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.237085&internal=0&org=Mm" target="icl_window" >Mm.237085</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.4644&internal=0&org=Mm" target="icl_window" >Mm.4644</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.17322&internal=0&org=Mm" target="icl_window" >Mm.17322</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.40085&internal=0&org=Mm" target="icl_window" >Mm.40085</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.257474&internal=0&org=Mm" target="icl_window" >Mm.257474</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.5104&internal=0&org=Mm" target="icl_window" >Mm.5104</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.30173&internal=0&org=Mm" target="icl_window" >Mm.30173</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.57009&internal=0&org=Mm" target="icl_window" >Mm.57009</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.213417&internal=0&org=Mm" target="icl_window" >Mm.213417</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.44176&internal=0&org=Mm" target="icl_window" >Mm.44176</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.35399&internal=0&org=Mm" target="icl_window" >Mm.35399</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.75049&internal=0&org=Mm" target="icl_window" >Mm.75049</a> </td><td></td></tr>
+</tbody>
+
+<tbody>
+ <tr align=center>
+<th> <b> N.14 </b></th><th></th><th><b> -0.0042 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.22682&internal=0&org=Mm" target="icl_window" >Mm.22682</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.252145&internal=0&org=Mm" target="icl_window" >Mm.252145</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.29488&internal=0&org=Mm" target="icl_window" >Mm.29488</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.15711&internal=0&org=Mm" target="icl_window" >Mm.15711</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.219544&internal=0&org=Mm" target="icl_window" >Mm.219544</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.29145&internal=0&org=Mm" target="icl_window" >Mm.29145</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.87663&internal=0&org=Mm" target="icl_window" >Mm.87663</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.328476&internal=0&org=Mm" target="icl_window" >Mm.328476</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.4922&internal=0&org=Mm" target="icl_window" >Mm.4922</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.3410&internal=0&org=Mm" target="icl_window" >Mm.3410</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.10406&internal=0&org=Mm" target="icl_window" >Mm.10406</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.220417&internal=0&org=Mm" target="icl_window" >Mm.220417</a> </td><td></td></tr>
+</tbody>
+
+</TABLE>
+
+ <hr align="left" width=80>
+
+ <h4>CV run  7 </h4>
+
+<p> Total of  1 signature components selected and  11 genes.</p>
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=150>Component name</th> <th width=200>Genes</th> <th width=80>Coefficient</th></tr>
+<tbody>
+ <tr align=center>
+<th> <b> N.20 </b></th><th></th><th><b> -0.0051 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.248046&internal=0&org=Mm" target="icl_window" >Mm.248046</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.188&internal=0&org=Mm" target="icl_window" >Mm.188</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.2024&internal=0&org=Mm" target="icl_window" >Mm.2024</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.5419&internal=0&org=Mm" target="icl_window" >Mm.5419</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.319286&internal=0&org=Mm" target="icl_window" >Mm.319286</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.273081&internal=0&org=Mm" target="icl_window" >Mm.273081</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.275847&internal=0&org=Mm" target="icl_window" >Mm.275847</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.24115&internal=0&org=Mm" target="icl_window" >Mm.24115</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.93759&internal=0&org=Mm" target="icl_window" >Mm.93759</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.40681&internal=0&org=Mm" target="icl_window" >Mm.40681</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.84389&internal=0&org=Mm" target="icl_window" >Mm.84389</a> </td><td></td></tr>
+</tbody>
+
+</TABLE>
+
+ <hr align="left" width=80>
+
+ <h4>CV run  8 </h4>
+
+<p> Total of  2 signature components selected and  28 genes.</p>
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=150>Component name</th> <th width=200>Genes</th> <th width=80>Coefficient</th></tr>
+<tbody>
+ <tr align=center>
+<th> <b> N.16 </b></th><th></th><th><b> -0.004 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.22682&internal=0&org=Mm" target="icl_window" >Mm.22682</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.252145&internal=0&org=Mm" target="icl_window" >Mm.252145</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.29488&internal=0&org=Mm" target="icl_window" >Mm.29488</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.219544&internal=0&org=Mm" target="icl_window" >Mm.219544</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.6246&internal=0&org=Mm" target="icl_window" >Mm.6246</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.361949&internal=0&org=Mm" target="icl_window" >Mm.361949</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.1645&internal=0&org=Mm" target="icl_window" >Mm.1645</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.311981&internal=0&org=Mm" target="icl_window" >Mm.311981</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.87663&internal=0&org=Mm" target="icl_window" >Mm.87663</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.4922&internal=0&org=Mm" target="icl_window" >Mm.4922</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.3410&internal=0&org=Mm" target="icl_window" >Mm.3410</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.10406&internal=0&org=Mm" target="icl_window" >Mm.10406</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.220417&internal=0&org=Mm" target="icl_window" >Mm.220417</a> </td><td></td></tr>
+</tbody>
+
+<tbody>
+ <tr align=center>
+<th> <b> N.61 </b></th><th></th><th><b> -0.0034 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.46539&internal=0&org=Mm" target="icl_window" >Mm.46539</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.290657&internal=0&org=Mm" target="icl_window" >Mm.290657</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.209232&internal=0&org=Mm" target="icl_window" >Mm.209232</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.25138&internal=0&org=Mm" target="icl_window" >Mm.25138</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.2103&internal=0&org=Mm" target="icl_window" >Mm.2103</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.41930&internal=0&org=Mm" target="icl_window" >Mm.41930</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.21596&internal=0&org=Mm" target="icl_window" >Mm.21596</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.282743&internal=0&org=Mm" target="icl_window" >Mm.282743</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.217027&internal=0&org=Mm" target="icl_window" >Mm.217027</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.253156&internal=0&org=Mm" target="icl_window" >Mm.253156</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.826&internal=0&org=Mm" target="icl_window" >Mm.826</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.257762&internal=0&org=Mm" target="icl_window" >Mm.257762</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.280013&internal=0&org=Mm" target="icl_window" >Mm.280013</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.45683&internal=0&org=Mm" target="icl_window" >Mm.45683</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.260601&internal=0&org=Mm" target="icl_window" >Mm.260601</a> </td><td></td></tr>
+</tbody>
+
+</TABLE>
+
+ <hr align="left" width=80>
+
+ <h4>CV run  9 </h4>
+
+<p> Total of  3 signature components selected and  37 genes.</p>
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=150>Component name</th> <th width=200>Genes</th> <th width=80>Coefficient</th></tr>
+<tbody>
+ <tr align=center>
+<th> <b> N.4 </b></th><th></th><th><b> -0.002 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.27218&internal=0&org=Mm" target="icl_window" >Mm.27218</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.17322&internal=0&org=Mm" target="icl_window" >Mm.17322</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.40085&internal=0&org=Mm" target="icl_window" >Mm.40085</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.253984&internal=0&org=Mm" target="icl_window" >Mm.253984</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.207048&internal=0&org=Mm" target="icl_window" >Mm.207048</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.257474&internal=0&org=Mm" target="icl_window" >Mm.257474</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.14125&internal=0&org=Mm" target="icl_window" >Mm.14125</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.5104&internal=0&org=Mm" target="icl_window" >Mm.5104</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.30173&internal=0&org=Mm" target="icl_window" >Mm.30173</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.57009&internal=0&org=Mm" target="icl_window" >Mm.57009</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.213417&internal=0&org=Mm" target="icl_window" >Mm.213417</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.24115&internal=0&org=Mm" target="icl_window" >Mm.24115</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.93759&internal=0&org=Mm" target="icl_window" >Mm.93759</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.44176&internal=0&org=Mm" target="icl_window" >Mm.44176</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.75049&internal=0&org=Mm" target="icl_window" >Mm.75049</a> </td><td></td></tr>
+</tbody>
+
+<tbody>
+ <tr align=center>
+<th> <b> N.53 </b></th><th></th><th><b> -1e-04 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.27932&internal=0&org=Mm" target="icl_window" >Mm.27932</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.284248&internal=0&org=Mm" target="icl_window" >Mm.284248</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.202781&internal=0&org=Mm" target="icl_window" >Mm.202781</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.29938&internal=0&org=Mm" target="icl_window" >Mm.29938</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.197&internal=0&org=Mm" target="icl_window" >Mm.197</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.27961&internal=0&org=Mm" target="icl_window" >Mm.27961</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.12814&internal=0&org=Mm" target="icl_window" >Mm.12814</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.247837&internal=0&org=Mm" target="icl_window" >Mm.247837</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.140619&internal=0&org=Mm" target="icl_window" >Mm.140619</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.341004&internal=0&org=Mm" target="icl_window" >Mm.341004</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.220170&internal=0&org=Mm" target="icl_window" >Mm.220170</a> </td><td></td></tr>
+</tbody>
+
+<tbody>
+ <tr align=center>
+<th> <b> N.76 </b></th><th></th><th><b> -0.0021 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.6609&internal=0&org=Mm" target="icl_window" >Mm.6609</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.369847&internal=0&org=Mm" target="icl_window" >Mm.369847</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.285295&internal=0&org=Mm" target="icl_window" >Mm.285295</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.5071&internal=0&org=Mm" target="icl_window" >Mm.5071</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.206505&internal=0&org=Mm" target="icl_window" >Mm.206505</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.244003&internal=0&org=Mm" target="icl_window" >Mm.244003</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.29110&internal=0&org=Mm" target="icl_window" >Mm.29110</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.347699&internal=0&org=Mm" target="icl_window" >Mm.347699</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.22225&internal=0&org=Mm" target="icl_window" >Mm.22225</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.124328&internal=0&org=Mm" target="icl_window" >Mm.124328</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.200889&internal=0&org=Mm" target="icl_window" >Mm.200889</a> </td><td></td></tr>
+</tbody>
+
+</TABLE>
+
+ <hr align="left" width=80>
+
+ <h4>CV run  10 </h4>
+
+<p> Total of  2 signature components selected and  28 genes.</p>
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=150>Component name</th> <th width=200>Genes</th> <th width=80>Coefficient</th></tr>
+<tbody>
+ <tr align=center>
+<th> <b> N.3 </b></th><th></th><th><b> -0.0012 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.27218&internal=0&org=Mm" target="icl_window" >Mm.27218</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.278357&internal=0&org=Mm" target="icl_window" >Mm.278357</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.237085&internal=0&org=Mm" target="icl_window" >Mm.237085</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.4644&internal=0&org=Mm" target="icl_window" >Mm.4644</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.17322&internal=0&org=Mm" target="icl_window" >Mm.17322</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.40085&internal=0&org=Mm" target="icl_window" >Mm.40085</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.207048&internal=0&org=Mm" target="icl_window" >Mm.207048</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.257474&internal=0&org=Mm" target="icl_window" >Mm.257474</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.5104&internal=0&org=Mm" target="icl_window" >Mm.5104</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.30173&internal=0&org=Mm" target="icl_window" >Mm.30173</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.57009&internal=0&org=Mm" target="icl_window" >Mm.57009</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.213417&internal=0&org=Mm" target="icl_window" >Mm.213417</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.44176&internal=0&org=Mm" target="icl_window" >Mm.44176</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.35399&internal=0&org=Mm" target="icl_window" >Mm.35399</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.75049&internal=0&org=Mm" target="icl_window" >Mm.75049</a> </td><td></td></tr>
+</tbody>
+
+<tbody>
+ <tr align=center>
+<th> <b> N.9 </b></th><th></th><th><b> -0.0038 </b></th></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.373606&internal=0&org=Mm" target="icl_window" >Mm.373606</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.22682&internal=0&org=Mm" target="icl_window" >Mm.22682</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.29488&internal=0&org=Mm" target="icl_window" >Mm.29488</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.219544&internal=0&org=Mm" target="icl_window" >Mm.219544</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.361949&internal=0&org=Mm" target="icl_window" >Mm.361949</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.1645&internal=0&org=Mm" target="icl_window" >Mm.1645</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.311981&internal=0&org=Mm" target="icl_window" >Mm.311981</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.87663&internal=0&org=Mm" target="icl_window" >Mm.87663</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.4922&internal=0&org=Mm" target="icl_window" >Mm.4922</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.3410&internal=0&org=Mm" target="icl_window" >Mm.3410</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.10406&internal=0&org=Mm" target="icl_window" >Mm.10406</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.20169&internal=0&org=Mm" target="icl_window" >Mm.20169</a> </td><td></td></tr>
+<tr><td></td><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.220417&internal=0&org=Mm" target="icl_window" >Mm.220417</a> </td><td></td></tr>
+</tbody>
+
+</TABLE>
+
+ <hr align="left" width=80><h3>5.3. Shared genes between runs</h3>
+<pre>
+
+ Number of shared genes 
+                    OriginalSample CV.run.1 CV.run.2 CV.run.3 CV.run.4 CV.run.5 CV.run.6 CV.run.7 CV.run.8 CV.run.9 CV.run.10
+OriginalSample (26)             26       15        9       19        1       14        9        0       25        0        10
+CV.run.1 (54)                   15       54       16       11       12       14       11        1       14       12        12
+CV.run.2 (24)                    9       16       24        2        2        8        0        0       10        0         0
+CV.run.3 (34)                   19       11        2       34        5       12        9        2       18        7        11
+CV.run.4 (30)                    1       12        2        5       30        7       12        0        1       10        12
+CV.run.5 (30)                   14       14        8       12        7       30        3        0       14        0         3
+CV.run.6 (26)                    9       11        0        9       12        3       26        0        9       10        22
+CV.run.7 (11)                    0        1        0        2        0        0        0       11        0        2         0
+CV.run.8 (28)                   25       14       10       18        1       14        9        0       28        0        11
+CV.run.9 (37)                    0       12        0        7       10        0       10        2        0       37        11
+CV.run.10 (28)                  10       12        0       11       12        3       22        0       11       11        28
+
+
+ Proportion of shared genes (relative to row total) 
+                    OriginalSample CV.run.1 CV.run.2 CV.run.3 CV.run.4 CV.run.5 CV.run.6 CV.run.7 CV.run.8 CV.run.9 CV.run.10
+OriginalSample (26)          1.000    0.577    0.346    0.731    0.038    0.538    0.346    0.000    0.962    0.000     0.385
+CV.run.1 (54)                0.278    1.000    0.296    0.204    0.222    0.259    0.204    0.019    0.259    0.222     0.222
+CV.run.2 (24)                0.375    0.667    1.000    0.083    0.083    0.333    0.000    0.000    0.417    0.000     0.000
+CV.run.3 (34)                0.559    0.324    0.059    1.000    0.147    0.353    0.265    0.059    0.529    0.206     0.324
+CV.run.4 (30)                0.033    0.400    0.067    0.167    1.000    0.233    0.400    0.000    0.033    0.333     0.400
+CV.run.5 (30)                0.467    0.467    0.267    0.400    0.233    1.000    0.100    0.000    0.467    0.000     0.100
+CV.run.6 (26)                0.346    0.423    0.000    0.346    0.462    0.115    1.000    0.000    0.346    0.385     0.846
+CV.run.7 (11)                0.000    0.091    0.000    0.182    0.000    0.000    0.000    1.000    0.000    0.182     0.000
+CV.run.8 (28)                0.893    0.500    0.357    0.643    0.036    0.500    0.321    0.000    1.000    0.000     0.393
+CV.run.9 (37)                0.000    0.324    0.000    0.189    0.270    0.000    0.270    0.054    0.000    1.000     0.297
+CV.run.10 (28)               0.357    0.429    0.000    0.393    0.429    0.107    0.786    0.000    0.393    0.393     1.000
+</pre>
+<h3>5.4. Gene freqs. in cross-validated runs of genes selected in model with all data</h3> 
+
+<TABLE frame="box">
+<tr><th width=200>Gene name</th> <th width=200>Frequency</th></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.10406&internal=0&org=Mm" target="icl_window" >Mm.10406</a> </td><td> 5 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.219544&internal=0&org=Mm" target="icl_window" >Mm.219544</a> </td><td> 5 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.209232&internal=0&org=Mm" target="icl_window" >Mm.209232</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.2103&internal=0&org=Mm" target="icl_window" >Mm.2103</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.21596&internal=0&org=Mm" target="icl_window" >Mm.21596</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.217027&internal=0&org=Mm" target="icl_window" >Mm.217027</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.220417&internal=0&org=Mm" target="icl_window" >Mm.220417</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.22682&internal=0&org=Mm" target="icl_window" >Mm.22682</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.25138&internal=0&org=Mm" target="icl_window" >Mm.25138</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.253156&internal=0&org=Mm" target="icl_window" >Mm.253156</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.257762&internal=0&org=Mm" target="icl_window" >Mm.257762</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.260601&internal=0&org=Mm" target="icl_window" >Mm.260601</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.268504&internal=0&org=Mm" target="icl_window" >Mm.268504</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.280013&internal=0&org=Mm" target="icl_window" >Mm.280013</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.282743&internal=0&org=Mm" target="icl_window" >Mm.282743</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.290657&internal=0&org=Mm" target="icl_window" >Mm.290657</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.29488&internal=0&org=Mm" target="icl_window" >Mm.29488</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.3410&internal=0&org=Mm" target="icl_window" >Mm.3410</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.41930&internal=0&org=Mm" target="icl_window" >Mm.41930</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.45683&internal=0&org=Mm" target="icl_window" >Mm.45683</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.4922&internal=0&org=Mm" target="icl_window" >Mm.4922</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.87663&internal=0&org=Mm" target="icl_window" >Mm.87663</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.1645&internal=0&org=Mm" target="icl_window" >Mm.1645</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.252145&internal=0&org=Mm" target="icl_window" >Mm.252145</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.361949&internal=0&org=Mm" target="icl_window" >Mm.361949</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.826&internal=0&org=Mm" target="icl_window" >Mm.826</a> </td><td> 3 </td></tr>
+</TABLE>
+
+<h3>5.5. Gene frequencies in cross-validated runs</h3> 
+
+<TABLE frame="box">
+<tr><th width=200>Gene name</th> <th width=200>Frequency</th></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.10406&internal=0&org=Mm" target="icl_window" >Mm.10406</a> </td><td> 5 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.17322&internal=0&org=Mm" target="icl_window" >Mm.17322</a> </td><td> 5 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.213417&internal=0&org=Mm" target="icl_window" >Mm.213417</a> </td><td> 5 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.219544&internal=0&org=Mm" target="icl_window" >Mm.219544</a> </td><td> 5 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.257474&internal=0&org=Mm" target="icl_window" >Mm.257474</a> </td><td> 5 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.27218&internal=0&org=Mm" target="icl_window" >Mm.27218</a> </td><td> 5 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.40085&internal=0&org=Mm" target="icl_window" >Mm.40085</a> </td><td> 5 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.44176&internal=0&org=Mm" target="icl_window" >Mm.44176</a> </td><td> 5 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.5104&internal=0&org=Mm" target="icl_window" >Mm.5104</a> </td><td> 5 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.57009&internal=0&org=Mm" target="icl_window" >Mm.57009</a> </td><td> 5 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.209232&internal=0&org=Mm" target="icl_window" >Mm.209232</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.2103&internal=0&org=Mm" target="icl_window" >Mm.2103</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.21596&internal=0&org=Mm" target="icl_window" >Mm.21596</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.217027&internal=0&org=Mm" target="icl_window" >Mm.217027</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.220417&internal=0&org=Mm" target="icl_window" >Mm.220417</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.22682&internal=0&org=Mm" target="icl_window" >Mm.22682</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.24115&internal=0&org=Mm" target="icl_window" >Mm.24115</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.25138&internal=0&org=Mm" target="icl_window" >Mm.25138</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.253156&internal=0&org=Mm" target="icl_window" >Mm.253156</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.257762&internal=0&org=Mm" target="icl_window" >Mm.257762</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.260601&internal=0&org=Mm" target="icl_window" >Mm.260601</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.268504&internal=0&org=Mm" target="icl_window" >Mm.268504</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.280013&internal=0&org=Mm" target="icl_window" >Mm.280013</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.282743&internal=0&org=Mm" target="icl_window" >Mm.282743</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.290657&internal=0&org=Mm" target="icl_window" >Mm.290657</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.29488&internal=0&org=Mm" target="icl_window" >Mm.29488</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.30173&internal=0&org=Mm" target="icl_window" >Mm.30173</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.3410&internal=0&org=Mm" target="icl_window" >Mm.3410</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.35399&internal=0&org=Mm" target="icl_window" >Mm.35399</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.41930&internal=0&org=Mm" target="icl_window" >Mm.41930</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.45683&internal=0&org=Mm" target="icl_window" >Mm.45683</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.4644&internal=0&org=Mm" target="icl_window" >Mm.4644</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.4922&internal=0&org=Mm" target="icl_window" >Mm.4922</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.75049&internal=0&org=Mm" target="icl_window" >Mm.75049</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.87663&internal=0&org=Mm" target="icl_window" >Mm.87663</a> </td><td> 4 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.103636&internal=0&org=Mm" target="icl_window" >Mm.103636</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.1645&internal=0&org=Mm" target="icl_window" >Mm.1645</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.168854&internal=0&org=Mm" target="icl_window" >Mm.168854</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.195649&internal=0&org=Mm" target="icl_window" >Mm.195649</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.207048&internal=0&org=Mm" target="icl_window" >Mm.207048</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.237085&internal=0&org=Mm" target="icl_window" >Mm.237085</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.2442&internal=0&org=Mm" target="icl_window" >Mm.2442</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.252145&internal=0&org=Mm" target="icl_window" >Mm.252145</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.278357&internal=0&org=Mm" target="icl_window" >Mm.278357</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.285295&internal=0&org=Mm" target="icl_window" >Mm.285295</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.287857&internal=0&org=Mm" target="icl_window" >Mm.287857</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.313558&internal=0&org=Mm" target="icl_window" >Mm.313558</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.361949&internal=0&org=Mm" target="icl_window" >Mm.361949</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.369847&internal=0&org=Mm" target="icl_window" >Mm.369847</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.46539&internal=0&org=Mm" target="icl_window" >Mm.46539</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.826&internal=0&org=Mm" target="icl_window" >Mm.826</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.93759&internal=0&org=Mm" target="icl_window" >Mm.93759</a> </td><td> 3 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.20169&internal=0&org=Mm" target="icl_window" >Mm.20169</a> </td><td> 2 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.21645&internal=0&org=Mm" target="icl_window" >Mm.21645</a> </td><td> 2 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.22990&internal=0&org=Mm" target="icl_window" >Mm.22990</a> </td><td> 2 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.232593&internal=0&org=Mm" target="icl_window" >Mm.232593</a> </td><td> 2 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.240510&internal=0&org=Mm" target="icl_window" >Mm.240510</a> </td><td> 2 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.250359&internal=0&org=Mm" target="icl_window" >Mm.250359</a> </td><td> 2 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.253984&internal=0&org=Mm" target="icl_window" >Mm.253984</a> </td><td> 2 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.27383&internal=0&org=Mm" target="icl_window" >Mm.27383</a> </td><td> 2 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.278997&internal=0&org=Mm" target="icl_window" >Mm.278997</a> </td><td> 2 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.311981&internal=0&org=Mm" target="icl_window" >Mm.311981</a> </td><td> 2 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.347699&internal=0&org=Mm" target="icl_window" >Mm.347699</a> </td><td> 2 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.46715&internal=0&org=Mm" target="icl_window" >Mm.46715</a> </td><td> 2 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.5071&internal=0&org=Mm" target="icl_window" >Mm.5071</a> </td><td> 2 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.5106&internal=0&org=Mm" target="icl_window" >Mm.5106</a> </td><td> 2 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.6246&internal=0&org=Mm" target="icl_window" >Mm.6246</a> </td><td> 2 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.105583&internal=0&org=Mm" target="icl_window" >Mm.105583</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.124328&internal=0&org=Mm" target="icl_window" >Mm.124328</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.1269&internal=0&org=Mm" target="icl_window" >Mm.1269</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.12814&internal=0&org=Mm" target="icl_window" >Mm.12814</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.12815&internal=0&org=Mm" target="icl_window" >Mm.12815</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.1287&internal=0&org=Mm" target="icl_window" >Mm.1287</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.140619&internal=0&org=Mm" target="icl_window" >Mm.140619</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.14125&internal=0&org=Mm" target="icl_window" >Mm.14125</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.154121&internal=0&org=Mm" target="icl_window" >Mm.154121</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.15711&internal=0&org=Mm" target="icl_window" >Mm.15711</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.158107&internal=0&org=Mm" target="icl_window" >Mm.158107</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.158733&internal=0&org=Mm" target="icl_window" >Mm.158733</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.188&internal=0&org=Mm" target="icl_window" >Mm.188</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.197&internal=0&org=Mm" target="icl_window" >Mm.197</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.200889&internal=0&org=Mm" target="icl_window" >Mm.200889</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.2024&internal=0&org=Mm" target="icl_window" >Mm.2024</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.202781&internal=0&org=Mm" target="icl_window" >Mm.202781</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.206505&internal=0&org=Mm" target="icl_window" >Mm.206505</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.20928&internal=0&org=Mm" target="icl_window" >Mm.20928</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.212927&internal=0&org=Mm" target="icl_window" >Mm.212927</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.215394&internal=0&org=Mm" target="icl_window" >Mm.215394</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.220170&internal=0&org=Mm" target="icl_window" >Mm.220170</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.221235&internal=0&org=Mm" target="icl_window" >Mm.221235</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.22225&internal=0&org=Mm" target="icl_window" >Mm.22225</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.233471&internal=0&org=Mm" target="icl_window" >Mm.233471</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.235300&internal=0&org=Mm" target="icl_window" >Mm.235300</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.244003&internal=0&org=Mm" target="icl_window" >Mm.244003</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.24661&internal=0&org=Mm" target="icl_window" >Mm.24661</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.247837&internal=0&org=Mm" target="icl_window" >Mm.247837</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.248046&internal=0&org=Mm" target="icl_window" >Mm.248046</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.25504&internal=0&org=Mm" target="icl_window" >Mm.25504</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.257765&internal=0&org=Mm" target="icl_window" >Mm.257765</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.261609&internal=0&org=Mm" target="icl_window" >Mm.261609</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.2681&internal=0&org=Mm" target="icl_window" >Mm.2681</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.271648&internal=0&org=Mm" target="icl_window" >Mm.271648</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.273081&internal=0&org=Mm" target="icl_window" >Mm.273081</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.275847&internal=0&org=Mm" target="icl_window" >Mm.275847</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.276291&internal=0&org=Mm" target="icl_window" >Mm.276291</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.27932&internal=0&org=Mm" target="icl_window" >Mm.27932</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.27961&internal=0&org=Mm" target="icl_window" >Mm.27961</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.27990&internal=0&org=Mm" target="icl_window" >Mm.27990</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.284248&internal=0&org=Mm" target="icl_window" >Mm.284248</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.28507&internal=0&org=Mm" target="icl_window" >Mm.28507</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.29110&internal=0&org=Mm" target="icl_window" >Mm.29110</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.29145&internal=0&org=Mm" target="icl_window" >Mm.29145</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.293030&internal=0&org=Mm" target="icl_window" >Mm.293030</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.293591&internal=0&org=Mm" target="icl_window" >Mm.293591</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.29938&internal=0&org=Mm" target="icl_window" >Mm.29938</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.314576&internal=0&org=Mm" target="icl_window" >Mm.314576</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.319011&internal=0&org=Mm" target="icl_window" >Mm.319011</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.319286&internal=0&org=Mm" target="icl_window" >Mm.319286</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.328476&internal=0&org=Mm" target="icl_window" >Mm.328476</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.341004&internal=0&org=Mm" target="icl_window" >Mm.341004</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.342279&internal=0&org=Mm" target="icl_window" >Mm.342279</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.35546&internal=0&org=Mm" target="icl_window" >Mm.35546</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.36217&internal=0&org=Mm" target="icl_window" >Mm.36217</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.372687&internal=0&org=Mm" target="icl_window" >Mm.372687</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.373606&internal=0&org=Mm" target="icl_window" >Mm.373606</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.378801&internal=0&org=Mm" target="icl_window" >Mm.378801</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.388&internal=0&org=Mm" target="icl_window" >Mm.388</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.39617&internal=0&org=Mm" target="icl_window" >Mm.39617</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.40681&internal=0&org=Mm" target="icl_window" >Mm.40681</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.40717&internal=0&org=Mm" target="icl_window" >Mm.40717</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.41558&internal=0&org=Mm" target="icl_window" >Mm.41558</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.44106&internal=0&org=Mm" target="icl_window" >Mm.44106</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.5267&internal=0&org=Mm" target="icl_window" >Mm.5267</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.5419&internal=0&org=Mm" target="icl_window" >Mm.5419</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.6609&internal=0&org=Mm" target="icl_window" >Mm.6609</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.7060&internal=0&org=Mm" target="icl_window" >Mm.7060</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.74636&internal=0&org=Mm" target="icl_window" >Mm.74636</a> </td><td> 1 </td></tr>
+
+ <tr align=right><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=ug&id=Mm.84389&internal=0&org=Mm" target="icl_window" >Mm.84389</a> </td><td> 1 </td></tr>
+</TABLE><hr> <a href="all.results.tar.gz">Download</a> all figures and text results.<br /> <hr> <h3> Send results to <a href = "http://pals.bioinfo.cnio.es"><IMG BORDER="0" SRC="../../palsfavicon40.png" align="middle"></a></h3><p> Send set of <a href="http://pals.bioinfo.cnio.es?org=Mm&idtype=ug&datafile=http://signs.bioinfo.cnio.es/tmp/507233199453611664464219844/Selected.genes.txt">genes selected in all components in main run to PaLS</a></p><p> Send set of <a href="http://pals.bioinfo.cnio.es?org=Mm&idtype=ug&datafile=http://signs.bioinfo.cnio.es/tmp/507233199453611664464219844/Selected.and.CV.selected.txt">genes selected in main run and in CV runs (all components in every run) to PaLS</a></p></body></html>
