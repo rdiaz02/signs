@@ -277,11 +277,16 @@ if(class(tryevent) == "try-error")
 ## to prevent problems with a space at end of classes
 if(is.na(Event[length(Event)])) Event <- Event[-length(Event)]
 
+
+if (! all(Event %in% c(0, 1))) {
+  caughtUserError("Your status data is not valid; can only be 0 or 1\n")
+}
+
+
 if(length(Time) < 10) {
     caughtUserError(paste("Your data should contain at least ten (10) samples\n",
                        "but your data have only", length(Time), ".\n"))
 }
-
 
 
 ## get rid of """ in data
