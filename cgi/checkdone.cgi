@@ -25,6 +25,142 @@ R_MAX_time = 8 * 3600 ## 4 hours is max duration allowd for any process
 
 ## For redirections, from Python Cookbook
 
+
+def extract_for_PaLS_from_Signs(file_in, file_out, all_runs = True):
+    """ We should be able to get the output from R directly but:
+    a) its much more of a mess, and we need to hack deep inside
+    functions; we do a lot with the fitted objects (the function to
+    look at is selectedSignatures, also when it is called from
+    summary.cvDave);
+    b) because of the above, a simple, clean, call to a function
+    outside is unlikely to be simple to write;
+    c) we need to mess around with the library, etc, which is a pain;
+    d) it is a lot harder to debug;
+    e) doing it this way, with pattern matchin, etc, is a lot more fun and
+    we are just picking up the final, digested, results. Should work.
+
+    That said, this function works on an object (Results.txt) which is the
+    output from a call of html2txt, based on results.html. So there are a
+    lof ot places where this can bomb if things change in the code.
+
+
+    The logic is to keep processing lines of outut and:
+    - look for where a set of results starts;
+    - keep adding the gene names until either that is done, or a new
+    component is added (mark the later when it happens).
+    - if the set is done, look again for where a set of results starts.
+    
+    """
+    
+    f1 = open(file_in, mode = 'r').readlines()
+    f2 = open(file_out, mode = 'w')
+
+    def can_make_float(x):
+        try:
+            float(x)
+        except:
+            return False
+        else:
+            return True
+
+    def is_start_run(x):
+        tmp = x.split()
+        if (len(tmp) == 4) and \
+           (tmp[0] == 'Component') and \
+           (tmp[1] == 'name') and \
+           (tmp[2] == 'Genes') and \
+           (tmp[3] == 'Coefficient'):
+            return True
+        else:
+            return False
+
+    def another_component(x):
+        tmp = x.split()
+        if (len(tmp) == 2) and \
+           ((tmp[0][0] == 'N') or (tmp[0][0] == 'P')) and \
+           can_make_float(tmp[1]):
+            return True
+        else:
+            return False
+
+    def end_run(x):
+        tmp = x.split()
+        if (len(tmp) == 1 and tmp[0].startswith("==================")):
+            return True
+        else:
+            return False
+
+
+    i = 0
+    maxi = len(f1) - 1
+
+    j = 1
+    k = 1
+    while True:
+        if is_start_run(f1[i]):
+            k = 1
+            f2.write("#Run." + str(j) + ".component." + str(k) + "\n")
+            i = i + 2
+            ltmp = f1[i]
+            while not end_run(ltmp):
+                print 'i is ' + str(i)
+                if not another_component(ltmp):
+                    print 'f1[i].lstrip is ' + ltmp
+                    f2.write(ltmp.lstrip())
+                elif another_component(ltmp):
+                    k += 1
+                    f2.write("#Run." + str(j) + ".component." + str(k) + "\n")
+                i += 1
+                ltmp = f1[i]
+            if not all_runs: break
+            j += 1
+
+        i += 1
+        if i >= maxi:
+            f2.close()
+            break
+
+
+def printPalsURL(newDir,
+                 tmpDir,
+                 application_url = "http://signs.bioinfo.cnio.es",
+                 f1 = "Selected.genes.txt",
+                 f2 = "Selected.and.CV.selected.txt",
+                 s1 = "genes selected in all components in main run",
+                 s2 = "genes selected in main run and in CV runs (all components in every run)"):
+    """ Based on Pomelo II's Send_to_Pals.cgi."""
+    f=open(tmpDir + "/idtype")
+    idtype = f.read().strip()
+    f.close()
+    f=open(tmpDir + "/organism")
+    organism = f.read().strip()
+    f.close()
+    if (idtype != "None" and organism != "None"):
+        url_org_id = "org=" + organism + "&idtype=" + idtype + "&"
+    else:
+        url_org_id = ""
+    gl_base = application_url + '/tmp/' + newDir + '/'
+    gl1 = gl_base + f1
+    gl2 = gl_base + f2
+
+    clean_for_PaLS(tmpDir + '/' + f1, tmpDir + '/' + f1)
+    clean_for_PaLS(tmpDir + '/' + f2, tmpDir + '/' + f2)
+    
+    outstr0 = '<br /> <hr> ' + \
+              '<h3> Send results to <a href = "http://pals.bioinfo.cnio.es">' + \
+              '<IMG BORDER="0" SRC="../../palsfavicon40.png" align="middle"></a></h3>'
+    outstr = outstr0 + \
+             '<p> Send set of <a href="http://pals.bioinfo.cnio.es?' + \
+             url_org_id + 'datafile=' + gl1 + \
+             '">' + s1 + ' to PaLS</a></p>' + \
+             '<p> Send set of <a href="http://pals.bioinfo.cnio.es?' + \
+             url_org_id + 'datafile=' + gl2 + \
+             '">' + s2 + ' to PaLS</a></p>' 
+    return(outstr)
+
+
+
+
 def getQualifiedURL(uri = None):
     """ Return a full URL starting with schema, servername and port.
     
@@ -124,7 +260,7 @@ def printOKRun():
     outf.write("\n <title>SignS results </title></head><body>\n")
      
     if os.path.exists(tmpDir + "/ErrorFigure.png"):
-        outf.write('<IMG WIDTH="500" HEIGHT="417" BORDER="0" SRC="ErrorFigure.png">')
+        outf.write('<IMG BORDER="0" SRC="ErrorFigure.png">')
         outf.write("<br /><br /> <hr>")
         outf.write("<pre>")
         outf.write('<br /><br /><h2> Results <a href="http://signs.bioinfo.cnio.es/help/signs-help.html#outputText">(help)</a></h2> \n')
@@ -143,31 +279,31 @@ def printOKRun():
             outf.write("<h2> Results using the Threshold Gradient Descent method of Li and Gui</h2><br/ >\n")
             outf.write('<h2>Survival curves using scores from final model <a href="http://signs.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h2> \n')
             outf.write('<h3>Splitting scores in two groups</h3>')
-            outf.write('<IMG WIDTH="500" HEIGHT="417" BORDER="0" SRC="kmplot-honest.png">')
-            outf.write('<IMG WIDTH="500" HEIGHT="417" BORDER="0" SRC="kmplot-overfitt.png">')
+            outf.write('<IMG BORDER="0" SRC="kmplot-honest.png">')
+            outf.write('<IMG BORDER="0" SRC="kmplot-overfitt.png">')
             outf.write('<p>Please, DO NOT use the overfitt one, except for pedagogic purposes to show ')
             outf.write('consequencues of overfitting and not doing cross-validation.</p>')
             outf.write('<h3>Splitting scores in four groups</h3>')
-            outf.write('<IMG WIDTH="500" HEIGHT="417" BORDER="0" SRC="kmplot4-honest.png">')
-            outf.write('<IMG WIDTH="500" HEIGHT="417" BORDER="0" SRC="kmplot4-overfitt.png">')
+            outf.write('<IMG BORDER="0" SRC="kmplot4-honest.png">')
+            outf.write('<IMG BORDER="0" SRC="kmplot4-overfitt.png">')
             outf.write('<p>Please, DO NOT use the overfitt one, except for pedagogic purposes to show ')
             outf.write('consequencues of overfitting and not doing cross-validation.</p>')
 
             if os.path.exists(tmpDir + "/usevalidation"):
                 outf.write('<h2>Survival curves for validation data <a href="http://signs.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h2> \n')
                 outf.write('<h3>Splitting scores in two groups</h3>')
-                outf.write('<IMG WIDTH="500" HEIGHT="417" BORDER="0" SRC="kmplot-validation.png">')
+                outf.write('<IMG BORDER="0" SRC="kmplot-validation.png">')
                 outf.write('<h3>Splitting scores in four groups</h3>')
-                outf.write('<IMG WIDTH="500" HEIGHT="417" BORDER="0" SRC="kmplot4-validation.png">')
+                outf.write('<IMG BORDER="0" SRC="kmplot4-validation.png">')
 
             outf.write('<br /> <br /><h2>Cross-validated partial likelihood for different values of the model parameters')
             outf.write('<a href="http://signs.bioinfo.cnio.es/help/signs-help.html#out.tgd">(help)</a></h2> \n')
-            outf.write('<IMG WIDTH="500" HEIGHT="417" BORDER="0" SRC="cvpl.png">')
+            outf.write('<IMG BORDER="0" SRC="cvpl.png">')
             outf.write('<p>(Use this plot to asses if the chosen values of maximum iterations and &#8710;&#951; worked appropriately.</p>')
 
             outf.write('<br /> <br /><h2>Coefficients of genes (at best cross-validated partial likelihood) for different thresholds ')
             outf.write('<a href="http://signs.bioinfo.cnio.es/help/signs-help.html#out.tgd">(help)</a></h2> \n')
-            outf.write('<IMG WIDTH="756" HEIGHT="864" BORDER="0" SRC="fstdgrun.png">')
+            outf.write('<IMG BORDER="0" SRC="fstdgrun.png">')
 
             outf.write("<br /><br /> <hr>")
             outf.write("<pre>")
@@ -341,8 +477,16 @@ def printOKRun():
 # #             if os.path.exists(tmpDir + "/kmplot4-validation.pdf"): allResults.add(tmpDir + '/kmplot4-validation.pdf', 'SurvivalPlot4-validation.pdf')
 
             allResults.close()
-        
             outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')  
+
+            extract_for_PaLS_from_Signs('Results.txt',
+                                        'Selected.genes.txt',
+                                        all_runs = False)
+            extract_for_PaLS_from_Signs('Results.txt',
+                                        'Selected.and.CV.selected.txt',
+                                        all_runs = True)
+            outf.write(outf.write(printPalsURL(newDir, tmpDir))
+
             outf.write("</body></html>")
             outf.close()
             shutil.copyfile(tmpDir + "/pre-results.html", tmpDir + "/results.html")

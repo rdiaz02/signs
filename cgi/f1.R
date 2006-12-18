@@ -76,7 +76,7 @@ system(paste("mv ../../R.running.procs/", new.name1,
 
 
 
-library(CGIwithR)
+#library(CGIwithR)
 library(Rmpi)
 library(survival)
 library(combinat)
@@ -129,7 +129,7 @@ nfold <- 10
 
 
 caughtUserError <- function(message) {
-    webPNG("ErrorFigure.png", width = 400,
+    GDD("ErrorFigure.png", width = 400,
            height = 350, ps = png.pointsize)
 ##           pointsize = png.pointsize,
 ##           family = png.family)
@@ -154,7 +154,7 @@ caughtUserError <- function(message) {
 
 
 caughtOurError <- function(message) {
-    webPNG("ErrorFigure.png", width = 400,
+    GDD("ErrorFigure.png", width = 400,
            height = 350, ps = png.pointsize)
 #           pointsize = png.pointsize,
 #           family = png.family)
@@ -545,14 +545,14 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
                              trycode, ". \n Please let us know so we can fix the code."))
     
 
-    webPNG(file = "kmplot-honest.png", width = png.width,
+    GDD(file = "kmplot-honest.png", width = png.width,
         height = png.height, ps = png.pointsize)
 #        pointsize = png.pointsize,
 #        family = png.family)
     KM.visualize(cvTGDResults$OOB.scores, Time,
                  Event, ngroups = 2, addmain = NULL) ## Good   ####  Fig 1
     dev.off()
-    webPNG(file = "kmplot-overfitt.png", width = png.width,
+    GDD(file = "kmplot-overfitt.png", width = png.width,
         height = png.height, ps = png.pointsize)
 ##        pointsize = png.pointsize,
 ##        family = png.family)
@@ -574,14 +574,14 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
 
 
 
-    webPNG(file = "kmplot4-honest.png", width = png.width,
+    GDD(file = "kmplot4-honest.png", width = png.width,
            height = png.height,ps = png.pointsize)
 #           pointsize = png.pointsize,
 #           family = png.family)
     KM.visualize4(cvTGDResults$OOB.scores, Time,
                  Event, ngroups = 2, addmain = NULL) ## Good   ####  Fig 1.4
     dev.off()
-    webPNG(file = "kmplot4-overfitt.png", width = png.width,
+    GDD(file = "kmplot4-overfitt.png", width = png.width,
         height = png.height,ps = png.pointsize)
 #        pointsize = png.pointsize,
 #        family = png.family)
@@ -606,7 +606,7 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
 
     
 
-    webPNG(file = "cvpl.png", width = png.width,
+    GDD(file = "cvpl.png", width = png.width,
            height = png.height,ps = png.pointsize)
 #           pointsize = png.pointsize,
 #           family = png.family)
@@ -693,7 +693,7 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
         KM.visualize(valpred, validationTime,
                      validationEvent, ngroups = 2, addmain = NULL)
         dev.off()
-        webPNG(file = "kmplot-validation.png", width = png.width,
+        GDD(file = "kmplot-validation.png", width = png.width,
                height = png.height, ps = png.pointsize)
 #               family = png.family)
         KM.visualize(valpred, validationTime,                         
@@ -705,7 +705,7 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
         KM.visualize4(valpred, validationTime,
                      validationEvent, ngroups = 2, addmain = NULL)
         dev.off() 
-        webPNG(file = "kmplot4-validation.png", width = png.width,
+        GDD(file = "kmplot4-validation.png", width = png.width,
                height = png.height,ps = png.pointsize)
 #               pointsize = png.pointsize,
 #               family = png.family)
@@ -838,6 +838,7 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
     cleanHTMLtail(file = "stepAIC.output.html")
 
     
+    cat("\n <hr align=\"left\" width=80>")
     cat("<h3>4.2. <a href=\"correlationMatrixClusters.html\" target=\"CorMatrix_window\">View</a> correlation matrix of clusters</h3>")
     cat("<h3>4.3. <a href=\"stepAIC.output.html\" target=\"stepAIC_window\">View</a> steps of variable selection</h3>")
 
