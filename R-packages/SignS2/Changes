@@ -1,0 +1,4 @@
+0.8:
+    - Fixed problem in prediction step when final model has no terms.
+    - Fixed problem in dStep1.parallel: can now run even if model can't be fitted.
+    - Fixed bug that lead to crashes (diring cv) when sample size = 10

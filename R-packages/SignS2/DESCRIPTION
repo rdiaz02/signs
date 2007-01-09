@@ -1,0 +1,16 @@
+Package: SignS2
+Version: 0.8-2
+Date: 2006-01-11
+Title: Molecular signatures for survival clinical data
+Author: Ramon Diaz-Uriarte <rdiaz@ligarto.org>
+Maintainer: Ramon Diaz-Uriarte <rdiaz@ligarto.org>
+Depends: R (>= 2.0.0)
+Description: whatever
+	     Main applications in high-dimensional data
+	     (e.g., microarray data, and other genomics and proteomics
+	     applications).
+LazyLoad: Yes
+License: GPL version 2 or newer
+URL: http://www.r-project.org, http://ligarto.org/rdiaz/Software/Software.html,
+http://ligarto.org/rdiaz/Papers/rfVS/randomForestVarSel.html
+Packaged: Fri Feb 10 22:18:54 2006; root
