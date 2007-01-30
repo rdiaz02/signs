@@ -1,0 +1,223 @@
+"surv1" <-
+function(x, time, surv.st, beta, ttt)
+{
+### x: n*m predictor matrix, with m predictors.	
+### time: survival time for n observations.
+### surv.st: censoring status for n observations.
+### beta: initial value for beta.
+### program output the estimate of beta at step ttt. 	
+	
+	x <- as.matrix(x)
+	nm <- dim(x)
+	n <- nm[1]
+	m <- nm[2]
+	one <- rep(1, n)
+	meanx <- drop(one %*% x)/n
+	meanx <- rep(0, m)
+	x <- scale(x, meanx, FALSE)
+	# centers x
+	normx <- sqrt(drop(one %*% (x^2)))
+	nosignal <- normx/sqrt(n) < 10^{-10}
+	if(any(nosignal)) {
+		ignores <- im[nosignal]
+		inactive <- im[ - ignores]
+		normx[nosignal] <- eps * sqrt(n)
+		if(trace)
+			cat("LARS Step 0 :\\t", sum(nosignal), "Variables with Variance < \\eps; dropped for good\n")
+	}
+	else ignores <- NULL
+	#singularities; augmented later as well
+	names(normx) <- NULL
+	normx <- rep(1, m)
+	x <- scale(x, FALSE, normx)
+	# scales x
+	r <- rank(time)
+	# need to define time
+	# beta<-rep(0,m)
+	beta <- as.matrix(beta)
+	ita <- x %*% beta
+	epita <- exp(ita)
+	d <- rep(0, n)
+	dono <- rep(0, n)
+	for(i in 1:n) {
+		d[i] <- sum(surv.st[r == r[i]])
+		dono[i] <- sum(epita[r >= r[i]])
+	}
+	risk <- d/dono
+	risk1 <- d/dono^{2}
+	culrisk1 <- culrisk <- rep(0, n)
+	for(i in 1:n) {
+		culrisk[i] <- sum(unique(risk[r <= r[i]]))
+		culrisk1[i] <- sum(unique(risk1[r <= r[i]]))
+	}
+	mu <- surv.st - epita * culrisk
+	A <- matrix(0, n, n)
+	for(i in 1:n) {
+		A[i, i] <-  - epita[i] * culrisk[i] + epita[i]^{2} * culrisk1[i]
+	}
+	for(i in 2:n) {
+		for(j in 1:i - 1) {
+			A[i, j] <- epita[i] * epita[j] * sum(unique(risk1[r <= r[i] & r <= r[j]]))
+			A[j, i] <- A[i, j]
+		}
+	}
+	paA <- chol( - A)
+	mu <- as.matrix(mu)
+	y <- (paA) %*% (ita + ginverse( - A) %*% mu)
+	if(m >= 400 & m > n)
+		fit <- lars(paA %*% x, y, "lasso", use.Gram = FALSE)
+	else fit <- lars(paA %*% x, y, "lasso")
+	beta1 <- predict(fit, s = ttt, type = "coef", mode = "step")$coefficients
+	beta1 <- t(scale(t(as.matrix(beta1)), FALSE, normx))
+	cat("diff=", sum(abs(beta - beta1)), "\n")
+	ttt1 <- ttt
+	while(sum(abs(beta - beta1)) >= 1e-005 * (ttt - 1)) {
+		beta <- beta1
+		ita <- x %*% beta
+		epita <- exp(ita)
+		d <- rep(0, n)
+		dono <- rep(0, n)
+		for(i in 1:n) {
+			d[i] <- sum(surv.st[r == r[i]])
+			dono[i] <- sum(epita[r >= r[i]])
+		}
+		risk <- d/dono
+		risk1 <- d/dono^{2}
+		culrisk1 <- culrisk <- rep(0, n)
+		for(i in 1:n) {
+			culrisk[i] <- sum(unique(risk[r <= r[i]]))
+			culrisk1[i] <- sum(unique(risk1[r <= r[i]]))
+		}
+		mu <- surv.st - epita * culrisk
+		A <- matrix(0, n, n)
+		for(i in 1:n) {
+			A[i, i] <-  - epita[i] * culrisk[i] + epita[i]^{2} * culrisk1[i]
+		}
+		for(i in 2:n) {
+			for(j in 1:i - 1) {
+				A[i, j] <- epita[i] * epita[j] * sum(unique(risk1[r <= r[i] & r <= r[j]]))
+				A[j, i] <- A[i, j]
+			}
+		}
+		paA <- chol( - A)
+		mu <- as.matrix(mu)
+		y <- paA %*% (ita + ginverse( - A) %*% mu)
+		if(m >= 400 & m > n)
+			fit <- lars(paA %*% x, y, "lasso", use.Gram = FALSE)
+		else fit <- lars(paA %*% x, y, "lasso")
+		di <- dim(fit$beta)
+		backtt <- rep(100, di[1])
+		trasbeta <- scale(fit$beta, FALSE, normx)
+		for(i in 1:di[1]) {
+			backtt[i] <- sum(abs(trasbeta[i,  ] - beta))
+		}
+		#af<-(unlist(fit$actions))
+		#backtt<-(1:length(af))[af==af1]
+		ttt1 <- (1:di[1])[backtt == min(backtt)]
+		beta1 <- (trasbeta[ttt1,  ])
+		cat("diff=", sum(abs(beta - beta1)), "\n")
+	}
+	list(beta = beta1, step = ttt1)
+}
+
+"surv4" <-
+function(x, time, surv.st, ss)
+{
+### x: n*m predictor matrix, with m predictors.	
+### time: survival time for n observations.
+### surv.st: censoring status for n observations.	
+### ss: the L1 constraint for beta. ss could be a vector in acsending order.
+### program output the estimate of beta at each L1 constaint in ss.
+	
+	nm <- dim(x)
+	n <- nm[1]
+	m <- nm[2]
+	res1 <- matrix(0, m, 3 * n)
+	nvara <- 1
+	ttt <- 2
+	ii <- 1
+	ts <- length(ss)
+	res <- matrix(0, m, ts)
+	nvara1 <- 0
+	while(nvara1 < ss[ts]) {
+		fft <- surv1(x, time, surv.st, res1[, ii], ttt)
+		res1[, ii + 1] <- fft$beta
+		nvara <- length(res1[abs(res1[, ii + 1]) >= 1e-005, ii + 1])
+		nvara1 <- sum(abs(res1[, ii + 1]))
+		if(fft$step + 1 == ttt || fft$step == 1)
+			ttt <- fft$step + 4
+		else ttt <- fft$step + 1
+		ii <- ii + 1
+		cat("s=", sum(abs(res1[, ii])), "\n")
+	}
+	s <- 0
+	for(i in 1:ii) {
+		s[i] <- sum(abs(res1[, i]))
+	}
+	for(i in 1:ts) {
+		ins <- ((1:ii)[s > ss[i]])[1]
+		alp <- (s[ins] - ss[i])/(ss[i] - s[ins - 1])
+		res[, i] <- (alp * res1[, ins - 1] + res1[, ins])/(1 + alp)
+	}
+	return(res)
+}
+ 
+"L1cvpl" <- 
+function(x, time, surv.st, ss, nfold)
+{
+### x: n*m predictor matrix, with m predictors.	
+### time: survival time for n observations.
+### surv.st: censoring status for n observations.	
+### ss: the L1 constraint for beta. ss could be a vector in acsending order.
+### nfold: number of cross-validation iterations
+### program output the cross validated partial likelihood at given ss.
+
+	nm <- dim(x)
+	n <- nm[1]
+	m <- nm[2]
+	l <- length(ss)
+	k <- n/nfold
+	res1 <- matrix(0, m, l)
+	cvscore1 <- cvscore <- rep(0, l)
+	for(i in 1:nfold) {
+		x1 <- x[ - c(((i - 1) * k + 1):(i * k)),  ]
+		time1 <- time[ - c(((i - 1) * k + 1):(i * k)) ]
+		surv.st1 <- surv.st[ - c(((i - 1) * k + 1):(i * k)) ]
+		res1 <- surv4(x1, time1, surv.st1, ss)
+		for(j in 1:l) {
+			cvscore1[j] <- - lik(x, time, surv.st, res1[, j]) + lik(x1, time1, surv.st1, res1[, j])
+		}
+		cvscore <- cvscore1/n + cvscore
+	}
+	return(cvscore)
+}
+
+"lik" <- 
+function(x, time, surv.st, beta)
+{	
+### function return the partial likelihood for Cox model
+
+	x <- as.matrix(x)
+	nm <- dim(x)
+	n <- nm[1]
+	m <- nm[2]
+	r <- rank(time)
+	beta <- as.matrix(beta)
+	ita <- x %*% beta
+	epita <- exp(ita)
+	d <- rep(0, n)
+	dono <- rep(0, n)
+	for(i in 1:n) {
+		d[i] <- sum(surv.st[r == r[i]])
+		dono[i] <- sum(epita[r >= r[i]])
+	}
+	risk <- d/dono
+	risk1 <- d/dono^{	2}
+	culrisk1 <- culrisk <- rep(0, n)
+	for(i in 1:n) {
+		culrisk[i] <- sum(unique(risk[r <= r[i]]))
+		culrisk1[i] <- sum(unique(risk1[r <= r[i]]))
+	}
+	lik <- sum((ita - log(dono)) * surv.st)
+	return(lik)
+}

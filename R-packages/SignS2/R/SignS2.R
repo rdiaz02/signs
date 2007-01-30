@@ -10,7 +10,7 @@ require(survival)
 require(imagemap)
 
 imClose <- function (im) {
-.    ## prevent all the "Closing PNG device ..."
+    ## prevent all the "Closing PNG device ..."
     dev.off(im$Device)
 }
 
@@ -18,8 +18,15 @@ imClose <- function (im) {
 tauBestP <- function(x, time, event, thres = c(0, 1),
                      epi = 5e-06, thresGrid = 6, 
                      maxiter = 5000, checkEvery = 50,
-                     nfold = 10) {
+                     nfold = 10, fitWithBest = TRUE) {
     ## allows early stopping, but therefore increases communicationg overhead
+
+    thresGrid <- 6 ## number of values of thres tried;
+    ## you can change this, but then be sure to change the "60" below
+    ## in the calls to clusterApply
+
+    ## everything is carefully chosen to use 60 slaves (or more).
+    
     if((!is.vector(time)) | (!is.vector(event)))
         stop("Time and event should be vectors")
     n <- length(time)
@@ -60,15 +67,13 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
     t.r1 <-
         unix.time(
                   clusterOutput <-
-                  clusterApplyLB(TheCluster, 1:60,
+                  clusterApply(TheCluster, 1:60,
                                  function(x) tgd1InternalSnow()))
     cat("\n \n      First run took ", t.r1[3], " seconds\n\n")
 
-##    browser()
     tmp.cvpl <- matrix(unlist(clusterOutput),
                       ncol = checkEvery, byrow = TRUE)
 
-##    browser()
     cvpllymtgd <- matrix(NA, nrow = thresGrid, ncol = maxiter)
     ## Set cvpl to NULL to make the stored
     ## and later transmitted object as small as possible
@@ -97,7 +102,6 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
 
         tmp.cvpl <- matrix(unlist(clusterOutput),
                            ncol = checkEvery, byrow = TRUE)
-        ##browser()
         
         for(th in indexThresRunning) {
             cvpllymtgd[th, iter : (iter + checkEvery - 1)] <-
@@ -159,8 +163,12 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
     if(is.na(stepBest)) {
         caughtUserError("An error occured, probably related to numerical problems. Please let us know")
     }
-    tgd.alldata <- tgdTrain(x, time, event, thresBest, epi,
-                          steps = stepBest)
+
+    ## do only if asked for.
+    if(fitWithBest) {
+        tgd.alldata <- tgdTrain(x, time, event, thresBest, epi,
+                                steps = stepBest)
+    } else tgd.alldata <- NA
 
 ## To incorporate ROC, do it here:
     ## train best models for each, and then find ROC, with CV.
@@ -221,7 +229,7 @@ tauBestP.noearly <- function(x, time, event, thres = c(0, 1),
     t.r1 <-
         unix.time(
                   clusterOutput <-
-                  clusterApplyLB(TheCluster, 1:60,
+                  clusterApply(TheCluster, 1:60,
                                  function(x) tgd1InternalSnow()))
     cat("\n \n      First run took ", t.r1[3], " seconds\n\n")
 

@@ -1,0 +1,53 @@
+"patial" <-
+function(x, time, surv.st, k)
+{
+	### program automatically centers and standardizes predictors.
+	### x: n*m predictor matrix, with m predictors.
+	### time: survival time for n observations.
+	### surv.st: censoring status for n observations.
+	### k: number of output PCR components.
+	### program output k PCR components in comp
+	### each PCR's corresponding coefficients output are in coef
+	
+	x <- as.matrix(x)
+	nm <- dim(x)
+	n <- nm[1]
+	m <- nm[2]
+	ti <- matrix(0, n, k)
+	beta <- matrix(0, m, k)
+	V2 <- matrix(0, n, m)
+	one <- rep(1, n)
+	para <- matrix(0, m, k)
+	coef <- matrix(0, m, k)
+	meanx <- drop(one %*% x)/n
+	x <- scale(x, meanx, FALSE)
+	V1 <- x
+	space1 <- NULL
+	for(i in 1:k) {
+		normx <- sqrt(drop(one %*% (V1^2)))
+		for(j in 1:m) {
+			fit <- coxph(Surv(time, surv.st) ~ cbind(space1, V1[, j]))
+			sdf <- fit$coefficients[i]
+			names(sdf) <- NULL
+			beta[j, i] <- (sdf * normx[j])/sum(normx)
+			ti[, i] <- ti[, i] + beta[j, i] * V1[, j]
+		}
+		if(i == 1)
+			coef[, i] <- beta[, i]
+		else coef[, i] <- beta[, i] - coef[, 1:(i - 1)] %*% t(t(beta[, i]) %*% para[, 1:(i - 1)])
+		space1 <- cbind(space1, ti[, i])
+		for(j in 1:m) {
+			fit <- lm(V1[, j] ~ ti[, i] - 1)
+			V2[, j] <- fit$residuals
+			para[j, i] <- fit$coefficients
+		}
+		names(para) <- NULL
+		V1 <- V2
+		cat("loop=", i, "\n")
+	}
+	list(comp = ti, coef = coef)
+}
+
+
+
+
