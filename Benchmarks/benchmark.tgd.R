@@ -150,3 +150,7 @@ paral.dlbcl.subs.ne <- sapply(rep(c(160, 80, 40, 20), 5),
                          function(x) fParal("dlbcl", arrays = x, genes =3500, checkEvery = 50001))
 paral.dlbcl.gene.ne <- sapply(rep(c(7000, 3500, 1750, 875), 5),
                          function(x) fParal("dlbcl", arrays = 40, genes = x, checkEvery = 50001))
+
+
+
+paral.aml <- replicate(nreps, fParal("aml", checkEvery = 1000))

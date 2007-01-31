@@ -35,7 +35,21 @@ def launchAll(test, lusers, samples):
 
 
 
+def writeFile(testout, name):
+    fout = open(name, mode = 'w')
+    for result in testout:
+        fout.write(str(result))
+        fout.write('\t')
+    fout.close()
+    
 
-ta = launchTest('test1b', 2, 3)    
 
 taa = launchAll('test1b', (1, 2), 3)
+
+writeFile(taa, 'test1out.txt')
+
+
+fout = open('fout.txt', mode = 'w')
+fout.writelines(str(taa))
+fout.flush()
+fout.close()
