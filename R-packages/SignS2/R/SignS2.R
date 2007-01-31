@@ -14,7 +14,6 @@ imClose <- function (im) {
     dev.off(im$Device)
 }
 
-
 tauBestP <- function(x, time, event, thres = c(0, 1),
                      epi = 5e-06, thresGrid = 6, 
                      maxiter = 5000, checkEvery = 50,
@@ -36,6 +35,15 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
     clusterParams <- expand.grid(1:nfold, thresS)
     totalProcs <- dim(clusterParams)[1]
 
+
+    if(checkEvery >= maxiter) {
+        print("WARNING: checkEvery >= maxiter. Early stopping disabled.")
+        checkEvery <- maxiter
+        earlyStop <- FALSE
+    } else {
+        earlyStop <- TRUE
+    }
+    
     xTheCluster <<- x
     tTheCluster <<- time
     eTheCluster <<- event
@@ -81,16 +89,22 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
     for(th in 1:thresGrid) {
         cvpllymtgd[th, iter : (iter + checkEvery - 1)] <-
             apply(tmp.cvpl[clusterParams[, 2] == thresS[th], ], 2, sum)
-    }        
+    }
+    
     ## I do not do anything with the pscore returned. They are not used
     ## anywhere else.
 
-    anyStillRunning <- TRUE
-    runIts <- rep(1, 60)
-    indexThresRunning <- 1:thresGrid
-    
-    iter <- iter + checkEvery
-    while(anyStillRunning) {
+    if (!earlyStop) {
+        anyStillRunning <- FALSE
+        cvpl.mat <- cvpllymtgd/nfold
+    } else {
+        anyStillRunning <- TRUE
+        runIts <- rep(1, 60)
+        indexThresRunning <- 1:thresGrid
+        iter <- iter + checkEvery
+    }
+        
+    while(anyStillRunning) { ## we only enter here if earlyStop
 
         t.r3 <-
             unix.time(
@@ -153,7 +167,8 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
                length(indexThresRunning)) stop("oops, should not be here [21]")
         } else anyStillRunning <- FALSE 
         if( (iter + checkEvery - 1) > maxiter) anyStillRunning <- FALSE
-    }
+    } ## closes while(stillRunning)
+    
     ## allow for possibl of several minima
     tmp <- which(cvpl.mat == min(cvpl.mat, na.rm = TRUE), arr.ind = TRUE)
     tmp <- tmp[nrow(tmp), ]
@@ -180,7 +195,6 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
                 tgd.alldata = tgd.alldata,
                 thres.loc = tmp[1]))
 }
-
 
 
 tauBestP.noearly <- function(x, time, event, thres = c(0, 1),

@@ -40,13 +40,9 @@ load("benchmark.data.sets.RData")
 
 source("gd1.R")
 
-library(SignS)
-
-
-
 
 fSeq <- function(dataset, epi = 5e-6,
-                 maxstep = 10000,
+                 maxstep = 5000,
                  nfold = 10,
                  arrays = NULL,
                  genes = NULL) {
@@ -79,8 +75,34 @@ fSeq <- function(dataset, epi = 5e-6,
 
 
 
+
+
+nreps <- 5
+
+serial.aml <- replicate(nreps, fSeq("aml"))
+serial.dlbcl <- replicate(nreps, fSeq("dlbcl"))
+serial.breast <- replicate(nreps, fSeq("breast"))
+
+serial.dlbcl.subs <- sapply(rep(c(160, 80, 40, 20), 5),
+                         function(x) fSeq("dlbcl", arrays = x, genes =3500))
+serial.dlbcl.gene <- sapply(rep(c(7000, 3500, 1750, 875), 5),
+                         function(x) fSeq("dlbcl", arrays = 40, genes = x))
+
+
+
+load("benchmark.data.sets.RData")
+library(SignS2)
+library(Rmpi)
+library(snow)
+TheCluster <- makeCluster(60, "MPI")
+clusterExport(TheCluster, c("lik1", "tgd1InternalSnow",
+                            "tgdTrain", "tgdPieceInternalSnow"))
+
+
+
 fParal <- function(dataset, epi = 5e-6,
-                   maxstep = 10000,
+                   maxstep = 5000,
+                   checkEvery = 50,
                    nfold = 10,
                    arrays = NULL,
                    genes = NULL) {
@@ -101,25 +123,14 @@ fParal <- function(dataset, epi = 5e-6,
     walltime <- unix.time({
         tmp <- tauBestP(covar, survtime, status, thres = c(0, 1),
                         epi = epi, maxiter = maxstep, nfold = nfold,
-                        thresGrid = 6, checkEvery = 50,
+                        thresGrid = 6, checkEvery = checkEvery,
                         fitWithBest = FALSE)
         })[3]
 
     return(walltime)
 }
 
-
-nreps <- 5
-
-serial.aml <- replicate(nreps, fSeq("aml"))
-serial.dlbcl <- replicate(nreps, fSeq("dlbcl"))
-serial.breast <- replicate(nreps, fSeq("breast"))
-
-serial.dlbcl.subs <- sapply(rep(c(160, 80, 40, 20), 5),
-                         function(x) fSeq("dlbcl", arrays = x, genes =3500))
-serial.dlbcl.gene <- sapply(rep(c(7000, 3500, 1750, 875), 5),
-                         function(x) fSeq("dlbcl", arrays = 40, genes = x))
-
+nreps <- 2
 
 paral.aml <- replicate(nreps, fParal("aml"))
 paral.dlbcl <- replicate(nreps, fParal("dlbcl"))
@@ -129,3 +140,13 @@ paral.dlbcl.subs <- sapply(rep(c(160, 80, 40, 20), 5),
                          function(x) fParal("dlbcl", arrays = x, genes =3500))
 paral.dlbcl.gene <- sapply(rep(c(7000, 3500, 1750, 875), 5),
                          function(x) fParal("dlbcl", arrays = 40, genes = x))
+
+## no early stopping
+paral.aml.ne <- replicate(nreps, fParal("aml", checkEvery = 50001))
+paral.dlbcl.ne <- replicate(nreps, fParal("dlbcl", checkEvery = 50001))
+paral.breast.ne <- replicate(nreps, fParal("breast", checkEvery = 50001))
+
+paral.dlbcl.subs.ne <- sapply(rep(c(160, 80, 40, 20), 5),
+                         function(x) fParal("dlbcl", arrays = x, genes =3500, checkEvery = 50001))
+paral.dlbcl.gene.ne <- sapply(rep(c(7000, 3500, 1750, 875), 5),
+                         function(x) fParal("dlbcl", arrays = 40, genes = x, checkEvery = 50001))
