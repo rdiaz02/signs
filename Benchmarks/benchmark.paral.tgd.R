@@ -32,61 +32,6 @@
 ## save(file = "benchmark.data.sets.RData", list = ls())
 
 
-
-
-
-
-load("benchmark.data.sets.RData")
-
-source("./Gui.Li.original/gd1.R")
-
-
-fSeq <- function(dataset, epi = 5e-6,
-                 maxstep = 5000,
-                 nfold = 10,
-                 arrays = NULL,
-                 genes = NULL) {
-    print(gc())
-    covar    <- t(get(paste(dataset, "covar", sep = "."))) ## they use subjects in rows
-    survtime <- get(paste(dataset, "surv", sep = "."))
-    status   <- get(paste(dataset, "event", sep = "."))
-
-    if(!is.null(arrays)) {
-        ## No, dlbcl shows no index trend
-        covar <- covar[1:arrays, ]
-        survtime <- survtime[1:arrays]
-        status <- status[1:arrays]
-    }
-    if(!is.null(genes)) covar <- covar[, 1:genes]
-
-    
-    thresS <- seq(from = 0, to = 1, length.out = 6)
-
-    cat("\n\n Running one iteration \n\n")
-    walltime <- unix.time({
-        for(ths in thresS) {
-            tmp <- gdcvpl(covar, survtime, status, ths,
-                          epi = epi, maxstep = maxstep, nfold = nfold)
-        }
-    })[3]
-
-    return(walltime)
-}
-
-
-nreps <- 5
-
-serial.aml <- replicate(nreps, fSeq("aml"))
-serial.dlbcl <- replicate(nreps, fSeq("dlbcl"))
-serial.breast <- replicate(nreps, fSeq("breast"))
-
-serial.dlbcl.subs <- sapply(rep(c(160, 80, 40, 20), 5),
-                         function(x) fSeq("dlbcl", arrays = x, genes =3500))
-serial.dlbcl.gene <- sapply(rep(c(7000, 3500, 1750, 875), 5),
-                         function(x) fSeq("dlbcl", arrays = 40, genes = x))
-
-
-
 load("benchmark.data.sets.RData")
 library(SignS2)
 library(Rmpi)
