@@ -4,8 +4,6 @@ NUM_SAMPLES = 5
 
 NUM_USERS = (1, 2, 10, 20)
 
-TESTS = ('test1b')
-
 
 def launchUTests(test, users):
     t = [-99999 for i in range(users)]
@@ -43,13 +41,9 @@ def writeFile(testout, name):
     fout.close()
     
 
+breast = launchAll('breast', NUM_USERS, NUM_SAMPLES)
+writeFile(breast, 'breast.web.bnchmk.txt')
 
-taa = launchAll('test1b', (1, 2), 3)
+dlbcl = launchAll('dlbcl', NUM_USERS, NUM_SAMPLES)
+writeFile(breast, 'dlbcl.web.bnchmk.txt')
 
-writeFile(taa, 'test1out.txt')
-
-
-fout = open('fout.txt', mode = 'w')
-fout.writelines(str(taa))
-fout.flush()
-fout.close()

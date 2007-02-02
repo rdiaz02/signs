@@ -44,7 +44,7 @@ clusterExport(TheCluster, c("lik1", "tgd1InternalSnow",
 
 fParal <- function(dataset, epi = 5e-6,
                    maxstep = 5000,
-                   checkEvery = 1000,
+                   checkEvery = 50000,
                    nfold = 10,
                    arrays = NULL,
                    genes = NULL) {
@@ -75,35 +75,66 @@ fParal <- function(dataset, epi = 5e-6,
 nreps <- 5
 
 
-## what is the best checkEvery?
-paral.aml.100 <- replicate(nreps, fParal("aml", checkEvery = 100))
-paral.dlbcl.100 <- replicate(nreps, fParal("dlbcl", checkEvery = 100))
-paral.breast.100 <- replicate(nreps, fParal("breast", checkEvery = 100))
-paral.aml.500 <- replicate(nreps, fParal("aml", checkEvery = 500))
-paral.dlbcl.500 <- replicate(nreps, fParal("dlbcl", checkEvery = 500))
-paral.breast.500 <- replicate(nreps, fParal("breast", checkEvery = 500))
-paral.aml.1000 <- replicate(nreps, fParal("aml", checkEvery = 1000))
-paral.dlbcl.1000 <- replicate(nreps, fParal("dlbcl", checkEvery = 1000))
-paral.breast.1000 <- replicate(nreps, fParal("breast", checkEvery = 1000))
-paral.aml.ne <- replicate(nreps, fParal("aml", checkEvery = 50001))
-paral.dlbcl.ne <- replicate(nreps, fParal("dlbcl", checkEvery = 50001))
-paral.breast.ne <- replicate(nreps, fParal("breast", checkEvery = 50001))
+
+s.20.40 <- replicate(nreps, fParal("dlbcl", arrays = 20, genes = 40))
+s.40.40 <- replicate(nreps, fParal("dlbcl", arrays = 40, genes = 40))
+s.80.40 <- replicate(nreps, fParal("dlbcl", arrays = 80, genes = 40))
+s.100.40 <- replicate(nreps, fParal("dlbcl", arrays = 100, genes = 40))
+s.120.40 <- replicate(nreps, fParal("dlbcl", arrays = 120, genes = 40))
+    
+    
+s.40.20 <- replicate(nreps, fParal("dlbcl", arrays = 40, genes = 20))
+s.40.80 <- replicate(nreps, fParal("dlbcl", arrays = 40, genes = 80))
+s.40.160 <- replicate(nreps, fParal("dlbcl", arrays = 40, genes = 160))
+s.40.320 <- replicate(nreps, fParal("dlbcl", arrays = 40, genes = 320))
+
+save(list = ls(),
+         file = "parallel.RData")
+
+
+
+### Now, do the above with different number of slaves per node:
+## 2, 6, 20, 60 (12 ?)
 
 
 
 
 
-paral.dlbcl.subs <- sapply(rep(c(160, 80, 40, 20), 5),
-                         function(x) fParal("dlbcl", arrays = x, genes =3500))
-paral.dlbcl.gene <- sapply(rep(c(7000, 3500, 1750, 875), 5),
-                         function(x) fParal("dlbcl", arrays = 40, genes = x))
-
-
-paral.dlbcl.subs.ne <- sapply(rep(c(160, 80, 40, 20), 5),
-                         function(x) fParal("dlbcl", arrays = x, genes =3500, checkEvery = 50001))
-paral.dlbcl.gene.ne <- sapply(rep(c(7000, 3500, 1750, 875), 5),
-                         function(x) fParal("dlbcl", arrays = 40, genes = x, checkEvery = 50001))
 
 
 
-paral.aml <- replicate(nreps, fParal("aml", checkEvery = 1000))
+
+
+
+## ## what is the best checkEvery?
+## paral.aml.100 <- replicate(nreps, fParal("aml", checkEvery = 100))
+## paral.dlbcl.100 <- replicate(nreps, fParal("dlbcl", checkEvery = 100))
+## paral.breast.100 <- replicate(nreps, fParal("breast", checkEvery = 100))
+## paral.aml.500 <- replicate(nreps, fParal("aml", checkEvery = 500))
+## paral.dlbcl.500 <- replicate(nreps, fParal("dlbcl", checkEvery = 500))
+## paral.breast.500 <- replicate(nreps, fParal("breast", checkEvery = 500))
+## paral.aml.1000 <- replicate(nreps, fParal("aml", checkEvery = 1000))
+## paral.dlbcl.1000 <- replicate(nreps, fParal("dlbcl", checkEvery = 1000))
+## paral.breast.1000 <- replicate(nreps, fParal("breast", checkEvery = 1000))
+## paral.aml.ne <- replicate(nreps, fParal("aml", checkEvery = 50001))
+## paral.dlbcl.ne <- replicate(nreps, fParal("dlbcl", checkEvery = 50001))
+## paral.breast.ne <- replicate(nreps, fParal("breast", checkEvery = 50001))
+
+
+
+
+
+## paral.dlbcl.subs <- sapply(rep(c(160, 80, 40, 20), 5),
+##                          function(x) fParal("dlbcl", arrays = x, genes =3500))
+## paral.dlbcl.gene <- sapply(rep(c(7000, 3500, 1750, 875), 5),
+##                          function(x) fParal("dlbcl", arrays = 40, genes = x))
+
+
+## paral.dlbcl.subs.ne <- sapply(rep(c(160, 80, 40, 20), 5),
+##                          function(x) fParal("dlbcl", arrays = x, genes =3500, checkEvery = 50001))
+## paral.dlbcl.gene.ne <- sapply(rep(c(7000, 3500, 1750, 875), 5),
+##                          function(x) fParal("dlbcl", arrays = 40, genes = x, checkEvery = 50001))
+
+
+
+## paral.aml <- replicate(nreps, fParal("aml", checkEvery = 1000))

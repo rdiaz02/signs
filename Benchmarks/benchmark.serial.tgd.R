@@ -77,32 +77,46 @@ fSeq <- function(dataset, epi = 5e-6,
 
 nreps <- 5
 
-
 if(doone == 1) {
-    serial.aml <- replicate(nreps, fSeq("aml"))
-    serial.dlbcl <- replicate(nreps, fSeq("dlbcl"))
-    serial.breast <- replicate(nreps, fSeq("breast"))
-    save(serial.aml, serial.dlbcl, serial.breast,
-         file = "serial.single.RData")
+    s.20.40 <- replicate(nreps, fSeq("dlbcl", arrays = 20, genes = 40))
+    s.40.40 <- replicate(nreps, fSeq("dlbcl", arrays = 40, genes = 40))
+    s.80.40 <- replicate(nreps, fSeq("dlbcl", arrays = 80, genes = 40))
+    s.100.40 <- replicate(nreps, fSeq("dlbcl", arrays = 100, genes = 40))
+    s.120.40 <- replicate(nreps, fSeq("dlbcl", arrays = 120, genes = 40))
+    save(list = ls(),
+         file = "serial.arrays.RData")
 }
-
+    
 if(doone == 0) {
-    serial.dlbcl.subs <- sapply(rep(c(160, 80, 40, 20), 5),
-                                function(x) fSeq("dlbcl", arrays = x, genes =3500))
-    serial.dlbcl.gene <- sapply(rep(c(7000, 3500, 1750, 875), 5),
-                                function(x) fSeq("dlbcl", arrays = 40, genes = x))
-
-    save(serial.dlbcl.subs, serial.dlbcl.gene,
-         file = "serial.many.RData")
+    
+    s.40.20 <- replicate(nreps, fSeq("dlbcl", arrays = 40, genes = 20))
+    s.40.80 <- replicate(nreps, fSeq("dlbcl", arrays = 40, genes = 80))
+    s.40.160 <- replicate(nreps, fSeq("dlbcl", arrays = 40, genes = 160))
+    s.40.320 <- replicate(nreps, fSeq("dlbcl", arrays = 40, genes = 320))
+    save(list = ls(),
+         file = "serial.genes.RData")
 }
 
 
 
+##  The following are undoable.
 
-### some trial runs:
+## if(doone == 1) {
+##     serial.aml <- replicate(nreps, fSeq("aml"))
+##     serial.dlbcl <- replicate(nreps, fSeq("dlbcl"))
+##     serial.breast <- replicate(nreps, fSeq("breast"))
+##     save(serial.aml, serial.dlbcl, serial.breast,
+##          file = "serial.single.RData")
+## }
 
-unix.time(fSeq("dlbcl", arrays = 10, genes = 20))
-unix.time(fSeq("dlbcl", arrays = 20, genes = 20)) ## 700 segundos!!
-unix.time(fSeq("dlbcl", arrays = 50, genes = 20)) ## 1719
-unix.time(fSeq("dlbcl", arrays = 20, genes = 40))
-unix.time(fSeq("dlbcl", arrays = 10, genes = 200))
+## if(doone == 0) {
+##     serial.dlbcl.subs <- sapply(rep(c(160, 80, 40, 20), 5),
+##                                 function(x) fSeq("dlbcl", arrays = x, genes =3500))
+##     serial.dlbcl.gene <- sapply(rep(c(7000, 3500, 1750, 875), 5),
+##                                 function(x) fSeq("dlbcl", arrays = 40, genes = x))
+
+##     save(serial.dlbcl.subs, serial.dlbcl.gene,
+##          file = "serial.many.RData")
+## }
+
+

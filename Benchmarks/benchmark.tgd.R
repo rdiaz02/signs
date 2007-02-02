@@ -115,7 +115,8 @@ fParal <- function(dataset, epi = 5e-6,
         status <- status[1:arrays]
     }
     if(!is.null(genes)) covar <- covar[, 1:genes]
-
+    covar <- scale(covar, center = TRUE, scale = TRUE)
+    
     cat("\n\n Running one iteration \n\n")
     walltime <- unix.time({
         tmp <- tauBestP(covar, survtime, status, thres = c(0, 1),

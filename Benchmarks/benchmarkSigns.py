@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-15 -*-
 """
-Benchmark SignS web application.
+Benchmark Signs2 web application.
 
 
 """
@@ -67,7 +67,7 @@ class Signs(FunkLoadTestCase):
     def setUp(self):
         """Setting up test."""
         self.logd("setUp")
-        self.server_url = 'http://signs.bioinfo.cnio.es'
+        self.server_url = 'http://signs2.bioinfo.cnio.es'
         ##self.server_url = self.conf_get('main', 'url')
 
     def test1(self):
@@ -116,6 +116,59 @@ class Signs(FunkLoadTestCase):
         end_time = time.time()
         duration = end_time - start_time
         print duration
+
+
+    def breast(self):
+        server_url = self.server_url
+
+        self.get(server_url + "/",
+            description="Get /")
+
+        start_time = time.time()
+        self.post(server_url + "/cgi-bin/signsR.cgi", params=[
+            ['covariate', Upload("./DataSets/breast.covar.txt")],
+            ['time', Upload("./DataSets/breast.surv.txt")],
+            ['event', Upload("./DataSets/breast.event.txt")],
+            ['methodSurv', 'FCMS'],
+            ['Minp', '0.1'],
+            ['MaxSize', '100'],
+            ['MinSize', '10'],
+            ['MinCor', '0.5'],
+            ['organism', 'None'],
+            ['idtype', 'None']],
+            description="Post /cgi-bin/signsR.cgi")
+        common_part_bench(self)
+
+        end_time = time.time()
+        duration = end_time - start_time
+        print duration
+
+
+    def dlbcl(self):
+        server_url = self.server_url
+
+        self.get(server_url + "/",
+            description="Get /")
+
+        start_time = time.time()
+        self.post(server_url + "/cgi-bin/signsR.cgi", params=[
+            ['covariate', Upload("./DataSets/dlbcl.160.covar.txt")],
+            ['time', Upload("./DataSets/dlbcl.160.surv.txt")],
+            ['event', Upload("./DataSets/dlbcl.160.event.txt")],
+            ['methodSurv', 'FCMS'],
+            ['Minp', '0.1'],
+            ['MaxSize', '100'],
+            ['MinSize', '10'],
+            ['MinCor', '0.5'],
+            ['organism', 'None'],
+            ['idtype', 'None']],
+            description="Post /cgi-bin/signsR.cgi")
+        common_part_bench(self)
+
+        end_time = time.time()
+        duration = end_time - start_time
+        print duration
+
 
     def tearDown(self):
         """Setting up test."""
