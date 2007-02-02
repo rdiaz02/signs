@@ -145,7 +145,7 @@ def extract_for_PaLS_from_Signs(file_in, file_out, all_runs = True):
 
 def printPalsURL(newDir,
                  tmpDir,
-                 application_url = "http://signs.bioinfo.cnio.es",
+                 application_url = "http://signs2.bioinfo.cnio.es",
                  f1 = "Selected.genes.txt",
                  f2 = "Selected.and.CV.selected.txt",
                  s1 = "genes selected in all components in main run",
@@ -238,7 +238,7 @@ def relaunchCGI():
     print '</head> <body>'
     print '<p> This is an autorefreshing page; your results will eventually be displayed here.\n'
     print 'If your browser does not autorefresh, the results will be kept for five days at</p>'
-    print '<p><a href="' + getBaseURL() + '?newDir=' + newDir + '">', 'http://signs.bioinfo.cnio.es/tmp/'+ newDir + '/results.html</a>.' 
+    print '<p><a href="' + getBaseURL() + '?newDir=' + newDir + '">', 'http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html</a>.' 
     print '</p> </body> </html>'
     
 
@@ -285,7 +285,7 @@ def printOKRun():
         outf.write('<IMG BORDER="0" SRC="ErrorFigure.png">')
         outf.write("<br /><br /> <hr>")
         outf.write("<pre>")
-        outf.write('<br /><br /><h2> Results <a href="http://signs.bioinfo.cnio.es/help/signs-help.html#outputText">(help)</a></h2> \n')
+        outf.write('<br /><br /><h2> Results <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outputText">(help)</a></h2> \n')
         outf.write("<br /><br /> <hr>")
         outf.write(cgi.escape(resultsFile))
         outf.write("</pre>")
@@ -299,7 +299,7 @@ def printOKRun():
 
         if (methodUsed == 'TGD') or (methodUsed == 'TGD\n'):
             outf.write("<h2> Results using the Threshold Gradient Descent method of Li and Gui</h2><br/ >\n")
-            outf.write('<h2>Survival curves using scores from final model <a href="http://signs.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h2> \n')
+            outf.write('<h2>Survival curves using scores from final model <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h2> \n')
             outf.write('<h3>Splitting scores in two groups</h3>')
             outf.write('<IMG BORDER="0" SRC="kmplot-honest.png">')
             outf.write('<IMG BORDER="0" SRC="kmplot-overfitt.png">')
@@ -312,24 +312,24 @@ def printOKRun():
             outf.write('consequencues of overfitting and not doing cross-validation.</p>')
 
             if os.path.exists(tmpDir + "/usevalidation"):
-                outf.write('<h2>Survival curves for validation data <a href="http://signs.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h2> \n')
+                outf.write('<h2>Survival curves for validation data <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h2> \n')
                 outf.write('<h3>Splitting scores in two groups</h3>')
                 outf.write('<IMG BORDER="0" SRC="kmplot-validation.png">')
                 outf.write('<h3>Splitting scores in four groups</h3>')
                 outf.write('<IMG BORDER="0" SRC="kmplot4-validation.png">')
 
             outf.write('<br /> <br /><h2>Cross-validated partial likelihood for different values of the model parameters')
-            outf.write('<a href="http://signs.bioinfo.cnio.es/help/signs-help.html#out.tgd">(help)</a></h2> \n')
+            outf.write('<a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#out.tgd">(help)</a></h2> \n')
             outf.write('<IMG BORDER="0" SRC="cvpl.png">')
             outf.write('<p>(Use this plot to asses if the chosen values of maximum iterations and &#8710;&#951; worked appropriately.</p>')
 
             outf.write('<br /> <br /><h2>Coefficients of genes (at best cross-validated partial likelihood) for different thresholds ')
-            outf.write('<a href="http://signs.bioinfo.cnio.es/help/signs-help.html#out.tgd">(help)</a></h2> \n')
+            outf.write('<a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#out.tgd">(help)</a></h2> \n')
             outf.write('<IMG BORDER="0" SRC="fstdgrun.png">')
 
             outf.write("<br /><br /> <hr>")
             outf.write("<pre>")
-            outf.write('<br /><br /><h2> Results <a href="http://signs.bioinfo.cnio.es/help/signs-help.html#outputText">(help)</a></h2> \n')
+            outf.write('<br /><br /><h2> Results <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outputText">(help)</a></h2> \n')
             outf.write(cgi.escape(resultsFile))
             outf.write("</pre>")
 
@@ -440,7 +440,7 @@ def printOKRun():
             outf.write("<br /><br /> <hr>")
             outf.write(resultsFile)
 ##            outf.write("<pre>")
-##            outf.write('<br /><br /><h2> Results <a href="http://signs.bioinfo.cnio.es/help/signs-help.html#outputText">(help)</a></h2> \n')
+##            outf.write('<br /><br /><h2> Results <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outputText">(help)</a></h2> \n')
 ##            outf.write(cgi.escape(resultsFile))
 ##            outf.write("</pre>")
 
@@ -568,7 +568,7 @@ if re.search(r'[^0-9]', str(newDir)):
     sys.exit()
     
 redirectLoc = "/tmp/" + newDir
-tmpDir = "/http/signs/www/tmp/" + newDir
+tmpDir = "/http/signs2/www/tmp/" + newDir
 
 if not os.path.isdir(tmpDir):
     commonOutput()
@@ -583,7 +583,7 @@ if not os.path.isdir(tmpDir):
 ## No need to reopen files or check anything else. Return url with results
 ## and bail out.
 if os.path.exists(tmpDir + "/natural.death.pid.txt") or os.path.exists(tmpDir + "/killed.pid.txt"):
-    print 'Location: http://signs.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
+    print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
     sys.exit()
 
 ## No, we were not done. Need to examine R output
@@ -616,10 +616,10 @@ if os.path.exists(tmpDir + "/pid.txt"):
         os.rename(tmpDir + '/pid.txt', tmpDir + '/killed.pid.txt')
         os.remove(tmpDir + '/f1.R')
         try:
-            os.system("rm /http/signs/www/R.running.procs/R." + newDir + "*")
+            os.system("rm /http/signs2/www/R.running.procs/R." + newDir + "*")
         except:
             None
-        print 'Location: http://signs.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
+        print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
 ##                chkmpi = os.system('/http/mpi.log/adhocCheckRmpi.py Signs&')
         sys.exit()
 
@@ -637,10 +637,10 @@ if errorRun > 0:
     except:
         None
     try:
-        os.system("rm /http/signs/www/R.running.procs/R." + newDir + "*")
+        os.system("rm /http/signs2/www/R.running.procs/R." + newDir + "*")
     except:
         None
-    print 'Location: http://signs.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
+    print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
 
 
 elif finishedOK > 0:
@@ -657,10 +657,10 @@ elif finishedOK > 0:
 ##    os.remove(tmpDir + '/f1.R')
     ##    chkmpi = os.system('/http/mpi.log/adhocCheckRmpi.py Signs&')
     try:
-        os.system("rm /http/signs/www/R.running.procs/R." + newDir + "*")
+        os.system("rm /http/signs2/www/R.running.procs/R." + newDir + "*")
     except:
         None
-    print 'Location: http://signs.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
+    print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
 
     
 else:
@@ -682,9 +682,9 @@ else:
 #       os.rename(tmpDir + '/pid.txt', tmpDir + '/killed.pid.txt')
 #             os.remove(tmpDir + '/f1.R')
 #             try:
-#                 os.remove("/http/signs/www/R.running.procs/R." + newDir)
+#                 os.remove("/http/signs2/www/R.running.procs/R." + newDir)
 #             finally:
-#                 print 'Location: http://signs.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
+#                 print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
 #                 chkmpi = os.system('/http/mpi.log/adhocCheckRmpi.py SignS&')
 #                 sys.exit()
 
@@ -694,9 +694,9 @@ else:
 #     os.remove(tmpDir + '/f1.R')
 #     chkmpi = os.system('/http/mpi.log/adhocCheckRmpi.py SignS&')
 #     try:
-#         os.remove("/http/signs/www/R.running.procs/R." + newDir)
+#         os.remove("/http/signs2/www/R.running.procs/R." + newDir)
 #     finally:
-#         print 'Location: http://signs.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
+#         print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
 
 # elif finishedOK > 0:
 #     printOKRun()
@@ -704,9 +704,9 @@ else:
 #     os.remove(tmpDir + '/f1.R')
 # #    chkmpi = os.system('/http/mpi.log/adhocCheckRmpi.py SignS&')
 #     try:
-#         os.remove("/http/signs/www/R.running.procs/R." + newDir)
+#         os.remove("/http/signs2/www/R.running.procs/R." + newDir)
 #     finally:
-#         print 'Location: http://signs.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
+#         print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
     
 # else:
 #     ## we only end up here if: we were not done in a previous run AND no process was overtime 

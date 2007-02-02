@@ -16,7 +16,7 @@ imClose <- function (im) {
 
 tauBestP <- function(x, time, event, thres = c(0, 1),
                      epi = 5e-06, thresGrid = 6, 
-                     maxiter = 5000, checkEvery = 50,
+                     maxiter = 5000, checkEvery = 50000, ## we do not want early stopping
                      nfold = 10, fitWithBest = TRUE) {
     ## allows early stopping, but therefore increases communicationg overhead
 

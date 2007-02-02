@@ -260,9 +260,9 @@ def radioUpload(fieldName, acceptedValues):
 
 ## Deleting tmp directories older than MAX_time
 currentTime = time.time()
-currentTmp = dircache.listdir("/http/signs/www/tmp")
+currentTmp = dircache.listdir("/http/signs2/www/tmp")
 for directory in currentTmp:
-    tmpS = "/http/signs/www/tmp/" + directory
+    tmpS = "/http/signs2/www/tmp/" + directory
     if (currentTime - os.path.getmtime(tmpS)) > MAX_time:
         shutil.rmtree(tmpS)
 
@@ -270,7 +270,7 @@ for directory in currentTmp:
 ### Creating temporal directories
 newDir = str(whrandom.randint(1, 10000)) + str(os.getpid()) + str(whrandom.randint(1, 100000)) + str(int(currentTime)) + str(whrandom.randint(1, 10000))
 redirectLoc = "/tmp/" + newDir
-tmpDir = "/http/signs/www/tmp/" + newDir
+tmpDir = "/http/signs2/www/tmp/" + newDir
 os.mkdir(tmpDir)
 os.chmod(tmpDir, 0700)
 
@@ -414,14 +414,14 @@ fileNamesBrowser.close()
 
 
 ## First, delete any R file left (e.g., from killing procs, etc).
-RrunningFiles = dircache.listdir("/http/signs/www/R.running.procs")
+RrunningFiles = dircache.listdir("/http/signs2/www/R.running.procs")
 for Rtouchfile in RrunningFiles:
-    tmpS = "/http/signs/www/R.running.procs/" + Rtouchfile
+    tmpS = "/http/signs2/www/R.running.procs/" + Rtouchfile
     if (currentTime - os.path.getmtime(tmpS)) > R_MAX_time:
         os.remove(tmpS)
 
 ## Now, verify any processes left
-numRsigns = len(glob.glob("/http/signs/www/R.running.procs/R.*@*%*"))
+numRsigns = len(glob.glob("/http/signs2/www/R.running.procs/R.*@*%*"))
 if numRsigns > MAX_signs:
     shutil.rmtree(tmpDir)
     commonOutput()
@@ -503,9 +503,9 @@ if fs.has_key('validation'):
 
 ## touch Rout, o.w. checkdone can try to open a non-existing file
 touchRout = os.system("/bin/touch " + tmpDir + "/f1.Rout") 
-touchRrunning = os.system("/bin/touch /http/signs/www/R.running.procs/R." + newDir +
+touchRrunning = os.system("/bin/touch /http/signs2/www/R.running.procs/R." + newDir +
                           "@" + socket.gethostname())
-shutil.copy("/http/signs/cgi/f1.R", tmpDir)
+shutil.copy("/http/signs2/cgi/f1.R", tmpDir)
 ## we add the 2> error.msg because o.w. if we kill R we get a server error as standard
 ## error is sent to the server
 #Rcommand = "cd " + tmpDir + "; " + "/usr/bin/R CMD BATCH --no-restore --no-readline --no-save -q f1.R 2> error.msg &"
@@ -520,7 +520,7 @@ createResultsFile = os.system("/bin/touch " + tmpDir + "/results.txt")
 ## Copy to tmpDir a results.html that redirects to checkdone.cgi
 ## If communication gets broken, there is always a results.html
 ## that will do the right thing.
-shutil.copy("/http/signs/cgi/results-pre.html", tmpDir)
+shutil.copy("/http/signs2/cgi/results-pre.html", tmpDir)
 os.system("cd " + tmpDir + "; /bin/sed 's/sustituyeme/" +
           newDir + "/g' results-pre.html > results.html; rm results-pre.html")
 

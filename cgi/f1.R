@@ -98,7 +98,7 @@ imClose <- function (im) {
 
 png.width <- 500
 png.height <- 500
-png.pointsize <- 12
+png.pointsize <- 10
 png.family = "Helvetica"
 graphDir <- paste(getwd(), "/", sep = "")
 
