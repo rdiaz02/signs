@@ -97,3 +97,12 @@ if(doone == 0) {
 }
 
 
+
+
+### some trial runs:
+
+unix.time(fSeq("dlbcl", arrays = 10, genes = 20))
+unix.time(fSeq("dlbcl", arrays = 20, genes = 20)) ## 700 segundos!!
+unix.time(fSeq("dlbcl", arrays = 50, genes = 20)) ## 1719
+unix.time(fSeq("dlbcl", arrays = 20, genes = 40))
+unix.time(fSeq("dlbcl", arrays = 10, genes = 200))
