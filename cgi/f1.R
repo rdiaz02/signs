@@ -1,17 +1,3 @@
-## ### For testing
-## library(CGIwithR)
-## library(survival)
-## library(combinat)
-## library(MASS)
-## library(R2HTML)
-## graphDir <- getwd()
-## source("/home/ramon/Proyectos/SignS/Rpackage.and.Data/SignS/R/SignS.R")
-
-## library(imagemap)
-## library(GDD)
-## load(".RData")
-
-
 ##############################################
 ##############################################
 ######                              ##########
@@ -22,7 +8,6 @@
 
 rm(list = ls())
 
-##.Last <- function() {cat("\n\n Normal termination\n")}
 
 ## From: http://ace.acadiau.ca/math/ACMMaC/Rmpi/sample.html
 # In case R exits unexpectedly, have it automatically clean up 
@@ -107,18 +92,6 @@ graphDir <- paste(getwd(), "/", sep = "")
 nfold <- 10
 
 
-## maxNodeNumber <- 57
-## currentNode <-
-##     as.numeric(strsplit(system("hostname", intern = TRUE), split = "prot")[[1]][2])
-## if(currentNode <= 25) { ## make it 26 when we have 23 back
-##     mpiHosts <- seq(from = (currentNode * 2) - 2, length = nfold)
-## } else {
-##     h1 <- seq(from = ((currentNode - 1) * 2) - 2, to = maxNodeNumber)
-##     h2 <- seq(from = 0, length = (nfold - length(h1)))
-##     mpiHosts <- c(h1, h2)
-## }
-
-
 ##############################################
 ##############################################
 ######                              ##########
@@ -131,8 +104,6 @@ nfold <- 10
 caughtUserError <- function(message) {
     GDD("ErrorFigure.png", width = 600,
            height = 500, ps = png.pointsize)
-##           pointsize = png.pointsize,
-##           family = png.family)
     plot(x = c(0, 1), y = c(0, 1), 
          type = "n", axes = FALSE, xlab = "", ylab = "")
     box()
@@ -156,8 +127,6 @@ caughtUserError <- function(message) {
 caughtOurError <- function(message) {
     GDD("ErrorFigure.png", width = 600,
            height = 500, ps = png.pointsize)
-#           pointsize = png.pointsize,
-#           family = png.family)
     plot(x = c(0, 1), y = c(0, 1),
          type = "n", axes = FALSE, xlab = "", ylab = "")
     box()
@@ -211,12 +180,6 @@ sink()
 
 
 
-##trylam <- try(
-##              lamSESSION <- scan("lamSuffix", sep = "\t", strip.white = TRUE))
-
-
-
-
 #########################################################
 
 ########   HTML and other utility functions
@@ -234,16 +197,6 @@ cleanHTMLhead <- function(file, title = "", h1 = NULL, append = FALSE) {
 cleanHTMLtail <- function(file, append= TRUE) {
     write("</body></html>", file = file, append = append)
 }
-
-
-## http://idclight.tupinambis.cnio.es/IDClight.prog?idtype=ensembl&id=ENSG000001
-## 56006&internal=1&org=Hs
-
-## donde:
-## * idtype = cnio, affy, clone, acc, ensembl, entrez, ug
-## * id = identificador
-## * internal = 1 (muestra CNIOids) / = 0 (no los muestra)
-## * org = Hs, Mm, Rn
 
 
 idtype <- try(scan("idtype", what = "", n = 1))
@@ -399,7 +352,7 @@ if(any(is.na(Event))) {
 
 if(useValidation == "yes") {
     trytime <- try(
-                   validationTime <- scan("validationtime", sep = "\t", strip.white = TRUE))
+                   validationTime <- scan("validationtime", sep = "\t", strip.white = TRUE, nlines = 1))
     if(class(trytime) == "try-error")
         caughtUserError("The validation time file is not of the appropriate format\n")
     
@@ -407,7 +360,7 @@ if(useValidation == "yes") {
     if(is.na(validationTime[length(validationTime)])) validationTime <- validationTime[-length(validationTime)]
     
     tryevent <- 
-        try(validationEvent <- scan("validationevent", sep = "\t", strip.white = TRUE))
+        try(validationEvent <- scan("validationevent", sep = "\t", strip.white = TRUE, nlines = 1))
     if(class(tryevent) == "try-error")
         caughtUserError("The validation status file is not of the appropriate format\n")
     
@@ -522,8 +475,8 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
     tce <- maxiter %/% checkEvery
     maxiter <- tce * checkEvery
     
-    clusterExport(TheCluster, c("lik1", "tgd1InternalSnow", "tgdTrain", "tgdPieceInternalSnow"))
-
+    clusterExport(TheCluster, c("lik1", "tgd1InternalSnow", "tgdTrain",
+                                "tgdPieceInternalSnow"))
 
     trycode <- try(
                    allDataRun <- tauBestP(xdata, Time, Event,
@@ -552,15 +505,11 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
 
     GDD(file = "kmplot-honest.png", width = png.width,
         height = png.height, ps = png.pointsize)
-#        pointsize = png.pointsize,
-#        family = png.family)
     KM.visualize(cvTGDResults$OOB.scores, Time,
                  Event, ngroups = 2, addmain = NULL) ## Good   ####  Fig 1
     dev.off()
     GDD(file = "kmplot-overfitt.png", width = png.width,
         height = png.height, ps = png.pointsize)
-##        pointsize = png.pointsize,
-##        family = png.family)
     KM.visualize(allDataRun$tgd.alldata$scores, Time,          ####  Fig 2
                  Event, ngroups = 2) ## Overfitt
     dev.off()
@@ -581,15 +530,11 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
 
     GDD(file = "kmplot4-honest.png", width = png.width,
            height = png.height,ps = png.pointsize)
-#           pointsize = png.pointsize,
-#           family = png.family)
     KM.visualize4(cvTGDResults$OOB.scores, Time,
                  Event, ngroups = 2, addmain = NULL) ## Good   ####  Fig 1.4
     dev.off()
     GDD(file = "kmplot4-overfitt.png", width = png.width,
         height = png.height,ps = png.pointsize)
-#        pointsize = png.pointsize,
-#        family = png.family)
     KM.visualize4(allDataRun$tgd.alldata$scores, Time,          ####  Fig 2.4
                  Event, ngroups = 2) ## Overfitt
     dev.off()
@@ -606,15 +551,8 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
     dev.off()
 
 
-
-
-
-    
-
     GDD(file = "cvpl.png", width = png.width,
            height = png.height,ps = png.pointsize)
-#           pointsize = png.pointsize,
-#           family = png.family)
     plot.cvpl(allDataRun$cvpl.mat, epi,                        ####  Fig 3
               thres, thresGrid)
     dev.off()
@@ -666,12 +604,6 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
         caughtOurError(paste("Function summary.cvTGD bombed unexpectedly with error",
                              trycode, ". \n Please let us know so we can fix the code."))
 
-
-##     try(mpi.close.Rslaves())
-##     mpi.quit(save = "no")
-
-
-
     if(useValidation == "yes") {
         
         cat("\n\n\n********************************************************************************\n")
@@ -700,7 +632,6 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
         dev.off()
         GDD(file = "kmplot-validation.png", width = png.width,
                height = png.height, ps = png.pointsize)
-#               family = png.family)
         KM.visualize(valpred, validationTime,                         
                      validationEvent, ngroups = 2, addmain = NULL)
         dev.off()
@@ -712,8 +643,6 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
         dev.off() 
         GDD(file = "kmplot4-validation.png", width = png.width,
                height = png.height,ps = png.pointsize)
-#               pointsize = png.pointsize,
-#               family = png.family)
         KM.visualize4(valpred, validationTime,                         
                      validationEvent, ngroups = 2, addmain = NULL)
         dev.off()
