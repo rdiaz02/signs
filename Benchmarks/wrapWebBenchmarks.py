@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 NUM_SAMPLES = 5
 
 NUM_USERS = (1, 2, 10, 20)
