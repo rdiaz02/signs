@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
 import os
-NUM_SAMPLES = 1
+import sys
 
-NUM_USERS = (1, 2, 5, 10)
+outappend = sys.argv[1]
+
+NUM_USERS = (1, 2, 5, 10, 20)
 
 
 def launchUTests(test, users):
@@ -17,19 +19,11 @@ def launchUTests(test, users):
 
     return timef
 
-def launchTest(test, users, samples):
-    out = []
-    for samp in range(samples):
-        out = out + launchUTests(test, users)
-    return out
-
-
-def launchAll(test, lusers, samples):
+def launchAll(test, lusers):
     outall = []
     for users in lusers:
         print 'users ' + str(users)
-        print 'samples ' + str(samples)
-        outall = outall + launchTest(test, users, samples)
+        outall = outall + launchUTests(test, users)
     return outall
 
 
@@ -42,9 +36,9 @@ def writeFile(testout, name):
     fout.close()
     
 
-breast = launchAll('breast', NUM_USERS, NUM_SAMPLES)
-writeFile(breast, 'breast.web.bnchmk.txt')
+breast = launchAll('breast', NUM_USERS)
+writeFile(breast, 'breast.web.bnchmk.' + outappend + 'txt')
 
-dlbcl = launchAll('dlbcl', NUM_USERS, NUM_SAMPLES)
-writeFile(breast, 'dlbcl.web.bnchmk.txt')
+dlbcl = launchAll('dlbcl', NUM_USERS)
+writeFile(breast, 'dlbcl.web.bnchmk.' + outappend + 'txt')
 
