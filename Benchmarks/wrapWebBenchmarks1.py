@@ -3,9 +3,15 @@
 import os
 import sys
 
-outappend = sys.argv[1]
+## outappend = sys.argv[1]
 
-NUM_USERS = (1, 2, 5, 10, 20)
+outappend = 'singlerun'
+
+NUM_USERS = (1, 1, 1, 1, 1, 
+##             2, 2, 2,
+##             5,
+             10,
+             20)
 
 
 def launchUTests(test, users):
@@ -36,9 +42,12 @@ def writeFile(testout, name):
     fout.close()
     
 
+dlbcl = launchAll('dlbcl', NUM_USERS)
+writeFile(dlbcl, 'dlbcl.web.bnchmk.' + outappend + 'txt')
+
+
 breast = launchAll('breast', NUM_USERS)
 writeFile(breast, 'breast.web.bnchmk.' + outappend + 'txt')
 
-dlbcl = launchAll('dlbcl', NUM_USERS)
-writeFile(breast, 'dlbcl.web.bnchmk.' + outappend + 'txt')
 
+## 2362.9028670799999, 2368.0365898599998: dlbcl with 1 sample
