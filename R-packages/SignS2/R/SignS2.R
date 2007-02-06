@@ -1042,7 +1042,7 @@ coxph.fit.pomelo0 <- function (x, y, init = NULL,
 dStep1.parallel <- function(x, time, event, p, MaxIterationsCox) { 
     res.mat <- matrix(NA, nrow = ncol(x), ncol = 6)
     sobject <- Surv(time,event)
-
+    cat("\n Starting dStep1.parallel at ", date(), " \n\n"); ptm <- proc.time()
     funpap3 <- function (x) {
         out1 <- coxph.fit.pomelo0(x, sobject, control = coxph.control(iter.max = 500))
         if(out1$warnStatus > 1) {
@@ -1067,38 +1067,9 @@ dStep1.parallel <- function(x, time, event, p, MaxIterationsCox) {
     res.mat[, 6] <- p.adjust(tmp[, 2], method = "BH")
     res.mat[is.na(res.mat[, 2]), c(2, 6)] <- 999
     colnames(res.mat) <- c("coeff", "p.value", "keep", "pos.neg", "Warning", "FDR")
+    cat("\n Finished dStep1.parallel at ", date(), "; took ", (proc.time() - ptm)[3], " \n\n")
     return(res.mat)
 }
-
-
-# dStep1.parallel <- function(x, time, event, p, MaxIterationsCox) { 
-#     ## Painfully slow!!!! use C++ code 
-#     ## We use papply to parallelize; but what will happen when slaves run this???
-#     res.mat <- matrix(NA, nrow = ncol(x), ncol = 4)
-#     sobject <- Surv(time,event)
-
-#     funpap3 <- function(x) {
-#         rcph <- try(coxph(sobject ~ x,
-#                           control = coxph.control(iter.max = MaxIterationsCox)))
-#         if(class(rcph) == "try-error")
-#             return(c(0, 99)) ## so, if error, an impossible value for p-value
-#         else
-#             return(c(rcph$coef, 1 - pchisq(rcph$wald, df = 1)))
-#     }
-
-#     res.mat[, 1:2] <-
-#         matrix(unlist(papply(as.data.frame(x),
-#                              funpap3,
-#                              papply_commondata =list(sobject = sobject,
-#                              MaxIterationsCox = MaxIterationsCox))),
-#                              ncol = 2, byrow = TRUE)
-    
-#     res.mat[, 3] <- ifelse(res.mat[, 2] < p, 1, 0)
-#     res.mat[, 4] <- sign(res.mat[, 1]) * res.mat[, 3]
-    
-#     colnames(res.mat) <- c("coeff", "p.value", "keep", "pos.neg")
-#     return(res.mat)
-# }
 
 
 ##  2. Cluster; independently for those with pos and neg beta.
@@ -1106,8 +1077,8 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
                    minCor, plot,
                    interactive,
                    plotSizes = c(0.5, 1, 2)) {
-##     basicSizeHeight <- 9
-##     basicSizeWidth <-  19
+    cat("\n       Starting dStep2 at ", date(), " \n\n"); ptm <- proc.time()
+    
     pdfheight <- 19
     pdfwidth <- 12.7
     height <- 1200
@@ -1269,51 +1240,13 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
         if (pdok) {
             for (plsz in plotSizes) {
                 dendmapp(factor = plsz, alllabels = FALSE)
-##                 pdf(file = paste("dend.P.factor", plsz, ".alllabels=FALSE",
-##                     ".pdf", sep = ""),
-##                     height = pdfheight * plsz,
-##                     width = pdfwidth * plsz)
-##                 pdokf(alllabels = FALSE)
-##                dev.off()
             }
              for (plsz in plotSizes) {
                  dendmapp(factor = plsz, alllabels = TRUE)
-##                  pdf(file = paste("dend.P.factor", plsz, ".alllabels = TRUE",
-##                      ".pdf", sep = ""),
-##                      height = pdfheight * plsz,
-##                      width = pdfwidth * plsz)
-##                  pdokf(alllabels = TRUE)
-##                 dev.off()
              }
             
         } else {
             system("touch NoPositiveCluster")
-##             for (plsz in plotSizes) {
-##                 GDD(file = paste("dend.P.factor", plsz, ".alllabelsFALSE",
-##                     ".png", sep = ""), w=width, h=height,
-##                     type = "png", ps = ps)	  
-##                 plot(x = c(0, 1), y = c(0, 1),
-##                      type = "n", axes = FALSE, xlab = "", ylab = "")
-##                 box()
-##                 text(0.5, 0.7,
-##                      "There are no genes with positive coefficients")
-##                 text(0.5, 0.5, "that satisfy the p, minimum correlation")
-##                 text(0.5, 0.3, "and size restrictions.")
-##                 dev.off()
-##             }
-##             for (plsz in plotSizes) {
-##                 GDD(file = paste("dend.P.factor", plsz, ".alllabelsTRUE",
-##                     ".png", sep = ""), w=width, h=height,
-##                     type = "png", ps = ps)	  
-##                 plot(x = c(0, 1), y = c(0, 1),
-##                      type = "n", axes = FALSE, xlab = "", ylab = "")
-##                 box()
-##                 text(0.5, 0.7,
-##                      "There are no genes with positive coefficients")
-##                 text(0.5, 0.5, "that satisfy the p, minimum correlation")
-##                 text(0.5, 0.3, "and size restrictions.")
-##                 dev.off()
-##             }
         }
 
 
@@ -1382,50 +1315,12 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
         if (pnok) {
             for (plsz in plotSizes) {
                 dendmapp(factor = plsz, alllabels = FALSE)
-##                 pdf(file = paste("dend.N.factor", plsz, ".alllabels=FALSE",
-##                     ".pdf", sep = ""),
-##                     height = pdfheight * plsz,
-##                     width = pdfwidth * plsz)
-##                 pnokf(alllabels = FALSE)
-##                 dev.off()
             }
             for (plsz in plotSizes) {
                 dendmapp(factor = plsz, alllabels = TRUE)
-##                 pdf(file = paste("dend.N.factor", plsz, ".alllabels=TRUE",
-##                     ".pdf", sep = ""),
-##                     height = pdfheight * plsz,
-##                     width = pdfwidth * plsz)
-##                 pnokf(alllabels = TRUE)
-##                 dev.off()
             }
         } else {
             system("touch NoNegativeCluster")
-##             for (plsz in plotSizes) {
-##                 GDD(file = paste("dend.N.factor", plsz, ".alllabelsFALSE",
-##                     ".png", sep = ""), w=width, h=height,
-##                     type = "png", ps = ps)	  
-##                 plot(x = c(0, 1), y = c(0, 1),
-##                      type = "n", axes = FALSE, xlab = "", ylab = "")
-##                 box()
-##                 text(0.5, 0.7,
-##                      "There are no genes with negative coefficients")
-##                 text(0.5, 0.5, "that satisfy the p, minimum correlation")
-##                 text(0.5, 0.3, "and size restrictions.")
-##                 dev.off()
-##             }
-##             for (plsz in plotSizes) {
-##                 GDD(file = paste("dend.N.factor", plsz, ".alllabelsTRUE",
-##                     ".png", sep = ""), w=width, h=height,
-##                     type = "png", ps = ps)	  
-##                 plot(x = c(0, 1), y = c(0, 1),
-##                      type = "n", axes = FALSE, xlab = "", ylab = "")
-##                 box()
-##                 text(0.5, 0.7,
-##                      "There are no genes with negative coefficients")
-##                 text(0.5, 0.5, "that satisfy the p, minimum correlation")
-##                 text(0.5, 0.3, "and size restrictions.")
-##                 dev.off()
-##             }            
         }
         
     } ##</ if plot>
@@ -1462,7 +1357,7 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
         filteredPosPositions <- NA
         posPositions <- NA
     }
-    
+    cat("\n Finished dStep2 at ", date(), "; took ", (proc.time() - ptm)[3], " \n\n")    
     return(list(md = cbind(posMeanData, negMeanData),
                 filteredGroupsPositive = groupsPositive,
                 filteredGroupsNegative = groupsNegative,
@@ -1476,6 +1371,7 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
 ## 3. fit model
 
 dStep3 <- function(res2, time, event, MaxIterationsCox) {
+    cat("\n ..... Starting dStep3 at ", date(), " \n\n"); ptm <- proc.time()
     if(all(is.na(res2))) return(NA)
     md <- res2$md
     sobject <- Surv(time, event)
@@ -1486,7 +1382,8 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
         ncolmd <- ncol(md)
         modelsSizeTwo <- t(combn(1:ncolmd, 2))
         logliks <- rep(NA, nrow(modelsSizeTwo))
-        for(i in 1:nrow(modelsSizeTwo)) {
+        cat("\n                  Number of models of size two: ", nrow(modelsSizeTwo), "\n")
+        for(i in 1:nrow(modelsSizeTwo)) { ## could parallelize here??
             ## This is the logic: in some models, if we use a very large num.
             ## iterations, some scores end up being infinite. That sometimes
             ## can be "fixed" if we use a smaller number of iterations.
@@ -1582,7 +1479,7 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
         ## think so.
         predictsFinalModel <- predict(finalModel, type = "lp")
         detach(mdf)
-    } else {
+    } else { ## so we do not need to look over several models
         mdf <- data.frame(md)
 
         trycox <-
@@ -1619,6 +1516,7 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
     out <- list(model = finalModel, scores = predictsFinalModel,
                 clusterResults = res2)
     class(out) <- "fmDave"
+    cat("\n ..... Finishing dStep3 at ", date(), "; took ", (proc.time() - ptm)[3] " \n\n")
     return(out)
 }
 
@@ -1674,8 +1572,10 @@ fitDave.res1Given <- function(x, time, event, res1,
                               p, maxSize, 
                               minSize, minCor, MaxIterationsCox, plot,
                               interactive) {
+    cat("\n Starting fitDave.res1Given at ", date(), " \n\n"); ptm <- proc.time()
     res2 <- dStep2(x, res1, maxSize, minSize, minCor, plot, interactive)
     res3 <- dStep3(res2, time, event, MaxIterationsCox)
+    cat("\n Ended fitDave.res1Given at ", date(), "; took ", (proc.time() - ptm)[3], " seconds \n\n")
     return(res3) ## i.e., an fmDave object returned
 }    
 
@@ -1798,16 +1698,20 @@ cvDave.parallel3 <- function(x, time, event,
                              minSize, minCor,
                              MaxIterationsCox,
                              nfold, mpiHosts) {
-
+    cat("\n Starting cvDave.parallel3 at ", date(), " \n\n"); ptm <- proc.time()
+    
     if (mpi.comm.size(comm = 1) == 0) {
         mpiSpawnAll()
+        cat("\n       cond 1 \n")
     } else { ## so mpi is running
         if ((mpi.comm.size(comm = 1) - 1) < mpi.universe.size()) {
             ## but few salves
             mpi.close.Rslaves()
             mpiSpawnAll()
+            cat("\n       cond 2 \n")
         } else {
             mpiMyCleanSetup()
+            cat("\n       cond 3 \n")
         }
     }
        
@@ -1834,11 +1738,6 @@ cvDave.parallel3 <- function(x, time, event,
                                       MaxIterationsCox = MaxIterationsCox)
     }
 
-##    cat("\n\n Cleaning up MPI space, and setting up a new one\n\n")
-    ## Clean previous stuff
-##    mpi.close.Rslaves()
-##    mpiSpawnAll()
-    ## mpiSpawnThis(hosts = mpiHosts)
     cat("\n\n Cleaning up MPI space, and setting up again\n\n")	
     mpiMyCleanSetup()
 
@@ -1880,6 +1779,7 @@ cvDave.parallel3 <- function(x, time, event,
     out <- list(cved.models = tmp1,
                 OOB.scores = OOB.scores)
     class(out) <- "cvDave"
+    cat("\n Ending cvDave.parallel3 at ", date(), "; it took ", (proc.time() - ptm)[3], " \n\n")
     return(out)
 }
 
