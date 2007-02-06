@@ -1480,7 +1480,7 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
             plotSizes2 <- c(plotSizes, plotSizes)
             aLabs <- c(rep(TRUE, length(plotSizes)),
                        rep(FALSE, length(plotSizes)))
-            for(jj in length(plotSizes2)) {
+            for(jj in 1:length(plotSizes2)) {
                 datalist[[jj]] <- list()
                 datalist[[jj]]$dir <- getwd()
                 datalist[[jj]]$factor <- plotSizes2[jj]
@@ -1492,6 +1492,7 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
                 datalist[[jj]]$main <- "Positive coefficients"
                 datalist[[jj]]$pnGroups <- posGroups
                 datalist[[jj]]$theName <- "dend.P.factor"
+                datalist[[jj]]$minCor <- minCor
             }
             tmp <- papply(datalist, function(z) wrapDendmapp(z))
 
@@ -1502,7 +1503,7 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
             plotSizes2 <- c(plotSizes, plotSizes)
             aLabs <- c(rep(TRUE, length(plotSizes)),
                        rep(FALSE, length(plotSizes)))
-            for(jj in length(plotSizes2)) {
+            for(jj in 1:length(plotSizes2)) {
                 datalist[[jj]] <- list()
                 datalist[[jj]]$dir <- getwd()
                 datalist[[jj]]$factor <- plotSizes2[jj]
@@ -1510,10 +1511,11 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
                 datalist[[jj]]$pn.groups <- neg.groups
                 datalist[[jj]]$pn.data <- neg.data
                 datalist[[jj]]$pn.accept <- neg.accept
-                datalist[[jj]]$pn.clus <- pos.clus
+                datalist[[jj]]$pn.clus <- neg.clus
                 datalist[[jj]]$main <- "Negative coefficients"
                 datalist[[jj]]$pnGroups <- negGroups
                 datalist[[jj]]$theName <- "dend.N.factor"
+                datalist[[jj]]$minCor <- minCor
             }
             tmp <- papply(datalist, function(z) wrapDendmapp(z))
 
@@ -1523,7 +1525,7 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
             plotSizes2 <- c(plotSizes, plotSizes)
             aLabs <- c(rep(TRUE, length(plotSizes)),
                        rep(FALSE, length(plotSizes)))
-            for(jj in length(plotSizes2)) {
+            for(jj in 1:length(plotSizes2)) {
                 datalist[[jj]] <- list()
                 datalist[[jj]]$dir <- getwd()
                 datalist[[jj]]$factor <- plotSizes2[jj]
@@ -1531,27 +1533,31 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
                 datalist[[jj]]$pn.groups <- neg.groups
                 datalist[[jj]]$pn.data <- neg.data
                 datalist[[jj]]$pn.accept <- neg.accept
-                datalist[[jj]]$pn.clus <- pos.clus
+                datalist[[jj]]$pn.clus <- neg.clus
                 datalist[[jj]]$main <- "Negative coefficients"
                 datalist[[jj]]$pnGroups <- negGroups
                 datalist[[jj]]$theName <- "dend.N.factor"
+                datalist[[jj]]$minCor <- minCor
+
             }
             plotSizes2 <- c(plotSizes, plotSizes)
             aLabs <- c(rep(TRUE, length(plotSizes)),
                        rep(FALSE, length(plotSizes)))
-            for(jj in length(plotSizes2)) {
-                datalist[[jj]] <- list()
-                datalist[[jj]]$dir <- getwd()
-                datalist[[jj]]$factor <- plotSizes2[jj]
-                datalist[[jj]]$alllabels <- aLabs[jj]
-                datalist[[jj]]$pn.groups <- pos.groups
-                datalist[[jj]]$pn.data <- pos.data
-                datalist[[jj]]$pn.accept <- pos.accept
-                datalist[[jj]]$pn.clus <- pos.clus
-                datalist[[jj]]$main <- "Positive coefficients"
-                datalist[[jj]]$pnGroups <- posGroups
-                datalist[[jj]]$theName <- "dend.P.factor"
-            }
+            for(jj in 1:length(plotSizes2)) {
+                datalist[[jj + length(plotSizes2)]] <- list()
+                datalist[[jj + length(plotSizes2)]]$dir <- getwd()
+                datalist[[jj + length(plotSizes2)]]$factor <- plotSizes2[jj]
+                datalist[[jj + length(plotSizes2)]]$alllabels <- aLabs[jj]
+                datalist[[jj + length(plotSizes2)]]$pn.groups <- pos.groups
+                datalist[[jj + length(plotSizes2)]]$pn.data <- pos.data
+                datalist[[jj + length(plotSizes2)]]$pn.accept <- pos.accept
+                datalist[[jj + length(plotSizes2)]]$pn.clus <- pos.clus
+                datalist[[jj + length(plotSizes2)]]$main <- "Positive coefficients"
+                datalist[[jj + length(plotSizes2)]]$pnGroups <- posGroups
+                datalist[[jj + length(plotSizes2)]]$theName <- "dend.P.factor"
+                datalist[[jj]]$minCor <- minCor
+           }
+
             tmp <- papply(datalist, function(z) wrapDendmapp(z))
            
         } else {
@@ -1605,7 +1611,7 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
 
 
 pdnokf <- function(pn.groups,  pn.data, pn.accept, pn.clus,
-                   main, pnGroups,
+                   main, pnGroups, minCor,
                    alllabels = FALSE) {
     pn.labels <- rep("                   ", ncol(pn.data))
     index.labels <- which(pn.groups %in% pn.accept)
@@ -1621,10 +1627,12 @@ pdnokf <- function(pn.groups,  pn.data, pn.accept, pn.clus,
     dfp$chosen.clus <- dfp$pn.gr %in% pn.accept
     dfp$y <- nrow(dfp) - as.numeric(rownames(dfp)) + 1
     rainbow.col <- rainbow(length(pnGroups))
+    cat("\n ... main is ", main, "\n")
     for(i in 1:length(pnGroups)) {
         dfpt <- dfp[dfp$pn.gr == pnGroups[i], ]
-        miny <- min(dfpt$y)
+        miny <- min(dfpt$y) ## by not setting na.rm = TRUE we would bomb if wrong set
         maxy <- max(dfpt$y)
+        cat("\n ......... pnGroup ", i,"\n")
         axis(4, line = 5, at = c(miny, maxy), col = rainbow.col[i],
              tick = TRUE, labels = FALSE, lw = 3)
         axis(4, line = 5, at = 0.5 * (miny + maxy),
@@ -1650,7 +1658,7 @@ pdnokf <- function(pn.groups,  pn.data, pn.accept, pn.clus,
 
 dendmapp <- function(factor, alllabels, 
                      pn.groups,  pn.data, pn.accept, pn.clus,
-                     main, pnGroups, theName = "dend.P.factor") {
+                     main, pnGroups, minCor, theName = "dend.P.factor") {
     ps <- 12
     height <- 1200
     width <- 800
@@ -1664,6 +1672,7 @@ dendmapp <- function(factor, alllabels,
                   pn.clus = pn.clus,
                   main = main,
                   pnGroups = pnGroups,
+                  minCor   = minCor,
                   alllabels = alllabels)
     
     for(np in 1:nrow(dfp)) {
@@ -1683,10 +1692,8 @@ wrapDendmapp <- function(li) {
     ## for papply usage
     setwd(li$dir)
     dendmapp(li$factor, li$alllabels, li$pn.groups, li$pn.data, li$pn.accept,
-             li$pn.clus, li$main, li$pnGroups, li$theName)
+             li$pn.clus, li$main, li$pnGroups, li$minCor, li$theName)
 }
-
-
 
 
 ## 3. fit model
@@ -1837,7 +1844,7 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
     out <- list(model = finalModel, scores = predictsFinalModel,
                 clusterResults = res2)
     class(out) <- "fmDave"
-    cat("\n ..... Finishing dStep3 at ", date(), "; took ", (proc.time() - ptm)[3] " \n\n")
+    cat("\n ..... Finishing dStep3 at ", date(), "; took ", (proc.time() - ptm)[3], " \n\n")
     return(out)
 }
 
@@ -1976,6 +1983,9 @@ mpiMyCleanSetup <- function() {
     mpi.remote.exec(library(combinat))
     mpi.remote.exec(library(SignS2))
     mpi.remote.exec(library(MASS))
+    mpi.remote.exec(library(GDD))
+    mpi.remote.exec(library(R2HTML))
+    mpi.remote.exec(library(imagemap))
 }
 
 

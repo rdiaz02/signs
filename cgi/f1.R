@@ -198,7 +198,8 @@ cleanHTMLtail <- function(file, append= TRUE) {
     write("</body></html>", file = file, append = append)
 }
 
-
+idtype <- "None"
+organism <- "None"
 idtype <- try(scan("idtype", what = "", n = 1))
 organism <- try(scan("organism", what = "", n = 1))
 
@@ -654,6 +655,11 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
     
     
 } else if(methodSurv == "FCMS") {
+
+    mpi.bcast.Robj2slave(idtype)
+    mpi.bcast.Robj2slave(organism)
+
+    
     MaxIterationsCox <- 200
     
     trycode <- try(

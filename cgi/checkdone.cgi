@@ -445,8 +445,8 @@ def printOKRun():
 ##            outf.write("</pre>")
 
             if os.path.exists(tmpDir + '/f1.R'): os.remove(tmpDir + '/f1.R')
-            if os.path.exists(tmpDir + '/f1.Rout'): os.remove(tmpDir + '/f1.Rout')
-            if os.path.exists(tmpDir + '/.RData'): os.remove(tmpDir + '/.RData')
+##            if os.path.exists(tmpDir + '/f1.Rout'): os.remove(tmpDir + '/f1.Rout')
+##            if os.path.exists(tmpDir + '/.RData'): os.remove(tmpDir + '/.RData')
             Rresults.close()
             if os.path.exists(tmpDir + '/results.txt'): os.remove(tmpDir + '/results.txt')
      
