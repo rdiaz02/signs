@@ -1073,7 +1073,7 @@ dStep1.parallel <- function(x, time, event, p, MaxIterationsCox) {
 
 
 ##  2. Cluster; independently for those with pos and neg beta.
-dStep2 <- function(x, res.mat, maxSize, minSize,
+dStep2.old <- function(x, res.mat, maxSize, minSize,
                    minCor, plot,
                    interactive,
                    plotSizes = c(0.5, 1, 2)) {
@@ -1174,75 +1174,81 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
     
     if(plot) {
        
-        pdokf <- function(alllabels = FALSE) {
-            pos.labels <- rep("                   ", ncol(pos.data))
-            index.labels <- which(pos.groups %in% pos.accept)
-            pos.labels[index.labels] <- colnames(pos.data)[index.labels]
+#####         pdokf <- function(alllabels = FALSE) {
+#####             pos.labels <- rep("                   ", ncol(pos.data))
+#####             index.labels <- which(pos.groups %in% pos.accept)
+#####             pos.labels[index.labels] <- colnames(pos.data)[index.labels]
 
-            pos.dend <- as.dendrogram(pos.clus, hang = 0.001)
-            par(mar = c(5, 2, 1, 8))
-            plot(pos.dend, horiz = TRUE, xlab = "1 - correlation", leaflab = "none",
-                 main = "Positive coefficients")
-            abline(v = 1 - minCor, lty = 2, col = "blue")
+#####             pos.dend <- as.dendrogram(pos.clus, hang = 0.001)
+#####             par(mar = c(5, 2, 1, 8))
+#####             plot(pos.dend, horiz = TRUE, xlab = "1 - correlation", leaflab = "none",
+#####                  main = "Positive coefficients")
+#####             abline(v = 1 - minCor, lty = 2, col = "blue")
 
-            dfp <- data.frame(name = unlist(dendrapply(rev(pos.dend), nameLeave)),
-                              height = unlist(dendrapply(rev(pos.dend), heightLeave)))
-            dfp$pos.gr <- pos.groups[order.dendrogram(rev(pos.dend))]
-            dfp$chosen.clus <- dfp$pos.gr %in% pos.accept
-            dfp$y <- nrow(dfp) - as.numeric(rownames(dfp)) + 1
-            rainbow.col <- rainbow(length(posGroups))
-            for(i in 1:length(posGroups)) {
-                dfpt <- dfp[dfp$pos.gr == posGroups[i], ]
-                miny <- min(dfpt$y)
-                maxy <- max(dfpt$y)
-                axis(4, line = 5, at = c(miny, maxy), col = rainbow.col[i],
-                     tick = TRUE, labels = FALSE, lw = 3)
-                axis(4, line = 5, at = 0.5 * (miny + maxy),
-                     col.axis = rainbow.col[i],
-                     tick = FALSE, labels = posGroups[i], lw = 0,
-                     cex.axis = 1.5)
-                for(j in 1:nrow(dfpt))
-                    text(dfpt$name[j], x = dfpt$height[j],
-                         y = dfpt$y[j], col = rainbow.col[i],
-                         font = 2, pos = 4)
-            }
-            if (alllabels) {
-                dfpt <- dfp[dfp$chosen.clus == FALSE,]
-		if(nrow(dfpt)) {
-                for(j in 1:nrow(dfpt))
-                    text(dfpt$name[j], x = dfpt$height[j],
-                         y = dfpt$y[j], col = "black", cex = 0.8, pos = 4)
-			 }
-            }
-            return(dfp)
-        } ##</pdokf within plotting>
+#####             dfp <- data.frame(name = unlist(dendrapply(rev(pos.dend), nameLeave)),
+#####                               height = unlist(dendrapply(rev(pos.dend), heightLeave)))
+#####             dfp$pos.gr <- pos.groups[order.dendrogram(rev(pos.dend))]
+#####             dfp$chosen.clus <- dfp$pos.gr %in% pos.accept
+#####             dfp$y <- nrow(dfp) - as.numeric(rownames(dfp)) + 1
+#####             rainbow.col <- rainbow(length(posGroups))
+#####             for(i in 1:length(posGroups)) {
+#####                 dfpt <- dfp[dfp$pos.gr == posGroups[i], ]
+#####                 miny <- min(dfpt$y)
+#####                 maxy <- max(dfpt$y)
+#####                 axis(4, line = 5, at = c(miny, maxy), col = rainbow.col[i],
+#####                      tick = TRUE, labels = FALSE, lw = 3)
+#####                 axis(4, line = 5, at = 0.5 * (miny + maxy),
+#####                      col.axis = rainbow.col[i],
+#####                      tick = FALSE, labels = posGroups[i], lw = 0,
+#####                      cex.axis = 1.5)
+#####                 for(j in 1:nrow(dfpt))
+#####                     text(dfpt$name[j], x = dfpt$height[j],
+#####                          y = dfpt$y[j], col = rainbow.col[i],
+#####                          font = 2, pos = 4)
+#####             }
+#####             if (alllabels) {
+#####                 dfpt <- dfp[dfp$chosen.clus == FALSE,]
+##### 		if(nrow(dfpt)) {
+#####                 for(j in 1:nrow(dfpt))
+#####                     text(dfpt$name[j], x = dfpt$height[j],
+#####                          y = dfpt$y[j], col = "black", cex = 0.8, pos = 4)
+##### 			 }
+#####             }
+#####             return(dfp)
+#####         } ##</pdokf within plotting>
 
-        dendmapp <- function(factor = 1, alllabels = FALSE) {
-            psf <- ifelse(factor < 1, ps * factor, ps)
-            nameIm <- paste("dend.P.factor", factor, ".alllabels", alllabels, sep = "")
-            im1 <- imagemap3(nameIm, height = height * factor, width = width * factor,
-                             ps = psf)
-            dfp <- pdokf(alllabels = alllabels)
+
+
+
+
+        
+        
+#####         dendmappP <- function(factor = 1, alllabels = FALSE) {
+#####             psf <- ifelse(factor < 1, ps * factor, ps)
+#####             nameIm <- paste("dend.P.factor", factor, ".alllabels", alllabels, sep = "")
+#####             im1 <- imagemap3(nameIm, height = height * factor, width = width * factor,
+#####                              ps = psf)
+#####             dfp <- pdokf(alllabels = alllabels)
             
-            for(np in 1:nrow(dfp)) {
-                addRegion(im1) <- imRect(dfp[np, 2] + .030, dfp[np, 5] - 0.45,
-                                         dfp[np, 2] - .1, dfp[np, 5] + 0.45,
-                                         title = dfp[np, 1], alt = dfp[np, 1],
-                                         href= linkGene2(dfp[np, 1]))
-            }
+#####             for(np in 1:nrow(dfp)) {
+#####                 addRegion(im1) <- imRect(dfp[np, 2] + .030, dfp[np, 5] - 0.45,
+#####                                          dfp[np, 2] - .1, dfp[np, 5] + 0.45,
+#####                                          title = dfp[np, 1], alt = dfp[np, 1],
+#####                                          href= linkGene2(dfp[np, 1]))
+#####             }
             
-            createIM(im1, file = paste("dend.P.factor", factor, ".alllabels",
-                          alllabels, ".html", sep = ""))
-            imClose(im1)
-        }
+#####             createIM(im1, file = paste("dend.P.factor", factor, ".alllabels",
+#####                           alllabels, ".html", sep = ""))
+#####             imClose(im1)
+#####         }
         
             
         if (pdok) {
             for (plsz in plotSizes) {
-                dendmapp(factor = plsz, alllabels = FALSE)
+                dendmappP(factor = plsz, alllabels = FALSE)
             }
              for (plsz in plotSizes) {
-                 dendmapp(factor = plsz, alllabels = TRUE)
+                 dendmappP(factor = plsz, alllabels = TRUE)
              }
             
         } else {
@@ -1250,74 +1256,78 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
         }
 
 
-        pnokf <- function(alllabels = FALSE) {
-            neg.labels <- rep("                   ", ncol(neg.data))
-            index.labels <- which(neg.groups %in% neg.accept)
-            neg.labels[index.labels] <- colnames(neg.data)[index.labels]
 
-            neg.dend <- as.dendrogram(neg.clus, hang = 0.001)
-            par(mar = c(5, 2, 1, 8))
-            plot(neg.dend, horiz = TRUE, xlab = "1 - correlation", leaflab = "none",
-                 main = "Negative coefficients")
-            abline(v = 1 - minCor, lty = 2, col = "blue")
 
-            dfp <- data.frame(name = unlist(dendrapply(rev(neg.dend), nameLeave)),
-                              height = unlist(dendrapply(rev(neg.dend), heightLeave)))
-            dfp$neg.gr <- neg.groups[order.dendrogram(rev(neg.dend))]
-            dfp$chosen.clus <- dfp$neg.gr %in% neg.accept
-            dfp$y <- nrow(dfp) - as.numeric(rownames(dfp)) + 1
-            rainbow.col <- rainbow(length(negGroups))
-            for(i in 1:length(negGroups)) {
-                dfpt <- dfp[dfp$neg.gr == negGroups[i], ]
-                miny <- min(dfpt$y)
-                maxy <- max(dfpt$y)
-                axis(4, line = 5, at = c(miny, maxy), col = rainbow.col[i],
-                     tick = TRUE, labels = FALSE, lw = 3)
-                axis(4, line = 5, at = 0.5 * (miny + maxy),
-                     col.axis = rainbow.col[i],
-                     tick = FALSE, labels = negGroups[i], lw = 0,
-                     cex.axis = 1.5)
-                for(j in 1:nrow(dfpt))
-                    text(dfpt$name[j], x = dfpt$height[j],
-                         y = dfpt$y[j], col = rainbow.col[i],
-                         font = 2, pos = 4)
-            }
-            if (alllabels) {
-                dfpt <- dfp[dfp$chosen.clus == FALSE,]
-		if(nrow(dfpt)) {
-                for(j in 1:nrow(dfpt))
-                    text(dfpt$name[j], x = dfpt$height[j],
-                         y = dfpt$y[j], col = "black", cex = 0.8, pos = 4)
-			 }
-            }
-            return(dfp)
-        } ##</pnokf within plotting>
+        
 
-        dendmapp <- function(factor = 1, alllabels = FALSE) {
-            psf <- ifelse(factor < 1, ps * factor, ps)
-            nameIm <- paste("dend.N.factor", factor, ".alllabels", alllabels, sep = "")
-            im1 <- imagemap3(nameIm, height = height * factor, width = width * factor,
-                             ps = psf)
-            dfp <- pnokf(alllabels = alllabels)
+#####         pnokf <- function(alllabels = FALSE) {
+#####             neg.labels <- rep("                   ", ncol(neg.data))
+#####             index.labels <- which(neg.groups %in% neg.accept)
+#####             neg.labels[index.labels] <- colnames(neg.data)[index.labels]
+
+#####             neg.dend <- as.dendrogram(neg.clus, hang = 0.001)
+#####             par(mar = c(5, 2, 1, 8))
+#####             plot(neg.dend, horiz = TRUE, xlab = "1 - correlation", leaflab = "none",
+#####                  main = "Negative coefficients")
+#####             abline(v = 1 - minCor, lty = 2, col = "blue")
+
+#####             dfp <- data.frame(name = unlist(dendrapply(rev(neg.dend), nameLeave)),
+#####                               height = unlist(dendrapply(rev(neg.dend), heightLeave)))
+#####             dfp$neg.gr <- neg.groups[order.dendrogram(rev(neg.dend))]
+#####             dfp$chosen.clus <- dfp$neg.gr %in% neg.accept
+#####             dfp$y <- nrow(dfp) - as.numeric(rownames(dfp)) + 1
+#####             rainbow.col <- rainbow(length(negGroups))
+#####             for(i in 1:length(negGroups)) {
+#####                 dfpt <- dfp[dfp$neg.gr == negGroups[i], ]
+#####                 miny <- min(dfpt$y)
+#####                 maxy <- max(dfpt$y)
+#####                 axis(4, line = 5, at = c(miny, maxy), col = rainbow.col[i],
+#####                      tick = TRUE, labels = FALSE, lw = 3)
+#####                 axis(4, line = 5, at = 0.5 * (miny + maxy),
+#####                      col.axis = rainbow.col[i],
+#####                      tick = FALSE, labels = negGroups[i], lw = 0,
+#####                      cex.axis = 1.5)
+#####                 for(j in 1:nrow(dfpt))
+#####                     text(dfpt$name[j], x = dfpt$height[j],
+#####                          y = dfpt$y[j], col = rainbow.col[i],
+#####                          font = 2, pos = 4)
+#####             }
+#####             if (alllabels) {
+#####                 dfpt <- dfp[dfp$chosen.clus == FALSE,]
+##### 		if(nrow(dfpt)) {
+#####                 for(j in 1:nrow(dfpt))
+#####                     text(dfpt$name[j], x = dfpt$height[j],
+#####                          y = dfpt$y[j], col = "black", cex = 0.8, pos = 4)
+##### 			 }
+#####             }
+#####             return(dfp)
+#####         } ##</pnokf within plotting>
+
+#####         dendmappN <- function(factor = 1, alllabels = FALSE) {
+#####             psf <- ifelse(factor < 1, ps * factor, ps)
+#####             nameIm <- paste("dend.N.factor", factor, ".alllabels", alllabels, sep = "")
+#####             im1 <- imagemap3(nameIm, height = height * factor, width = width * factor,
+#####                              ps = psf)
+#####             dfp <- pnokf(alllabels = alllabels)
             
-            for(np in 1:nrow(dfp)) {
-                addRegion(im1) <- imRect(dfp[np, 2] + .030, dfp[np, 5] - 0.45,
-                                         dfp[np, 2] - .1, dfp[np, 5] + 0.45,
-                                         title = dfp[np, 1], alt = dfp[np, 1],
-                                         href= linkGene2(dfp[np, 1]))
-            }
+#####             for(np in 1:nrow(dfp)) {
+#####                 addRegion(im1) <- imRect(dfp[np, 2] + .030, dfp[np, 5] - 0.45,
+#####                                          dfp[np, 2] - .1, dfp[np, 5] + 0.45,
+#####                                          title = dfp[np, 1], alt = dfp[np, 1],
+#####                                          href= linkGene2(dfp[np, 1]))
+#####             }
             
-            createIM(im1, file = paste("dend.N.factor", factor, ".alllabels",
-                          alllabels, ".html", sep = ""))
-            imClose(im1)
-        }
+#####             createIM(im1, file = paste("dend.N.factor", factor, ".alllabels",
+#####                           alllabels, ".html", sep = ""))
+#####             imClose(im1)
+#####         }
 
         if (pnok) {
             for (plsz in plotSizes) {
-                dendmapp(factor = plsz, alllabels = FALSE)
+                dendmappN(factor = plsz, alllabels = FALSE)
             }
             for (plsz in plotSizes) {
-                dendmapp(factor = plsz, alllabels = TRUE)
+                dendmappN(factor = plsz, alllabels = TRUE)
             }
         } else {
             system("touch NoNegativeCluster")
@@ -1366,6 +1376,317 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
                 posPositions = posPositions,
                 negPositions = negPositions))
 }
+
+
+
+dStep2 <- function(x, res.mat, maxSize, minSize,
+                   minCor, plot,
+                   interactive,
+                   plotSizes = c(0.5, 1, 2)) {
+    cat("\n       Starting dStep2 at ", date(), " \n\n"); ptm <- proc.time()
+    
+    res.mat[is.na(res.mat[, 4]), 4] <- 0
+
+    if(sum(res.mat[, 4] == 1) >= minSize) {
+        pos.data <- x[, res.mat[, 4] == 1]
+        pdok <- TRUE
+    } else {
+        pdok <- FALSE
+        warning(paste("Not enough positive coeff. genes that",
+                      "meet the p restrictions."))
+    }
+    if(sum(res.mat[, 4] == -1) >= minSize) {
+        neg.data <- x[, res.mat[, 4] == -1]
+        pnok <- TRUE
+    } else {
+        pnok <- FALSE
+        warning(paste("Not enough negative coeff. genes that",
+                      "meet the p restrictions."))
+    }
+
+    if((!pnok) & (!pdok)) {
+	if(interactive) caughtUserError("No gene was above the minimal p threshold")
+        else {
+            return(NA)
+        }
+    }
+
+    tn <- tp <- FALSE
+    if(pdok) {
+        pos.clus <- hclust(as.dist(1 -cor(pos.data)), method = "complete")
+        pos.groups <- paste("P.", cutree(pos.clus, h = 1- minCor), sep = "")
+        tpos <- table(pos.groups)
+        pos.accept <- names(which((tpos >= minSize) & (tpos <= maxSize)))
+        if(length(pos.accept)) {
+            groupsPositive <- pos.groups[pos.groups %in% pos.accept]
+            dataPositive <- pos.data[ , pos.groups %in% pos.accept]
+            posGroups <- unique(groupsPositive)
+            posMeanData <- matrix(NA, nrow = dim(dataPositive)[1],
+                              ncol = length(posGroups))
+
+            for(i in 1:length(posGroups)) {
+                posMeanData[, i] <-
+                    apply(dataPositive[, groupsPositive == posGroups[i]],
+                          1, mean)
+            }
+            colnames(posMeanData) <- posGroups
+            tp <- TRUE
+        } else {
+            tp <- FALSE
+            warning(paste("No groups of positive coeff genes that",
+                          "meet the p, minimum correlation and size restrictions."))
+        }
+    }
+
+    if(pnok) {
+        neg.clus <- hclust(as.dist(1 -cor(neg.data)), method = "complete")
+        neg.groups <- paste("N.", cutree(neg.clus, h = 1- minCor), sep = "")
+        npos <- table(neg.groups)
+        neg.accept <- names(which((npos >= minSize) & (npos <= maxSize)))
+        if(length(neg.accept)) {
+            groupsNegative <- neg.groups[neg.groups %in% neg.accept]
+            dataNegative <- neg.data[ , neg.groups %in% neg.accept]
+            negGroups <- unique(groupsNegative)
+            negMeanData <- matrix(NA, nrow = dim(dataNegative)[1],
+                                  ncol = length(negGroups))
+
+            for(i in 1:length(negGroups)) {
+                negMeanData[, i] <-
+                    apply(dataNegative[, groupsNegative == negGroups[i]],
+                          1, mean)
+            }
+            colnames(negMeanData) <- negGroups
+            tn <- TRUE
+        } else {
+            tn <- FALSE
+            warning(paste("No groups of negative coeff. genes that",
+                          "meet the p, minimum correlation and size restrictions."))
+        }
+    }
+
+    if(!tn & !tp) {
+        if(interactive) caughtUserError(paste("No groups that meet the p, minimum correlation",
+                                              "and size restrictions."))
+        else return(NA)
+    }
+    pdok <- tp & pdok
+    pnok <- tn & pnok
+    
+    if(plot) {
+        if(pdok & (! pnok)) {
+            system("touch NoNegativeCluster")
+
+            datalist <- list()
+            plotSizes2 <- c(plotSizes, plotSizes)
+            aLabs <- c(rep(TRUE, length(plotSizes)),
+                       rep(FALSE, length(plotSizes)))
+            for(jj in length(plotSizes2)) {
+                datalist[[jj]] <- list()
+                datalist[[jj]]$dir <- getwd()
+                datalist[[jj]]$factor <- plotSizes2[jj]
+                datalist[[jj]]$alllabels <- aLabs[jj]
+                datalist[[jj]]$pn.groups <- pos.groups
+                datalist[[jj]]$pn.data <- pos.data
+                datalist[[jj]]$pn.accept <- pos.accept
+                datalist[[jj]]$pn.clus <- pos.clus
+                datalist[[jj]]$main <- "Positive coefficients"
+                datalist[[jj]]$pnGroups <- posGroups
+                datalist[[jj]]$theName <- "dend.P.factor"
+            }
+            tmp <- papply(datalist, function(z) wrapDendmapp(z))
+
+        } else if ((! pdok) & pnok) {
+            system("touch NoPositiveCluster")
+
+            datalist <- list()
+            plotSizes2 <- c(plotSizes, plotSizes)
+            aLabs <- c(rep(TRUE, length(plotSizes)),
+                       rep(FALSE, length(plotSizes)))
+            for(jj in length(plotSizes2)) {
+                datalist[[jj]] <- list()
+                datalist[[jj]]$dir <- getwd()
+                datalist[[jj]]$factor <- plotSizes2[jj]
+                datalist[[jj]]$alllabels <- aLabs[jj]
+                datalist[[jj]]$pn.groups <- neg.groups
+                datalist[[jj]]$pn.data <- neg.data
+                datalist[[jj]]$pn.accept <- neg.accept
+                datalist[[jj]]$pn.clus <- pos.clus
+                datalist[[jj]]$main <- "Negative coefficients"
+                datalist[[jj]]$pnGroups <- negGroups
+                datalist[[jj]]$theName <- "dend.N.factor"
+            }
+            tmp <- papply(datalist, function(z) wrapDendmapp(z))
+
+            
+        } else if (pdok & pnok) {
+            datalist <- list()
+            plotSizes2 <- c(plotSizes, plotSizes)
+            aLabs <- c(rep(TRUE, length(plotSizes)),
+                       rep(FALSE, length(plotSizes)))
+            for(jj in length(plotSizes2)) {
+                datalist[[jj]] <- list()
+                datalist[[jj]]$dir <- getwd()
+                datalist[[jj]]$factor <- plotSizes2[jj]
+                datalist[[jj]]$alllabels <- aLabs[jj]
+                datalist[[jj]]$pn.groups <- neg.groups
+                datalist[[jj]]$pn.data <- neg.data
+                datalist[[jj]]$pn.accept <- neg.accept
+                datalist[[jj]]$pn.clus <- pos.clus
+                datalist[[jj]]$main <- "Negative coefficients"
+                datalist[[jj]]$pnGroups <- negGroups
+                datalist[[jj]]$theName <- "dend.N.factor"
+            }
+            plotSizes2 <- c(plotSizes, plotSizes)
+            aLabs <- c(rep(TRUE, length(plotSizes)),
+                       rep(FALSE, length(plotSizes)))
+            for(jj in length(plotSizes2)) {
+                datalist[[jj]] <- list()
+                datalist[[jj]]$dir <- getwd()
+                datalist[[jj]]$factor <- plotSizes2[jj]
+                datalist[[jj]]$alllabels <- aLabs[jj]
+                datalist[[jj]]$pn.groups <- pos.groups
+                datalist[[jj]]$pn.data <- pos.data
+                datalist[[jj]]$pn.accept <- pos.accept
+                datalist[[jj]]$pn.clus <- pos.clus
+                datalist[[jj]]$main <- "Positive coefficients"
+                datalist[[jj]]$pnGroups <- posGroups
+                datalist[[jj]]$theName <- "dend.P.factor"
+            }
+            tmp <- papply(datalist, function(z) wrapDendmapp(z))
+           
+        } else {
+            stop("We should never get here!!! Plot error ")
+        }
+       
+    } ##</ if plot>
+
+    ## For predictions and results, which vars. correspond
+    ## to which original genes
+
+    ## The following two are the indices of the columns in the original (non
+    ## divided data file)
+
+    if(pdok) {
+        posPositions <- which(res.mat[, 4] == 1)
+        filteredPosPositions <- posPositions[pos.groups %in% pos.accept]
+    }
+    if(pnok) {
+        negPositions <- which(res.mat[, 4] == -1)
+        filteredNegPositions <- negPositions[neg.groups %in% neg.accept]
+    }
+
+    if(pnok & pdok)
+        if(length(intersect(filteredPosPositions, filteredNegPositions)))
+            stop("Non zero intersection between filtered pos and neg positions")
+    if(!pnok) {
+        negMeanData <- NULL
+        groupsNegative <- NA
+        filteredGroupsNegative <- NA
+        filteredNegPositions <- NA
+        negPositions <- NA
+    }
+    if(!pdok) {
+        posMeanData <- NULL
+        groupsPositive <- NA
+        filteredGroupsPositive <- NA
+        filteredPosPositions <- NA
+        posPositions <- NA
+    }
+    cat("\n Finished dStep2 at ", date(), "; took ", (proc.time() - ptm)[3], " \n\n")    
+    return(list(md = cbind(posMeanData, negMeanData),
+                filteredGroupsPositive = groupsPositive,
+                filteredGroupsNegative = groupsNegative,
+                filteredPosPositions = filteredPosPositions,
+                filteredNegPositions = filteredNegPositions,
+                posPositions = posPositions,
+                negPositions = negPositions))
+}
+
+
+
+pdnokf <- function(pn.groups,  pn.data, pn.accept, pn.clus,
+                   main, pnGroups,
+                   alllabels = FALSE) {
+    pn.labels <- rep("                   ", ncol(pn.data))
+    index.labels <- which(pn.groups %in% pn.accept)
+    pn.labels[index.labels] <- colnames(pn.data)[index.labels]
+    pn.dend <- as.dendrogram(pn.clus, hang = 0.001)
+    par(mar = c(5, 2, 1, 8))
+    plot(pn.dend, horiz = TRUE, xlab = "1 - correlation", leaflab = "none",
+         main = main)
+    abline(v = 1 - minCor, lty = 2, col = "blue")
+    dfp <- data.frame(name = unlist(dendrapply(rev(pn.dend), nameLeave)),
+                      height = unlist(dendrapply(rev(pn.dend), heightLeave)))
+    dfp$pn.gr <- pn.groups[order.dendrogram(rev(pn.dend))]
+    dfp$chosen.clus <- dfp$pn.gr %in% pn.accept
+    dfp$y <- nrow(dfp) - as.numeric(rownames(dfp)) + 1
+    rainbow.col <- rainbow(length(pnGroups))
+    for(i in 1:length(pnGroups)) {
+        dfpt <- dfp[dfp$pn.gr == pnGroups[i], ]
+        miny <- min(dfpt$y)
+        maxy <- max(dfpt$y)
+        axis(4, line = 5, at = c(miny, maxy), col = rainbow.col[i],
+             tick = TRUE, labels = FALSE, lw = 3)
+        axis(4, line = 5, at = 0.5 * (miny + maxy),
+             col.axis = rainbow.col[i],
+             tick = FALSE, labels = pnGroups[i], lw = 0,
+             cex.axis = 1.5)
+        for(j in 1:nrow(dfpt))
+            text(dfpt$name[j], x = dfpt$height[j],
+                 y = dfpt$y[j], col = rainbow.col[i],
+                 font = 2, pos = 4)
+    }
+    if (alllabels) {
+        dfpt <- dfp[dfp$chosen.clus == FALSE,]
+        if(nrow(dfpt)) {
+            for(j in 1:nrow(dfpt))
+                text(dfpt$name[j], x = dfpt$height[j],
+                     y = dfpt$y[j], col = "black", cex = 0.8, pos = 4)
+        }
+    }
+    return(dfp)
+} ##</pdokf within plotting>
+
+
+dendmapp <- function(factor, alllabels, 
+                     pn.groups,  pn.data, pn.accept, pn.clus,
+                     main, pnGroups, theName = "dend.P.factor") {
+    ps <- 12
+    height <- 1200
+    width <- 800
+    psf <- ifelse(factor < 1, ps * factor, ps)
+    nameIm <- paste(theName, factor, ".alllabels", alllabels, sep = "")
+    im1 <- imagemap3(nameIm, height = height * factor, width = width * factor,
+                     ps = psf)
+    dfp <- pdnokf(pn.groups = pn.groups,
+                  pn.data = pn.data,
+                  pn.accept = pn.accept,
+                  pn.clus = pn.clus,
+                  main = main,
+                  pnGroups = pnGroups,
+                  alllabels = alllabels)
+    
+    for(np in 1:nrow(dfp)) {
+        addRegion(im1) <- imRect(dfp[np, 2] + .030, dfp[np, 5] - 0.45,
+                                 dfp[np, 2] - .1, dfp[np, 5] + 0.45,
+                                 title = dfp[np, 1], alt = dfp[np, 1],
+                                 href= linkGene2(dfp[np, 1]))
+    }
+    
+    createIM(im1, file = paste(theName, factor, ".alllabels",
+                  alllabels, ".html", sep = ""))
+    imClose(im1)
+}
+
+
+wrapDendmapp <- function(li) {
+    ## for papply usage
+    setwd(li$dir)
+    dendmapp(li$factor, li$alllabels, li$pn.groups, li$pn.data, li$pn.accept,
+             li$pn.clus, li$main, li$pnGroups, li$theName)
+}
+
+
 
 
 ## 3. fit model
