@@ -82,17 +82,18 @@ pxyB <- function(type) {
     return(cbind(timings.means[poses, c(2, 4)][oo, ]))
 }
 
-postscript(file = "bench.tgd.eps", height = 8, width = 12,
+postscript(file = "bench.tgd.eps", height = 9.6, width = 14.4,
            horizontal = FALSE,
            onefile = FALSE, paper = "special")
 par(mfrow = c(1, 2))
 par(las = 1)
 par(cex = 1.2)
+par(cex.lab = 1.1)
 plot(pxyA("Serial"), ylim = c(10, 5700),
      type = "b", lwd = 2, col = "black",
      xlab = "Number of arrays (samples)",
      ylab = "User wall time (seconds)", log = "y",
-     xlim = c(20, 160), xaxt = "n",
+     xlim = c(20, 155), xaxt = "n",
      main = "Effect of number of arrays (number of genes = 40)"
      )
 axis(1, at = c(20, 40, 80, 100, 120),
@@ -109,14 +110,7 @@ points(pxyA("P_20_slaves/node"),
 points(pxyA("P_60_slaves/node"),
        type = "b", col = "red", log = "y", lwd = 2)
 
-## text(cbind(2, 0) + pxyA("Serial")[5, ], "Original serial", adj = 0)
-## text(cbind(2, 0) + pxyA("P_2_slaves/node")[5, ], "Parall; 2 slaves/node", col = "blue", adj = 0)
-## text(cbind(2, 0) + pxyA("P_6_slaves/node")[5, ], "Parall; 6 slaves/node", col = "green", adj = 0)
-## text(cbind(2, 0) + pxyA("P_12_slaves/node")[5, ], "Parall; 12 slaves/node", col = "orange", adj = 0)
-## text(cbind(2, 0) + pxyA("P_20_slaves/node")[5, ], "Parall; 20 slaves/node", col = "brown", adj = 0)
-## text(cbind(2, 0) + pxyA("P_60_slaves/node")[5, ], "Parall; 60 slaves/node", col = "red", adj = 0)
-
-text(50, 4000, "Original serial code")
+text(50, 4000, "Original sequential code")
 text(50, 500, "Parallelized code") ##, vfont = c("sans serif", "italic"))
 
 text(cbind(2, 0) + pxyA("P_2_slaves/node")[5, ], "2 slaves/node", col = "blue", adj = 0)
@@ -150,7 +144,7 @@ points(pxyB("P_20_slaves/node"),
 points(pxyB("P_60_slaves/node"),
        type = "b", col = "red", log = "y", lwd = 2)
 
-text(120, 2000, "Original serial code")
+text(120, 2000, "Original sequential code")
 text(120, 300, "Parallelized code") ##, vfont = c("sans serif", "italic"))
 
 text(cbind(9, 0) + pxyB("P_2_slaves/node")[5, ], "2 slaves/node", col = "blue", adj = 0)
