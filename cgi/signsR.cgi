@@ -10,14 +10,14 @@ import time
 import shutil
 import dircache
 ##import string
-import whrandom
+import random
 ##import re
 from stat import ST_SIZE
 import cgitb
 cgitb.enable() ## zz: eliminar for real work?
 sys.stderr = sys.stdout
 
-MAX_signs = 15 ## MAX_genesrf + 1 = Maximum number of R processes running at same time.
+MAX_signs = 25 ## MAX_genesrf + 1 = Maximum number of R processes running at same time.
 MAX_time = 3600 * 24 * 5 ## 5 is days until deletion of a tmp directory
 R_MAX_time = 3600 * 8 ## 8 hours is max duration allowed for any process
 MAX_covariate_size = 363948523L ## a 500 * 40000 array of floats
@@ -247,6 +247,32 @@ def radioUpload(fieldName, acceptedValues):
 
 
 
+def restart_tryRrun(tmpDir, tsleep = 5, ntries = 5):
+    """Verify if left track in ApplicationCounter log. Otherwise
+    call tryRrun again and leave a file in the tmpDir. """
+    
+    for i in range(ntries + 1):
+        time.sleep(tsleep)
+        in_log = int(os.popen('grep "' + \
+                              tmpDir + \
+                              '" /http/mpi.log/ApplicationCounter | wc').readline().split()[0])
+        if in_log == 0:
+            leave_track = os.system('/bin/touch ' + tmpDir + \
+                                    '/had_to_restart_' + str(i + 1))
+            if i == ntries :
+                commonOutput()
+                print "<h1> SignS problem: Can't start the application. </h1>"
+                print "<p> Please try again later.</p>"
+                print "<p> We apologize for the inconvenience.</p>"    
+                print "</body></html>"
+                sys.exit()
+            else:
+                tryrrun = os.system('/http/mpi.log/tryRrun4.py ' + tmpDir + ' SignS &')
+                
+        else:
+            break
+
+
 
 #########################################################
 #########################################################
@@ -268,7 +294,7 @@ for directory in currentTmp:
 
 
 ### Creating temporal directories
-newDir = str(whrandom.randint(1, 10000)) + str(os.getpid()) + str(whrandom.randint(1, 100000)) + str(int(currentTime)) + str(whrandom.randint(1, 10000))
+newDir = str(random.randint(1, 10000)) + str(os.getpid()) + str(random.randint(1, 100000)) + str(int(currentTime)) + str(random.randint(1, 10000))
 redirectLoc = "/tmp/" + newDir
 tmpDir = "/http/signs2/www/tmp/" + newDir
 os.mkdir(tmpDir)
@@ -510,10 +536,15 @@ shutil.copy("/http/signs2/cgi/f1.R", tmpDir)
 ## error is sent to the server
 #Rcommand = "cd " + tmpDir + "; " + "/usr/bin/R CMD BATCH --no-restore --no-readline --no-save -q f1.R 2> error.msg &"
 ##Rrun = os.system(Rcommand)
-tryrrun = os.system('/http/mpi.log/tryRrun2.py ' + tmpDir +' 10 ' + 'SignS &')
+tryrrun = os.system('/http/mpi.log/tryRrun4.py ' + tmpDir + ' SignS &')
+
+## something weird is happening, that tryRrun4.py seems not to get started ...
+## we will check the logs, and if it ain't in there, we try again
+## and annotate the error
 
 createResultsFile = os.system("/bin/touch " + tmpDir + "/results.txt")
 
+restart_tryRrun(tmpDir)
 
 ###########   Creating a results.hmtl   ###############
 
@@ -532,4 +563,3 @@ print "Location: "+ getQualifiedURL("/cgi-bin/checkdone.cgi") + "?newDir=" + new
 
 
 
-## create a new file, for tryRrun that has all needed to run it

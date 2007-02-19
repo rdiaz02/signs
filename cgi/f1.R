@@ -58,6 +58,9 @@ system(paste("mv ../../R.running.procs/", new.name1,
              " ../../R.running.procs/", new.name,
              sep = ""))
 
+sink(file = "hostname")
+cat(hostn)
+sink()
 
 
 
@@ -169,11 +172,19 @@ if( methodSurv == "TGD") {
 
 #########################################################
 
+MPI_MIN_UNIVERSE_SIZE <- 15
+
+if (mpi.universe.size () < MPI_MIN_UNIVERSE_SIZE) {
+    cat("\n\n mpi.universe.size () < MPI_MIN_UNIVERSE_SIZE \n\n")
+    quit(save = "no", status = 11, runLast = TRUE)
+}
+
 if(methodSurv == "TGD") {
     TheCluster <- makeCluster(mpi.universe.size(), "MPI")
     } else if(methodSurv == "FCMS") {
     mpiSpawnAll()
 }
+
 sink(file = "mpiOK")
 cat("MPI started OK\n")
 sink()

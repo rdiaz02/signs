@@ -1988,6 +1988,9 @@ mpiMyCleanSetup <- function() {
     mpi.remote.exec(library(imagemap))
 }
 
+mpiDelete <- function() {
+    mpi.remote.exec(rm(list = ls(env = .GlobalEnv), envir =.GlobalEnv))
+}
 
 
 DaveCVPred.res1Given.InternalMPI2 <- function(fnum) {
@@ -2041,7 +2044,7 @@ cvDave.parallel3 <- function(x, time, event,
             mpiSpawnAll()
             cat("\n       cond 2 \n")
         } else {
-            mpiMyCleanSetup()
+            mpiDelete()
             cat("\n       cond 3 \n")
         }
     }
@@ -2069,11 +2072,12 @@ cvDave.parallel3 <- function(x, time, event,
                                       MaxIterationsCox = MaxIterationsCox)
     }
 
-    cat("\n\n Cleaning up MPI space, and setting up again\n\n")	
-    mpiMyCleanSetup()
+    cat("\n\n Cleaning up MPI slaves\n\n")	
+    mpiDelete()
 
     if(nfold > (mpi.comm.size() - 1))
-        stop("nfold > number of mpi Rslaves")
+        stop(paste("nfold > number of mpi Rslaves; mpi.comm.size = ",
+                   mpi.comm.size() ))
     
     cat("\n\n Sending objects to MPI space\n\n")
 
@@ -2098,8 +2102,8 @@ cvDave.parallel3 <- function(x, time, event,
     cat("\n\n Computing the rest\n")
     tmp1 <- papply(as.list(1:nfold),
                  DaveCVPred.res1Given.InternalMPI2)
-    cat("\n\n Cleaning up and closing MPI\n")
-    try(mpi.close.Rslaves())
+##    cat("\n\n Cleaning up and closing MPI\n")
+##    try(mpi.close.Rslaves())
     
     for(i in 1:nfold) {
         OOB.scores[index.select == i] <-

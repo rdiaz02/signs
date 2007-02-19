@@ -21,7 +21,7 @@ import cgitb
 cgitb.enable() ## zz: eliminar for real work?
 sys.stderr = sys.stdout ## eliminar?
 
-R_MAX_time = 8 * 3600 ## 4 hours is max duration allowd for any process
+R_MAX_time = 8 * 3600 ## max duration allowd for any process
 
 ## For redirections, from Python Cookbook
 
@@ -603,14 +603,14 @@ errorRun = soFar.endswith("Execution halted\n")
 if os.path.exists(tmpDir + "/pid.txt"):
     ## do we need to kill an R process?
     if (time.time() - os.path.getmtime(tmpDir + "/pid.txt")) > R_MAX_time:
-        lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
-        try:
-            os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv +
-                      '; lamhalt -H; lamwipe -H')
-        except:
-            None
-#             os.kill(int(open(tmpDir + "/pid.txt", mode = "r").readline()),
-#                        signal.SIGKILL)
+#         lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
+#         try:
+#             os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv +
+#                       '; lamhalt -H; lamwipe -H')
+#         except:
+#             None
+# #             os.kill(int(open(tmpDir + "/pid.txt", mode = "r").readline()),
+# #                        signal.SIGKILL)
 
         printRKilled()
         os.rename(tmpDir + '/pid.txt', tmpDir + '/killed.pid.txt')
@@ -626,16 +626,16 @@ if os.path.exists(tmpDir + "/pid.txt"):
 if errorRun > 0:
     printErrorRun()
     os.rename(tmpDir + '/pid.txt', tmpDir + '/natural.death.pid.txt')
-    os.remove(tmpDir + '/f1.R')
+#     os.remove(tmpDir + '/f1.R')
 ##    chkmpi = os.system('/http/mpi.log/adhocCheckRmpi.py Signs&')
-    try:
-        lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
-    except:
-        None
-    try:
-        os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv + '; lamhalt -H; lamwipe -H')
-    except:
-        None
+#     try:
+#         lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
+#     except:
+#         None
+#     try:
+#         os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv + '; lamhalt -H; lamwipe -H')
+#     except:
+#         None
     try:
         os.system("rm /http/signs2/www/R.running.procs/R." + newDir + "*")
     except:
@@ -644,14 +644,14 @@ if errorRun > 0:
 
 
 elif finishedOK > 0:
-    try:
-        lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
-    except:
-        None
-    try:
-        lamkill = os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv + '; lamhalt -H; lamwipe -H')
-    except:
-        None
+#     try:
+#         lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
+#     except:
+#         None
+#     try:
+#         lamkill = os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv + '; lamhalt -H; lamwipe -H')
+#     except:
+#         None
     printOKRun()
     os.rename(tmpDir + '/pid.txt', tmpDir + '/natural.death.pid.txt')
 ##    os.remove(tmpDir + '/f1.R')
