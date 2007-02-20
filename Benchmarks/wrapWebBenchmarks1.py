@@ -61,16 +61,16 @@ def writeFile(testout, name):
 ## that lost all work. Now I do this from an interactive python shell.
 
 
-breast_1_1 = launchUTests('breast', 1)
-breast_1_2 = launchUTests('breast', 1)
-breast_1_3 = launchUTests('breast', 1)
-breast_1_4 = launchUTests('breast', 1)
-breast_1_5 = launchUTests('breast', 1)
-breast_5_1 = launchUTests('breast', 5)
+# breast_1_1 = launchUTests('breast', 1)
+# breast_1_2 = launchUTests('breast', 1)
+# breast_1_3 = launchUTests('breast', 1)
+# breast_1_4 = launchUTests('breast', 1)
+# breast_1_5 = launchUTests('breast', 1)
+# breast_5_1 = launchUTests('breast', 5)
 
-breastA = breast_1_1 + breast_1_2 + breast_1_3 + breast_1_4 + breast_1_5 +\
-            breast_5_1 
-writeFile(breastA, 'breastA.web.tests.txt')
+# breastA = breast_1_1 + breast_1_2 + breast_1_3 + breast_1_4 + breast_1_5 +\
+#             breast_5_1 
+# writeFile(breastA, 'breastA.web.tests.txt')
 
 
 dlbcl_1_1 = launchUTests('dlbcl', 1)
@@ -86,22 +86,22 @@ dlbclA = dlbcl_1_1 + dlbcl_1_2 + dlbcl_1_3 + dlbcl_1_4 + dlbcl_1_5 +\
 writeFile(dlbclA, 'dlbclA.web.tests.txt')
 
 
-breast_10_1 = [-9999999.11]
-breast_20_1 = [-9999999.22]
+# breast_10_1 = [-9999999.11]
+# breast_20_1 = [-9999999.22]
 
-try:
-    breast_10_1 = launchUTests('breast', 10)
-except:
-    None
+# try:
+#     breast_10_1 = launchUTests('breast', 10)
+# except:
+#     None
     
-try:
-    breast_20_1 = launchUTests('breast', 20)
-except:
-    None
+# try:
+#     breast_20_1 = launchUTests('breast', 20)
+# except:
+#     None
 
-breast = breast_1_1 + breast_1_2 + breast_1_3 + breast_1_4 + breast_1_5 +\
-            breast_5_1 + breast_10_1 + breast_20_1
-writeFile(breast, 'breast.web.tests.txt')
+# breast = breast_1_1 + breast_1_2 + breast_1_3 + breast_1_4 + breast_1_5 +\
+#             breast_5_1 + breast_10_1 + breast_20_1
+# writeFile(breast, 'breast.web.tests.txt')
 
 
 dlblc_10_1 = [-9999999.11]
