@@ -77,9 +77,9 @@ def check_tping(lamSuffix, tmpDir, tsleep = 15, nc = 2):
 
 def recover_from_lam_crash(tmpDir, machine_root = machine_root,
                            tsleep = 100, maxrmpi_tries = 10):
-    'Check if lam crashed during R run. If it did, restart R
+    """Check if lam crashed during R run. If it did, restart R
     after possibly rebooting the lam universe.
-    Leave a trace of what happened.'
+    Leave a trace of what happened."""
     final_value = 'NoCrash'
     OTHER_LAM_MSGS = 'Call stack within LAM:'
     lam_logs = glob.glob(tmpDir + '/' + machine_root + '*.*.*.log')
@@ -122,8 +122,11 @@ def recover_from_lam_crash(tmpDir, machine_root = machine_root,
                 if lam_ok == 0: lboot = lamboot(lamSuffix)
                 Rrun = os.system(Rcommand)
 
-        if startedOK = False: ## something seriously broken: give up.
+        if startedOK == False: ## something seriously broken: give up.
             final_value = 'FAILED'
+    timeHuman = str(time.strftime('%d %b %Y %H:%M:%S')) 
+    os.system('echo "' + final_value + '  at ' + timeHuman + \
+              '" >> ' + tmpDir + '/recoverFromLAMCrash.out')
     return final_value
 
 
