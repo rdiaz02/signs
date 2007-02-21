@@ -6,7 +6,11 @@
 ##############################################
 ##############################################
 
-rm(list = ls())
+## rm(list = ls())
+
+checkpoint.num <- scan("checkpoint.num", what = double(0), n = 1)
+
+
 
 
 ## From: http://ace.acadiau.ca/math/ACMMaC/Rmpi/sample.html
@@ -38,6 +42,15 @@ rm(list = ls())
     try(system(paste("/http/mpi.log/killLAM.py", lamSESSION, "&")))
     try(mpi.quit(save = "no"), silent = TRUE)
 }
+
+doCheckpoint <- function(num) {
+    save.image()
+    sink("checkpoint.num")
+    cat(num)
+    sink()
+}
+
+
 
 
 startExecTime <- format(Sys.time())
@@ -209,10 +222,8 @@ cleanHTMLtail <- function(file, append= TRUE) {
     write("</body></html>", file = file, append = append)
 }
 
-idtype <- "None"
-organism <- "None"
-idtype <- try(scan("idtype", what = "", n = 1))
-organism <- try(scan("organism", what = "", n = 1))
+
+
 
 
 
@@ -222,6 +233,12 @@ organism <- try(scan("organism", what = "", n = 1))
 
 #########################################################
 
+if(checkpoint.num < 1) {
+
+idtype <- "None"
+organism <- "None"
+idtype <- try(scan("idtype", what = "", n = 1))
+organism <- try(scan("organism", what = "", n = 1))
 
 
 useValidation <- try(scan("usevalidation", what = "", n = 1))
@@ -472,6 +489,9 @@ if(useValidation == "yes") {
     }
 }
 
+doCheckpoint(1)
+
+}
 
 options(warn = -1)
 
@@ -480,6 +500,11 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
     ##    TheCluster <- makeCluster(60, "MPI")
     ##     mpiSpawnThis(hosts = mpiHosts)
 
+
+## recall that TGD ain't running now, so some of the checkpinting strategy,
+    ## etc not implemented here
+
+    
     thresGrid <- 6
     thres <- c(0, 1)
     checkEvery <- 2000
@@ -667,7 +692,11 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
     
 } else if(methodSurv == "FCMS") {
 
-    mpi.bcast.Robj2slave(idtype)
+
+
+    if(checkpoint.num < 2) {
+
+        mpi.bcast.Robj2slave(idtype)
     mpi.bcast.Robj2slave(organism)
 
     
@@ -705,7 +734,14 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
     system(paste("/http/signs/cgi/order.html.py", idtype, organism)) ## call python to generate pre-sorted HTML tables
     
 
+
+        doCheckpoint(2)
+    }
+        
 #################    step AIC      #################                
+
+
+    if(checkpoint.num < 3) {
 
     sink(file = "stepAIC.output.txt")
     trycode <- try(
@@ -726,7 +762,13 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
     print(all.res3$model)
     sink()
 
+    doCheckpoint(3)
+}
+
 #################    run all the rest      #################
+
+
+if(checkpoint.num < 4) {
     
     trycode <- try(
                    cvDaveRun <- cvDave.parallel3(x = xdata, time = Time,
@@ -758,7 +800,13 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
                              trycode, ". \n Please let us know so we can fix the code."))
 
     sink()
-##    system("cat results.txt /http/signs/cgi/p.v.table.html > tmp.p.v; mv tmp.p.v results.txt")
+
+    doCheckpoint(4)
+
+}
+
+if(checkpoint.num < 5) {   
+
     sink(file = "results.txt", append = TRUE)
 
 
@@ -806,7 +854,14 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
         caughtOurError(paste("Function summary.cvDave bombed unexpectedly with error",
                              trycode, ". \n Please let us know so we can fix the code."))
 
+    sink()
 
+doCheckpoint(5)
+}
+
+   
+    if(checkpoint.num < 6) {
+        sink(file = "results.txt", append = TRUE)
 
     if(useValidation == "yes") {
         cat("\n <h2>6. Validation data</h2>\n")
@@ -834,20 +889,14 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
         write(wout, file = "scores.validation.html", append = TRUE)
         cleanHTMLtail(file = "scores.validation.html")
 
-##         cat("\n\n <h4>Scores (linear predictor) for validation data</h4>\n")
-##         cat("<TABLE frame=\"box\">\n")
-##         cat("<tr><th>Validation subject/array</th> <th>Linear score</th></tr>\n")
-##         for(i in 1:length(valpred)) {
-##             cat("\n <tr align=right>")
-##             cat("<td>", rownames(valpred)[i], "</td><td>", valpred[i], "</td></tr>\n")
-##         }
-##         cat("</TABLE>")
-##        print(valpred)
        
     }      
 
     sink()
 
+        doCheckpoint(6)
+    }
+    
 
 #########################################################
 ########
@@ -855,7 +904,7 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
 ########
 #########################################################
 
-
+    if(checkpoint.num < 7) {
     gdd.width <- 480
     gdd.height <- 410
 
@@ -928,7 +977,8 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
     dev.off()
 
-
+    doCheckpoint(7)
+}
 
 
 

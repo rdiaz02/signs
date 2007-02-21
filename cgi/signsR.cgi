@@ -543,6 +543,7 @@ tryrrun = os.system('/http/mpi.log/tryRrun4.py ' + tmpDir + ' SignS &')
 ## and annotate the error
 
 createResultsFile = os.system("/bin/touch " + tmpDir + "/results.txt")
+checkpoint = os.system("echo 0 > " + tmpDir + "/checkpoint.num")
 
 restart_tryRrun(tmpDir)
 

@@ -25,6 +25,109 @@ R_MAX_time = 8 * 3600 ## max duration allowd for any process
 
 ## For redirections, from Python Cookbook
 
+machine_root = 'karl'
+
+
+def lamboot(lamSuffix):
+    'Boot a lam universe'
+    fullCommand = 'export LAM_MPI_SESSION_SUFFIX="' + lamSuffix + \
+                  '"; /http/mpi.log/tryBootLAM.py ' + lamSuffix
+    lboot = os.system(fullCommand)
+
+def check_tping(lamSuffix, tmpDir, tsleep = 15, nc = 2):
+    """ Use tping to verify LAM universe OK.
+    tsleep is how long we wait before checking output of tping.
+    Verify also using 'lamexec C hostname' """
+    
+    tmp2 = os.system('export LAM_MPI_SESSION_SUFFIX="' +\
+                     lamSuffix + '"; cd ' + tmpDir + \
+                     '; tping C N -c' + str(nc) + \
+                     ' > tping.out & ')
+    time.sleep(tsleep)
+    tmp = int(os.popen('cd ' + tmpDir + \
+                       '; wc tping.out').readline().split()[0])
+    os.system('rm ' + tmpDir + '/tping.out')
+    timeHuman = '##########   ' + \
+                str(time.strftime('%d %b %Y %H:%M:%S')) 
+    os.system('echo "' + timeHuman + \
+              '" >> ' + tmpDir + '/checkTping.out')
+    if tmp == 0:
+        os.system('echo "tping fails" >> ' + \
+                  tmpDir + '/checkTping.out')
+        return 0
+    elif tmp > 0:
+        os.system('echo "tping OK" >> ' + \
+                  tmpDir + '/checkTping.out')
+        lamexec = os.system('export LAM_MPI_SESSION_SUFFIX="' +\
+                            lamSuffix + '"; lamexec C hostname')
+        if lamexec == 0:
+            os.system('echo "lamexec OK" >> ' + \
+                      tmpDir + '/checkTping.out')
+            return 1
+        else:
+            os.system('echo "lamexec fails" >> ' + \
+                      tmpDir + '/checkTping.out')
+            return 0
+    else:
+        os.system('echo "tping weird ' + str(tmp) + '" >> ' + \
+                  tmpDir + '/checkTping.out')
+        return 0
+
+
+
+def recover_from_lam_crash(tmpDir, machine_root = machine_root,
+                           tsleep = 100, maxrmpi_tries = 10):
+    'Check if lam crashed during R run. If it did, restart R
+    after possibly rebooting the lam universe.
+    Leave a trace of what happened.'
+    final_value = 'NoCrash'
+    OTHER_LAM_MSGS = 'Call stack within LAM:'
+    lam_logs = glob.glob(tmpDir + '/' + machine_root + '*.*.*.log')
+    in_error_msg = os.popen('grep MPI_Error_string ' + \
+                            tmpDir + '/error.msg | wc').readline().split()[0]
+    if in_error_msg > 0:
+        os.system('rm ' + tmpDir + '/error.msg')
+        for lam_log in lam_logs:
+            os.system('rm ' + lam_log)
+    else: ## look in lam logs
+        for lam_log in lam_logs:
+            tmp1 = os.popen('grep ' + OTHER_LAM_MSGS + ' ' + \
+                            lam_log + ' | wc').readline().split()[0]
+            if tmp1 > 0:
+                in_lam_logs = 1
+                break
+
+    if (in_error_msg > 0) or (in_lam_logs > 0):
+        final_value = 'Recovering'
+        os.system('mv ' + tmpDir + '/mpiOK ' + tmpDir + '/previous_mpiOK')
+        timeHuman = str(time.strftime('%d %b %Y %H:%M:%S')) 
+        os.system('echo "' + timeHuman + \
+                  '" >> ' + tmpDir + '/recoverFromLAMCrash.out')
+        lamSuffix = open(tmpDir + "/lamSuffix", mode = "r").readline()
+        lam_ok = check_tping(lamSuffix, tmpDir)
+        if lam_ok == 0: lboot = lamboot(lamSuffix)
+        Rcommand = 'export LAM_MPI_SESSION_SUFFIX="' + lamSuffix + \
+                   '"; cd ' + tmpDir + \
+                   '; sleep 1; /http/R-custom/bin/R  --no-restore --no-readline --no-save --slave <f1.R >>f1.Rout 2>> error.msg &'
+        Rrun = os.system(Rcommand)
+        ## Verify Rmpi started OK, and relaunch o.w.
+        for rmpytry in range(maxrmpi_tries):
+            time.sleep(tsleep)
+            if os.path.exists(tmpDir + "/mpiOK"):
+                startedOK = True
+                break
+            else:
+                startedOK = False
+                lam_ok = check_tping(lamSuffix, tmpDir)
+                if lam_ok == 0: lboot = lamboot(lamSuffix)
+                Rrun = os.system(Rcommand)
+
+        if startedOK = False: ## something seriously broken: give up.
+            final_value = 'FAILED'
+    return final_value
+
+
+
 def clean_for_PaLS(file_in, file_out):
     """ Make sure no file has two consecutive lines that start with '#',
     so there are not lists without genes."""
@@ -259,6 +362,10 @@ def printErrorRun():
     outf.write("<pre>")
     outf.write(cgi.escape(resultsFile))
     outf.write("</pre>")
+    outf.write("<p> And this the error messages file:<p>")
+    outf.write("<pre>")
+    outf.write(cgi.escape(error.msg))
+    outf.write("</pre>")
     outf.write("</body></html>")
     outf.close()
     Rresults.close()
@@ -387,13 +494,9 @@ def printOKRun():
             outf.write('<h4>Three groups</h4>\n')
             outf.write('<IMG BORDER="0" SRC="kmplot3-honest.png">')
             outf.write('<IMG BORDER="0" SRC="kmplot3-overfitt.png">')
-##            outf.write('<p>Please, DO NOT use the overfitt one, except for pedagogic purposes to show ')
-##            outf.write('consequencues of overfitting and not doing cross-validation.</p>')
             outf.write('<h4>Four groups</h4>\n')
             outf.write('<IMG BORDER="0" SRC="kmplot4-honest.png">')
             outf.write('<IMG BORDER="0" SRC="kmplot4-overfitt.png">')
-##            outf.write('<p>Please, DO NOT use the overfitt one, except for pedagogic purposes to show ')
-##            outf.write('consequencues of overfitting and not doing cross-validation.</p></ul>')
 
             if os.path.exists(tmpDir + "/usevalidation"):
                 outf.write('<h3>2.2. Survival plots for validation data</h3>\n')
@@ -439,14 +542,8 @@ def printOKRun():
             
             outf.write("<br /><br /> <hr>")
             outf.write(resultsFile)
-##            outf.write("<pre>")
-##            outf.write('<br /><br /><h2> Results <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outputText">(help)</a></h2> \n')
-##            outf.write(cgi.escape(resultsFile))
-##            outf.write("</pre>")
 
             if os.path.exists(tmpDir + '/f1.R'): os.remove(tmpDir + '/f1.R')
-##            if os.path.exists(tmpDir + '/f1.Rout'): os.remove(tmpDir + '/f1.Rout')
-##            if os.path.exists(tmpDir + '/.RData'): os.remove(tmpDir + '/.RData')
             Rresults.close()
             if os.path.exists(tmpDir + '/results.txt'): os.remove(tmpDir + '/results.txt')
      
@@ -470,33 +567,6 @@ def printOKRun():
             lll = glob.glob('*')
             for flname in lll:
                 allResults.add(flname)
-            
-
-# #             allResults.add(tmpDir + '/results.txt', 'results.txt')
-# #             if os.path.exists(tmpDir + "/kmplot-honest.png"): allResults.add(tmpDir + '/kmplot-honest.png', 'SurvivalPlot-honest.png')
-# #             if os.path.exists(tmpDir + "/kmplot-overfitt.png"): allResults.add(tmpDir + '/kmplot-overfitt.png', 'SurvivalPlot-overfitt.png')
-# #             if os.path.exists(tmpDir + "/ClusterPositiveCoefficients.pn
-
-# #             allResults.add(tmpDir + '/results.txt', 'results.txt')
-# #             if os.path.exists(tmpDir + "/kmplot-honest.png"): allResults.add(tmpDir + '/kmplot-honest.png', 'SurvivalPlot-honest.png')
-# #             if os.path.exists(tmpDir + "/kmplot-overfitt.png"): allResults.add(tmpDir + '/kmplot-overfitt.png', 'SurvivalPlot-overfitt.png')
-# #             if os.path.exists(tmpDir + "/ClusterPositiveCoefficients.png"): allResults.add(tmpDir + '/ClusterPositiveCoefficients.png')
-# #             if os.path.exists(tmpDir + "/ClusterNegativeCoefficients.png"): allResults.add(tmpDir + '/ClusterNegativeCoefficients.png')
-
-# #             if os.path.exists(tmpDir + "/kmplot-honest.pdf"): allResults.add(tmpDir + '/kmplot-honest.pdf', 'SurvivalPlot-honest.pdf')
-# #             if os.path.exists(tmpDir + "/kmplot-overfitt.pdf"): allResults.add(tmpDir + '/kmplot-overfitt.pdf', 'SurvivalPlot-overfitt.pdf')
-# #             if os.path.exists(tmpDir + "/ClusterPositiveCoefficients.pdf"): allResults.add(tmpDir + '/ClusterPositiveCoefficients.pdf')
-# #             if os.path.exists(tmpDir + "/ClusterNegativeCoefficients.pdf"): allResults.add(tmpDir + '/ClusterNegativeCoefficients.pdf')
-
-# #             if os.path.exists(tmpDir + "/kmplot4-honest.png"): allResults.add(tmpDir + '/kmplot4-honest.png', 'SurvivalPlot4-honest.png')
-# #             if os.path.exists(tmpDir + "/kmplot4-overfitt.png"): allResults.add(tmpDir + '/kmplot4-overfitt.png', 'SurvivalPlot4-overfitt.png')
-# #             if os.path.exists(tmpDir + "/kmplot4-honest.pdf"): allResults.add(tmpDir + '/kmplot4-honest.pdf', 'SurvivalPlot4-honest.pdf')
-# #             if os.path.exists(tmpDir + "/kmplot4-overfitt.pdf"): allResults.add(tmpDir + '/kmplot4-overfitt.pdf', 'SurvivalPlot4-overfitt.pdf')
-
-# #             if os.path.exists(tmpDir + "/kmplot-validation.png"): allResults.add(tmpDir + '/kmplot-validation.png', 'SurvivalPlot-validation.png')
-# #             if os.path.exists(tmpDir + "/kmplot4-validation.png"): allResults.add(tmpDir + '/kmplot4-validation.png', 'SurvivalPlot4-validation.png')
-# #             if os.path.exists(tmpDir + "/kmplot-validation.pdf"): allResults.add(tmpDir + '/kmplot-validation.pdf', 'SurvivalPlot-validation.pdf')
-# #             if os.path.exists(tmpDir + "/kmplot4-validation.pdf"): allResults.add(tmpDir + '/kmplot4-validation.pdf', 'SurvivalPlot4-validation.pdf')
 
             allResults.close()
             outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')  
@@ -586,31 +656,32 @@ if os.path.exists(tmpDir + "/natural.death.pid.txt") or os.path.exists(tmpDir + 
     print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
     sys.exit()
 
-## No, we were not done. Need to examine R output
+## No, we were not done. Need to examine R output and possible crashes
 Rrout = open(tmpDir + "/f1.Rout")
 soFar = Rrout.read()
 Rrout.close()
 finishedOK = soFar.endswith("Normal termination\n")
 errorRun = soFar.endswith("Execution halted\n")
 
+lam_recovered = recover_from_lam_crash(tmpDir)
+if lam_recovered == 'FAILED':
+    errorRun = 1
+    finishedOK = 0
+elif lam_recovered == 'Recovering':
+    relaunchCGI()
+else: ## we did not crash, so like we never run recover_from_lam_crash
+    pass
 
-Rrout = open(tmpDir + "/f1.Rout")
-soFar = Rrout.read()
-Rrout.close()
-finishedOK = soFar.endswith("Normal termination\n")
-errorRun = soFar.endswith("Execution halted\n")
 
 if os.path.exists(tmpDir + "/pid.txt"):
     ## do we need to kill an R process?
     if (time.time() - os.path.getmtime(tmpDir + "/pid.txt")) > R_MAX_time:
-#         lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
-#         try:
-#             os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv +
-#                       '; lamhalt -H; lamwipe -H')
-#         except:
-#             None
-# #             os.kill(int(open(tmpDir + "/pid.txt", mode = "r").readline()),
-# #                        signal.SIGKILL)
+        lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
+        try:
+            os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv +
+                      '; lamhalt -H; lamwipe -H')
+        except:
+            None
 
         printRKilled()
         os.rename(tmpDir + '/pid.txt', tmpDir + '/killed.pid.txt')
@@ -620,22 +691,19 @@ if os.path.exists(tmpDir + "/pid.txt"):
         except:
             None
         print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
-##                chkmpi = os.system('/http/mpi.log/adhocCheckRmpi.py Signs&')
         sys.exit()
 
 if errorRun > 0:
     printErrorRun()
     os.rename(tmpDir + '/pid.txt', tmpDir + '/natural.death.pid.txt')
-#     os.remove(tmpDir + '/f1.R')
-##    chkmpi = os.system('/http/mpi.log/adhocCheckRmpi.py Signs&')
-#     try:
-#         lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
-#     except:
-#         None
-#     try:
-#         os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv + '; lamhalt -H; lamwipe -H')
-#     except:
-#         None
+    try:
+        lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
+    except:
+        None
+    try:
+        os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv + '; lamhalt -H; lamwipe -H')
+    except:
+        None
     try:
         os.system("rm /http/signs2/www/R.running.procs/R." + newDir + "*")
     except:
@@ -644,18 +712,16 @@ if errorRun > 0:
 
 
 elif finishedOK > 0:
-#     try:
-#         lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
-#     except:
-#         None
-#     try:
-#         lamkill = os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv + '; lamhalt -H; lamwipe -H')
-#     except:
-#         None
+    try:
+        lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
+    except:
+        None
+    try:
+        lamkill = os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv + '; lamhalt -H; lamwipe -H')
+    except:
+        None
     printOKRun()
     os.rename(tmpDir + '/pid.txt', tmpDir + '/natural.death.pid.txt')
-##    os.remove(tmpDir + '/f1.R')
-    ##    chkmpi = os.system('/http/mpi.log/adhocCheckRmpi.py Signs&')
     try:
         os.system("rm /http/signs2/www/R.running.procs/R." + newDir + "*")
     except:
@@ -671,45 +737,3 @@ else:
 
 
 
-# if os.path.exists(tmpDir + "/pid.txt"):
-#     ## do we need to kill an R process?
-#     if (time.time() - os.path.getmtime(tmpDir + "/pid.txt")) > R_MAX_time:
-#         try:
-#             os.kill(int(open(tmpDir + "/pid.txt", mode = "r").readline()),
-#                     signal.SIGKILL) ## maybe sigint is better than sigkill??  
-#         finally:
-#             printRKilled()
-#       os.rename(tmpDir + '/pid.txt', tmpDir + '/killed.pid.txt')
-#             os.remove(tmpDir + '/f1.R')
-#             try:
-#                 os.remove("/http/signs2/www/R.running.procs/R." + newDir)
-#             finally:
-#                 print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
-#                 chkmpi = os.system('/http/mpi.log/adhocCheckRmpi.py SignS&')
-#                 sys.exit()
-
-# if errorRun > 0:
-#     printErrorRun()
-#     os.rename(tmpDir + '/pid.txt', tmpDir + '/natural.death.pid.txt')
-#     os.remove(tmpDir + '/f1.R')
-#     chkmpi = os.system('/http/mpi.log/adhocCheckRmpi.py SignS&')
-#     try:
-#         os.remove("/http/signs2/www/R.running.procs/R." + newDir)
-#     finally:
-#         print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
-
-# elif finishedOK > 0:
-#     printOKRun()
-#     os.rename(tmpDir + '/pid.txt', tmpDir + '/natural.death.pid.txt')
-#     os.remove(tmpDir + '/f1.R')
-# #    chkmpi = os.system('/http/mpi.log/adhocCheckRmpi.py SignS&')
-#     try:
-#         os.remove("/http/signs2/www/R.running.procs/R." + newDir)
-#     finally:
-#         print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
-    
-# else:
-#     ## we only end up here if: we were not done in a previous run AND no process was overtime 
-#     ## AND we did not just finish. So we must continue.
-#     relaunchCGI()
-    

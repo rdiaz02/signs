@@ -5,12 +5,14 @@
 
 rr <- function(x) rep(x, x)
 
-breast.results <- NULL
-breast.results <- c(breast.results,
-                    scan("breast.web.bnchmk.1.1.1.txt", sep = "\t", what = double(0), nmax = 3),
-                    scan("breast.web.bnchmk.A.1.20txt", sep = "\t", what = double(0), nmax = 38),
-                    scan("breast.web.bnchmk.B.1.20txt", sep = "\t", what = double(0), nmax = 38),
-                    scan("breast.web.bnchmk.F.1.20txt", sep = "\t", what = double(0), nmax = 38))
+breast.results <- scan("breast.web.tests.txt", sep = "\t",
+                       what = double(0), 40)
+nusers <- c(rep(1, 5), rr(5), rr(10), rr(20))
+
+            
+
+
+
 dlbcl.results <- NULL
 dlbcl.results <- c(dlbcl.results,
                     scan("dlbcl.web.bnchmk.1.1.1.txt", sep = "\t", what = double(0), nmax = 3),
@@ -33,6 +35,7 @@ par(cex = 1.2)
 boxplot(breast.results ~ nusers, xlab = "Number of simultaneous users",
         ylab = "User wall time (seconds)",
         main = "Breast data set (78 arrays x 4751 genes)")
+
 
 boxplot(dlbcl.results ~ nusers, xlab = "Number of simultaneous users",
         ylab = "User wall time (seconds)",
