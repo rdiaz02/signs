@@ -538,7 +538,16 @@ shutil.copy("/http/signs2/cgi/f1.R", tmpDir)
 ##Rrun = os.system(Rcommand)
 tryrrun = os.system('/http/mpi.log/tryRrun5.py ' + tmpDir + ' SignS &')
 
-## FIXME : should probably tell the user if the jobe waiting or running.
+## Launch the lam checking program 
+lam_check = os.spawnv(os.P_NOWAIT, '/http/mpi.log/recoverFromLAMCrash.py',
+                      ['', tmpDir])
+
+os.system('echo "' + str(lam_check) + ' ' + socket.gethostname() +\
+           '"> ' + tmpDir + '/lamCheckPID')
+
+
+
+## FIXME : should probably tell the user if the job waiting or running.
 
 ## something weird is happening, that tryRrun4.py seems not to get started ...
 ## we will check the logs, and if it ain't in there, we try again
