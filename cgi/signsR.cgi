@@ -536,7 +536,9 @@ shutil.copy("/http/signs2/cgi/f1.R", tmpDir)
 ## error is sent to the server
 #Rcommand = "cd " + tmpDir + "; " + "/usr/bin/R CMD BATCH --no-restore --no-readline --no-save -q f1.R 2> error.msg &"
 ##Rrun = os.system(Rcommand)
-tryrrun = os.system('/http/mpi.log/tryRrun3.py ' + tmpDir + ' SignS &')
+tryrrun = os.system('/http/mpi.log/tryRrun5.py ' + tmpDir + ' SignS &')
+
+## FIXME : should probably tell the user if the jobe waiting or running.
 
 ## something weird is happening, that tryRrun4.py seems not to get started ...
 ## we will check the logs, and if it ain't in there, we try again
