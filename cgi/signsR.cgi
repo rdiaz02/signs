@@ -267,7 +267,7 @@ def restart_tryRrun(tmpDir, tsleep = 5, ntries = 5):
                 print "</body></html>"
                 sys.exit()
             else:
-                tryrrun = os.system('/http/mpi.log/tryRrun3.py ' + tmpDir + ' SignS &')
+                tryrrun = os.system('/http/mpi.log/tryRrun5.py ' + tmpDir + ' SignS &')
                 
         else:
             break

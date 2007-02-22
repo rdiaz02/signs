@@ -24,6 +24,13 @@ sys.stderr = sys.stdout ## eliminar?
 R_MAX_time = 8 * 3600 ## max duration allowd for any process
 
 
+# def issue_echo(fecho, tmpDir):
+#     """Silly function to output small tracking files"""
+#     timeHuman = '##########   ' + \
+#                 str(time.strftime('%d %b %Y %H:%M:%S')) 
+    
+
+
 def kill_lamcheck(pid, machine):
     'as it says: to kill lamcheck; actually, anything'
     os.system('ssh ' + machine + ' "kill -s9 ' + pid + '"')
@@ -562,11 +569,6 @@ soFar = Rrout.read()
 Rrout.close()
 finishedOK = soFar.endswith("Normal termination\n")
 errorRun = soFar.endswith("Execution halted\n")
-
-
-lam_check = open(tmpDir + '/lamCheckPID', mode = 'r'). readline().split()
-lam_check_machine = lam_check[1]
-lam_check_pid = lam_check[0]
 
 
 if os.path.exists(tmpDir + "/pid.txt"):
