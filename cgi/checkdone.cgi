@@ -571,6 +571,10 @@ finishedOK = soFar.endswith("Normal termination\n")
 errorRun = soFar.endswith("Execution halted\n")
 
 
+lam_check = open(tmpDir + '/lamCheckPID', mode = 'r'). readline().split()
+lam_check_machine = lam_check[1]
+lam_check_pid = lam_check[0]
+
 if os.path.exists(tmpDir + "/pid.txt"):
     ## do we need to kill an R process?
     if (time.time() - os.path.getmtime(tmpDir + "/pid.txt")) > R_MAX_time:
