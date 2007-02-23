@@ -24,10 +24,15 @@ sys.stderr = sys.stdout ## eliminar?
 R_MAX_time = 8 * 3600 ## max duration allowd for any process
 
 
-# def issue_echo(fecho, tmpDir):
-#     """Silly function to output small tracking files"""
-#     timeHuman = '##########   ' + \
-#                 str(time.strftime('%d %b %Y %H:%M:%S')) 
+def issue_echo(fecho, tmpDir = tmpDir):
+    """Silly function to output small tracking files"""
+    timeHuman = '##########   ' + \
+                str(time.strftime('%d %b %Y %H:%M:%S')) 
+    os.system('echo "' + timeHuman + \
+              '" >> ' + tmpDir + '/checkdone.echo')
+    os.system('echo "' + fecho + \
+              '" >> ' + tmpDir + '/checkdone.echo')
+    os.system('echo "    " >> ' + tmpDir + '/checkdone.echo')
     
 
 
@@ -564,19 +569,35 @@ if os.path.exists(tmpDir + "/natural.death.pid.txt") or os.path.exists(tmpDir + 
     sys.exit()
 
 ## No, we were not done. Need to examine R output and possible crashes
+
+issue_echo('before lam_check')
+
+lam_check = open(tmpDir + '/lamCheckPID', mode = 'r'). readline().split()
+lam_check_machine = lam_check[1]
+lam_check_pid = lam_check[0]
+
+issue_echo('right after lam_check')
+
+
 Rrout = open(tmpDir + "/f1.Rout")
 soFar = Rrout.read()
 Rrout.close()
 finishedOK = soFar.endswith("Normal termination\n")
 errorRun = soFar.endswith("Execution halted\n")
 
+issue_echo('right after Rrout')
 
-lam_check = open(tmpDir + '/lamCheckPID', mode = 'r'). readline().split()
-lam_check_machine = lam_check[1]
-lam_check_pid = lam_check[0]
+if os.path.exists(tmpDir + '/RterminatedOK'):
+    finishedOK = True
 
-if os.path.exists(tmpDir + "/pid.txt"):
+issue_echo('right after checking Rterminated')
+
+
+## if os.path.exists(tmpDir + "/pid.txt"):
+if (not finishedOK) and (not errorRun) and (os.path.exists(tmpDir + "/pid.txt")):
     ## do we need to kill an R process?
+    issue_echo('did we run out of time?')
+
     if (time.time() - os.path.getmtime(tmpDir + "/pid.txt")) > R_MAX_time:
         lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
         try:
@@ -597,6 +618,8 @@ if os.path.exists(tmpDir + "/pid.txt"):
         sys.exit()
 
 if errorRun > 0:
+    issue_echo('errorRun is 1')
+
     kill_lamcheck(lam_check_pid, lam_check_machine)
     printErrorRun()
     os.rename(tmpDir + '/pid.txt', tmpDir + '/natural.death.pid.txt')
@@ -616,6 +639,8 @@ if errorRun > 0:
 
 
 elif finishedOK > 0:
+    issue_echo('finishedOK is 1')
+
     kill_lamcheck(lam_check_pid, lam_check_machine)
     try:
         lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
@@ -626,7 +651,8 @@ elif finishedOK > 0:
     except:
         None
     printOKRun()
-    os.rename(tmpDir + '/pid.txt', tmpDir + '/natural.death.pid.txt')
+    try: os.rename(tmpDir + '/pid.txt', tmpDir + '/natural.death.pid.txt')
+    except: None
     try:
         os.system("rm /http/signs2/www/R.running.procs/R." + newDir + "*")
     except:
@@ -635,10 +661,15 @@ elif finishedOK > 0:
 
     
 else:
+    issue_echo('relaunching')
+
     ## we only end up here if: we were not done in a previous run AND no process was overtime 
     ## AND we did not just finish. So we must continue.
     relaunchCGI()
-    
+
+
+issue_echo('SHOULD NOT BE HERE')
+
 
 
 
