@@ -24,7 +24,7 @@ sys.stderr = sys.stdout ## eliminar?
 R_MAX_time = 8 * 3600 ## max duration allowd for any process
 
 
-def issue_echo(fecho, tmpDir = tmpDir):
+def issue_echo(fecho, tmpDir):
     """Silly function to output small tracking files"""
     timeHuman = '##########   ' + \
                 str(time.strftime('%d %b %Y %H:%M:%S')) 
@@ -38,7 +38,7 @@ def issue_echo(fecho, tmpDir = tmpDir):
 
 def kill_lamcheck(pid, machine):
     'as it says: to kill lamcheck; actually, anything'
-    os.system('ssh ' + machine + ' "kill -s9 ' + pid + '"')
+    os.system('ssh ' + machine + ' "kill -s 9 ' + pid + '"')
 
 def clean_for_PaLS(file_in, file_out):
     """ Make sure no file has two consecutive lines that start with '#',
@@ -242,6 +242,8 @@ def commonOutput():
     
 ## to keep executing myself:
 def relaunchCGI():
+    issue_echo('inside relaunchCGI', tmpDir)
+
     print "Content-type: text/html\n\n"
     print """
     <html>
@@ -255,6 +257,7 @@ def relaunchCGI():
     print 'If your browser does not autorefresh, the results will be kept for five days at</p>'
     print '<p><a href="' + getBaseURL() + '?newDir=' + newDir + '">', 'http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html</a>.' 
     print '</p> </body> </html>'
+    issue_echo('end of relaunchCGI', tmpDir)
     
 
 ## Output-generating functions
@@ -286,6 +289,8 @@ def printErrorRun():
 
 
 def printOKRun():
+    issue_echo('starting printOKRun', tmpDir)
+
     Rresults = open(tmpDir + "/results.txt")
     resultsFile = Rresults.read()
     outf = open(tmpDir + "/pre-results.html", mode = "w")
@@ -482,7 +487,6 @@ def printOKRun():
 
             allResults.close()
             outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')  
-
             extract_for_PaLS_from_Signs('Results.txt',
                                         'Selected.genes.txt',
                                         all_runs = False)
@@ -493,6 +497,7 @@ def printOKRun():
             outf.write("</body></html>")
             outf.close()
             shutil.copyfile(tmpDir + "/pre-results.html", tmpDir + "/results.html")
+    issue_echo('end of printOKRun', tmpDir)
 
 
 def printRKilled():
@@ -570,13 +575,13 @@ if os.path.exists(tmpDir + "/natural.death.pid.txt") or os.path.exists(tmpDir + 
 
 ## No, we were not done. Need to examine R output and possible crashes
 
-issue_echo('before lam_check')
+issue_echo('before lam_check', tmpDir)
 
 lam_check = open(tmpDir + '/lamCheckPID', mode = 'r'). readline().split()
 lam_check_machine = lam_check[1]
 lam_check_pid = lam_check[0]
 
-issue_echo('right after lam_check')
+issue_echo('right after lam_check', tmpDir)
 
 
 Rrout = open(tmpDir + "/f1.Rout")
@@ -585,18 +590,18 @@ Rrout.close()
 finishedOK = soFar.endswith("Normal termination\n")
 errorRun = soFar.endswith("Execution halted\n")
 
-issue_echo('right after Rrout')
+issue_echo('right after Rrout', tmpDir)
 
 if os.path.exists(tmpDir + '/RterminatedOK'):
     finishedOK = True
 
-issue_echo('right after checking Rterminated')
+issue_echo('right after checking Rterminated', tmpDir)
 
 
 ## if os.path.exists(tmpDir + "/pid.txt"):
 if (not finishedOK) and (not errorRun) and (os.path.exists(tmpDir + "/pid.txt")):
     ## do we need to kill an R process?
-    issue_echo('did we run out of time?')
+    issue_echo('did we run out of time?', tmpDir)
 
     if (time.time() - os.path.getmtime(tmpDir + "/pid.txt")) > R_MAX_time:
         lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
@@ -618,7 +623,7 @@ if (not finishedOK) and (not errorRun) and (os.path.exists(tmpDir + "/pid.txt"))
         sys.exit()
 
 if errorRun > 0:
-    issue_echo('errorRun is 1')
+    issue_echo('errorRun is 1', tmpDir)
 
     kill_lamcheck(lam_check_pid, lam_check_machine)
     printErrorRun()
@@ -639,7 +644,7 @@ if errorRun > 0:
 
 
 elif finishedOK > 0:
-    issue_echo('finishedOK is 1')
+    issue_echo('finishedOK is 1', tmpDir)
 
     kill_lamcheck(lam_check_pid, lam_check_machine)
     try:
@@ -661,14 +666,14 @@ elif finishedOK > 0:
 
     
 else:
-    issue_echo('relaunching')
+    issue_echo('relaunching', tmpDir)
 
     ## we only end up here if: we were not done in a previous run AND no process was overtime 
     ## AND we did not just finish. So we must continue.
     relaunchCGI()
 
 
-issue_echo('SHOULD NOT BE HERE')
+issue_echo('END of checkdone.cgi', tmpDir)
 
 
 

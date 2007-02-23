@@ -76,6 +76,17 @@ cat(hostn)
 sink()
 
 
+### The above is no longer really needed. What follows is what buryThem2.py
+##  uses
+sink(file = "current_R_proc_info")
+cat(hostn)
+cat("   ")
+cat(pid)
+sink()
+
+
+
+
 
 #library(CGIwithR)
 library(Rmpi)
