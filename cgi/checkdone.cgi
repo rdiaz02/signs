@@ -290,7 +290,6 @@ def printErrorRun():
 
 def printOKRun():
     issue_echo('starting printOKRun', tmpDir)
-
     Rresults = open(tmpDir + "/results.txt")
     resultsFile = Rresults.read()
     outf = open(tmpDir + "/pre-results.html", mode = "w")
@@ -479,7 +478,8 @@ def printOKRun():
             
             ll1 = glob.glob('*.log')
             for dname in ll1:
-                os.remove(dname)
+                try: os.remove(dname)
+                except: None
             
             lll = glob.glob('*')
             for flname in lll:
@@ -566,22 +566,25 @@ if not os.path.isdir(tmpDir):
     sys.exit()
     
 
-## Were we already done in a previous execution?
-## No need to reopen files or check anything else. Return url with results
-## and bail out.
-if os.path.exists(tmpDir + "/natural.death.pid.txt") or os.path.exists(tmpDir + "/killed.pid.txt"):
-    print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
-    sys.exit()
-
-## No, we were not done. Need to examine R output and possible crashes
-
-issue_echo('before lam_check', tmpDir)
 
 lam_check = open(tmpDir + '/lamCheckPID', mode = 'r'). readline().split()
 lam_check_machine = lam_check[1]
 lam_check_pid = lam_check[0]
 
-issue_echo('right after lam_check', tmpDir)
+
+## Were we already done in a previous execution?
+## No need to reopen files or check anything else. Return url with results
+## and bail out.
+if os.path.exists(tmpDir + "/natural.death.pid.txt") or os.path.exists(tmpDir + "/killed.pid.txt"):
+    print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
+    try:
+        kill_lamcheck(lam_check_pid, lam_check_machine)
+    except:
+        None
+    sys.exit()
+
+## No, we were not done. Need to examine R output and possible crashes
+
 
 
 Rrout = open(tmpDir + "/f1.Rout")
@@ -597,12 +600,10 @@ if os.path.exists(tmpDir + '/RterminatedOK'):
 
 issue_echo('right after checking Rterminated', tmpDir)
 
-
 ## if os.path.exists(tmpDir + "/pid.txt"):
 if (not finishedOK) and (not errorRun) and (os.path.exists(tmpDir + "/pid.txt")):
     ## do we need to kill an R process?
     issue_echo('did we run out of time?', tmpDir)
-
     if (time.time() - os.path.getmtime(tmpDir + "/pid.txt")) > R_MAX_time:
         lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
         try:
@@ -614,7 +615,7 @@ if (not finishedOK) and (not errorRun) and (os.path.exists(tmpDir + "/pid.txt"))
         kill_lamcheck(lam_check_pid, lam_check_machine)
         printRKilled()
         os.rename(tmpDir + '/pid.txt', tmpDir + '/killed.pid.txt')
-        os.remove(tmpDir + '/f1.R')
+##        os.remove(tmpDir + '/f1.R')
         try:
             os.system("rm /http/signs2/www/R.running.procs/R." + newDir + "*")
         except:
@@ -624,7 +625,6 @@ if (not finishedOK) and (not errorRun) and (os.path.exists(tmpDir + "/pid.txt"))
 
 if errorRun > 0:
     issue_echo('errorRun is 1', tmpDir)
-
     kill_lamcheck(lam_check_pid, lam_check_machine)
     printErrorRun()
     os.rename(tmpDir + '/pid.txt', tmpDir + '/natural.death.pid.txt')

@@ -504,6 +504,9 @@ doCheckpoint(1)
 
 }
 
+#### FIXME (if ever needed ....): No checkpointing for TGD!!!
+
+
 options(warn = -1)
 
 if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent

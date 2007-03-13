@@ -17,7 +17,7 @@ import cgitb
 cgitb.enable() ## zz: eliminar for real work?
 sys.stderr = sys.stdout
 
-MAX_signs = 55 ## MAX_genesrf + 1 = Maximum number of R processes running at same time.
+MAX_signs = 155 ## MAX_genesrf + 1 = Maximum number of R processes running at same time.
 MAX_time = 3600 * 24 * 5 ## 5 is days until deletion of a tmp directory
 R_MAX_time = 3600 * 8 ## 8 hours is max duration allowed for any process
 MAX_covariate_size = 363948523L ## a 500 * 40000 array of floats
@@ -285,12 +285,13 @@ def restart_tryRrun(tmpDir, tsleep = 5, ntries = 5):
 
 
 ## Deleting tmp directories older than MAX_time
+## NOT needed anymore; delete_old_dirs runs as cron job!
 currentTime = time.time()
-currentTmp = dircache.listdir("/http/signs2/www/tmp")
-for directory in currentTmp:
-    tmpS = "/http/signs2/www/tmp/" + directory
-    if (currentTime - os.path.getmtime(tmpS)) > MAX_time:
-        shutil.rmtree(tmpS)
+# currentTmp = dircache.listdir("/http/signs2/www/tmp")
+# for directory in currentTmp:
+#     tmpS = "/http/signs2/www/tmp/" + directory
+#     if (currentTime - os.path.getmtime(tmpS)) > MAX_time:
+#         shutil.rmtree(tmpS)
 
 
 ### Creating temporal directories
@@ -555,7 +556,6 @@ os.system('echo "' + str(lam_check) + ' ' + socket.gethostname() +\
 
 createResultsFile = os.system("/bin/touch " + tmpDir + "/results.txt")
 checkpoint = os.system("echo 0 > " + tmpDir + "/checkpoint.num")
-
 restart_tryRrun(tmpDir)
 
 ###########   Creating a results.hmtl   ###############
