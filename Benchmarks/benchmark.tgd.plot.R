@@ -87,13 +87,14 @@ postscript(file = "bench.tgd.eps", height = 9.6, width = 14.4,
            onefile = FALSE, paper = "special")
 par(mfrow = c(1, 2))
 par(las = 1)
-par(cex = 1.2)
+par(cex = 1.5)
 par(cex.lab = 1.1)
+par(cex.main = 0.9)
 plot(pxyA("Serial"), ylim = c(10, 5700),
      type = "b", lwd = 2, col = "black",
      xlab = "Number of arrays (samples)",
      ylab = "User wall time (seconds)", log = "y",
-     xlim = c(20, 155), xaxt = "n",
+     xlim = c(20, 170), xaxt = "n",
      main = "Effect of number of arrays (number of genes = 40)"
      )
 axis(1, at = c(20, 40, 80, 100, 120),
@@ -110,14 +111,14 @@ points(pxyA("P_20_slaves/node"),
 points(pxyA("P_60_slaves/node"),
        type = "b", col = "red", log = "y", lwd = 2)
 
-text(50, 4000, "Original sequential code")
-text(50, 500, "Parallelized code") ##, vfont = c("sans serif", "italic"))
+text(60, 5000, "Original sequential code")
+text(60, 700, "Parallelized code") ##, vfont = c("sans serif", "italic"))
 
-text(cbind(2, 0) + pxyA("P_2_slaves/node")[5, ], "2 slaves/node", col = "blue", adj = 0)
-text(cbind(2, 0) + pxyA("P_6_slaves/node")[5, ], "6 slaves/node", col = "green", adj = 0)
-text(cbind(2, 0) + pxyA("P_12_slaves/node")[5, ], "12 slaves/node", col = "orange", adj = 0)
-text(cbind(2, 0) + pxyA("P_20_slaves/node")[5, ], "20 slaves/node", col = "brown", adj = 0)
-text(cbind(2, 0) + pxyA("P_60_slaves/node")[5, ], "60 slaves/node", col = "red", adj = 0)
+text(cbind(4, 0) + pxyA("P_2_slaves/node")[5, ], "2 slaves/node", col = "blue", adj = 0)
+text(cbind(4, 0) + pxyA("P_6_slaves/node")[5, ], "6 slaves/node", col = "green", adj = 0)
+text(cbind(4, 0) + pxyA("P_12_slaves/node")[5, ], "12 slaves/node", col = "orange", adj = 0)
+text(cbind(4, 0) + pxyA("P_20_slaves/node")[5, ], "20 slaves/node", col = "brown", adj = 0)
+text(cbind(4, 0) + pxyA("P_60_slaves/node")[5, ], "60 slaves/node", col = "red", adj = 0)
 
 
 
@@ -127,7 +128,7 @@ plot(pxyB("Serial"), ylim = c(15, 2000),
      type = "b", lwd = 2, col = "black",
      xlab = "Number of genes",
      ylab = "User wall time (seconds)", log = "y",
-     xlim = c(20, 420), xaxt = "n",
+     xlim = c(20, 470), xaxt = "n",
      main = "Effect of number of genes (number of arrays = 40)"
      )
 axis(1, at = c(20, 40, 80, 160, 320),
@@ -144,8 +145,8 @@ points(pxyB("P_20_slaves/node"),
 points(pxyB("P_60_slaves/node"),
        type = "b", col = "red", log = "y", lwd = 2)
 
-text(120, 2000, "Original sequential code")
-text(120, 300, "Parallelized code") ##, vfont = c("sans serif", "italic"))
+text(140, 2000, "Original sequential code")
+text(150, 320, "Parallelized code") ##, vfont = c("sans serif", "italic"))
 
 text(cbind(9, 0) + pxyB("P_2_slaves/node")[5, ], "2 slaves/node", col = "blue", adj = 0)
 text(cbind(9, 0) + pxyB("P_6_slaves/node")[5, ], "6 slaves/node", col = "green", adj = 0)

@@ -14,193 +14,19 @@ imClose <- function (im) {
     dev.off(im$Device)
 }
 
+
+#### Several major changes:
+
+##   - no early stopping anymore for tauBestP: communication way too expensive.
+##     look at repos if you want it.
+
+##   - No usage of snow. Now only papply.
+
 tauBestP <- function(x, time, event, thres = c(0, 1),
                      epi = 5e-06, thresGrid = 6, 
-                     maxiter = 5000, checkEvery = 50000, ## we do not want early stopping
-                     nfold = 10, fitWithBest = TRUE) {
-    ## allows early stopping, but therefore increases communicationg overhead
-
-    thresGrid <- 6 ## number of values of thres tried;
-    ## you can change this, but then be sure to change the "60" below
-    ## in the calls to clusterApply
-
-    ## everything is carefully chosen to use 60 slaves (or more).
-    
-    if((!is.vector(time)) | (!is.vector(event)))
-        stop("Time and event should be vectors")
-    n <- length(time)
-    thresS <- seq(from = thres[1], to = thres[2], length.out = thresGrid)
-    cvpl.mat <- array(NA, c(length(thresS), maxiter))
-    cvindex <- sample(rep(1:nfold, length = n), n, replace = FALSE)
-    clusterParams <- expand.grid(1:nfold, thresS)
-    totalProcs <- dim(clusterParams)[1]
-
-
-    if(checkEvery >= maxiter) {
-        print("WARNING: checkEvery >= maxiter. Early stopping disabled.")
-        checkEvery <- maxiter
-        earlyStop <- FALSE
-    } else {
-        earlyStop <- TRUE
-    }
-    
-    xTheCluster <<- x
-    tTheCluster <<- time
-    eTheCluster <<- event
-    epTheCluster <<- epi
-    mitTheCluster <<- maxiter
-    ceTheCluster <<- checkEvery
-    cviTheCluster <<- cvindex
-    clusterParams <<- clusterParams
-    
-    time.initial.export <-
-        unix.time(clusterExport(TheCluster,
-                                c("xTheCluster", "tTheCluster",
-                                  "eTheCluster",
-                                  "epTheCluster",
-                                  "mitTheCluster","ceTheCluster",
-                                  "cviTheCluster",
-                                  "clusterParams")))
-    cat("\n\n     Export to slaves took ", time.initial.export[3],
-        " seconds\n")
-    ## clean master too
-    rm(list = c("xTheCluster", "tTheCluster", "eTheCluster",
-       "epTheCluster","mitTheCluster", "ceTheCluster",
-       "cviTheCluster", "clusterParams"), envir = .GlobalEnv)
-
-    ts1 <- unix.time(clusterApply(TheCluster, 1:60, tgdSnowSetUp))
-    cat("\n \n      Slaves setup took ", ts1[3], " seconds\n")
-    
-    clusterOutput <- list()
-    t.r1 <-
-        unix.time(
-                  clusterOutput <-
-                  clusterApply(TheCluster, 1:60,
-                                 function(x) tgd1InternalSnow()))
-    cat("\n \n      First run took ", t.r1[3], " seconds\n\n")
-
-    tmp.cvpl <- matrix(unlist(clusterOutput),
-                      ncol = checkEvery, byrow = TRUE)
-
-    cvpllymtgd <- matrix(NA, nrow = thresGrid, ncol = maxiter)
-    ## Set cvpl to NULL to make the stored
-    ## and later transmitted object as small as possible
-    iter <- 1
-    for(th in 1:thresGrid) {
-        cvpllymtgd[th, iter : (iter + checkEvery - 1)] <-
-            apply(tmp.cvpl[clusterParams[, 2] == thresS[th], ], 2, sum)
-    }
-    
-    ## I do not do anything with the pscore returned. They are not used
-    ## anywhere else.
-
-    if (!earlyStop) {
-        anyStillRunning <- FALSE
-        cvpl.mat <- cvpllymtgd/nfold
-    } else {
-        anyStillRunning <- TRUE
-        runIts <- rep(1, 60)
-        indexThresRunning <- 1:thresGrid
-        iter <- iter + checkEvery
-    }
-        
-    while(anyStillRunning) { ## we only enter here if earlyStop
-
-        t.r3 <-
-            unix.time(
-                      clusterOutput <-
-                      clusterApply(TheCluster,
-                                   runIts,
-                                   function(vv) tgdPieceInternalSnow(vv)))
-        cat("\n \n .... additional runs took ", t.r3[3], " seconds\n")
-
-        tmp.cvpl <- matrix(unlist(clusterOutput),
-                           ncol = checkEvery, byrow = TRUE)
-        
-        for(th in indexThresRunning) {
-            cvpllymtgd[th, iter : (iter + checkEvery - 1)] <-
-                apply(tmp.cvpl[clusterParams[, 2] == thresS[th], ], 2, sum)
-        }        
-
-        cvpl.mat <- cvpllymtgd/nfold
-        iter <- iter + checkEvery
-
-        ## Which thresholds should be stopped?
-        for(thh in indexThresRunning) {
-            tmp.cvplscore <- cvpl.mat[thh, ]
-            checkAt <- iter - round(checkEvery * (4:0)/4) - 1
-            if(all(diff(tmp.cvplscore[checkAt]) > 0)) {
-                cat("\n Exiting iterations:\n")
-                cat("   CVPL getting monotonically worse\n")
-                cat(paste("   at threshold = ", thresS[thh],
-                          "; max steps = ", iter - 1 , "\n"))
-                cat(paste("minimum = ", min(tmp.cvplscore[1:(iter-1)], na.rm = TRUE),
-                          "at ", which.min(tmp.cvplscore[1:(iter -1)]), " steps.\n\n\n"))
-                indexThresRunning <- setdiff(indexThresRunning, thh)
-            } else {
-                allMin <- min(tmp.cvplscore[1:(iter - 1)])
-                sectionMin <- min(tmp.cvplscore[(iter - checkEvery):(iter - 1)])
-                sectionCoef <-
-                    lm(tmp.cvplscore[(iter - checkEvery):(iter - 1)] ~
-                       c(1:checkEvery))$coeff[2]
-                if ((allMin < sectionMin) & (sectionCoef > 0)) {
-                    cat("\n Exiting iterations:")
-                    cat("\n   CVPL above the minimum and getting worse (positive slope)\n")
-                    cat(paste("   at threshold = ", thresS[thh],
-                              "; max steps = ", iter - 1 , "\n"))
-                    cat(paste("minimum = ", min(tmp.cvplscore[1:(iter - 1)], na.rm = TRUE),
-                              "at ", which.min(tmp.cvplscore[1:(iter - 1)]), " steps.\n\n\n"))
-                ## we are above the minimum, and going up
-                    indexThresRunning <- setdiff(indexThresRunning, thh)
-                }
-            }
-        }
-        ## get back indices to run
-        if(length(indexThresRunning)) {
-            theseProcs <-
-                as.vector(sapply(indexThresRunning,
-                                 function(x) ((x - 1) * nfold +1): (x * nfold)))
-            runIts <- rep(0, 60)
-            runIts[theseProcs] <- 1
-            ## paranoid checks
-            if(length(unique(clusterParams[theseProcs, 2])) !=
-               length(indexThresRunning)) stop("oops, should not be here [21]")
-        } else anyStillRunning <- FALSE 
-        if( (iter + checkEvery - 1) > maxiter) anyStillRunning <- FALSE
-    } ## closes while(stillRunning)
-    
-    ## allow for possibl of several minima
-    tmp <- which(cvpl.mat == min(cvpl.mat, na.rm = TRUE), arr.ind = TRUE)
-    tmp <- tmp[nrow(tmp), ]
-    thresBest <- thresS[tmp[1]]
-    stepBest <- tmp[2]
-
-    if(is.na(stepBest)) {
-        caughtUserError("An error occured, probably related to numerical problems. Please let us know")
-    }
-
-    ## do only if asked for.
-    if(fitWithBest) {
-        tgd.alldata <- tgdTrain(x, time, event, thresBest, epi,
-                                steps = stepBest)
-    } else tgd.alldata <- NA
-
-## To incorporate ROC, do it here:
-    ## train best models for each, and then find ROC, with CV.
-
-    betas <- tgd.alldata$beta
-    return(list(betas = betas, nonZeroBetas = sum(betas != 0), 
-                threshold = thresBest, epi = epi,
-                step = stepBest, cvpl.mat = cvpl.mat,
-                tgd.alldata = tgd.alldata,
-                thres.loc = tmp[1]))
-}
-
-
-tauBestP.noearly <- function(x, time, event, thres = c(0, 1),
-                     epi = 5e-06, thresGrid = 6, 
-                     maxiter = 5000, checkEvery = 50,
-                     nfold = 10) {
+                     maxiter = 5000, 
+                     nfold = 10,
+                     fitWithBest = TRUE) {
     ## checkEvery is not used as such
     checkEvery <- maxiter
     if((!is.vector(time)) | (!is.vector(event)))
@@ -212,45 +38,48 @@ tauBestP.noearly <- function(x, time, event, thres = c(0, 1),
     clusterParams <- expand.grid(1:nfold, thresS)
     totalProcs <- dim(clusterParams)[1]
 
-    xTheCluster <<- x
-    tTheCluster <<- time
-    eTheCluster <<- event
-    epTheCluster <<- epi
-    mitTheCluster <<- maxiter
-    ceTheCluster <<- checkEvery
-    cviTheCluster <<- cvindex
-    clusterParams <<- clusterParams
+##     xTheCluster <<- x
+##     tTheCluster <<- time
+##     eTheCluster <<- event
+##     epTheCluster <<- epi
+##     mitTheCluster <<- maxiter
+##     ceTheCluster <<- checkEvery
+##     cviTheCluster <<- cvindex
+##     clusterParams <<- clusterParams
     
-    time.initial.export <-
-        unix.time(clusterExport(TheCluster,
-                                c("xTheCluster", "tTheCluster",
-                                  "eTheCluster",
-                                  "epTheCluster",
-                                  "mitTheCluster","ceTheCluster",
-                                  "cviTheCluster",
-                                  "clusterParams")))
-    cat("\n\n     Export to slaves took ", time.initial.export[3],
-        " seconds\n")
-    ## clean master too
-    rm(list = c("xTheCluster", "tTheCluster", "eTheCluster",
-       "epTheCluster","mitTheCluster", "ceTheCluster",
-       "cviTheCluster", "clusterParams"), envir = .GlobalEnv)
-
-    ts1 <- unix.time(clusterApply(TheCluster, 1:60, tgdSnowSetUp))
-    cat("\n \n      Slaves setup took ", ts1[3], " seconds\n")
+##     time.initial.export <-
+##         unix.time(clusterExport(TheCluster,
+##                                 c("xTheCluster",
+##                                   "tTheCluster",
+##                                   "eTheCluster",
+##                                   "epTheCluster",
+##                                   "mitTheCluster",
+##                                   "ceTheCluster",
+##                                   "cviTheCluster",
+##                                   "clusterParams")))
+##     cat("\n\n     Export to slaves took ", time.initial.export[3],
+##         " seconds\n")
+##     ts1 <- unix.time(clusterApply(TheCluster, 1:60, tgdSnowSetUp))
+##     cat("\n \n      Slaves setup took ", ts1[3], " seconds\n")
     
     clusterOutput <- list()
     t.r1 <-
         unix.time(
                   clusterOutput <-
-                  clusterApply(TheCluster, 1:60,
-                                 function(x) tgd1InternalSnow()))
-    cat("\n \n      First run took ", t.r1[3], " seconds\n\n")
+                  papply(as.list(1:60),
+                         nodeRun,
+                         papply_commondata = list(
+                         clusterParams = clusterParams,
+                         x = x,
+                         time = time,
+                         event = event,
+                         epi = epi,
+                         steps = maxiter,
+                         cvindex = cvindex)))
 
     tmp.cvpl <- matrix(unlist(clusterOutput),
-                      ncol = checkEvery, byrow = TRUE)
+                      ncol = maxiter, byrow = TRUE)
 
-##    browser()
     cvpllymtgd <- matrix(NA, nrow = thresGrid, ncol = maxiter)
     ## Set cvpl to NULL to make the stored
     ## and later transmitted object as small as possible
@@ -272,9 +101,12 @@ tauBestP.noearly <- function(x, time, event, thres = c(0, 1),
         caughtUserError("An error occured, probably related to numerical problems. Please let us know")
     }
 
-    tgd.alldata <- tgdTrain(x, time, event, thresBest, epi,
-                          steps = stepBest)
+    if(fitWithBest) {
+        tgd.alldata <- tgdTrain(x, time, event, thresBest, epi,
+                                steps = stepBest)
+    } else tgd.alldata <- NA
 
+    
 ## To incorporate ROC, do it here:
     ## train best models for each, and then find ROC, with CV.
 
@@ -287,32 +119,52 @@ tauBestP.noearly <- function(x, time, event, thres = c(0, 1),
 }
 
       
-tgdSnowSetUp <- function(index) {
-    assign("cvindex", cviTheCluster, env = .GlobalEnv)
-    assign("epi",  epTheCluster, env = .GlobalEnv)
-    assign("steps",  ceTheCluster, env = .GlobalEnv)
-    assign("maxiter",  mitTheCluster, env = .GlobalEnv)
+## tgdSnowSetUp <- function(index) {
+##     assign("cvindex", cviTheCluster, env = .GlobalEnv)
+##     assign("epi",  epTheCluster, env = .GlobalEnv)
+##     assign("steps",  ceTheCluster, env = .GlobalEnv)
+##     assign("maxiter",  mitTheCluster, env = .GlobalEnv)
 
-    assign("thres",  clusterParams[index, 2], env = .GlobalEnv)
-    assign("i",  clusterParams[index, 1], env = .GlobalEnv)
-    assign("x.train",
-           as.matrix(xTheCluster[cvindex != i, , drop = FALSE]),
-           env = .GlobalEnv)
-    assign("time.train", tTheCluster[cvindex != i], env = .GlobalEnv)
-    assign("event.train",  eTheCluster[cvindex != i], env = .GlobalEnv)
+##     assign("thres",  clusterParams[index, 2], env = .GlobalEnv)
+##     assign("i",  clusterParams[index, 1], env = .GlobalEnv)
+##     assign("x.train",
+##            as.matrix(xTheCluster[cvindex != i, , drop = FALSE]),
+##            env = .GlobalEnv)
+##     assign("time.train", tTheCluster[cvindex != i], env = .GlobalEnv)
+##     assign("event.train",  eTheCluster[cvindex != i], env = .GlobalEnv)
     
-    assign("x.test",
-           as.matrix(xTheCluster[cvindex == i, , drop = FALSE]), env = .GlobalEnv)
-    assign("time.test",  tTheCluster[cvindex == i], env = .GlobalEnv)
-    assign("event.test",  eTheCluster[cvindex == i], env = .GlobalEnv)
+##     assign("x.test",
+##            as.matrix(xTheCluster[cvindex == i, , drop = FALSE]), env = .GlobalEnv)
+##     assign("time.test",  tTheCluster[cvindex == i], env = .GlobalEnv)
+##     assign("event.test",  eTheCluster[cvindex == i], env = .GlobalEnv)
     
-    rm(list = c("xTheCluster", "tTheCluster", "eTheCluster",
-       "epTheCluster","mitTheCluster", "ceTheCluster",
-       "cviTheCluster", "clusterParams", "i"), envir = .GlobalEnv)
+##     rm(list = c("xTheCluster", "tTheCluster", "eTheCluster",
+##        "epTheCluster","mitTheCluster", "ceTheCluster",
+##        "cviTheCluster", "clusterParams", "i"), envir = .GlobalEnv)
+## }
+
+nodeRun <- function(index) {
+    i <- clusterParams[index, 1]
+    thres <- clusterParams[index, 2]
+    x.train <- as.matrix(x[cvindex != i, , drop = FALSE])
+    x.test <- as.matrix(x[cvindex == i, , drop = FALSE])
+    time.train <- time[cvindex != i]
+    time.test <- time[cvindex == i]
+    event.train <- event[cvindex != i]
+    event.test <- event[cvindex == i]
+    tgd1InternalSnow(x.train, time.train, event.train,
+                     x.test, time.test, event.test,
+                     thres, epi, steps)
 }
 
 
-tgd1InternalSnow <- function(){
+
+
+tgd1InternalSnow <- function(x.train, time.train, event.train,
+                             x.test, time.test, event.test,
+                             thres,
+                             epi,
+                             steps){
 
 ## x, time, event: covariate, time to event, and event indicator (1
 ## observed, 0 censored) for the training data.
@@ -327,19 +179,19 @@ tgd1InternalSnow <- function(){
 
     
     nm <- dim(x.train)
-    n <<- nm[1]
-    m <<- nm[2]
+    n <- nm[1]
+    m <- nm[2]
     nm1 <- dim(x.test)
-    n1 <<- nm1[1]
-    m1 <<- nm1[2]
-    r <<- rank(time.train)
+    n1 <- nm1[1]
+    m1 <- nm1[2]
+    r <- rank(time.train)
     gradient <- rep(NA, n)
     scores <- rep(NA, n1)
     beta <- beta1 <- rep(0, m)
     beta <- as.matrix(beta)
     cvpl <- rep(0, steps)
     
-    warning(paste("I am using: threshold", thres))
+##    cat(paste("I am using: threshold", thres))
 
     for(iteration in 1:steps) {
         beta <- beta1
@@ -375,68 +227,69 @@ tgd1InternalSnow <- function(){
                                  c(event.train, event.test)))/length(time.test)
 
     }
-    rm("beta1GlobalEnv", envir = .GlobalEnv)
-    assign("beta1GlobalEnv", beta1, envir = .GlobalEnv)
+    ## what are these for?
+    ##     rm("beta1GlobalEnv", envir = .GlobalEnv)
+    ##     assign("beta1GlobalEnv", beta1, envir = .GlobalEnv)
 
     ## recall we are using clusterApply
     ## and we count on the persistence for future visits
 
-    warning(paste("**** First run: spent ", proc.time()[3] - pt1, "seconds"))
+##    cat(paste("**** First run: spent ", proc.time()[3] - pt1, "seconds"))
     return(cvpl)
 }
 
 
-tgdPieceInternalSnow <- function(runIt) {
-### like tgd, but continues the iterations where the other left.
-### we are using clusterApply, so we count on the exact positions in the cluster.
+## tgdPieceInternalSnow <- function(runIt) {
+## ### like tgd, but continues the iterations where the other left.
+## ### we are using clusterApply, so we count on the exact positions in the cluster.
 
-    pt1 <- proc.time()[3]
-    if(runIt) {
-        cvpl <- rep(0, steps)
-        scores <- rep(0, n1)
-        gradient <- rep(0, n)
+##     pt1 <- proc.time()[3]
+##     if(runIt) {
+##         cvpl <- rep(0, steps)
+##         scores <- rep(0, n1)
+##         gradient <- rep(0, n)
         
-        beta1 <- beta1GlobalEnv
-##         warning(paste("I am using: threshold", thres,
-##                       " runIt ", runIt))
+##         beta1 <- beta1GlobalEnv
+## ##         warning(paste("I am using: threshold", thres,
+## ##                       " runIt ", runIt))
 
-        for(iteration in 1:steps){
-            beta <- beta1
-            if(n1 == 1) scores <- sum(x.test * beta)
-            else scores <- x.test %*% beta
+##         for(iteration in 1:steps){
+##             beta <- beta1
+##             if(n1 == 1) scores <- sum(x.test * beta)
+##             else scores <- x.test %*% beta
             
-            ita <- x.train %*% beta
+##             ita <- x.train %*% beta
             
-            epita <- exp(ita)
-            d <- rep(0, n)
-            dono <- rep(0, n)
-            for(i in 1:n) {
-                d[i] <- sum(event.train[r == r[i]])
-                dono[i] <- sum(epita[r >= r[i]])
-            }
-            risk <- d/dono
-            culrisk <- rep(0, n)
-            for(i in 1:n) {
-                culrisk[i] <- sum(unique(risk[r <= r[i]]))
-            }
-            gradient <- event.train - epita * culrisk
-            gra1 <- crossprod(x.train, gradient)
-            gra1[abs(gra1) < thres * max(abs(gra1))] <- 0
-            beta1 <- beta + epi * gra1
+##             epita <- exp(ita)
+##             d <- rep(0, n)
+##             dono <- rep(0, n)
+##             for(i in 1:n) {
+##                 d[i] <- sum(event.train[r == r[i]])
+##                 dono[i] <- sum(epita[r >= r[i]])
+##             }
+##             risk <- d/dono
+##             culrisk <- rep(0, n)
+##             for(i in 1:n) {
+##                 culrisk[i] <- sum(unique(risk[r <= r[i]]))
+##             }
+##             gradient <- event.train - epita * culrisk
+##             gra1 <- crossprod(x.train, gradient)
+##             gra1[abs(gra1) < thres * max(abs(gra1))] <- 0
+##             beta1 <- beta + epi * gra1
             
             
-            lik1.train <- sum((ita - log(dono)) * event.train)
-            cvpl[iteration] <- (lik1.train -
-                                lik1(c(ita, scores),
-                                     c(time.train,  time.test),
-                                     c(event.train, event.test)))/length(time.test)
-        }
-        rm("beta1GlobalEnv", envir = .GlobalEnv)
-        assign("beta1GlobalEnv", beta1, envir = .GlobalEnv)
-        warning(paste("**** Other runs: spent ", proc.time()[3] - pt1, "seconds"))
-        return(cvpl)
-    } else {return(rep(NA, steps))}
-}
+##             lik1.train <- sum((ita - log(dono)) * event.train)
+##             cvpl[iteration] <- (lik1.train -
+##                                 lik1(c(ita, scores),
+##                                      c(time.train,  time.test),
+##                                      c(event.train, event.test)))/length(time.test)
+##         }
+##         rm("beta1GlobalEnv", envir = .GlobalEnv)
+##         assign("beta1GlobalEnv", beta1, envir = .GlobalEnv)
+##         warning(paste("**** Other runs: spent ", proc.time()[3] - pt1, "seconds"))
+##         return(cvpl)
+##     } else {return(rep(NA, steps))}
+## }
 
 
 lik1 <- function(score, time, event)
@@ -485,7 +338,6 @@ cvTGDP <- function(x, time, event, thres = c(0, 1),
                                          x[index.select == i, , drop = FALSE],
                                          thres = thres,
                                          epi = epi, thresGrid = thresGrid,
-                                         checkEvery = checkEvery,
                                          maxiter = maxiter,
                                          nfold = nfold)
         OOB.scores[index.select == i] <-
@@ -763,24 +615,29 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
     ##bestBetas.m[[z$thres.loc]] <- z$betas
     thres.do <- (1:thresGrid)[-z$thres.loc]
 
-    tgdTrainSnow <- function(varArgs, x, time, event, epi)
-        return(tgdTrain(x, time, event, varArgs[1], epi, varArgs[2])[[2]])
+    tgdTrainPap <- function(varArgs)
+        return(tgdTrain(xdatasn, timedatasn, eventdatasn,
+                        varArgs[1], epidatasn, varArgs[2])[[2]])
     
     variableArgs <- list()
     for(tt in thres.do) variableArgs[[tt]] <- c(thresS[tt], mins.at[tt])
-    bestBetas.m.pre <- clusterApply(TheCluster, variableArgs,
-                                    tgdTrainSnow, x, time, event, epi)
 
+    bestBetas.m.pre <- papply(variableArgs,
+                              tgdTrainPap,
+                              papply_commondata = list(
+                              xdatasn = x,
+                              timedatasn = time,
+                              eventdatasn = event,
+                              epidatasn = epi))
+##     bestBetas.m.pre <- clusterApply(TheCluster, variableArgs,
+##                                     tgdTrainSnow, x, time, event, epi)
+
+    
+    
+    
     bestBetas.m <- bestBetas.m.pre
     bestBetas.m[[z$thres.loc]] <- z$betas
-    ##     browser()
-##     if(z$thres.loc == 1) bestBetas.m <- c(list(z$betas), bestBetas.m.pre)
-##     else if (z$thres.loc == thresGrid) bestBetas.m <-
-##         c(bestBetas.m.pre, list(z$betas))
-##     else bestBetas.m <- c(bestBetas.m.pre[1:(z$thres.loc - 1)],
-##                           list(z$betas),
-##                           bestBetas.m.pre[(z$thres.loc):thresGrid])
-   
+
     n.betas.nozero <- lapply(bestBetas.m, function(x) sum(x != 0))
     outm <- data.frame(cbind(Threshold = thresS,
                              Minimum.CVPL.at = mins.at,
@@ -836,7 +693,7 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
 tgdCVPred <- function(x, time, event,
                      xtest, 
                      thres, epi, thresGrid,
-                     checkEvery, maxiter,
+                     maxiter,
                      nfold) {
     ## find best params by CV and predict on a new set.
     bestTrain <- tauBestP(x, time, event,
@@ -2091,8 +1948,8 @@ cvDave.parallel3 <- function(x, time, event,
     mpi.bcast.Robj2slave(MaxIterationsCox)
     mpi.bcast.Robj2slave(res1s)
     ## debug:
-    global.res1s <<- res1s
-    global.index.select <<- index.select
+##    global.res1s <<- res1s
+##    global.index.select <<- index.select
     mpi.bcast.Robj2slave(index.select)
 ##    mpi.bcast.cmd(foldNumber <- mpi.comm.rank())
 ##    mpi.bcast.Robj2slave(DaveCVPred.res1Given.InternalMPI)

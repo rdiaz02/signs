@@ -203,11 +203,13 @@ if (mpi.universe.size () < MPI_MIN_UNIVERSE_SIZE) {
     quit(save = "no", status = 11, runLast = TRUE)
 }
 
-if(methodSurv == "TGD") {
-    TheCluster <- makeCluster(mpi.universe.size(), "MPI")
-    } else if(methodSurv == "FCMS") {
-    mpiSpawnAll()
-}
+mpiSpawnAll()
+
+## if(methodSurv == "TGD") {
+##     TheCluster <- makeCluster(mpi.universe.size(), "MPI")
+##     } else if(methodSurv == "FCMS") {
+##     mpiSpawnAll()
+## }
 
 sink(file = "mpiOK")
 cat("MPI started OK\n")
