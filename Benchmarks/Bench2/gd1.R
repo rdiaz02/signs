@@ -1,0 +1,188 @@
+gd <- function(x, pred, predtime, predsurv, time, surv.st, thres, epi, maxstep) {
+### x: n*m predictor matrix, with m predictors.
+### time: survival time for n observations.
+### surv.st: censoring status for n observations.
+### x, time, surv.st together are training dataset
+### pred, predtime, predsurv together are corresponding testing dataset
+### thres: threshold value between 0 and 1
+### epi: maximum factor (step size) scaling gradient for incrementing selected coefficients at each step
+### maxstep: maximum number of threshold gradient descent iterations
+### program outputs:
+### gra: n*maxstep, is the gradient for the training score (x%*%beta) in each steps.
+### pred: n1*maxstep, is the score(pred%*%beta) for testing dataset in each steps.
+### lik: testing data's partial likelihood in each steps.
+### cvpl: will be used to calculate the cross-validated partial likelihood in gdcvpl.
+    x <- as.matrix(x)
+    nm <- dim(x)
+    n <- nm[1]
+    m <- nm[2]
+    nm1 <- dim(as.matrix(pred))
+    n1 <- nm1[1]
+    m1 <- nm1[2]
+    one <- rep(1, n)
+    meanx <- drop(one %*% x)/n
+    meanx <- rep(0, m)
+    x <- scale(x, meanx, FALSE)
+    ## centers x
+    normx <- sqrt(drop(one %*% (x^2)))
+    names(normx) <- NULL
+    normx <- rep(1, m)
+    x <- scale(x, FALSE, normx)
+    ## scales x
+    r <- rank(time)
+    # need to define time
+    mu <- matrix(0, n, maxstep)
+    ita1 <- matrix(0, n1, maxstep)
+    beta <- beta1 <- rep(0, m)
+    beta <- as.matrix(beta)
+    predlik <- 0
+    cvpl <- 0
+    f <- 1
+    while(f <= maxstep) {
+        beta <- beta1
+        if(n1 == 1)
+            ita1[, f] <- sum(pred * beta)
+        else ita1[, f] <- t(t(beta)%*%t(pred))
+        predlik[f + 1] <- lik1(ita1[, f], predtime, predsurv)
+        ita <- t(t(beta)%*%t(x))
+        cvpl[f] <- (lik1(ita, time, surv.st) -
+                    lik1(c(ita, ita1[, f]), c(time, predtime), c(surv.st, predsurv)))/length(predtime)
+        epita <- exp(ita)
+        d <- rep(0, n)
+        dono <- rep(0, n)
+        for(i in 1:n) {
+            d[i] <- sum(surv.st[r == r[i]])
+            dono[i] <- sum(epita[r >= r[i]])
+        }
+        risk <- d/dono
+        culrisk <- rep(0, n)
+        for(i in 1:n) {
+            culrisk[i] <- sum(unique(risk[r <= r[i]]))
+        }
+        mu[, f] <- surv.st - epita * culrisk
+        gradient <- t(x) %*% mu[, f]
+        gra1 <- gradient
+        gra1[abs(gradient) < thres * max(abs(gradient))] <- 0
+        beta1 <- beta + epi * gra1
+        f <- f + 1
+    }
+    list(gra = mu, pred = ita1, lik = predlik[-1], cvpl = cvpl)
+}
+
+
+gdcvpl <- function(x, time, surv.st, thres, epi, maxstep, nfold)
+{
+### x: n*m predictor matrix, with m predictors.	
+### time: survival time for n observations.
+### surv.st: censoring status for n observations.
+### thres: threshold value between 0 and 1
+### epi: maximum factor (step size) scaling gradient for incrementing selected coefficients at each step 
+### maxstep: maximum number of threshold gradient descent iterations
+### nfold: number of cross-validation iterations
+### program outputs the cross-validated partial likelihood for given epi and thres.
+    pscore<-matrix(0,length(time),maxstep)
+    nm <- dim(x)
+    n <- nm[1]
+    m <- nm[2]
+    k <- n/nfold
+    cvpllymgd <- rep(0, maxstep)
+    for(i in 1:nfold) {
+        x1 <- x[ - c(((i - 1) * k + 1):(i * k)),  ]
+        x2 <- x[c(((i - 1) * k + 1):(i * k)),  ]
+        gralym <- gd(x1, x2, time[c(((i - 1) * k + 1):(i * k))],
+                     surv.st[c(((i - 1) *k + 1):(i * k))],
+                     time[ - c(((i - 1) *k + 1):(i * k))],
+                     surv.st[ - c(((i - 1) * k + 1):(i * k))],
+                     thres, epi, maxstep)
+        cvpllymgd <- cvpllymgd + gralym$cvpl
+        pscore[c(((i - 1) * k + 1):(i * k)),]<-gralym$pred
+    }
+    
+    list(cvplscore=cvpllymgd/nfold,pscore=pscore)
+}
+
+findbeta <- function(x, gra, thres, epi, stepno)
+{
+### x: n*m predictor matrix, with m predictors.	
+### gra: output from "gd", gradient for x%*%beta in each steps
+### thres: threshold value between 0 and 1
+### epi: maximum factor (step size) scaling gradient for incrementing selected coefficients at each step 
+### note that thres and epi should be same as what is in "gd"  
+### program outputs the estimated beta in step "stepno".  
+
+	nm <- dim(x)
+	n <- nm[1]
+	m <- nm[2]
+	beta <- rep(0, m)
+	beta1 <- beta
+	gra1 <- t(x) %*% gra
+	for(i in 1:stepno) {
+		beta1 <- gra1[, i]
+		beta1[abs(gra1[, i]) < thres * max(abs(gra1[, i]))] <- 0
+		beta <- beta + beta1 * epi
+	}
+	return(beta)
+}
+
+lik1 <- function(score, time, surv.st)
+{
+### return the partial likelihood for Cox model 	
+
+	n <- length(score)
+	r <- rank(time)
+	ita <- score
+	epita <- exp(score)
+	d <- rep(0, n)
+	dono <- rep(0, n)
+	for(i in 1:n) {
+		d[i] <- sum(surv.st[r == r[i]])
+		dono[i] <- sum(epita[r >= r[i]])
+	}
+	lik <- sum((ita - log(dono)) * surv.st)
+	return(lik)
+}
+
+
+### This funcgtion never used, and never worked, as roc.KM.calc is nowhere defined
+## gdcvroc <- function(x, time, surv.st, thres, epi, maxstep, nfold, t)
+## {
+## ### x: n*m predictor matrix, with m predictors. 
+## ### time: survival time for n observations.
+## ### surv.st: censoring status for n observations.
+## ### thres: threshold value between 0 and 1
+## ### epi: maximum factor (step size) scaling gradient for incrementing selected coefficients at each step 
+## ### maxstep: maximum number of threshold gradient descent iterations
+## ### nfold: number of cross-validation iterations
+## ### program outputs predicted area under the curve at time t 
+##     nm <- dim(x)
+##     n <- nm[1]
+##     m <- nm[2]
+##     k <- round(n/nfold)
+##     aucscore <- matrix(0, n, maxstep)
+##     for(i in 1:(nfold-1)) {
+##         x1 <- x[ - c(((i - 1) * k + 1):(i * k)), ]
+##         x2 <- x[c(((i - 1) * k + 1):(i * k)), ]
+##         gralym <- gd(x1, x2, time[c(((i - 1) * k + 1):(i * k))],
+##                      surv.st[c(((i - 1) *k + 1):(i * k))],
+##                      time[ - c(((i - 1) *k + 1):(i * k))],
+##                      surv.st[ - c(((i - 1) * k + 1):(i * k))],
+##                      thres, epi, maxstep)
+##         aucscore[c(((i - 1) * k + 1):(i * k)), ] <- gralym$pred
+##     }
+##     i <- nfold
+##     x1 <- x[ 1:((i-1)*k), ]
+##     x2 <- x[ ((i-1)*k+1): n, ]
+##     gralym <- gd(x1, x2, time[((i-1)*k+1): n],
+##                  surv.st[((i-1)*k+1): n], time[1:((i-1)*k)],
+##                  surv.st[1:((i-1)*k)],
+##                  thres, epi, maxstep)
+##     aucscore[((i-1)*k+1): n, ] <- gralym$pred
+##     lym2roc2<-0
+##     for (j in 1:(maxstep-1)){
+##          roc12 <- roc.KM.calc(time,surv.st, aucscore[,j], predict.time=t, span=1)
+##     }
+##     lym2roc2[j] <- roc.area(roc12)
+## }
+## return(lym2roc2)
+## }
+
