@@ -22,6 +22,26 @@ imClose <- function (im) {
 
 ##   - No usage of snow. Now only papply.
 
+
+tgdSingle <- function(x, time, event, unique.thres = 1, epi = 5e-06,
+                      maxiter = 5000,
+                      nfold = 10, fitWithBest = TRUE){
+    tauBestP(x, time, event, thres = c(unique.thres, unique.thres),
+             epi, thresGrid = 1, maxiter,  nfold, fitWithBest)
+}
+
+
+## to check tgdSingle
+## arrays <- 40
+## genes <- 30
+## covar <- dlbcl.covar[1:arrays, ]
+## survtime <- dlbcl.surv[1:arrays]
+## status <- dlbcl.status[1:arrays]
+## covar <- covar[, 1:genes]
+## uu <- tgdSingle(covar, survtime, status, unique.thres = 0.9, maxiter = 10000)
+
+
+
 tauBestP <- function(x, time, event, thres = c(0, 1),
                      epi = 5e-06, thresGrid = 6, 
                      maxiter = 5000, 
@@ -66,7 +86,7 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
     t.r1 <-
         unix.time(
                   clusterOutput <-
-                  papply(as.list(1:60),
+                  papply(as.list(1:totalProcs),
                          nodeRun,
                          papply_commondata = list(
                          clusterParams = clusterParams,
@@ -117,6 +137,8 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
                 tgd.alldata = tgd.alldata,
                 thres.loc = tmp[1]))
 }
+
+
 
       
 ## tgdSnowSetUp <- function(index) {
@@ -351,7 +373,6 @@ cvTGDP <- function(x, time, event, thres = c(0, 1),
     return(out)
 }
 
-
 tgdTrain <- function(x, time, event, thres, epi, steps){
 ### R.D.-U.: from tgd but I eliminate all testing data related
 ###    stuff and I return gradient, scores (for plotting later)
@@ -405,6 +426,9 @@ tgdTrain <- function(x, time, event, thres, epi, steps){
     }
     return(list(gradient = gradient, beta = beta1, scores = x %*% beta1))
 }
+
+
+
 
 
 KM.visualize <- function(scores, surv, event, ngroups = 2,
