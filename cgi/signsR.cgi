@@ -342,14 +342,23 @@ if methodSurv == 'FCMS':
         print "</body></html>"
         sys.exit()
 if methodSurv == 'TGD':
-    commonOutput()
-    print "<h1> SignS INPUT ERROR </h1>"    
-    print "<p> We are sorry, but TGD is temporarily disabled.."
-    print "</body></html>"
-    sys.exit()
-   
-#     maxiter = valueNumUpload('maxiter', 'int', 4000)
-#     epi = valueNumUpload('epi', 'float', 0)
+    maxiter = valueNumUpload('maxiter', 'int', 4000)
+    epi = valueNumUpload('epi', 'float', 0)
+    tau = valueNumUpload('tau', 'float', 0)
+    if tau > 1:
+        shutil.rmtree(tmpDir)
+        commonOutput()
+        print "<h1> SignS INPUT ERROR </h1>"    
+        print "<p> Tau should be between 0 and 1."
+        print "<p> Please fill up the required fields and try again.</p>"
+        print "</body></html>"
+        sys.exit()
+
+#     commonOutput()
+#     print "<h1> SignS INPUT ERROR </h1>"    
+#     print "<p> We are sorry, but TGD is temporarily disabled.."
+#     print "</body></html>"
+#     sys.exit()
 
 ##check if file coming from preP
 

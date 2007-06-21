@@ -249,6 +249,7 @@ series of steps very similar to those in Dave et al. </p>
       infinitesimal increment that affects the rate of change of the
       coefficients at each iteration of the algorithm. </p>
 
+   
 <p>In <a href = "http://helix-web.stanford.edu/psb05/gui.pdf">their
 	paper</a>, Gui and Li suggest using cross-validation to choose
 	&#964; and &#951;. Actually, an operational approach is to decide
@@ -288,6 +289,12 @@ series of steps very similar to those in Dave et al. </p>
       coefficients refer to the effect of a change in 1 s.d. unit of the
       gene.</p>
 
+
+<p><b>NEW</b>We have re-enabled this method. This method is still slow, so
+following a suggestion from Jiang Gui, we now do not examine the CVPL over
+a range of threshold parameters &#964; (tau), but instead use a fixed
+one. By default, it is set at 1. You can vary it, but you are likely to
+want large values (between 0.9 and 1.).</p>
 
 <h3><a name="errorstab">Assessment</a> of predictive performance and stability</h3>
 

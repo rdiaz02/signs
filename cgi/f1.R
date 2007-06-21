@@ -180,6 +180,7 @@ methodSurv <- scan("methodSurv", what = "", n = 1)
 if( methodSurv == "TGD") {
     epi <- scan("epi", what = double(0), n = 1)
     maxiter <- scan("maxiter", what = double(0), n = 1)
+    tau <- scan("tau", what = double(0), n = 1)
 } else if (methodSurv == "FCMS") {
     MaxSize <- scan("MaxSize", what = double(0), n = 1)
     MinSize <- scan("MinSize", what = double(0), n = 1)
@@ -512,6 +513,9 @@ doCheckpoint(1)
 options(warn = -1)
 
 if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
+
+
+if(checkpoint.num < 2) {
     xdata <- scale(xdata, center = TRUE, scale = TRUE)
     ##    TheCluster <- makeCluster(60, "MPI")
     ##     mpiSpawnThis(hosts = mpiHosts)
@@ -520,41 +524,67 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
 ## recall that TGD ain't running now, so some of the checkpinting strategy,
     ## etc not implemented here
 
+
+    u.threshold <- tau
     
-    thresGrid <- 6
-    thres <- c(0, 1)
-    checkEvery <- 2000
+##     thresGrid <- 6
+##     thres <- c(0, 1)
+##     checkEvery <- 2000
 
     tce <- maxiter %/% checkEvery
     maxiter <- tce * checkEvery
     
-    clusterExport(TheCluster, c("lik1", "tgd1InternalSnow", "tgdTrain",
-                                "tgdPieceInternalSnow"))
+##     clusterExport(TheCluster, c("lik1", "tgd1InternalSnow", "tgdTrain",
+##                                 "tgdPieceInternalSnow"))
+
+##     trycode <- try(
+##                    allDataRun <- tauBestP(xdata, Time, Event,
+##                                           thres,
+##                                           epi, thresGrid, 
+##                                           maxiter, checkEvery,
+##                                           nfold)
+##                    )
 
     trycode <- try(
-                   allDataRun <- tauBestP(xdata, Time, Event,
-                                          thres,
-                                          epi, thresGrid, 
-                                          maxiter, checkEvery,
-                                          nfold)
+                   allDataRun <- tgdSingleP(xdata, Time, Event,
+                                            unique.thres =u.treshold,
+                                            epi, maxiter,
+                                            nfold = 10)
                    )
+
+
+
     if(class(trycode) == "try-error")
-        caughtOurError(paste("Function tauBestP bombed unexpectedly with error",
+        caughtOurError(paste("Function tgdSingleP bombed unexpectedly with error",
                              trycode, ". \n Please let us know so we can fix the code."))
                        
-
+    doCheckpoint(2)
+}
+if(checkpoint.num < 3) {
     trycode <- try(
                    cvTGDResults <- cvTGDP(xdata, Time, Event,
-                                          thres,
-                                          epi, thresGrid, 
-                                          maxiter, checkEvery,
-                                          nfold) ## 4000 segundos en breast.covar[, 100:1000]
+                                          thres = c(u.threshold, u.threshold),
+                                          epi, thresGrid = 1, 
+                                          maxiter, 
+                                          nfold) 
                    )
+ 
+##     trycode <- try(
+##                    cvTGDResults <- cvTGDP(xdata, Time, Event,
+##                                           thres = c(u.threshold, u.threshold),
+##                                           epi, thresGrid , 
+##                                           maxiter, checkEvery,
+##                                           nfold) ## 4000 segundos en breast.covar[, 100:1000]
+##                    )
 
     if(class(trycode) == "try-error")
         caughtOurError(paste("Function cvTGDP bombed unexpectedly with error",
                              trycode, ". \n Please let us know so we can fix the code."))
-    
+
+
+    doCheckpoint(3)
+}
+if(checkpoint.num < 4) {
 
     GDD(file = "kmplot-honest.png", width = png.width,
         height = png.height, ps = png.pointsize)
@@ -606,15 +636,13 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
 
     GDD(file = "cvpl.png", width = png.width,
            height = png.height,ps = png.pointsize)
-    plot.cvpl(allDataRun$cvpl.mat, epi,                        ####  Fig 3
-              thres, thresGrid)
+    plot.cvpl(allDataRun$cvpl.mat, epi)                       ####  Fig 3
     dev.off()
 
 
     pdf(file = "cvpl.pdf", width = png.width,
            height = png.height)
-    plot.cvpl(allDataRun$cvpl.mat, epi,                        ####  Fig 3
-              thres, thresGrid)
+    plot.cvpl(allDataRun$cvpl.mat, epi)                        ####  Fig 3
     dev.off()
 
     sink(file = "results.txt")
@@ -633,7 +661,8 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
 
     trycode <- try(
                    outm <- summaryTGDrun(xdata, Time, Event, allDataRun,
-                                         epi, thres, thresGrid, plot = TRUE,
+                                         epi, thres = c(u.thresh, u.thresh),
+                                         thresGrid = 1, plot = TRUE,
                                          genesOut = TRUE,
                                          outfile = "genes.all.out") )          #### Fig 4: fstdgrun
 
@@ -676,7 +705,8 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
     
     sink()
 
-    
+    doCheckpoint(4)
+}
     if(useValidation == "yes") {
         pdf(file = "kmplot-validation.pdf", width = png.width,
             height = png.height)
@@ -713,8 +743,8 @@ if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
     if(checkpoint.num < 2) {
 
         mpi.bcast.Robj2slave(idtype)
-    mpi.bcast.Robj2slave(organism)
-
+        mpi.bcast.Robj2slave(organism)
+        
     
     MaxIterationsCox <- 200
     

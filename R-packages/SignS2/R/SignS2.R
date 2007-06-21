@@ -48,7 +48,7 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
                      nfold = 10,
                      fitWithBest = TRUE) {
     ## checkEvery is not used as such
-    checkEvery <- maxiter
+##     checkEvery <- maxiter
     if((!is.vector(time)) | (!is.vector(event)))
         stop("Time and event should be vectors")
     n <- length(time)
@@ -329,7 +329,7 @@ lik1 <- function(score, time, event)
 
 cvTGDP <- function(x, time, event, thres = c(0, 1),
                  epi = 5e-06, thresGrid = 6, 
-                 maxiter = 5000, checkEvery = 50,
+                 maxiter = 5000, 
                  nfold = 10) {
 
     ##     if(is.null(nfold)) {
@@ -581,9 +581,9 @@ KM.visualize3 <- function(scores, surv, event, ngroups = 3,
 
 
 
-
-plot.cvpl <- function(cvpl.mat, epi, thres = c(0, 1), thresGrid = 6) {
-
+plot.cvpl <- function(cvpl.mat, epi, thres = c(1, 1), thresGrid = 1) {
+##plot.cvpl <- function(cvpl.mat, epi, thres = c(0, 1), thresGrid = 6) {
+   
 ## Diagnostic plot for the output from tauBest
 
     ## Would be neat to add \tau in the legend, but I am not able to.
@@ -722,8 +722,7 @@ tgdCVPred <- function(x, time, event,
     ## find best params by CV and predict on a new set.
     bestTrain <- tauBestP(x, time, event,
                          thres, epi, thresGrid,
-                         maxiter, checkEvery,
-                         nfold)
+                         maxiter, nfold)
     
     return(list(scoresTest = xtest %*% bestTrain$betas,
                 betas = bestTrain$betas,
