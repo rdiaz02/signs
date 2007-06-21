@@ -459,7 +459,7 @@ def printOKRun():
             outf.write("<br /><br /> <hr>")
             outf.write(resultsFile)
 
-            if os.path.exists(tmpDir + '/f1.R'): os.remove(tmpDir + '/f1.R')
+            #if os.path.exists(tmpDir + '/f1.R'): os.remove(tmpDir + '/f1.R')
             Rresults.close()
             if os.path.exists(tmpDir + '/results.txt'): os.remove(tmpDir + '/results.txt')
      
