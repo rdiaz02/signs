@@ -602,7 +602,7 @@ plot.cvpl <- function(cvpl.mat, epi, thres = c(1, 1), thresGrid = 1) {
     tmp1 <- round(col2rgb(1:(thresGrid + 1))/255)
     plotcolors <- rgb(tmp1[1,], tmp1[2,], tmp1[3,])
     matplot(x = nus,
-            y = t(cvpl.mat[, 1:m.step]), xlab = expression(nu),
+            y = t(cvpl.mat[, 1:m.step, drop = FALSE]), xlab = expression(nu),
             ylab = "Cross validated partial likelihood",
             type = "l", col = plotcolors, lwd = 1.9,
             main = expression(paste("CV partial likelihood: effects of ",
@@ -615,9 +615,30 @@ plot.cvpl <- function(cvpl.mat, epi, thres = c(1, 1), thresGrid = 1) {
            cex = 1.1)
 }
 
+
+plot.cvpl.single  <- function(cvpl.mat, epi, thres) {
+   ## for a single threshold
+## Diagnostic plot for the output from tauBest
+   
+    m.step <- max(apply(cvpl.mat, 1, function(x) sum(!is.na(x))))
+    nus <- epi * (1:m.step)
+    maxy <- max(cvpl.mat, na.rm = TRUE)
+    miny <- min(cvpl.mat, na.rm = TRUE)
+
+    plot(x = nus,
+         y = t(cvpl.mat[, 1:m.step, drop = FALSE]),
+         xlab = paste(expression(nu), " ( = Delta nu * number iterations)"),
+         ylab = "Cross validated partial likelihood",
+         type = "l", col = "black", lwd = 1.9,
+         main = expression(paste("CV partial likelihood: effects of nu")))
+}
+
+
+
 summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
                           thresGrid = 6, plot = TRUE,
-                          genesOut = TRUE, outfile = "genes.all.out")  {
+                          genesOut = TRUE, outfile = "genes.all.out",
+                          html = TRUE)  {
     ## spit out the selected betas (i.e., for chose threshold)
     ## but also provide a table such as Table 1 in Gui & Li, Pac.Symp...
     ## with CVPL added.
@@ -670,21 +691,42 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
 
     bb <- z$betas[z$betas != 0]
     bb <- bb[order(abs(bb), decreasing = TRUE)]
-    cat("\n\n Selected genes (ordered by decreasing value of their coefficient)\n")
-    bb
-    cat("\n\n\n Cross-validated partial likelihood and number of selected\n")
-    cat(" genes for different thresholds (tau), with delta nu (epi) =", epi, ".\n")
-    cat("\n ===============================================================\n\n")
-    print(outm)
+    rnnbb <- rownames(bb)
 
+    if(html) {
+        cat("\n\n<h3> 4.1 Selected genes (ordered by decreasing value of their coefficient)</h3>\n")
+        cat("\n <TABLE  frame=\"box\" rules=\"groups\">\n")
+        cat("<tr align=left><th width=200>Gene</th> <th width=80>Coefficient</th></tr>")
+        for(iii in 1:length(bb)) {
+            cat("\n <tr align=center>\n")
+            cat("<td>", linkGene(rnbb[i]), "</td><td>",
+                round(bb[i], 4),
+                "</td></tr>")
+        }
+        cat("\n </TABLE>\n")
+     
+##         cat("\n\n\n Cross-validated partial likelihood and number of selected\n")
+##         cat(" genes for different thresholds (tau), with delta nu (epi) =", epi, ".\n")
+##         cat("\n ===============================================================\n\n")
+##         print(outm)
+
+        
+    } else {       
+        cat("\n\n Selected genes (ordered by decreasing value of their coefficient)\n")
+        print(bb)
+##         cat("\n\n\n Cross-validated partial likelihood and number of selected\n")
+##         cat(" genes for different thresholds (tau), with delta nu (epi) =", epi, ".\n")
+##         cat("\n ===============================================================\n\n")
+##         print(outm)
+    }
     if(plot) {
-        webPNG(file = "fstdgrun.png", width = 1.5 * png.width,
-               height = 2 * png.height,
-               pointsize = png.pointsize,
-               family = png.family)
+
+        GDD(file = "fstdgrun.png", w = 1.5 * png.width,
+            h = 2 * png.height,
+            ps = png.pointsize,
+            type = "png")
         par(cex.axis = 0.75); par(cex.lab = 1.4); par(cex.main = 1.5)
 
-        par(mfrow = c(3, 2)) ## z: change for more general setups
         for(ip in 1:thresGrid) {
             plot(bestBetas.m[[ip]], xlab = "Gene index",
                  ylab = "Coefficient",
@@ -695,7 +737,6 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
 
         pdf(file = "fstdgrun.pdf", width = 1.5 * png.width,
                height = 2* png.height, onefile = FALSE)
-        par(mfrow = c(3, 2)) ## z: change for more general setups
         for(ip in 1:thresGrid) {
             plot(bestBetas.m[[ip]], xlab = "Gene index",
                  ylab = "Coefficient",
@@ -731,13 +772,35 @@ tgdCVPred <- function(x, time, event,
                 step = bestTrain$step))
 }
 
-summary.cvTGD <- function(object, allDataObject, subjectNames) {
+summary.cvTGD <- function(object, allDataObject, subjectNames, html = TRUE) {
 
-    cat("\n Out-of-bag scores\n\n")
-    oobs <- matrix(object$OOB.scores, ncol = 1)
-    rownames(oobs) <- subjectNames
-    print(oobs)
+    if(html) {
+        oobs <- matrix(object$OOB.scores, ncol = 1)
+        rownames(oobs) <- subjectNames
 
+        cat("\n<h3>4.1. <a href=\"scores.oob.html\" target=\"scores_window\">View</a> out-of-bag scores.</h3>\n")
+        cleanHTMLhead(file = "scores.oob.html",
+                      title = "Linear predictor scores for out-of-bag data")
+        write(paste("<TABLE frame=\"box\">\n",
+                    "<tr><th>Subject/array</th> <th>Linear score</th></tr>\n"),
+              file = "scores.oob.html", append = TRUE)
+        wout <- ""
+        for(i in 1:nrow(oobs)) {
+            wout <- paste(wout, "\n <tr align=right>",
+            "<td>", rownames(oobs)[i], "</td><td>", oobs[i], "</td></tr>\n")
+        }
+        wout <- paste(wout, "</TABLE>")
+        write(wout, file = "scores.oob.html", append = TRUE)
+        cleanHTMLtail(file = "scores.oob.html")
+
+    } else {
+        
+        cat("\n Out-of-bag scores\n\n")
+        oobs <- matrix(object$OOB.scores, ncol = 1)
+        rownames(oobs) <- subjectNames
+        print(oobs)
+    }
+    
     object <- object[[1]] ## don't need scores anymore. Simpler subsetting.
 
     ks <- length(object)
@@ -751,23 +814,44 @@ summary.cvTGD <- function(object, allDataObject, subjectNames) {
                           Optimal.Threshold = thresholds,
                           Optimal.Steps = steps)
 
+
     cv.names <- paste("CV.run.", 1:ks, sep = "")    
     rownames(tmp.mat) <- cv.names
-    cat("\n\n Number of selected genes and parameters in cross-validation runs\n")
-    cat("-------------------------------------------------------------------\n\n")
-    print(tmp.mat)
 
-    cat("\n\n Stability assessments \n")
-    cat(    " ---------------------\n")
-    cat("\n Genes selected in each of the cross-validation runs \n")
 
- 
-    for(i in 1:ks) {
-        cat(paste("CV run  ", i, " (", ngenes[i], " genes selected):   ", sep = ""), "\n")
-        print(rownames(object[[i]]$betas)[object[[i]]$betas != 0])
-        cat("\n---\n")
+    if(html) {
+        cat("\n\n <h3>4.2 Number of selected genes and parameters in cross-validation runs</h3>\n")
+        print(tmp.mat)
+        
+        cat("\n\n <h3>4.3 Genes selected in each of the cross-validation runs</h3>\n")
+        for(i in 1:ks) {
+            cat("\n\n <h4>CV run ", cvr, "</h4>\n")
+            cat("\n <TABLE  frame=\"box\" rules=\"groups\">\n")
+            cat("<tr align=left><th width=200>Gene</th> </tr>")
+            thesegenes <- rownames(object[[i]]$betas)[object[[i]]$betas != 0]
+            for(thegene in thesegenes) {
+                cat("\n<tr><td>", linkGene(thegene), "</td></tr>")
+            }
+            cat("\n </TABLE>")
+        }
+    } else {
+        cat("\n\n Number of selected genes and parameters in cross-validation runs\n")
+        cat("-------------------------------------------------------------------\n\n")
+        print(tmp.mat)
+        
+        cat("\n\n Stability assessments \n")
+        cat(    " ---------------------\n")
+        cat("\n Genes selected in each of the cross-validation runs \n")
+        
+        for(i in 1:ks) {
+            cat(paste("CV run  ", i, " (", ngenes[i], " genes selected):   ", sep = ""), "\n")
+            print(rownames(object[[i]]$betas)[object[[i]]$betas != 0])
+            cat("\n---\n")
+        }
     }
 
+
+    
     tmp.genesSelected <- list()
     tmp.genesSelected[[1]] <- rownames(allDataObject$betas)[allDataObject$betas != 0]
     genesSelected.cv <- lapply(object, function(x)
@@ -791,10 +875,22 @@ summary.cvTGD <- function(object, allDataObject, subjectNames) {
     rownames(shared.genes) <- rownames(prop.shared) <- paste(c("OriginalSample", cv.names), ngenesS)
     
     options(width = 200)
-    cat("\n\n Number of shared genes \n")
+
+
+    if(html) {
+        cat("\n\n <h2>5. Stability assessments</h2>\n")
+        cat("\n\n <h3>5.1 Number of shared genes</h3> \n")
+    } else {
+        cat("\n\n Stability assessments \n")
+        cat("\n\n Number of shared genes \n")
+    }
     print(as.table(shared.genes))
-    
-    cat("\n\n Proportion of shared genes (relative to row total) \n")
+
+    if(html) {
+        cat("\n\n <h3>5.2 Proportion of shared genes (relative to row total)</h3> \n")
+    } else {
+        cat("\n\n Proportion of shared genes (relative to row total) \n")
+    }
     print(as.table(prop.shared))
     
     options(width = 80)
@@ -802,16 +898,41 @@ summary.cvTGD <- function(object, allDataObject, subjectNames) {
     
     in.all.data <-
         which(names(table(unlisted.genes.selected, dnn = NULL)) %in% tmp.genesSelected[[1]])
-    cat("\n\n\n Gene freqs. in cross-validated runs of genes selected in model with all data \n\n")
-    print(sort(table(unlisted.genes.selected, dnn = NULL)[in.all.data], decreasing = TRUE))
-    cat("\n")
-    
-    
-    cat("\n\n Gene frequencies in cross-validated runs \n\n")
-    tmp.table <- sort(table(unlisted.genes.selected, dnn = NULL),
-                      decreasing = TRUE)
-    print(tmp.table)
-    cat("\n")
+
+    if(html) {
+        tmptmp <- sort(table(unlisted.genes.selected, dnn = NULL)[in.all.data], decreasing = TRUE)
+        rntmptmp <- rownames(tmptmp)
+        cat("\n\n\n<h3> 5.3 Gene freqs. in cross-validated runs of genes selected in model with all data</h3> \n\n")
+        
+        cat("\n <TABLE  frame=\"box\" rules=\"groups\">\n")
+        cat("<tr align=left><th width=200>Gene</th> <th width=50>Frequency</th></tr>")
+            for(ii in 1:length(tmptmp)) {
+                cat("\n<tr><td>", linkGene(rntmptmp[ii]), "</td>",
+                    "<td>", tmptmp[ii], "</td></tr>")
+            }
+            cat("\n </TABLE>")
+    } else {
+        cat("\n\n\n Gene freqs. in cross-validated runs of genes selected in model with all data \n\n")
+        print(sort(table(unlisted.genes.selected, dnn = NULL)[in.all.data], decreasing = TRUE))
+    }
+
+    if(html) {
+        tmptmp <- sort(table(unlisted.genes.selected, dnn = NULL), decreasing = TRUE)
+        rntmptmp <- rownames(tmptmp)
+        cat("\n\n\n<h3> 5.4 Gene freqs. in cross-validated runs</h3> \n\n")
+        
+        cat("\n <TABLE  frame=\"box\" rules=\"groups\">\n")
+        cat("<tr align=left><th width=200>Gene</th> <th width=50>Frequency</th></tr>")
+            for(ii in 1:length(tmptmp)) {
+                cat("\n<tr><td>", linkGene(rntmptmp[ii]), "</td>",
+                    "<td>", tmptmp[ii], "</td></tr>")
+            }
+            cat("\n </TABLE>")
+    } else {
+        cat("\n\n\n Gene freqs. in cross-validated runs \n\n")
+        print(sort(table(unlisted.genes.selected, dnn = NULL), decreasing = TRUE))
+    }
+
 }
 
 

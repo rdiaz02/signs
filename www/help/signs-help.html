@@ -242,7 +242,7 @@ series of steps very similar to those in Dave et al. </p>
       of genes that show high correlations.</p>
 
 <p>Two parameters have to be set for this method: a threshold parameter
-      &#964; (tau) and an infinitesimal increment &#8710;&#951; (Delta
+      &#964; (tau) and an infinitesimal increment &#8710;&#957; (Delta
       nu). The threshold parameter (where 0 &#8804; &#964; &#8804; 1) is
       related to the amount of penalization, and larger values lead to
       larger numbers of coefficients being set to 0. Delta nu is an
@@ -252,20 +252,20 @@ series of steps very similar to those in Dave et al. </p>
    
 <p>In <a href = "http://helix-web.stanford.edu/psb05/gui.pdf">their
 	paper</a>, Gui and Li suggest using cross-validation to choose
-	&#964; and &#951;. Actually, an operational approach is to decide
+	&#964; and &#957;. Actually, an operational approach is to decide
 	in advance on a set of &#964; to examine (in our case, 0, 0.2,
-	0.4, 0.6, 0.8, 1), and use cross-validation to select the &#951;
+	0.4, 0.6, 0.8, 1), and use cross-validation to select the &#957;
 	for each of the pre-specified &#964;. For each &#964;, we will
-	chose the &#951; that minimizes the cross-validated partial
+	chose the &#957; that minimizes the cross-validated partial
 	likelihood (CVPL), a function of the difference in the log Cox's partial
 	likelihoods for the models with and without the the ith group of
-	subjects. Once we find the &#951; for a given &#964;, it is
+	subjects. Once we find the &#957; for a given &#964;, it is
 	inmediate to obtain the fitted coefficients for the genes and the
 	scores for subjects not in the sample.</p>
 
 <p>From the <a href =
 	"http://helix-web.stanford.edu/psb05/gui.pdf">original paper</a>,
-	it seems that the authors used the CVPL to find the &#951; for a
+	it seems that the authors used the CVPL to find the &#957; for a
 	given &#964;, but it is not clear that this is the criterion
 	ultimately used to select among &#964;. Rather, in the example
 	discussed in their paper, the authors choose the final model based
@@ -513,14 +513,14 @@ tool.</p>
     in the textual output. </p>
     
     <p>For TGD we show a plot of the CVPL (cross-validate partial
-    likelihood) versus &#951; for different values of &#964;. You would
+    likelihood) versus &#957; for different values of &#964;. You would
     want to see six U shaped lines, with the bottom of the U far from the
     maximum you set for <b>Maximum iterations</b>; note that this maximum
     might not be shown in the figure. You might see that different lines
-    finish at differetn &#951;: one algorithm we have implemented (and
+    finish at differetn &#957;: one algorithm we have implemented (and
     which might be running when you use the program) allows
     for "early stopping" when it is obvious we are getting away from the
-    best &#951;, and this is likely to happen at different &#951; for
+    best &#957;, and this is likely to happen at different &#957; for
     different &#964;. For TGD we also showm, following the <a href =
     "http://helix-web.stanford.edu/psb05/gui.pdf">original paper</a> of
     Gui and Li, the values of the coefficients for different settings of

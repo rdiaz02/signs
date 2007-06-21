@@ -507,52 +507,22 @@ doCheckpoint(1)
 
 }
 
-#### FIXME (if ever needed ....): No checkpointing for TGD!!!
-
-
 options(warn = -1)
 
 if(methodSurv == "TGD") {#### Starting part for Threshold Gradient Descent
 
+    u.threshold <- tau
+
 
 if(checkpoint.num < 2) {
     xdata <- scale(xdata, center = TRUE, scale = TRUE)
-    ##    TheCluster <- makeCluster(60, "MPI")
-    ##     mpiSpawnThis(hosts = mpiHosts)
-
-
-## recall that TGD ain't running now, so some of the checkpinting strategy,
-    ## etc not implemented here
-
-
-    u.threshold <- tau
-    
-##     thresGrid <- 6
-##     thres <- c(0, 1)
-##     checkEvery <- 2000
-
-    tce <- maxiter %/% checkEvery
-    maxiter <- tce * checkEvery
-    
-##     clusterExport(TheCluster, c("lik1", "tgd1InternalSnow", "tgdTrain",
-##                                 "tgdPieceInternalSnow"))
-
-##     trycode <- try(
-##                    allDataRun <- tauBestP(xdata, Time, Event,
-##                                           thres,
-##                                           epi, thresGrid, 
-##                                           maxiter, checkEvery,
-##                                           nfold)
-##                    )
 
     trycode <- try(
-                   allDataRun <- tgdSingleP(xdata, Time, Event,
-                                            unique.thres =u.treshold,
+                   allDataRun <- tgdSingle(xdata, Time, Event,
+                                            unique.thres =u.threshold,
                                             epi, maxiter,
                                             nfold = 10)
                    )
-
-
 
     if(class(trycode) == "try-error")
         caughtOurError(paste("Function tgdSingleP bombed unexpectedly with error",
@@ -569,14 +539,6 @@ if(checkpoint.num < 3) {
                                           nfold) 
                    )
  
-##     trycode <- try(
-##                    cvTGDResults <- cvTGDP(xdata, Time, Event,
-##                                           thres = c(u.threshold, u.threshold),
-##                                           epi, thresGrid , 
-##                                           maxiter, checkEvery,
-##                                           nfold) ## 4000 segundos en breast.covar[, 100:1000]
-##                    )
-
     if(class(trycode) == "try-error")
         caughtOurError(paste("Function cvTGDP bombed unexpectedly with error",
                              trycode, ". \n Please let us know so we can fix the code."))
@@ -636,32 +598,27 @@ if(checkpoint.num < 4) {
 
     GDD(file = "cvpl.png", width = png.width,
            height = png.height,ps = png.pointsize)
-    plot.cvpl(allDataRun$cvpl.mat, epi)                       ####  Fig 3
+    plot.cvpl.single(allDataRun$cvpl.mat, epi, tau)                       ####  Fig 3
     dev.off()
 
 
     pdf(file = "cvpl.pdf", width = png.width,
            height = png.height)
-    plot.cvpl(allDataRun$cvpl.mat, epi)                        ####  Fig 3
+    plot.cvpl.single(allDataRun$cvpl.mat, epi, tau)                        ####  Fig 3
     dev.off()
 
-    sink(file = "results.txt")
-    cat("\n\n  Analyses using  Threshold Gradient Descent (Li & Gui)\n")
-    cat("===================================================================================\n")
 
-    cat("\n\n\n********************************************************************************\n")
-    cat("********************************************************************************\n")
-    cat("********************                                        ********************\n")
-    cat("********************        Model fitted to all data        ********************\n")
-    cat("********************                                        ********************\n")
-    cat("********************************************************************************\n")
-    cat("********************************************************************************\n\n")
+
+
+
     
-
+    sink(file = "results.txt")
+    cat("\n <hr><h2>4. Model fitted to all data</h2>\n")
+        
 
     trycode <- try(
                    outm <- summaryTGDrun(xdata, Time, Event, allDataRun,
-                                         epi, thres = c(u.thresh, u.thresh),
+                                         epi, thres = c(u.threshold, u.threshold),
                                          thresGrid = 1, plot = TRUE,
                                          genesOut = TRUE,
                                          outfile = "genes.all.out") )          #### Fig 4: fstdgrun
@@ -671,14 +628,8 @@ if(checkpoint.num < 4) {
         caughtOurError(paste("Function summaryTGDrun bombed unexpectedly with error",
                              trycode, ". \n Please let us know so we can fix the code."))
 
-    
-    cat("\n\n\n********************************************************************************\n")
-    cat("********************************************************************************\n")
-    cat("********************                                        ********************\n")
-    cat("********************        Cross-validation runs           ********************\n")
-    cat("********************                                        ********************\n")
-    cat("********************************************************************************\n")
-    cat("********************************************************************************\n\n")
+
+    cat("\n <hr><h2>5. Cross-validation runs</h2>\n")
     trycode <- try(
                    summary.cvTGD(cvTGDResults, allDataRun, rownames(xdata))
                    )
@@ -687,14 +638,7 @@ if(checkpoint.num < 4) {
                              trycode, ". \n Please let us know so we can fix the code."))
 
     if(useValidation == "yes") {
-        
-        cat("\n\n\n********************************************************************************\n")
-        cat("********************************************************************************\n")
-        cat("********************                                        ********************\n")
-        cat("********************        Validation data                 ********************\n")
-        cat("********************                                        ********************\n")
-        cat("********************************************************************************\n")
-        cat("********************************************************************************\n\n")
+        cat("\n <hr><h2>6. Validation data</h2>\n")
         
         valpred <- validationxdata %*% allDataRun$betas
        
@@ -732,7 +676,7 @@ if(checkpoint.num < 4) {
         
     }
     
-    stopCluster(TheCluster)
+##    stopCluster(TheCluster)
     save.image()
     
     

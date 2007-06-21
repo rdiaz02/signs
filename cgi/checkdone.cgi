@@ -322,7 +322,8 @@ def printOKRun():
 
         if (methodUsed == 'TGD') or (methodUsed == 'TGD\n'):
             outf.write("<h2> Results using the Threshold Gradient Descent method of Li and Gui</h2><br/ >\n")
-            outf.write('<h2>Survival curves using scores from final model <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h2> \n')
+            outf.write('<h2>1. Survival plots \n')
+            outf.write('<h2>1.1. Survival plots using scores from final model <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h2> \n')
             outf.write('<h3>Splitting scores in two groups</h3>')
             outf.write('<IMG BORDER="0" SRC="kmplot-honest.png">')
             outf.write('<IMG BORDER="0" SRC="kmplot-overfitt.png">')
@@ -335,29 +336,33 @@ def printOKRun():
             outf.write('consequencues of overfitting and not doing cross-validation.</p>')
 
             if os.path.exists(tmpDir + "/usevalidation"):
-                outf.write('<h2>Survival curves for validation data <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h2> \n')
+                outf.write('<h2>1.2. Survival curves for validation data <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h2> \n')
                 outf.write('<h3>Splitting scores in two groups</h3>')
                 outf.write('<IMG BORDER="0" SRC="kmplot-validation.png">')
                 outf.write('<h3>Splitting scores in four groups</h3>')
                 outf.write('<IMG BORDER="0" SRC="kmplot4-validation.png">')
 
-            outf.write('<br /> <br /><h2>Cross-validated partial likelihood for different values of the model parameters')
+            outf.write('<br /> <br /><h2>2. Cross-validated partial likelihood')
             outf.write('<a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#out.tgd">(help)</a></h2> \n')
             outf.write('<IMG BORDER="0" SRC="cvpl.png">')
-            outf.write('<p>(Use this plot to asses if the chosen values of maximum iterations and &#8710;&#951; worked appropriately.</p>')
+            outf.write('<p>(Use this plot to asses if the chosen values of maximum iterations and &#8710;&#951; worked appropriately.)</p>')
 
-            outf.write('<br /> <br /><h2>Coefficients of genes (at best cross-validated partial likelihood) for different thresholds ')
+            outf.write('<br /> <br /><h2>3. Coefficients of genes (at best cross-validated partial likelihood) ')
             outf.write('<a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#out.tgd">(help)</a></h2> \n')
             outf.write('<IMG BORDER="0" SRC="fstdgrun.png">')
 
             outf.write("<br /><br /> <hr>")
             outf.write("<pre>")
-            outf.write('<br /><br /><h2> Results <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outputText">(help)</a></h2> \n')
-            outf.write(cgi.escape(resultsFile))
+#             outf.write('<br /><br /><h2> Results <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outputText">(help)</a></h2> \n')
+##            outf.write(cgi.escape(resultsFile))
+            outf.write(resultsFile)
             outf.write("</pre>")
 
             allResults = tarfile.open(tmpDir + '/all.results.tar.gz', 'w:gz')
-            allResults.add(tmpDir + '/results.txt', 'results.txt')
+#            allResults.add(tmpDir + '/results.txt', 'results.txt')
+            os.system('html2text -width 200 -nobs -o Results.txt pre-results.html')
+            allResults.add(tmpDir + '/Results.txt', 'Results.txt')
+
             if os.path.exists(tmpDir + "/kmplot-honest.png"): allResults.add(tmpDir + '/kmplot-honest.png', 'SurvivalPlot-honest.png')
             if os.path.exists(tmpDir + "/kmplot-overfitt.png"): allResults.add(tmpDir + '/kmplot-overfitt.png', 'SurvivalPlot-overfitt.png')
             if os.path.exists(tmpDir + "/fstdgrun.png"): allResults.add(tmpDir + '/fstdgrun.png', 'GeneCoefficients.png')
