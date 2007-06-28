@@ -699,7 +699,7 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
         cat("<tr align=left><th width=200>Gene</th> <th width=80>Coefficient</th></tr>")
         for(iii in 1:length(bb)) {
             cat("\n <tr align=center>\n")
-            cat("<td>", linkGene(rnbb[i]), "</td><td>",
+            cat("<td>", linkGene(rnnbb[i]), "</td><td>",
                 round(bb[i], 4),
                 "</td></tr>")
         }

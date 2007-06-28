@@ -33,6 +33,9 @@ checkpoint.num <- scan("checkpoint.num", what = double(0), n = 1)
         cat("\n\n Normal termination\n")
         try(stopCluster(TheCluster), silent = TRUE)
         ##        .Call("mpi_finalize")
+        try(system(paste("/http/mpi.log/killLAM.py", lamSESSION, "&")))
+        cat(paste("\n Did the call to killLAM.py 1 ", date(), " \n"),
+        file = "tmp.checks", append = TRUE)
         try(mpi.quit(save = "no"), silent = TRUE)
     }
     try(stopCluster(TheCluster), silent = TRUE)
@@ -40,6 +43,8 @@ checkpoint.num <- scan("checkpoint.num", what = double(0), n = 1)
     ## In case the CGI is not called (user kills browser)
     ## have a way to stop lam
     try(system(paste("/http/mpi.log/killLAM.py", lamSESSION, "&")))
+    cat(paste("\n Did the call to killLAM.py 2 ", date(), " \n"),
+        file = "tmp.checks", append = TRUE)
     try(mpi.quit(save = "no"), silent = TRUE)
 }
 
@@ -216,6 +221,9 @@ sink(file = "mpiOK")
 cat("MPI started OK\n")
 sink()
 
+trylam <- try(
+              lamSESSION <- scan("lamSuffix", what = "character",
+                                 sep = "\t", strip.white = TRUE))
 
 
 #########################################################
@@ -341,6 +349,12 @@ if(length(arrayNames) > 0) {
                           "Please change them so that they are unique.\n",
                           "The duplicated names are ", dupnames, "\n")
         caughtUserError(message)
+    }
+    if(ncol(xdata) != length(arrayNames)) {
+        emessage <- paste("We get that the number of columns in your data (", ncol(xdata), ")\n",
+                          "is different from the number of column names (", length(arrayNames), ")\n",
+                          "Check for things such as '#' or '#NULL!' in the middle of your data.\n")
+        caughtUserError(emessage)
     }
     colnames(xdata) <- arrayNames
 }
