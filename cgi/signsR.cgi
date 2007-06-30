@@ -342,7 +342,7 @@ if methodSurv == 'FCMS':
         print "</body></html>"
         sys.exit()
 if methodSurv == 'TGD':
-    maxiter = valueNumUpload('maxiter', 'int', 4000)
+    maxiter = valueNumUpload('maxiter', 'int', 100)
     epi = valueNumUpload('epi', 'float', 0)
     tau = valueNumUpload('tau', 'float', 0)
     if tau > 1:

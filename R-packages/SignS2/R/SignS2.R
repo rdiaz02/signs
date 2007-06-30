@@ -111,6 +111,7 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
     cvpl.mat <- cvpllymtgd/nfold
 
     ## have to allow for possibility of several minima; take largest
+    browser()
     tmp <-
         which(cvpl.mat == min(cvpl.mat, na.rm = TRUE), arr.ind = TRUE)
     tmp <- tmp[nrow(tmp), ]
@@ -187,7 +188,7 @@ tgd1InternalSnow <- function(x.train, time.train, event.train,
                              thres,
                              epi,
                              steps){
-
+##    on.exit(browser())
 ## x, time, event: covariate, time to event, and event indicator (1
 ## observed, 0 censored) for the training data.
 ## xtest, time.test, event.test: same as above, but for testing data.
@@ -217,7 +218,9 @@ tgd1InternalSnow <- function(x.train, time.train, event.train,
 
     for(iteration in 1:steps) {
         beta <- beta1
-        if(n1 == 1) scores <- sum(x.test * beta)
+        if(n1 == 1) {
+            scores <- sum(x.test * as.vector(beta))
+        }
         else scores <- x.test %*% beta
 
         ita <- x.train%*% beta
@@ -337,8 +340,9 @@ cvTGDP <- function(x, time, event, thres = c(0, 1),
     ##     } ## I've never tested this. Should work for leave-one-out but ....
     
     ## we asume at least as many mpi Rslaves as nfold.
-    if(nfold > (mpi.comm.size() - 1))
-        stop("nfold > number of mpi Rslaves")
+    ## eh? why?
+##    if(nfold > (mpi.comm.size() - 1))
+##        stop("nfold > number of mpi Rslaves")
     
     
     ## nfold is the number of folds for cross-validation, and this are
@@ -690,17 +694,19 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
                              Number.non.zero.coefficients = n.betas.nozero))
 
     bb <- z$betas[z$betas != 0]
+    names(bb) <- rownames(z$betas)[z$betas != 0]
     bb <- bb[order(abs(bb), decreasing = TRUE)]
-    rnnbb <- rownames(bb)
+    rnnbb <- names(bb)
 
     if(html) {
+        browser()
         cat("\n\n<h3> 4.1 Selected genes (ordered by decreasing value of their coefficient)</h3>\n")
         cat("\n <TABLE  frame=\"box\" rules=\"groups\">\n")
         cat("<tr align=left><th width=200>Gene</th> <th width=80>Coefficient</th></tr>")
         for(iii in 1:length(bb)) {
             cat("\n <tr align=center>\n")
-            cat("<td>", linkGene(rnnbb[i]), "</td><td>",
-                round(bb[i], 4),
+            cat("<td>", linkGene(rnnbb[iii]), "</td><td>",
+                bb[iii],
                 "</td></tr>")
         }
         cat("\n </TABLE>\n")
@@ -721,8 +727,8 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
     }
     if(plot) {
 
-        GDD(file = "fstdgrun.png", w = 1.5 * png.width,
-            h = 2 * png.height,
+        GDD(file = "fstdgrun.png", w = png.width,
+            h = png.height,
             ps = png.pointsize,
             type = "png")
         par(cex.axis = 0.75); par(cex.lab = 1.4); par(cex.main = 1.5)
@@ -735,8 +741,8 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
         }
         dev.off()
 
-        pdf(file = "fstdgrun.pdf", width = 1.5 * png.width,
-               height = 2* png.height, onefile = FALSE)
+        pdf(file = "fstdgrun.pdf", width =  png.width,
+               height =  png.height, onefile = FALSE)
         for(ip in 1:thresGrid) {
             plot(bestBetas.m[[ip]], xlab = "Gene index",
                  ylab = "Coefficient",
@@ -825,7 +831,7 @@ summary.cvTGD <- function(object, allDataObject, subjectNames, html = TRUE) {
         
         cat("\n\n <h3>4.3 Genes selected in each of the cross-validation runs</h3>\n")
         for(i in 1:ks) {
-            cat("\n\n <h4>CV run ", cvr, "</h4>\n")
+            cat("\n\n <h4>CV run ", i, "</h4>\n")
             cat("\n <TABLE  frame=\"box\" rules=\"groups\">\n")
             cat("<tr align=left><th width=200>Gene</th> </tr>")
             thesegenes <- rownames(object[[i]]$betas)[object[[i]]$betas != 0]

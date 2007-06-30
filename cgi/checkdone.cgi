@@ -361,7 +361,7 @@ def printOKRun():
             allResults = tarfile.open(tmpDir + '/all.results.tar.gz', 'w:gz')
 #            allResults.add(tmpDir + '/results.txt', 'results.txt')
             os.system('html2text -width 200 -nobs -o Results.txt pre-results.html')
-            allResults.add(tmpDir + '/Results.txt', 'Results.txt')
+            allResults.add(tmpDir + '/results.txt', 'Results.txt')
 
             if os.path.exists(tmpDir + "/kmplot-honest.png"): allResults.add(tmpDir + '/kmplot-honest.png', 'SurvivalPlot-honest.png')
             if os.path.exists(tmpDir + "/kmplot-overfitt.png"): allResults.add(tmpDir + '/kmplot-overfitt.png', 'SurvivalPlot-overfitt.png')
