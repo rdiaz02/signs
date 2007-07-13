@@ -627,7 +627,7 @@ if(checkpoint.num < 4) {
 
     
     sink(file = "results.txt")
-    cat("\n <hr><h2>4. Model fitted to all data</h2>\n")
+    cat("\n <h2>4. Model fitted to all data</h2>\n")
         
 
     trycode <- try(

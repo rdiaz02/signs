@@ -52,6 +52,7 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
     if((!is.vector(time)) | (!is.vector(event)))
         stop("Time and event should be vectors")
     n <- length(time)
+    nfold <- min(nfold, n)
     thresS <- seq(from = thres[1], to = thres[2], length.out = thresGrid)
     cvpl.mat <- array(NA, c(length(thresS), maxiter))
     cvindex <- sample(rep(1:nfold, length = n), n, replace = FALSE)
@@ -111,7 +112,7 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
     cvpl.mat <- cvpllymtgd/nfold
 
     ## have to allow for possibility of several minima; take largest
-    browser()
+##    browser()
     tmp <-
         which(cvpl.mat == min(cvpl.mat, na.rm = TRUE), arr.ind = TRUE)
     tmp <- tmp[nrow(tmp), ]
@@ -699,7 +700,7 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
     rnnbb <- names(bb)
 
     if(html) {
-        browser()
+##        browser()
         cat("\n\n<h3> 4.1 Selected genes (ordered by decreasing value of their coefficient)</h3>\n")
         cat("\n <TABLE  frame=\"box\" rules=\"groups\">\n")
         cat("<tr align=left><th width=200>Gene</th> <th width=80>Coefficient</th></tr>")
