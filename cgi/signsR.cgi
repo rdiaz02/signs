@@ -532,40 +532,22 @@ if fs.has_key('validation'):
 ## but newDir is not passed from any other user-reachable place
 ## (it is created here).
 
-
-## recall to include in R
-    ##pid <- Sys.getpid()
-    ##write.table(file = "pid.txt", pid, row.names = FALSE, col.names = FALSE)
-
 ## touch Rout, o.w. checkdone can try to open a non-existing file
 touchRout = os.system("/bin/touch " + tmpDir + "/f1.Rout") 
 touchRrunning = os.system("/bin/touch /http/signs2/www/R.running.procs/R." + newDir +
                           "@" + socket.gethostname())
 shutil.copy("/http/signs2/cgi/f1.R", tmpDir)
-## we add the 2> error.msg because o.w. if we kill R we get a server error as standard
-## error is sent to the server
-#Rcommand = "cd " + tmpDir + "; " + "/usr/bin/R CMD BATCH --no-restore --no-readline --no-save -q f1.R 2> error.msg &"
-##Rrun = os.system(Rcommand)
-tryrrun = os.system('/http/mpi.log/tryRrun5.py ' + tmpDir + ' SignS &')
+checkpoint = os.system("echo 0 > " + tmpDir + "/checkpoint.num")
+createResultsFile = os.system("/bin/touch " + tmpDir + "/results.txt")
+
 
 ## Launch the lam checking program 
-lam_check = os.spawnv(os.P_NOWAIT, '/http/mpi.log/recoverFromLAMCrash.py',
+run_and_check = os.spawnv(os.P_NOWAIT, '/http/signs2/cgi/runAndCheck.py',
                       ['', tmpDir])
 
-os.system('echo "' + str(lam_check) + ' ' + socket.gethostname() +\
-           '"> ' + tmpDir + '/lamCheckPID')
+os.system('echo "' + str(run_and_check) + ' ' + socket.gethostname() +\
+           '"> ' + tmpDir + '/run_and_checkPID')
 
-
-
-## FIXME : should probably tell the user if the job waiting or running.
-
-## something weird is happening, that tryRrun4.py seems not to get started ...
-## we will check the logs, and if it ain't in there, we try again
-## and annotate the error
-
-createResultsFile = os.system("/bin/touch " + tmpDir + "/results.txt")
-checkpoint = os.system("echo 0 > " + tmpDir + "/checkpoint.num")
-restart_tryRrun(tmpDir)
 
 ###########   Creating a results.hmtl   ###############
 
@@ -577,7 +559,8 @@ os.system("cd " + tmpDir + "; /bin/sed 's/sustituyeme/" +
           newDir + "/g' results-pre.html > results.html; rm results-pre.html")
 
 ##############    Redirect to checkdone.cgi    ##################
-print "Location: "+ getQualifiedURL("/cgi-bin/checkdone.cgi") + "?newDir=" + newDir, "\n\n"
+print "Location: "+ getQualifiedURL("/tmp/" + newDir + "/results.html"), "\n\n"
+## print "Location: "+ getQualifiedURL("/cgi-bin/checkdone.cgi") + "?newDir=" + newDir, "\n\n"
 
 
 

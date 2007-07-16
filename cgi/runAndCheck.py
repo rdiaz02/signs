@@ -1,27 +1,91 @@
 #!/usr/bin/python
 
-## All this code is copyright Ramon Diaz-Uriarte. For security reasons, this is for
-## now confidential. No license is granted to copy, distribute, or modify it.
-## Once everything is OK, it will be distributed under the GPL.
+## All this code is copyright Ramon Diaz-Uriarte.
+## Released under the Affero GPL.
 
+
+## This file is very similar to the one in ADaCGH, but with minor adaptations to signs.
 
 import sys
 import os
 import cgi 
-import types
 import time
 import shutil
-##import string
-import signal
-import re
 import glob
+import random
+import socket
+##import fcntl
+
 import tarfile
 
-import cgitb
-cgitb.enable() ## zz: eliminar for real work?
-sys.stderr = sys.stdout ## eliminar?
 
-R_MAX_time = 8 * 3600 ## max duration allowd for any process
+sys.path = sys.path + ['/http/mpi.log']
+import counterApplications
+
+
+R_MAX_time = 12 * 3600 ## 12 hours is max duration allowd for any process
+TIME_BETWEEN_CHECKS = 45
+MAX_MPI_CRASHES = 20
+
+
+tmpDir = sys.argv[1]
+ROOT_TMP_DIR = "/http/signs/www/tmp/"
+newDir = tmpDir.replace(ROOT_TMP_DIR, "")
+runningProcs = tmpDir.split('/tmp/')[0] + '/R.running.procs/'
+
+
+## I think we no longer check tmpDir is OK, because this is not launched
+## by the user, byt by the signsR.cgi file.
+
+
+
+
+## procTable = tmpDir.split('/tmp/')[0] + '/R.running.procs/procTable'
+
+## Must ensure the procTable exists and has a valid value
+## No longer used
+# if not os.path.exists(procTable):
+#     fo = open(procTable, mode = 'w')
+#     fo.write('0')
+#     fo.close()
+
+def set_defaults_lam(tmpDir):
+    """ Set defaults for lamboot and Rslaves and number procs
+    based on the size of the data file. This is all heuristic,
+    but works for us with 6 GB RAM per node. The key idea is to
+    prevent swapping. ncpu are the Rslaves spawned by lamd, or the cpu=ncpu
+    in the lamb-host file. max_num_procs is the maximum number of simultaneous
+    adacgh processes running at any time.
+    We return the tuple ncpu, max_num_procs"""
+    return(4, 100)
+## In contrast to ADaCGH, we do not see swapping here, so no need to do
+## size-dependent lam boots
+#     datsize1 = 0
+#     datsize2 = 0
+#     if os.path.exists(tmpDir + '/acghData'):
+#         datsize1 = int(os.popen('ls ' + tmpDir + '/acghData -sk').read().split()[0])
+#     if os.path.exists(tmpDir + '/acghAndPosition'):
+#         datsize2 = int(os.popen('ls ' + tmpDir + '/acghAndPosition -sk').read().split()[0])
+#     datsize = max(datsize2, datsize1)
+#     if datsize < 2000:
+#         return (2, 3)
+#     elif datsize < 6000:
+#         return (2, 2)
+#     elif datsize < 14000:
+#         return (2, 1)
+#     else:
+#         return (1, 1)
+
+
+def collectZombies(k = 10):
+    """ Make sure there are no zombies in the process tables.
+    This is probably an overkill, but works.
+    """
+    for nk in range(k):
+        try:
+            tmp = os.waitpid(-1, os.WNOHANG)
+        except:
+            None
 
 
 def issue_echo(fecho, tmpDir):
@@ -33,12 +97,14 @@ def issue_echo(fecho, tmpDir):
     os.system('echo "' + fecho + \
               '" >> ' + tmpDir + '/checkdone.echo')
     os.system('echo "    " >> ' + tmpDir + '/checkdone.echo')
-    
 
 
-def kill_lamcheck(pid, machine):
-    'as it says: to kill lamcheck; actually, anything'
+def kill_pid_machine(pid, machine):
+    'as it says: to kill somehting somewhere'
     os.system('ssh ' + machine + ' "kill -s 9 ' + pid + '"')
+
+
+
 
 def clean_for_PaLS(file_in, file_out):
     """ Make sure no file has two consecutive lines that start with '#',
@@ -209,26 +275,17 @@ def getQualifiedURL(uri = None):
         host = os.environ.get('SERVER_NAME')
         port = os.environ.get('SERVER_PORT', '80')
         if port != stdport: host = host + ":" + port
-        
     result = "%s://%s" % (schema, host)
     if uri: result = result + uri
-    
     return result
 
 def getScriptname():
     """ Return te scriptname part of the URL."""
     return os.environ.get('SCRIPT_NAME', '')
 
-
-# def getPathinfo():
-#     """ Return the remaining part of the URL. """
-#     pathinfo = os.environ.get('PATH_INFO', '')
-#     return pathinfo
-
 def getBaseURL():
     """ Return a fully qualified URL to this script. """
     return getQualifiedURL(getScriptname())
-
 
 def commonOutput():
     print "Content-type: text/html\n\n"
@@ -239,8 +296,12 @@ def commonOutput():
     </head>
     <body>
     """
+
+def getScriptname():
+    """ Return te scriptname part of the URL."""
+    return os.environ.get('SCRIPT_NAME', '')
     
-## to keep executing myself:
+
 def relaunchCGI():
     issue_echo('inside relaunchCGI', tmpDir)
 
@@ -259,6 +320,11 @@ def relaunchCGI():
     print '</p> </body> </html>'
     issue_echo('end of relaunchCGI', tmpDir)
     
+
+
+    
+
+## Output-generating functions
 
 ## Output-generating functions
 def printErrorRun():
@@ -508,6 +574,7 @@ def printOKRun():
     issue_echo('end of printOKRun', tmpDir)
 
 
+
 def printRKilled():
     Rresults = open(tmpDir + "/results.txt")
     resultsFile = Rresults.read()
@@ -517,10 +584,6 @@ def printRKilled():
     outf.write("<p>  The R process lasted longer than the maximum  allowed time, ")
     outf.write(str(R_MAX_time))
     outf.write(" seconds,  and was killed.")
-###     outf.write("<p> This is the output from the R run:<p>")
-###     outf.write("<pre>")
-###     outf.write(cgi.escape(soFar))
-###     outf.write("</pre>")
     outf.write("<p> This is the results file:<p>")
     outf.write("<pre>")
     outf.write(cgi.escape(resultsFile))
@@ -531,158 +594,466 @@ def printRKilled():
     shutil.copyfile(tmpDir + "/pre-results.html", tmpDir + "/results.html")
 
 
+def printMPIerror(tmpDir, numtries, application = 'SignS'):
+    if not os.path.exists('/http/mpi.log/' + application + 'ErrorLog'):
+        os.system('touch /http/mpi.log/' + application + 'ErrorLog')
+    outlog = open('/http/mpi.log/' + application + 'ErrorLog', mode = 'a')
+    outlog.write('MPI fails on ' + time.ctime(time.time()) +
+                 ' Directory: ' + tmpDir + '\n')
+    outlog.close()
+    out1 = open(tmpDir + "/natural.death.pid.txt", mode = "w")
+    out2 = open(tmpDir + "/kill.pid.txt", mode = "w")
+    out1.write('MPI initialization error!!')
+    out2.write('MPI initialization error!!')
+    out1.close()
+    out2.close()
+    outf = open(tmpDir + "/pre-results.html", mode = "w")
+    outf.write("<html><head><title> MPI initialization problem.</title></head><body>\n")
+    outf.write("<h1> MPI initialization problem.</h1>")
+    outf.write("<p> After " + str(numtries) + " attempts we have been unable to ")
+    outf.write(" initialize MPI.</p>")
+    outf.write("<p> We will be notified of this error, but we would also ")
+    outf.write("appreciate if you can let us know of any circumstances or problems ")
+    outf.write("so we can diagnose the error.</p>")
+    outf.write("</body></html>")
+    outf.close()
+    shutil.copyfile(tmpDir + "/pre-results.html", tmpDir + "/results.html")
+
+
+def printMPITooBusy(tmpDir, MAX_DURATION_TRY, application = 'SignS'):
+    if not os.path.exists('/http/mpi.log/' + application + 'ErrorLog'):
+        os.system('touch /http/mpi.log/' + application + 'ErrorLog')
+    outlog = open('/http/mpi.log/' + application + 'ErrorLog', mode = 'a')
+    outlog.write('Something fails on ' + time.ctime(time.time()) +
+                 ' Directory: ' + tmpDir + '\n')
+    outlog.close()
+    out1 = open(tmpDir + "/natural.death.pid.txt", mode = "w")
+    out2 = open(tmpDir + "/kill.pid.txt", mode = "w")
+    out1.write('Cannot start!!')
+    out2.write('Cannot start!!')
+    out1.close()
+    out2.close()
+    outf = open(tmpDir + "/pre-results.html", mode = "w")
+    outf.write("<html><head><title> Cannot start application.</title></head><body>\n")
+    outf.write("<h1> Cannot start application.</h1>")
+    outf.write("<p> After " + str(MAX_DURATION_TRY) + " seconds we have been unable to ")
+    outf.write(" start the application.</p>")
+    outf.write("<p> Most likely this means the servers are too busy and many ")
+    outf.write("are running ahead of yours. ")
+    outf.write("Please try again later. You can also get in touch with us ")
+    outf.write("if you think this is our error.</p>")
+    outf.write("</body></html>")
+    outf.close()
+    shutil.copyfile(tmpDir + "/pre-results.html", tmpDir + "/results.html")
+
+
+
+
+def lamboot(lamSuffix, ncpu, runningProcs = runningProcs):
+    'Boot a lam universe and leave a sentinel file behind'
+    sentinel = os.open(''.join([runningProcs, 'sentinel.lam.', newDir, '.', lamSuffix]),
+                       os.O_RDWR | os.O_CREAT | os.O_NDELAY)
+    fullCommand = 'export LAM_MPI_SESSION_SUFFIX="' + lamSuffix + \
+                  '"; /http/mpi.log/tryBootLAM2.py ' + lamSuffix + \
+                  ' ' + str(ncpu)
+    lboot = os.system(fullCommand)
+
+def check_tping(lamSuffix, tmpDir, tsleep = 15, nc = 2):
+    """ Use tping to verify LAM universe OK.
+    tsleep is how long we wait before checking output of tping.
+    Verify also using 'lamexec C hostname' """
     
-## Changing to the appropriate directory
+    tmp2 = os.system('export LAM_MPI_SESSION_SUFFIX="' +\
+                     lamSuffix + '"; cd ' + tmpDir + \
+                     '; tping C N -c' + str(nc) + \
+                     ' > tping.out & ')
+    time.sleep(tsleep)
+    tmp = int(os.popen('cd ' + tmpDir + \
+                       '; wc tping.out').readline().split()[0])
+    os.system('rm ' + tmpDir + '/tping.out')
+    timeHuman = '##########   ' + \
+                str(time.strftime('%d %b %Y %H:%M:%S')) 
+    os.system('echo "' + timeHuman + \
+              '" >> ' + tmpDir + '/checkTping.out')
+    if tmp == 0:
+        os.system('echo "tping fails" >> ' + \
+                  tmpDir + '/checkTping.out')
+        return 0
+    elif tmp > 0:
+        os.system('echo "tping OK" >> ' + \
+                  tmpDir + '/checkTping.out')
+        lamexec = os.system('export LAM_MPI_SESSION_SUFFIX="' +\
+                            lamSuffix + '"; lamexec C hostname')
+        if lamexec == 0:
+            os.system('echo "lamexec OK" >> ' + \
+                      tmpDir + '/checkTping.out')
+            return 1
+        else:
+            os.system('echo "lamexec fails" >> ' + \
+                      tmpDir + '/checkTping.out')
+            return 0
+    else:
+        os.system('echo "tping weird ' + str(tmp) + '" >> ' + \
+                  tmpDir + '/checkTping.out')
+        return 0
+
+
+
+def lam_crash_log(tmpDir, value):
+    """ Write to the lam crash log, 'recoverFromLAMCrash.out' """
+    timeHuman = str(time.strftime('%d %b %Y %H:%M:%S')) 
+    os.system('echo "' + value + '  at ' + timeHuman + \
+              '" >> ' + tmpDir + '/recoverFromLAMCrash.out')
     
-form = cgi.FieldStorage()
-if form.has_key('newDir'):
-   value=form['newDir']
-   if type(value) is types.ListType:
-       commonOutput()
-       print "<h1> ERROR </h1>"    
-       print "<p> newDir should not be a list. </p>"
-       print "<p> Anyone trying to mess with it?</p>"
-       print "</body></html>"
-       sys.exit()
-   else:
-       newDir = value.value
-else:
-    commonOutput()
-    print "<h1> ERROR </h1>"    
-    print "<p> newDir is empty. </p>"
-    print "</body></html>"
-    sys.exit()
-
-if re.search(r'[^0-9]', str(newDir)):
-## newDir can ONLY contain digits.
-    commonOutput()
-    print "<h1> ERROR </h1>"    
-    print "<p> newDir does not have a valid format. </p>"
-    print "<p> Anyone trying to mess with it?</p>"
-    print "</body></html>"
-    sys.exit()
+def recover_from_lam_crash(tmpDir, NCPU, MAX_NUM_PROCS, lamSuffix,
+                           runningProcs = runningProcs,
+                           machine_root = 'karl'):
+    """Check if lam crashed during R run. If it did, restart R
+    after possibly rebooting the lam universe.
+    Leave a trace of what happened."""
     
-redirectLoc = "/tmp/" + newDir
-tmpDir = "/http/signs2/www/tmp/" + newDir
-
-if not os.path.isdir(tmpDir):
-    commonOutput()
-    print "<h1> ERROR </h1>"    
-    print "<p> newDir is not a valid directory. </p>"
-    print "<p> Anyone trying to mess with it?</p>"
-    print "</body></html>"
-    sys.exit()
-    
-
-
-lam_check = open(tmpDir + '/lamCheckPID', mode = 'r'). readline().split()
-lam_check_machine = lam_check[1]
-lam_check_pid = lam_check[0]
-
-
-## Were we already done in a previous execution?
-## No need to reopen files or check anything else. Return url with results
-## and bail out.
-if os.path.exists(tmpDir + "/natural.death.pid.txt") or os.path.exists(tmpDir + "/killed.pid.txt"):
-    print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
+    os.remove(''.join([runningProcs, 'sentinel.lam.', newDir, '.', lamSuffix]))
+    del_mpi_logs(tmpDir, machine_root)
+    lam_crash_log(tmpDir, 'Crashed')
     try:
-        kill_lamcheck(lam_check_pid, lam_check_machine)
+        os.system('mv ' + tmpDir + '/mpiOK ' + tmpDir + '/previous_mpiOK')
     except:
         None
-    sys.exit()
 
-## No, we were not done. Need to examine R output and possible crashes
+    check_room = my_queue(MAX_NUM_PROCS)
+    if check_room == 'Failed':
+        printMPITooBusy(tmpDir, MAX_DURATION_TRY = 5 * 3600)
+
+    lam_ok = check_tping(lamSuffix, tmpDir)
+    if lam_ok == 0:
+        lboot = lamboot(lamSuffix, NCPU)
+    Rrun(tmpDir, lamSuffix)
+    lam_crash_log(tmpDir, '..... recovering')
+
+
+def Rrun(tmpDir, lamSuffix):
+    """ Launch R, after setting the lam stuff."""
+    Rcommand = 'export LAM_MPI_SESSION_SUFFIX="' + lamSuffix + \
+               '"; cd ' + tmpDir + \
+               '; sleep 1; /http/R-custom/bin/R --no-readline --no-save --slave <f1.R >>f1.Rout 2>> Status.msg &'
+    Rtorun = os.system(Rcommand)
+    
 
 
 
-Rrout = open(tmpDir + "/f1.Rout")
-soFar = Rrout.read()
-Rrout.close()
-finishedOK = soFar.endswith("Normal termination\n")
-errorRun = soFar.endswith("Execution halted\n")
+def status_run(tmpDir):
+    """ Read Status.msg and return status."""
+    status_r = open(tmpDir + '/Status.msg').read()
+    if status_r.find('Normal termination\n') > -1:
+        return('FinishedOK')
+    if status_r.find('Execution halted\n') > -1:
+        return('Halted')
+    if status_r.find('Running\n') > -1:
+        return('Running')
+    if status_r.find('Rmpi error\n') > -1:
+        return('Error_mpi')
+    if status_r.find('Run out of time; killed\n') > -1:
+        return('Out_of_time')
 
-issue_echo('right after Rrout', tmpDir)
 
-if os.path.exists(tmpDir + '/RterminatedOK'):
-    finishedOK = True
+def did_R_crash_in_slaves(tmpDir, machine_root = 'karl'):
+    """ Verify whether R crashed in any of the slaves by
+    checking lam logs."""
+    R_LAM_MSGS = 'Error:  Error in'
+    lam_logs = glob.glob(tmpDir + '/' + machine_root + '*.*.*.log')
+    in_lam_logs = 0
+    for lam_log in lam_logs:
+        tmp1 = int(os.popen('grep "' + R_LAM_MSGS + '" ' + \
+                            lam_log + ' | wc').readline().split()[0])
+        if tmp1 > 0:
+            in_lam_logs = 1
+            break
+    if in_lam_logs > 0:
+        return True, lam_log
+    else:
+        return False, 'NA'
 
-issue_echo('right after checking Rterminated', tmpDir)
 
-## if os.path.exists(tmpDir + "/pid.txt"):
-if (not finishedOK) and (not errorRun) and (os.path.exists(tmpDir + "/pid.txt")):
-    ## do we need to kill an R process?
+
+def did_lam_crash(tmpDir, machine_root = 'karl'):
+    """ Verify whether LAM/MPI crashed by checking logs and f1.Rout
+    for single universe lamboot."""
+    OTHER_LAM_MSGS = 'Call stack within LAM:'
+    lam_logs = glob.glob(tmpDir + '/' + machine_root + '*.*.*.log')
+    in_error_msg = int(os.popen('grep MPI_Error_string ' + \
+                                tmpDir + '/Status.msg | wc').readline().split()[0])
+#     no_universe = int(os.popen('grep "Running serial version of papply" ' + \
+#                                tmpDir + '/f1.Rout | wc').readline().split()[0])
+## We do NOT want that, because sometimes a one node universe is legitimate!!!
+    if in_error_msg > 0:
+        for lam_log in lam_logs:
+            os.system('rm ' + lam_log)
+#     elif no_universe > 0:
+#         os.system("sed -i 's/Running serial version of papply/already_seen:running serial version of papply/g'" + \
+#                   tmpDir + "/f1.Rout")
+    else: ## look in lam logs
+        in_lam_logs = 0
+        for lam_log in lam_logs:
+            tmp1 = int(os.popen('grep "' + OTHER_LAM_MSGS + '" ' + \
+                                lam_log + ' | wc').readline().split()[0])
+            if tmp1 > 0:
+                in_lam_logs = 1
+                break
+    if (in_error_msg > 0) or (in_lam_logs > 0):
+        return True
+    else:
+        return False
+    
+def did_mpi_crash(tmpDir, machine_root = 'karl'):
+    """ Either Rmpi or LAM crashed"""
+    if (status_run(tmpDir) == 'Error_mpi') or \
+       did_lam_crash(tmpDir, machine_root):
+        return True
+    else:
+        return False
+
+def del_mpi_logs(tmpDir, machine_root = 'karl'):
+    """ Delete logs from LAM/MPI."""
+    lam_logs = glob.glob(tmpDir + '/' + machine_root + '*.*.*.log')
+    try:
+        os.system('rm ' + tmpDir + '/Status.msg')
+    except:
+        None
+    try:
+        for lam_log in lam_logs:
+            os.system('rm ' + lam_log)    
+    except:
+        None
+
+def did_run_out_of_time(tmpDir, R_MAX_time):
+    """ Did the process run longer than allowed?"""
     issue_echo('did we run out of time?', tmpDir)
-    if (time.time() - os.path.getmtime(tmpDir + "/pid.txt")) > R_MAX_time:
-        lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
-        try:
-            os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv +
-                      '; lamhalt -H; lamwipe -H')
-        except:
-            None
+    if not os.path.exists(tmpDir + "/pid.txt"):
+        False
+    elif ((time.time() - os.path.getmtime(tmpDir + "/pid.txt")) > R_MAX_time) and \
+       (status_run(tmpDir) == 'Running'):
+        True
+    else:
+        False
+                           
 
-        kill_lamcheck(lam_check_pid, lam_check_machine)
-        printRKilled()
-        os.rename(tmpDir + '/pid.txt', tmpDir + '/killed.pid.txt')
-##        os.remove(tmpDir + '/f1.R')
-        try:
-            os.system("rm /http/signs2/www/R.running.procs/R." + newDir + "*")
-        except:
-            None
-        print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
-        sys.exit()
-
-if errorRun > 0:
-    issue_echo('errorRun is 1', tmpDir)
-    kill_lamcheck(lam_check_pid, lam_check_machine)
-    printErrorRun()
-    os.rename(tmpDir + '/pid.txt', tmpDir + '/natural.death.pid.txt')
+def cleanups(tmpDir, newDir, newnamepid,
+             lamSuffix,
+             runningProcs = runningProcs,
+             appl = 'adacgh2'):
+    """ Clean up actions; kill lam, delete running.procs files, clean process table."""
+    lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
+    rinfo = open(tmpDir + '/current_R_proc_info', mode = 'r').readline().split()
     try:
-        lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
+        kill_pid_machine(rinfo[1], rinfo[0])
     except:
         None
     try:
-        os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv + '; lamhalt -H; lamwipe -H')
+        os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv +
+                  '; lamhalt -H; lamwipe -H')
     except:
         None
     try:
-        os.system("rm /http/signs2/www/R.running.procs/R." + newDir + "*")
-    except:
-        None
-    print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
-
-
-elif finishedOK > 0:
-    issue_echo('finishedOK is 1', tmpDir)
-
-    kill_lamcheck(lam_check_pid, lam_check_machine)
-    try:
-        lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
+        os.system('rm /http/' + appl + '/www/R.running.procs/R.' + newDir + '*')
     except:
         None
     try:
-        lamkill = os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv + '; lamhalt -H; lamwipe -H')
+        os.rename(tmpDir + '/pid.txt', tmpDir + '/' + newnamepid)
     except:
         None
-    printOKRun()
-    try: os.rename(tmpDir + '/pid.txt', tmpDir + '/natural.death.pid.txt')
-    except: None
     try:
-        os.system("rm /http/signs2/www/R.running.procs/R." + newDir + "*")
+        os.remove(''.join([runningProcs, 'sentinel.lam.', newDir, '.', lamSuffix]))
     except:
         None
-    print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
 
+
+def finished_ok(tmpDir):
+    """ check ok termination and act accordingly."""
+    if status_run(tmpDir) == 'FinishedOK':
+        return True
+    else:
+        return False
+
+def halted(tmpDir):
+    """ check halted execution and act accordingly."""
+    if status_run(tmpDir) == 'Halted':
+        return True
+    else:
+        return False
+
+
+def master_out_of_time(time_start):
+    """If this process run longer than allowed, kill it and kill lam and R."""
+    if (time.time () - time_start) > R_MAX_time:
+        return True
+    else:
+        return False
+        
+
+# def add_to_proc_table(max_num_procs, add_procs = 1):
+#     """Try to add add_procs to the process table. If it can
+#     returns OK, otherwise (e.g., too many procs) return Failed.
+#     Locking would be great ... but it does not work over NFS. """
     
-else:
-    issue_echo('relaunching', tmpDir)
+#     fo = open(procTable, mode = 'r+')
+#     fcntl.flock(fo.fileno(), fcntl.LOCK_EX)
+#     currentProcs = int(fo.read())
+#     if currentProcs >= max_num_procs:
+#         fcntl.flock(fo.fileno(), fcntl.LOCK_UN)
+#         fo.close()
+#         return 'Failed'
+#     else:
+#         fo.seek(0)
+#         fo.write(str(currentProcs + add_procs))
+#         fcntl.flock(fo.fileno(), fcntl.LOCK_UN)
+#         fo.close()
+#         return 'OK'
 
-    ## we only end up here if: we were not done in a previous run AND no process was overtime 
-    ## AND we did not just finish. So we must continue.
-    relaunchCGI()
+# def add_to_proc_table(max_num_procs, add_procs = 1):
+#     """Try to add add_procs to the process table. If it can
+#     returns OK, otherwise (e.g., too many procs) return Failed."""
+#     fo = open(procTable, mode = 'r+')
+#     currentProcs = int(fo.read())
+#     if currentProcs >= max_num_procs:
+#         fo.close()
+#         return 'Failed'
+#     else:
+#         fo.seek(0)
+#         fo.write(str(currentProcs + add_procs))
+#         fo.close()
+#         return 'OK'
 
 
-issue_echo('END of checkdone.cgi', tmpDir)
+
+
+def del_from_proc_table(del_procs = 1):
+    """Decrease count in the process table."""
+    fo = open(procTable, mode = 'r+')
+    currentProcs = int(fo.read())
+    fo.seek(0)
+    fo.write(str(currentProcs - del_procs))
+    fo.close()
+    return 'OK'
+
+
+def my_queue(MAX_NUM_PROCS,
+             runningProcs = runningProcs,
+             ADD_PROCS = 1,
+             CHECK_QUEUE = 23,
+             MAX_DURATION_TRY = 25 * 3600):
+    """ Wait here until the number of processes is smaller than
+    MAX_NUM_PROCS and number of slaves smaller than MAX_NUM_PROCS + ADD_PROCS
+    (so we allow for other apps. launching lamd).
+    But only wait for MAX_DURATION. Check
+    every CHECK_QUEUE seconds. If able to find an opening, return
+    OK, otherwise return Failed"""
+    out_value = 'OK'
+    startTime = time.time()
+    while True:
+        killedlamandr = os.system('/http/mpi.log/killOldLamAllMachines.py')
+        issue_echo('     inside my_queue ', tmpDir)
+        if (time.time() - startTime) > MAX_DURATION_TRY:
+            out_value = 'Failed'
+            break
+        num_lamd = int(os.popen('pgrep -u www-data lamd | wc').readline().split()[0])
+        num_sentinel = int(len(glob.glob(''.join([runningProcs, 'sentinel.lam.*']))))
+        if (num_lamd < (MAX_NUM_PROCS + ADD_PROCS)) and (num_sentinel < MAX_NUM_PROCS):
+            issue_echo('     OK; num_lamd = ' + str(num_lamd) + \
+                       '; num_sentinel = ' + str(num_sentinel), tmpDir)
+            break
+        else:
+	    issue_echo('     wait:  num_lamd = ' + str(num_lamd) + \
+                       '; num_sentinel = ' + str(num_sentinel), tmpDir)
+            time.sleep(CHECK_QUEUE + random.uniform(0.1, 5))
+
+def generate_lam_suffix(tmpDir):
+    """As it says. Generate and write it out"""
+    lamSuffix = str(random.randint(1, 99)) + str(int(time.time())) + \
+                str(os.getpid()) + str(random.randint(10, 9999))
+    lamenvfile = open(tmpDir + '/lamSuffix', mode = 'w')
+    lamenvfile.write(lamSuffix)
+    lamenvfile.flush()
+    lamenvfile.close()
+    return lamSuffix
 
 
 
+## Starting. First, the very first run.
+
+issue_echo('starting', tmpDir)
+
+        
+NCPU, MAX_NUM_PROCS = set_defaults_lam(tmpDir)
+
+try:
+    counterApplications.add_to_log('ADaCGH2', tmpDir, socket.gethostname())
+except:
+    None
+
+issue_echo('at 2', tmpDir)
+
+lamSuffix = generate_lam_suffix(tmpDir)
+
+issue_echo('at 3', tmpDir)
+
+time.sleep(random.uniform(0.1, 15)) ## Break ties if starting at identical times
+
+check_room = my_queue(MAX_NUM_PROCS)
+if check_room == 'Failed':
+    printMPITooBusy(tmpDir, MAX_DURATION_TRY = 5 * 3600)
+    sys.exit()
+
+lamboot(lamSuffix, NCPU)
+issue_echo('after lamboot', tmpDir)
+
+
+Rrun(tmpDir, lamSuffix)
+        
+time_start = time.time()
+time.sleep(TIME_BETWEEN_CHECKS + random.uniform(0.1, 3))
+
+count_mpi_crash = 0
+
+while True:
+    if did_run_out_of_time(tmpDir, R_MAX_time):
+        issue_echo('run out of time', tmpDir)
+        cleanups(tmpDir, newDir, 'killed.pid.txt', lamSuffix)
+        printRKilled()
+        break
+    elif finished_ok(tmpDir):
+        issue_echo('finished OK', tmpDir)
+        cleanups(tmpDir, newDir, 'natural.death.pid.txt', lamSuffix)
+        printOKRun()
+        break
+    elif halted(tmpDir):
+        issue_echo('halted', tmpDir)
+        cleanups(tmpDir, newDir, 'natural.death.pid.txt', lamSuffix)
+        printErrorRun(tmpDir + '/Status.msg')
+        break
+    elif did_R_crash_in_slaves(tmpDir, machine_root = 'karl')[0]:
+        issue_echo('R crash in slaves', tmpDir)
+        cleanups(tmpDir, newDir, 'natural.death.pid.txt', lamSuffix)
+        printErrorRun(did_R_crash_in_slaves(tmpDir, machine_root = 'karl')[1])
+        break
+    elif master_out_of_time(time_start):
+        issue_echo('master out of time', tmpDir)
+        cleanups(tmpDir, newDir, 'killed.pid.txt', lamSuffix)
+        printRKilled()
+        break
+    elif did_mpi_crash(tmpDir, machine_root = 'karl'):
+        count_mpi_crash += 1
+        if count_mpi_crash > MAX_MPI_CRASHES:
+            printMPIerror(tmpDir, MAX_MPI_CRASHES)
+            break
+        else:
+            recover_from_lam_crash(tmpDir, NCPU, MAX_NUM_PROCS,
+                                   lamSuffix,
+                                   machine_root = 'karl')
+    else:
+        lam_crash_log(tmpDir, 'NoCrash') ## if we get here, this much we know
+    time.sleep(TIME_BETWEEN_CHECKS)
+
+
+
+issue_echo('at the very end!', tmpDir)
 

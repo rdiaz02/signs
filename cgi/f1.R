@@ -206,7 +206,7 @@ MPI_MIN_UNIVERSE_SIZE <- 15
 
 if (mpi.universe.size () < MPI_MIN_UNIVERSE_SIZE) {
     cat("\n\n mpi.universe.size () < MPI_MIN_UNIVERSE_SIZE \n\n")
-    quit(save = "no", status = 11, runLast = TRUE)
+    quit(save = "no", status = 11, runLast = FALSE)
 }
 
 mpiSpawnAll()
@@ -610,6 +610,30 @@ if(checkpoint.num < 4) {
     dev.off()
 
 
+    pdf(file = "kmplot3-honest.pdf", width = png.width,
+        height = png.height)
+    KM.visualize3(cvTGDResults$OOB.scores, Time,
+                 Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1.3
+    dev.off()
+    pdf(file = "kmplot3-overfitt.pdf", width = png.width,
+        height = png.height)
+    KM.visualize3(allDataRun$tgd.alldata$scores, Time,                         
+                 Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
+    dev.off()
+    GDD(file = "kmplot3-honest.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize,
+        type = "png")
+    KM.visualize3(cvTGDResults$OOB.scores, Time,
+                 Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1.3
+    dev.off()
+    GDD(file = "kmplot3-overfitt.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize,
+        type = "png")
+    KM.visualize3(allDataRun$tgd.alldata$scores, Time,                         
+                 Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
+    dev.off()
+
+    
     GDD(file = "cvpl.png", width = png.width,
            height = png.height,ps = png.pointsize)
     plot.cvpl.single(allDataRun$cvpl.mat, epi, tau)                       ####  Fig 3
@@ -687,7 +711,19 @@ if(checkpoint.num < 4) {
         KM.visualize4(valpred, validationTime,                         
                      validationEvent, ngroups = 2, addmain = NULL)
         dev.off()
-        
+        pdf(file = "kmplot3-validation.pdf", width = png.width,
+            height = png.height)
+        KM.visualize3(valpred, validationTime,
+                      validationEvent, ngroups = 2, addmain = NULL)
+        dev.off()
+        GDD(file = "kmplot3-validation.png", w=gdd.width,
+            h = gdd.height, ps = png.pointsize,
+            type = "png")
+        KM.visualize3(valpred, validationTime,                         
+                      validationEvent, ngroups = 2, addmain = NULL)
+        dev.off()    
+
+
     }
     
 ##    stopCluster(TheCluster)
