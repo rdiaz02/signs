@@ -8,6 +8,9 @@
 
 ## rm(list = ls())
 
+
+cat("\nRunning\n", file = "Status.msg")
+
 checkpoint.num <- scan("checkpoint.num", what = double(0), n = 1)
 
 
@@ -19,6 +22,12 @@ checkpoint.num <- scan("checkpoint.num", what = double(0), n = 1)
 ## But does it really do it??
 .Last <- function(){
     try(sink()) ## in case we are bailing out from within sink
+
+    status <- file("Status.msg", "w")
+    cat("Normal termination\n", file = status)
+    flush(status)
+    close(status)
+    
     RterminatedOK <- file("RterminatedOK", "w")
     cat("\nNormal termination\n", file = RterminatedOK)
     flush(RterminatedOK)
@@ -113,8 +122,8 @@ imClose <- function (im) {
 		
 
 
-png.width <- 500
-png.height <- 500
+gdd.width <- png.width <- 480
+gdd.height <- png.height <- 410
 png.pointsize <- 10
 png.family = "Helvetica"
 graphDir <- paste(getwd(), "/", sep = "")
@@ -626,7 +635,7 @@ if(checkpoint.num < 4) {
     KM.visualize3(cvTGDResults$OOB.scores, Time,
                  Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1.3
     dev.off()
-    GDD(file = "kmplot3-overfitt.png", w=gdd.width,
+    GDD(file = "kmplot3-overfitt.png", w=png.width,
         h = gdd.height, ps = png.pointsize,
         type = "png")
     KM.visualize3(allDataRun$tgd.alldata$scores, Time,                         

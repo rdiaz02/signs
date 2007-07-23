@@ -339,11 +339,11 @@ def printErrorRun():
     outf.write("(and that there is no way we could have avoided the crash) ")
     outf.write("please let us know so we can fix the problem. ")
     outf.write("Please sed us this URL and the output below</p>")
-    outf.write("<p> This is the results file:<p>")
+    outf.write("<p> This is the results file:</p>")
     outf.write("<pre>")
     outf.write(cgi.escape(resultsFile))
     outf.write("</pre>")
-    outf.write("<p> And this the error messages file:<p>")
+    outf.write("<p> And this the error messages file:</p>")
     outf.write("<pre>")
     outf.write(cgi.escape(error.msg))
     outf.write("</pre>")
@@ -388,7 +388,7 @@ def printOKRun():
 
         if (methodUsed == 'TGD') or (methodUsed == 'TGD\n'):
             outf.write("<h2> Results using the Threshold Gradient Descent method of Li and Gui</h2><br/ >\n")
-            outf.write('<h2>1. Survival plots \n')
+            outf.write('<h2>1. Survival plots</h2>\n')
             outf.write('<h3>1.1. Survival plots using scores from final model <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h3> \n')
             outf.write('<h4>Two groups</h4>')
             outf.write('<IMG BORDER="0" SRC="kmplot-honest.png">')
@@ -651,12 +651,20 @@ def printMPITooBusy(tmpDir, MAX_DURATION_TRY, application = 'SignS'):
 
 def lamboot(lamSuffix, ncpu, runningProcs = runningProcs):
     'Boot a lam universe and leave a sentinel file behind'
+    issue_echo('before sentinel inside lamboot', tmpDir)
+    issue_echo('newDir is ' + newDir, tmpDir)
+    issue_echo('lamSuffix ' + lamSuffix, tmpDir)
+    issue_echo('runningProcs ' + runningProcs, tmpDir)
     sentinel = os.open(''.join([runningProcs, 'sentinel.lam.', newDir, '.', lamSuffix]),
                        os.O_RDWR | os.O_CREAT | os.O_NDELAY)
+    issue_echo('before fullCommand inside lamboot', tmpDir)
     fullCommand = 'export LAM_MPI_SESSION_SUFFIX="' + lamSuffix + \
                   '"; /http/mpi.log/tryBootLAM2.py ' + lamSuffix + \
                   ' ' + str(ncpu)
+    issue_echo('before os.system inside lamboot', tmpDir)
     lboot = os.system(fullCommand)
+    issue_echo('after lboot ---os.system--- inside lamboot. Exiting lamboot', tmpDir)
+
 
 def check_tping(lamSuffix, tmpDir, tsleep = 15, nc = 2):
     """ Use tping to verify LAM universe OK.
@@ -829,12 +837,12 @@ def did_run_out_of_time(tmpDir, R_MAX_time):
     """ Did the process run longer than allowed?"""
     issue_echo('did we run out of time?', tmpDir)
     if not os.path.exists(tmpDir + "/pid.txt"):
-        False
+        return False
     elif ((time.time() - os.path.getmtime(tmpDir + "/pid.txt")) > R_MAX_time) and \
        (status_run(tmpDir) == 'Running'):
-        True
+        return True
     else:
-        False
+        return False
                            
 
 def cleanups(tmpDir, newDir, newnamepid,
@@ -965,6 +973,7 @@ def my_queue(MAX_NUM_PROCS,
 	    issue_echo('     wait:  num_lamd = ' + str(num_lamd) + \
                        '; num_sentinel = ' + str(num_sentinel), tmpDir)
             time.sleep(CHECK_QUEUE + random.uniform(0.1, 5))
+    return out_value
 
 def generate_lam_suffix(tmpDir):
     """As it says. Generate and write it out"""
@@ -986,7 +995,7 @@ issue_echo('starting', tmpDir)
 NCPU, MAX_NUM_PROCS = set_defaults_lam(tmpDir)
 
 try:
-    counterApplications.add_to_log('ADaCGH2', tmpDir, socket.gethostname())
+    counterApplications.add_to_log('Signs2', tmpDir, socket.gethostname())
 except:
     None
 
@@ -999,10 +1008,13 @@ issue_echo('at 3', tmpDir)
 time.sleep(random.uniform(0.1, 15)) ## Break ties if starting at identical times
 
 check_room = my_queue(MAX_NUM_PROCS)
+issue_echo('after check_room', tmpDir)
+
 if check_room == 'Failed':
     printMPITooBusy(tmpDir, MAX_DURATION_TRY = 5 * 3600)
     sys.exit()
 
+issue_echo('before lamboot', tmpDir)
 lamboot(lamSuffix, NCPU)
 issue_echo('after lamboot', tmpDir)
 
