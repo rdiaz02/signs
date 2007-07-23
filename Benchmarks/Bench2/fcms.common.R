@@ -1,6 +1,7 @@
 load("benchmark.data.sets.RData")
 library(SignS2)
 library(papply)
+library(survival)
 
 ##library(snow)
 
