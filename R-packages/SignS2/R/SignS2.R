@@ -1047,7 +1047,113 @@ coxph.fit.pomelo0 <- function (x, y, init = NULL,
     }
 }
 
+
+
+#### At least in our set up, doing dStep1 sequentially is faster than
+#### parallel. These are some timings:
+####  The "4x" means with 4 times the number of genes (by rbind)
+
+## data set          1 node           sequential          62 nodes
+## ---------------------------------------------------------------------
+## aml                4.97             4.791              6.66
+## aml  4x           19.182           18.909             24.604
+## breast             3.351                               3.236
+## breast 4x         13.106                              12.896
+## dlbcl              6.388            6.347             10.233 
+## dlbcl 4x          25.208           24.452             40.619
+## dlbcl 8x          50.327           49.303             78.267 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+dStep1.serial <- function(x, time, event, p, MaxIterationsCox) {
+    res.mat <- matrix(NA, nrow = ncol(x), ncol = 6) sobject <-
+    Surv(time, event) ## cat("\n Starting dStep1.serial at ", date(),
+    " \n\n"); ptm <- proc.time() funpap3 <- function (x) { out1 <-
+    coxph.fit.pomelo0(x, sobject, control = coxph.control(iter.max =
+    MaxIterationsCox)) if(out1$warnStatus > 1) { return(c(0, NA,
+    out1$warnStatus)) } else { sts <- out1$coef/sqrt(out1$var)
+    return(c(out1$coef, 1- pchisq((sts^2), df = 1), out1$warnStatus))
+    } } tmp <- t(apply(x, 2, funpap3)) res.mat[, 1:2] <- tmp[, 1:2]
+    res.mat[, 3] <- ifelse(res.mat[, 2] < p, 1, 0) res.mat[, 4] <-
+    sign(res.mat[, 1]) * res.mat[, 3] res.mat[, 5] <- tmp[, 3]
+    res.mat[, 6] <- p.adjust(tmp[, 2], method = "BH")
+    res.mat[is.na(res.mat[, 2]), c(2, 6)] <- 999 colnames(res.mat) <-
+    c("coeff", "p.value", "keep", "pos.neg", "Warning", "FDR") ##
+    cat("\n Finished dStep1.serial at ", date(), "; took ",
+    (proc.time() - ptm)[3], " \n\n") return(res.mat) }
+
+
+
+
+
 dStep1.parallel <- function(x, time, event, p, MaxIterationsCox) { 
+    res.mat <- matrix(NA, nrow = ncol(x), ncol = 6)
+    sobject <- Surv(time, event)
+    cat("\n Starting dStep1.parallel at ", date(), " \n\n"); ptm <- proc.time()
+    funpap3 <- function (x) {
+        out1 <-
+            coxph.fit.pomelo0(x, sobject,
+                              control = coxph.control(iter.max = MaxIterationsCox))
+        if(out1$warnStatus > 1) {
+            return(c(0, NA,  out1$warnStatus))
+        } else {
+            sts <- out1$coef/sqrt(out1$var)
+            return(c(out1$coef,
+                     1- pchisq((sts^2), df = 1), 
+                     out1$warnStatus))
+        }
+    }
+    funpap4 <- function(xmat) apply(xmat, 2, funpap3)
+    
+    ## split data into the right number of groups for parallelization
+    nparalGroups <- (mpi.comm.size(comm = 1) - 1)
+    if(nparalGroups > 1) {
+        paralGroups <- as.numeric(factor(cut(1:ncol(x),
+                                             nparalGroups, labels = FALSE)))
+    } else {
+        nparalGroups <- 1
+        paralGroups <- rep(1, ncol(x))
+    }
+
+    datalist <- list()
+    for(ng in 1:nparalGroups)
+        datalist[[ng]] <- x[, ng == paralGroups]
+    
+    tmp <- matrix(unlist(papply(datalist,
+                                funpap4,
+                                papply_commondata =list(sobject = sobject,
+                                MaxIterationsCox = MaxIterationsCox))),
+                  ncol = 3, byrow = TRUE)
+
+
+    
+    res.mat[, 1:2] <- tmp[, 1:2]
+    res.mat[, 3] <- ifelse(res.mat[, 2] < p, 1, 0)
+    res.mat[, 4] <- sign(res.mat[, 1]) * res.mat[, 3]
+    res.mat[, 5] <- tmp[, 3]
+    res.mat[, 6] <- p.adjust(tmp[, 2], method = "BH")
+    res.mat[is.na(res.mat[, 2]), c(2, 6)] <- 999
+    colnames(res.mat) <- c("coeff", "p.value", "keep", "pos.neg", "Warning", "FDR")
+    cat("\n Finished dStep1.parallel at ", date(), "; took ", (proc.time() - ptm)[3], " \n\n")
+    return(res.mat)
+}
+
+
+
+dStep1.parallel.old <- function(x, time, event, p, MaxIterationsCox) { 
     res.mat <- matrix(NA, nrow = ncol(x), ncol = 6)
     sobject <- Surv(time,event)
     cat("\n Starting dStep1.parallel at ", date(), " \n\n"); ptm <- proc.time()
@@ -1078,6 +1184,15 @@ dStep1.parallel <- function(x, time, event, p, MaxIterationsCox) {
     cat("\n Finished dStep1.parallel at ", date(), "; took ", (proc.time() - ptm)[3], " \n\n")
     return(res.mat)
 }
+
+
+
+
+
+
+
+
+
 
 
 ##  2. Cluster; independently for those with pos and neg beta.
@@ -1707,6 +1822,9 @@ wrapDendmapp <- function(li) {
 ## 3. fit model
 
 dStep3 <- function(res2, time, event, MaxIterationsCox) {
+    ### this is a terrible hack, but I am getting scoping problems in stepAIC
+    assign("..___MaxIterationsCox", MaxIterationsCox, env = .GlobalEnv)
+    
     cat("\n ..... Starting dStep3 at ", date(), " \n\n"); ptm <- proc.time()
     if(all(is.na(res2))) return(NA)
     md <- res2$md
@@ -1746,12 +1864,14 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
         ## stepAIC
         mdf <- data.frame(md)
         attach(mdf) ## stepAIC not working otherwise
-        trycox <- try(
+        thisenv <- environment()
+
+        trycox <- try(                      
                       bestTwoModel <-
                       coxph(eval(parse(text = paste("sobject ~",
                                        paste(colnames(mdf)[bestTwoGenes],
                                              sep = "", collapse = " + ")))),
-                            control = coxph.control(iter.max = MaxIterationsCox))
+                            control = coxph.control(iter.max = ..___MaxIterationsCox))
                       )
         if(class(trycox) == "try-error")
             trycox <- try(
@@ -2001,117 +2121,133 @@ mpiDelete <- function() {
 }
 
 
-DaveCVPred.res1Given.InternalMPI2 <- function(fnum) {
-## to be used with papply
-  ## the following need to be passed with
-##    mpi.bcast.Robj2slave
-##    x, time, event, ,
-##    p, maxSize, 
-##    minSize, minCor, MaxIterationsCox,
-##    index.select
-##    for res1 supply the complete list
-
-    res1 <- res1s[[fnum]]
-    
-    xtrain <- x[index.select != fnum, , drop = FALSE]
-    xtest <- x[index.select == fnum, , drop = FALSE]
-    timetrain <- time[index.select != fnum]
-    eventtrain <- event[index.select != fnum]
-
-    ## find best params by CV and predict on a new set.
-    bestTrain <- fitDave.res1Given(xtrain, timetrain, eventtrain,
-                                   res1 = res1,
-                                   p = p, maxSize = maxSize,
-                                   minSize = minSize, minCor = minCor,
-                                   MaxIterationsCox = MaxIterationsCox,
-                                   plot = FALSE,
-                                   interactive =FALSE)
-
-    testPred <- dPredictNew(res3 = bestTrain, newdata = xtest)
-                
-return(list(scoresTest = testPred,
-                fmDaveObject = bestTrain))
-}
-
 
 
 cvDave.parallel3 <- function(x, time, event,
                              p, maxSize,
                              minSize, minCor,
                              MaxIterationsCox,
-                             nfold, mpiHosts) {
+                             nfold) {
     cat("\n Starting cvDave.parallel3 at ", date(), " \n\n"); ptm <- proc.time()
     
     if (mpi.comm.size(comm = 1) == 0) {
         mpiSpawnAll()
-        cat("\n       cond 1 \n")
+        cat("\n      cvDave.parallel3:  cond 1 \n")
     } else { ## so mpi is running
         if ((mpi.comm.size(comm = 1) - 1) < mpi.universe.size()) {
             ## but few salves
             mpi.close.Rslaves()
             mpiSpawnAll()
-            cat("\n       cond 2 \n")
+            cat("\n     cvDave.parallel3:  cond 2 \n")
         } else {
             mpiDelete()
-            cat("\n       cond 3 \n")
+            cat("\n     cvDave.parallel3:  cond 3 \n")
         }
     }
        
-## we asume at least as many mpi Rslaves as nfold.
-    ## mpiHosts used for the second spawning of slaves,
-    ## only for the 10 fold runs.
-    
-    
     n <- length(time)
     index.select <- sample(rep(1:nfold, length = n), n, replace = FALSE)
     OOB.scores <- rep(NA, n)
 
-    res1s <- list()
 
-    ### Here we use papply, which is 
-    argspapp <- list()
     cat("\n\n Computing gene-wise cox p-value\n")
-    for(i in 1:nfold) {
-        cat("\n  ....  fold ", i)
+    ##    res1s <- list()
+    ##     for(i in 1:nfold) {
+    ##         cat("\n  ....  fold ", i)
+    ##         xtr <- x[index.select != i, , drop = FALSE]
+    ##         ttr <- time[index.select != i]
+    ##         etr <- event[index.select != i]
+    ##         res1s[[i]] <- dStep1.parallel(xtr, ttr, etr, p = p,
+    ##                                       MaxIterationsCox = MaxIterationsCox)
+    ##     }
+    f00 <- function(i) {
         xtr <- x[index.select != i, , drop = FALSE]
         ttr <- time[index.select != i]
         etr <- event[index.select != i]
-        res1s[[i]] <- dStep1.parallel(xtr, ttr, etr, p = p,
-                                      MaxIterationsCox = MaxIterationsCox)
+        return(dStep1.serial(xtr, ttr, etr, p = p,
+                               MaxIterationsCox = MaxIterationsCox))
     }
-
+    res1s <- papply(as.list(1:nfold),
+                    f00,
+                    papply_commondata = list(
+                    x = x,
+                    time = time,
+                    event = event,
+                    p = p,
+                    MaxIterationsCox = MaxIterationsCox,
+                    index.select = index.select))
+        
     cat("\n\n Cleaning up MPI slaves\n\n")	
     mpiDelete()
 
-    if(nfold > (mpi.comm.size() - 1))
-        stop(paste("nfold > number of mpi Rslaves; mpi.comm.size = ",
-                   mpi.comm.size() ))
+##     if(nfold > (mpi.comm.size() - 1))
+##         stop(paste("nfold > number of mpi Rslaves; mpi.comm.size = ",
+##                    mpi.comm.size() ))
     
-    cat("\n\n Sending objects to MPI space\n\n")
+##     cat("\n\n Sending objects to MPI space\n\n")
 
-    mpi.bcast.Robj2slave(x)
-    mpi.bcast.Robj2slave(time)
-    mpi.bcast.Robj2slave(event)
-    mpi.bcast.Robj2slave(p)
-    mpi.bcast.Robj2slave(maxSize)
-    mpi.bcast.Robj2slave(minSize)
-    mpi.bcast.Robj2slave(minCor)
-    mpi.bcast.Robj2slave(MaxIterationsCox)
-    mpi.bcast.Robj2slave(res1s)
-    ## debug:
-##    global.res1s <<- res1s
-##    global.index.select <<- index.select
-    mpi.bcast.Robj2slave(index.select)
-##    mpi.bcast.cmd(foldNumber <- mpi.comm.rank())
-##    mpi.bcast.Robj2slave(DaveCVPred.res1Given.InternalMPI)
+##     mpi.bcast.Robj2slave(x)
+##     mpi.bcast.Robj2slave(time)
+##     mpi.bcast.Robj2slave(event)
+##     mpi.bcast.Robj2slave(p)
+##     mpi.bcast.Robj2slave(maxSize)
+##     mpi.bcast.Robj2slave(minSize)
+##     mpi.bcast.Robj2slave(minCor)
+##     mpi.bcast.Robj2slave(MaxIterationsCox)
+##     mpi.bcast.Robj2slave(res1s)
+##     ## debug:
+##     ##    global.res1s <<- res1s
+##     ##    global.index.select <<- index.select
+##     mpi.bcast.Robj2slave(index.select)
+##     ##    mpi.bcast.cmd(foldNumber <- mpi.comm.rank())
+##     ##    mpi.bcast.Robj2slave(DaveCVPred.res1Given.InternalMPI)
 
-
-    ## We use papply again
+##     ## We use papply again
     cat("\n\n Computing the rest\n")
+
+
+    DaveCVPred.res1Given.InternalMPI2 <- function(fnum) {
+        ## to be used with papply
+        ## the following need to be passed with
+        ##    mpi.bcast.Robj2slave
+        ##    x, time, event, ,
+        ##    p, maxSize, 
+        ##    minSize, minCor, MaxIterationsCox,
+        ##    index.select
+        ##    for res1 supply the complete list
+        
+        res1 <- res1s[[fnum]]
+        
+        xtrain <- x[index.select != fnum, , drop = FALSE]
+        xtest <- x[index.select == fnum, , drop = FALSE]
+        timetrain <- time[index.select != fnum]
+        eventtrain <- event[index.select != fnum]
+        
+        ## find best params by CV and predict on a new set.
+        bestTrain <- fitDave.res1Given(xtrain, timetrain, eventtrain,
+                                       res1 = res1,
+                                       p = p, maxSize = maxSize,
+                                       minSize = minSize, minCor = minCor,
+                                       MaxIterationsCox = MaxIterationsCox,
+                                       plot = FALSE,
+                                       interactive =FALSE)
+        
+        testPred <- dPredictNew(res3 = bestTrain, newdata = xtest)
+        
+        return(list(scoresTest = testPred,
+                    fmDaveObject = bestTrain))
+    }
+
     tmp1 <- papply(as.list(1:nfold),
-                 DaveCVPred.res1Given.InternalMPI2)
-##    cat("\n\n Cleaning up and closing MPI\n")
-##    try(mpi.close.Rslaves())
+                   DaveCVPred.res1Given.InternalMPI2,
+                   papply_commondata = list(x = x,
+                   time = time, event = event, p = p,
+                   maxSize = maxSize, index.select = index.select,
+                   minSize = minSize, minCor = minCor,
+                   MaxIterationsCox = MaxIterationsCox,
+                   res1s = res1s))
+    ##    cat("\n\n Cleaning up and closing MPI\n")
+    ##    try(mpi.close.Rslaves())
     
     for(i in 1:nfold) {
         OOB.scores[index.select == i] <-
