@@ -826,8 +826,7 @@ if(checkpoint.num < 4) {
                                                  minSize = MinSize,
                                                  minCor = MinCor,
                                                  MaxIterationsCox = MaxIterationsCox,
-                                                 nfold = nfold,
-                                                 mpiHosts = mpiHosts)
+                                                 nfold = nfold)
                    )
     
     if(class(trycode) == "try-error")
