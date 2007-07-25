@@ -56,9 +56,9 @@ colnames(tgd.paral.60cpu.mini) <- c("time", "narrays", "ngenes")
 for(i in 1:nrow(tgd.paral.60cpu.mini)) {
     tgd.paral.60cpu.mini[i, 1] <- fParal("dlbcl", arrays = tgd.paral.60cpu.mini[i, 2],
                                    genes = tgd.paral.60cpu.mini[i, 3])
+    save(file = "tgd.paral.60cpu.mini.RData", tgd.paral.60cpu.mini)
 }
 
-save(file = "tgd.paral.60cpu.mini.RData", tgd.paral.60cpu.mini)
 
 
 
@@ -73,9 +73,10 @@ colnames(tgd.paral.60cpu) <- c("time", "narrays", "ngenes")
 for(i in 1:nrow(tgd.paral.60cpu)) {
     tgd.paral.60cpu[i, 1] <- fParal("dlbcl", arrays = tgd.paral.60cpu[i, 2],
                                    genes = tgd.paral.60cpu[i, 3])
+    save(file = "tgd.paral.60cpu.RData", tgd.paral.60cpu)
+
 }
 
-save(file = "tgd.paral.60cpu.RData", tgd.paral.60cpu)
 
 
 

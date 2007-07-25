@@ -1,16 +1,18 @@
-load("benchmark.data.sets.RData")
 library(SignS2)
 library(papply)
 library(survival)
+library(MASS)
+load("dlbcl.benchmark.RData")
+
 
 ##library(snow)
 
 fParal <- function(dataset,
-                   Minp = 0.1,
+                   Minp = 0.15,
                    MaxIterationsCox = 200,
                    MaxSize = 100,
-                   MinSize = 10,
-                   MinCor = 0.8,
+                   MinSize = 5,
+                   MinCor = 0.65,
                    nfold = 10,
                    arrays = NULL,
                    genes = NULL) {
@@ -29,23 +31,24 @@ fParal <- function(dataset,
 
     cat("\n\n Running one iteration \n\n")
     walltime <- unix.time({
-        all.res1 <- dStep1.parallel(covar, survtime, status,
+        all.res1 <- dStep1.serial(covar, survtime, status,
                                     Minp, MaxIterationsCox)
-        try(all.res3 <- fitDave.res1Given(covar, survtime, status,    
+        all.res3 <- fitDave.res1Given(covar, survtime, status,    
                                       res1 = all.res1,            
-                                      Minp, MaxSize,              
-                                      MinSize, MinCor,            
-                                      MaxIterationsCox,
+                                      p = Minp,
+                                      maxSize = MaxSize,              
+                                      minSize = MinSize,
+                                      minCor = MinCor,            
+                                      MaxIterationsCox = MaxIterationsCox,
                                       plot = FALSE,
-                                      interactive = FALSE))
-        try(cvDaveRun <- cvDave.parallel3(x = covar, time = survtime,
+                                      interactive = FALSE)
+        cvDaveRun <- cvDave.parallel3(x = covar, time = survtime,
                                       event = status,
                                       p = Minp, maxSize = MaxSize,
                                       minSize = MinSize,
                                       minCor = MinCor,
                                       MaxIterationsCox = MaxIterationsCox,
-                                      nfold = nfold,
-                                      mpiHosts = NULL))
+                                      nfold = nfold)
     })[3]
     return(walltime)
 }

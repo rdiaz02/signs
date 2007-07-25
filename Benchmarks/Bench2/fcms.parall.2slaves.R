@@ -13,6 +13,9 @@ fcms.paral.2cpu <- matrix(cbind(rep(NA, 8),
 colnames(fcms.paral.2cpu) <- c("time", "narrays", "ngenes")
                                           
 for(i in 1:nrow(fcms.paral.2cpu)) {
+    cat(" \n\n arrays = ", fcms.paral.2cpu[i, 2],
+        " genes = ", fcms.paral.2cpu[i, 3], "\n")
+
     fcms.paral.2cpu[i, 1] <- fParal("dlbcl", arrays = fcms.paral.2cpu[i, 2],
                                    genes = fcms.paral.2cpu[i, 3])
 }
