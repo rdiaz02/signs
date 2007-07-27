@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 
 
-## To do: Use only 1, 2, 5, 10 simultaneous users.
-## and save each one as run (and embed in try, and assign a default
-## so we can save).
-
-
 import os
 import sys
 import time
@@ -46,46 +41,35 @@ def writeFile(testout, name):
 
 breast_15_1 = [-9999999.11]
 breast_10_1 = [-9999999.11]
-breast_20_1 = [-9999999.22]
-breast_50_1 = [-9999999.22]
 
 dlbcl_10_1 = [-9999999.11]
-dlbcl_20_1 = [-9999999.22]
-dlbcl_50_1 = [-9999999.22]
 dlbcl_15_1 = [-9999999.11]
-
-
-
-
 
 
 try:
     breast_10_1 = launchUTests('breast', 10)
 except:
     None
-writeFile(breast_10_1, 'breast.web.tests.reedition.10_1.txt')
+writeFile(breast_10_1, 'breast.web.tgd.10_1.txt')
    
 try:
     dlbcl_10_1 = launchUTests('dlbcl', 10)
 except:
     None
-writeFile(dlbcl_10_1, 'dlbcl.web.tests.reedition.10_1.txt')
+writeFile(dlbcl_10_1, 'dlbcl.web.tgd.10_1.txt')
    
 
 try:
     breast_15_1 = launchUTests('breast', 15)
 except:
     None
-writeFile(breast_15_1, 'breast.web.tests.reedition.15_1.txt')
+writeFile(breast_15_1, 'breast.web.tgd.15_1.txt')
    
 try:
     dlbcl_15_1 = launchUTests('dlbcl', 15)
 except:
     None
-writeFile(dlbcl_15_1, 'dlbcl.web.tests.reedition.15_1.txt')
-
-
-
+writeFile(dlbcl_15_1, 'dlbcl.web.tgd.15_1.txt')
 
 breast_1_1 = launchUTests('breast', 1)
 breast_1_2 = launchUTests('breast', 1)
@@ -96,7 +80,7 @@ breast_5_1 = launchUTests('breast', 5)
 
 breastA = breast_1_1 + breast_1_2 + breast_1_3 + breast_1_4 + breast_1_5 +\
           breast_5_1 
-writeFile(breastA, 'breastA.web.tests.reedition.txt')
+writeFile(breastA, 'breastA.web.tgd.txt')
 
 dlbcl_1_1 = launchUTests('dlbcl', 1)
 dlbcl_1_2 = launchUTests('dlbcl', 1)
@@ -107,32 +91,32 @@ dlbcl_5_1 = launchUTests('dlbcl', 5)
 
 dlbclA = dlbcl_1_1 + dlbcl_1_2 + dlbcl_1_3 + dlbcl_1_4 + dlbcl_1_5 +\
          dlbcl_5_1 
-writeFile(dlbclA, 'dlbclA.web.tests.reedition.txt')
+writeFile(dlbclA, 'dlbclA.web.tgd.txt')
 
 
-try:
-    dlbcl_20_1 = launchUTests('dlbcl', 20)
-except:
-    None
-writeFile(dlbcl_20_1, 'dlbcl.web.tests.reedition.20_1.txt')
+# try:
+#     dlbcl_20_1 = launchUTests('dlbcl', 20)
+# except:
+#     None
+# writeFile(dlbcl_20_1, 'dlbcl.web.tests.reedition.20_1.txt')
 
 
-try:
-    breast_20_1 = launchUTests('breast', 20)
-except:
-     None
-writeFile(breast_20_1, 'breast.web.tests.reedition.20_1.txt')
+# try:
+#     breast_20_1 = launchUTests('breast', 20)
+# except:
+#      None
+# writeFile(breast_20_1, 'breast.web.tests.reedition.20_1.txt')
 
 
 
-try:
-    breast_50_1 = launchUTests('breast', 50)
-except:
-    None
-writeFile(breast_50_1, 'breast.web.tests.reedition.50_1.txt')
+# try:
+#     breast_50_1 = launchUTests('breast', 50)
+# except:
+#     None
+# writeFile(breast_50_1, 'breast.web.tests.reedition.50_1.txt')
 
-try:
-    dlbcl_50_1 = launchUTests('dlbcl', 50)
-except:
-    None
-writeFile(dlbcl_50_1, 'dlbcl.web.tests.reedition.50_1.txt')
+# try:
+#     dlbcl_50_1 = launchUTests('dlbcl', 50)
+# except:
+#     None
+# writeFile(dlbcl_50_1, 'dlbcl.web.tests.reedition.50_1.txt')

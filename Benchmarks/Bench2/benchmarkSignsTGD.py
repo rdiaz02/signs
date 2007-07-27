@@ -51,9 +51,9 @@ class Signs(FunkLoadTestCase):
 
         start_time = time.time()
         self.post(server_url + "/cgi-bin/signsR.cgi", params=[
-            ['covariate', Upload("./DataSets/breast.covar.txt")],
-            ['time', Upload("./DataSets/breast.surv.txt")],
-            ['event', Upload("./DataSets/breast.event.txt")],
+            ['covariate', Upload("../DataSets/breast.covar.txt")],
+            ['time', Upload("../DataSets/breast.surv.txt")],
+            ['event', Upload("../DataSets/breast.event.txt")],
             ['methodSurv', 'FCMS'],
             ['Minp', '0.1'],
             ['MaxSize', '100'],
@@ -77,9 +77,9 @@ class Signs(FunkLoadTestCase):
 
         start_time = time.time()
         self.post(server_url + "/cgi-bin/signsR.cgi", params=[
-            ['covariate', Upload("./DataSets/dlbcl.160.covar.txt")],
-            ['time', Upload("./DataSets/dlbcl.160.surv.txt")],
-            ['event', Upload("./DataSets/dlbcl.160.event.txt")],
+            ['covariate', Upload("../DataSets/dlbcl.160.covar.txt")],
+            ['time', Upload("../DataSets/dlbcl.160.surv.txt")],
+            ['event', Upload("../DataSets/dlbcl.160.event.txt")],
             ['methodSurv', 'FCMS'],
             ['Minp', '0.1'],
             ['MaxSize', '100'],
@@ -103,9 +103,9 @@ class Signs(FunkLoadTestCase):
 
         start_time = time.time()
         self.post(server_url + "/cgi-bin/signsR.cgi", params=[
-            ['covariate', Upload("./DataSets/breast.covar.txt")],
-            ['time', Upload("./DataSets/breast.surv.txt")],
-            ['event', Upload("./DataSets/breast.event.txt")],
+            ['covariate', Upload("../DataSets/breast.covar.txt")],
+            ['time', Upload("../DataSets/breast.surv.txt")],
+            ['event', Upload("../DataSets/breast.event.txt")],
             ['methodSurv', 'TGD'],
             ['maxiter', '6000'],
             ['epi', '6e-06'],
@@ -129,9 +129,9 @@ class Signs(FunkLoadTestCase):
 
         start_time = time.time()
         self.post(server_url + "/cgi-bin/signsR.cgi", params=[
-            ['covariate', Upload("./DataSets/dlbcl.160.covar.txt")],
-            ['time', Upload("./DataSets/dlbcl.160.surv.txt")],
-            ['event', Upload("./DataSets/dlbcl.160.event.txt")],
+            ['covariate', Upload("../DataSets/dlbcl.160.covar.txt")],
+            ['time', Upload("../DataSets/dlbcl.160.surv.txt")],
+            ['event', Upload("../DataSets/dlbcl.160.event.txt")],
             ['methodSurv', 'TGD'],
             ['maxiter', '6000'],
             ['epi', '6e-06'],
