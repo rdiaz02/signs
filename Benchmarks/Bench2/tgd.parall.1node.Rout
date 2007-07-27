@@ -1,0 +1,151 @@
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  255428 13.7     467875 25.0   350000 18.7
+Vcells 2442329 18.7    2963239 22.7  2493948 19.1
+
+
+ Running one iteration 
+
+
+	LAM/MPI runtime environment is not operating.
+	Starting LAM/MPI runtime environment.
+	1 slaves are spawned successfully. 0 failed.
+master (rank 0, comm 1) of size 2 is running on: karl01 
+slave1 (rank 1, comm 1) of size 2 is running on: karl01 
+[1] "Running serial version of papply\n"
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  265969 14.3     531268 28.4   531268 28.4
+Vcells 2445131 18.7    6020591 46.0  5127007 39.2
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  265969 14.3     531268 28.4   531268 28.4
+Vcells 2445131 18.7    6020591 46.0  6019670 46.0
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  265969 14.3     531268 28.4   531268 28.4
+Vcells 2445131 18.7    6020591 46.0  6019670 46.0
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  265969 14.3     531268 28.4   531268 28.4
+Vcells 2445131 18.7    6020591 46.0  6019670 46.0
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  265969 14.3     531268 28.4   531268 28.4
+Vcells 2445131 18.7    6020591 46.0  6019670 46.0
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  265969 14.3     531268 28.4   531268 28.4
+Vcells 2445131 18.7    6020591 46.0  6019670 46.0
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  265969 14.3     531268 28.4   531268 28.4
+Vcells 2445131 18.7    6020591 46.0  6019670 46.0
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  265969 14.3     531268 28.4   531268 28.4
+Vcells 2445131 18.7    6020591 46.0  6019690 46.0
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  265969 14.3     531268 28.4   531268 28.4
+Vcells 2445131 18.7    6020591 46.0  6019700 46.0
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  266145 14.3     531268 28.4   531268 28.4
+Vcells 2445189 18.7    6020591 46.0  6019710 46.0
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  266146 14.3     531268 28.4   531268 28.4
+Vcells 2445190 18.7    6020591 46.0  6019788 46.0
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  266146 14.3     531268 28.4   531268 28.4
+Vcells 2445190 18.7    6401620 48.9  6019789 46.0
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  266146 14.3     531268 28.4   531268 28.4
+Vcells 2445190 18.7    8126018 62.0  7917096 60.5
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  266146 14.3     531268 28.4   531268 28.4
+Vcells 2445190 18.7    8177625 62.4  9649239 73.7
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  266146 14.3     531268 28.4   531268 28.4
+Vcells 2445190 18.7    8177625 62.4  9649239 73.7
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  266146 14.3     531268 28.4   531268 28.4
+Vcells 2445190 18.7    8177625 62.4  9649239 73.7
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  266146 14.3     531268 28.4   531268 28.4
+Vcells 2445190 18.7    8177625 62.4  9649239 73.7
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+[1] "Exiting Rmpi. Rmpi cannot be used unless relaunching R."

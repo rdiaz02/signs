@@ -1,0 +1,61 @@
+
+ numero is  1 
+-----------------------------------------------------------------------------
+It seems that there is no lamd running on the host karl01.
+
+This indicates that the LAM/MPI runtime environment is not operating.
+The LAM/MPI runtime environment is necessary for the "lamhalt" command.
+
+Please run the "lamboot" command the start the LAM/MPI runtime
+environment.  See the LAM/MPI documentation for how to invoke
+"lamboot" across multiple machines.
+-----------------------------------------------------------------------------
+
+LAM 7.1.2/MPI 2 C++/ROMIO - Indiana University
+
+Loading required package: splines
+
+	LAM/MPI runtime environment is not operating.
+	Starting LAM/MPI runtime environment.
+	1 slaves are spawned successfully. 0 failed.
+master (rank 0, comm 1) of size 2 is running on: karl01 
+slave1 (rank 1, comm 1) of size 2 is running on: karl01 
+$slave1
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+ 
+
+ arrays =  160  genes =  12000 
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  303166 16.2     531268 28.4   433052 23.2
+Vcells 7907067 60.4    8547562 65.3  7990228 61.0
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+ 
+
+ arrays =  160  genes =  24000 
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells  307342 16.5     597831  32.0   597831  32.0
+Vcells 7907664 60.4   23147981 176.7 25326866 193.3
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+ 
+
+ arrays =  160  genes =  48000 
+          used (Mb) gc trigger  (Mb) max used (Mb)
+Ncells  307342 16.5     597831  32.0   597831   32
+Vcells 7907664 60.4   28413026 216.8 32765333  250
+
+
+ Running one iteration 
+
+[1] "Running serial version of papply\n"
+[1] "Exiting Rmpi. Rmpi cannot be used unless relaunching R."

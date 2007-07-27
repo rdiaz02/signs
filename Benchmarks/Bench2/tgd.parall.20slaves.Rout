@@ -1,0 +1,309 @@
+-----------------------------------------------------------------------------
+It seems that there is no lamd running on the host karl03.
+
+This indicates that the LAM/MPI runtime environment is not operating.
+The LAM/MPI runtime environment is necessary for the "lamhalt" command.
+
+Please run the "lamboot" command the start the LAM/MPI runtime
+environment.  See the LAM/MPI documentation for how to invoke
+"lamboot" across multiple machines.
+-----------------------------------------------------------------------------
+
+LAM 7.1.2/MPI 2 C++/ROMIO - Indiana University
+
+n-1<22446> ssi:boot:base:linear: booting n0 (192.168.7.3)
+n-1<22446> ssi:boot:base:linear: booting n1 (192.168.7.4)
+n-1<22446> ssi:boot:base:linear: booting n2 (192.168.7.5)
+n-1<22446> ssi:boot:base:linear: booting n3 (192.168.7.6)
+n-1<22446> ssi:boot:base:linear: booting n4 (192.168.7.7)
+n-1<22446> ssi:boot:base:linear: booting n5 (192.168.7.8)
+n-1<22446> ssi:boot:base:linear: booting n6 (192.168.7.9)
+n-1<22446> ssi:boot:base:linear: booting n7 (192.168.7.10)
+n-1<22446> ssi:boot:base:linear: booting n8 (192.168.7.11)
+n-1<22446> ssi:boot:base:linear: booting n9 (192.168.7.12)
+n-1<22446> ssi:boot:base:linear: finished
+
+LAM 7.1.2/MPI 2 C++/ROMIO - Indiana University
+
+	20 slaves are spawned successfully. 0 failed.
+master  (rank 0 , comm 1) of size 21 is running on: karl03 
+slave1  (rank 1 , comm 1) of size 21 is running on: karl03 
+slave2  (rank 2 , comm 1) of size 21 is running on: karl03 
+slave3  (rank 3 , comm 1) of size 21 is running on: karl04 
+slave4  (rank 4 , comm 1) of size 21 is running on: karl04 
+slave5  (rank 5 , comm 1) of size 21 is running on: karl05 
+slave6  (rank 6 , comm 1) of size 21 is running on: karl05 
+slave7  (rank 7 , comm 1) of size 21 is running on: karl06 
+slave8  (rank 8 , comm 1) of size 21 is running on: karl06 
+slave9  (rank 9 , comm 1) of size 21 is running on: karl07 
+slave10 (rank 10, comm 1) of size 21 is running on: karl07 
+slave11 (rank 11, comm 1) of size 21 is running on: karl08 
+slave12 (rank 12, comm 1) of size 21 is running on: karl08 
+slave13 (rank 13, comm 1) of size 21 is running on: karl09 
+slave14 (rank 14, comm 1) of size 21 is running on: karl09 
+slave15 (rank 15, comm 1) of size 21 is running on: karl10 
+slave16 (rank 16, comm 1) of size 21 is running on: karl10 
+slave17 (rank 17, comm 1) of size 21 is running on: karl11 
+slave18 (rank 18, comm 1) of size 21 is running on: karl11 
+slave19 (rank 19, comm 1) of size 21 is running on: karl12 
+slave20 (rank 20, comm 1) of size 21 is running on: karl12 
+Loading required package: splines
+
+Attaching package: 'combinat'
+
+
+Attaching package: 'combinat'
+
+
+	The following object(s) are masked from package:utils :
+
+	 combn 
+
+
+	The following object(s) are masked from package:utils :
+
+	 combn 
+
+
+Attaching package: 'imagemap'
+
+
+	The following object(s) are masked from package:SignS2 :
+
+	 imClose 
+
+
+Attaching package: 'imagemap'
+
+
+	The following object(s) are masked from package:SignS2 :
+
+	 imClose 
+
+$slave1
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave2
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave3
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave4
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave5
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave6
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave7
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave8
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave9
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave10
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave11
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave12
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave13
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave14
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave15
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave16
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave17
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave18
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave19
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave20
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  261517 14.0     531268 28.4   531268 28.4
+Vcells 2444492 18.7    3191407 24.4  2562680 19.6
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6023081 46.0  5128495 39.2
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6023081 46.0  6019500 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6023081 46.0  6019500 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6023081 46.0  6019500 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6023081 46.0  6019500 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6023081 46.0  6019500 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6023081 46.0  6019500 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6023081 46.0  6019520 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6023081 46.0  6019530 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264772 14.2     531268 28.4   531268 28.4
+Vcells 2444995 18.7    6023081 46.0  6019540 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264772 14.2     531268 28.4   531268 28.4
+Vcells 2444995 18.7    6023081 46.0  6019594 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264772 14.2     531268 28.4   531268 28.4
+Vcells 2444995 18.7    6023081 46.0  6019594 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264772 14.2     531268 28.4   531268 28.4
+Vcells 2444995 18.7    6023081 46.0  6019594 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264772 14.2     531268 28.4   531268 28.4
+Vcells 2444995 18.7    7909800 60.4  7304535 55.8
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264772 14.2     531268 28.4   531268 28.4
+Vcells 2444995 18.7    7909800 60.4  7525873 57.5
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264772 14.2     531268 28.4   531268 28.4
+Vcells 2444995 18.7    7909800 60.4  7821937 59.7
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264772 14.2     531268 28.4   531268 28.4
+Vcells 2444995 18.7    7909800 60.4  7821937 59.7
+
+
+ Running one iteration 
+
+[1] "Exiting Rmpi. Rmpi cannot be used unless relaunching R."

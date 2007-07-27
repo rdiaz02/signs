@@ -1,0 +1,235 @@
+
+ numero is  10 
+-----------------------------------------------------------------------------
+It seems that there is no lamd running on the host karl23.
+
+This indicates that the LAM/MPI runtime environment is not operating.
+The LAM/MPI runtime environment is necessary for the "lamhalt" command.
+
+Please run the "lamboot" command the start the LAM/MPI runtime
+environment.  See the LAM/MPI documentation for how to invoke
+"lamboot" across multiple machines.
+-----------------------------------------------------------------------------
+
+LAM 7.1.2/MPI 2 C++/ROMIO - Indiana University
+
+n-1<32296> ssi:boot:base:linear: booting n0 (192.168.7.23)
+n-1<32296> ssi:boot:base:linear: booting n1 (192.168.7.24)
+n-1<32296> ssi:boot:base:linear: booting n2 (192.168.7.25)
+n-1<32296> ssi:boot:base:linear: booting n3 (192.168.7.26)
+n-1<32296> ssi:boot:base:linear: booting n4 (192.168.7.27)
+n-1<32296> ssi:boot:base:linear: finished
+
+LAM 7.1.2/MPI 2 C++/ROMIO - Indiana University
+
+Loading required package: splines
+	10 slaves are spawned successfully. 0 failed.
+master  (rank 0 , comm 1) of size 11 is running on: karl23 
+slave1  (rank 1 , comm 1) of size 11 is running on: karl23 
+slave2  (rank 2 , comm 1) of size 11 is running on: karl23 
+slave3  (rank 3 , comm 1) of size 11 is running on: karl24 
+slave4  (rank 4 , comm 1) of size 11 is running on: karl24 
+slave5  (rank 5 , comm 1) of size 11 is running on: karl25 
+slave6  (rank 6 , comm 1) of size 11 is running on: karl25 
+slave7  (rank 7 , comm 1) of size 11 is running on: karl26 
+slave8  (rank 8 , comm 1) of size 11 is running on: karl26 
+slave9  (rank 9 , comm 1) of size 11 is running on: karl27 
+slave10 (rank 10, comm 1) of size 11 is running on: karl27 
+Loading required package: splines
+Loading required package: splines
+
+Attaching package: 'combinat'
+
+
+Attaching package: 'combinat'
+
+
+	The following object(s) are masked from package:utils :
+
+	 combn 
+
+
+	The following object(s) are masked from package:utils :
+
+	 combn 
+
+
+Attaching package: 'imagemap'
+
+
+	The following object(s) are masked from package:SignS2 :
+
+	 imClose 
+
+
+Attaching package: 'imagemap'
+
+
+	The following object(s) are masked from package:SignS2 :
+
+	 imClose 
+
+$slave1
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave2
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave3
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave4
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave5
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave6
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave7
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave8
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave9
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave10
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+Warning message:
+number of rows of result
+	is not a multiple of vector length (arg 1) in: cbind(1, rep(NA, 8), narrays = c(rep(160, 7), 20, 40, 80, 100),  
+ 
+
+ arrays =  160  genes =  1000 
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  303259 16.2     597831 32.0   467875   25
+Vcells 7907129 60.4    9055191 69.1  7990227   61
+
+
+ Running one iteration 
+
+ 
+
+ arrays =  160  genes =  2000 
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells  306500 16.4     597831  32.0   597831  32.0
+Vcells 7907597 60.4   23148041 176.7 23550428 179.7
+
+
+ Running one iteration 
+
+ 
+
+ arrays =  160  genes =  4000 
+          used (Mb) gc trigger  (Mb) max used (Mb)
+Ncells  306500 16.4     597831  32.0   597831   32
+Vcells 7907597 60.4   23148461 176.7 23711906  181
+
+
+ Running one iteration 
+
+ 
+
+ arrays =  160  genes =  6000 
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells  306500 16.4     597831  32.0   597831  32.0
+Vcells 7907597 60.4   23148461 176.7 24034906 183.4
+
+
+ Running one iteration 
+
+ 
+
+ arrays =  160  genes =  12000 
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells  306500 16.4     597831  32.0   597831  32.0
+Vcells 7907597 60.4   23148461 176.7 24357906 185.9
+
+
+ Running one iteration 
+
+ 
+
+ arrays =  160  genes =  24000 
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells  306500 16.4     597831  32.0   597831  32.0
+Vcells 7907597 60.4   23148461 176.7 25326906 193.3
+
+
+ Running one iteration 
+
+ 
+
+ arrays =  160  genes =  48000 
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells  306500 16.4     597831  32.0   597831  32.0
+Vcells 7907597 60.4   23148461 176.7 27281739 208.2
+
+
+ Running one iteration 
+
+ 
+
+ arrays =  20  genes =  7399 
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells  306500 16.4     597831  32.0   597831  32.0
+Vcells 7907597 60.4   39360335 300.3 46628935 355.8
+
+
+ Running one iteration 
+
+ 
+
+ arrays =  40  genes =  7399 
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells  306500 16.4     597831  32.0   597831  32.0
+Vcells 7907597 60.4   25190614 192.2 46628935 355.8
+
+
+ Running one iteration 
+
+ 
+
+ arrays =  80  genes =  7399 
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells  306500 16.4     597831  32.0   597831  32.0
+Vcells 7907597 60.4   26530144 202.5 46628935 355.8
+
+
+ Running one iteration 
+
+ 
+
+ arrays =  100  genes =  7399 
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells  306500 16.4     597831  32.0   597831  32.0
+Vcells 7907597 60.4   22349320 170.6 46628935 355.8
+
+
+ Running one iteration 
+
+[1] "Exiting Rmpi. Rmpi cannot be used unless relaunching R."

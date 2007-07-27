@@ -1,0 +1,28 @@
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  255491 13.7     467875 25.0   350000 18.7
+Vcells 2441893 18.7    2963229 22.7  2447811 18.7
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  257136 13.8     467875   25   350000 18.7
+Vcells 2442117 18.7    6020086   46  6020086 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  257136 13.8     467875 25.0   350000 18.7
+Vcells 2442117 18.7    6801144 51.9  6801144 51.9
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  257136 13.8     467875   25   376859 20.2
+Vcells 2442117 18.7    7726668   59  9658335 73.7
+
+
+ Running one iteration 
+

@@ -12,7 +12,7 @@ def launchUTests(test, users):
         iin, t[uu] = os.popen2('fl-run-test benchmarkSignsTGD.py Signs.' + test + '_tgd')
         time.sleep(5)
     for uu in range(users):
-        timef[uu] = float(t[uu].readlines()[1].strip())
+        timef[uu] = float(t[uu].readlines()[-1].strip())
 
     return timef
 

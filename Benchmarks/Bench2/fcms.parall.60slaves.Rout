@@ -1,0 +1,4762 @@
+
+R version 2.4.1 Patched (2007-02-28 r40809)
+Copyright (C) 2007 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> invisible(options(echo = TRUE))
+> rm(list = ls())
+> 
+> system("lamhalt")
+
+LAM 7.1.2/MPI 2 C++/ROMIO - Indiana University
+
+> system("lamboot -v lamb-host-60slaves.def")
+n-1<9753> ssi:boot:base:linear: booting n0 (192.168.7.1)
+n-1<9753> ssi:boot:base:linear: booting n1 (192.168.7.2)
+n-1<9753> ssi:boot:base:linear: booting n2 (192.168.7.3)
+n-1<9753> ssi:boot:base:linear: booting n3 (192.168.7.4)
+n-1<9753> ssi:boot:base:linear: booting n4 (192.168.7.5)
+n-1<9753> ssi:boot:base:linear: booting n5 (192.168.7.6)
+n-1<9753> ssi:boot:base:linear: booting n6 (192.168.7.7)
+n-1<9753> ssi:boot:base:linear: booting n7 (192.168.7.8)
+n-1<9753> ssi:boot:base:linear: booting n8 (192.168.7.9)
+n-1<9753> ssi:boot:base:linear: booting n9 (192.168.7.10)
+n-1<9753> ssi:boot:base:linear: booting n10 (192.168.7.11)
+n-1<9753> ssi:boot:base:linear: booting n11 (192.168.7.12)
+n-1<9753> ssi:boot:base:linear: booting n12 (192.168.7.13)
+n-1<9753> ssi:boot:base:linear: booting n13 (192.168.7.14)
+n-1<9753> ssi:boot:base:linear: booting n14 (192.168.7.15)
+n-1<9753> ssi:boot:base:linear: booting n15 (192.168.7.16)
+n-1<9753> ssi:boot:base:linear: booting n16 (192.168.7.17)
+n-1<9753> ssi:boot:base:linear: booting n17 (192.168.7.18)
+n-1<9753> ssi:boot:base:linear: booting n18 (192.168.7.19)
+n-1<9753> ssi:boot:base:linear: booting n19 (192.168.7.20)
+n-1<9753> ssi:boot:base:linear: booting n20 (192.168.7.21)
+n-1<9753> ssi:boot:base:linear: booting n21 (192.168.7.22)
+n-1<9753> ssi:boot:base:linear: booting n22 (192.168.7.23)
+n-1<9753> ssi:boot:base:linear: booting n23 (192.168.7.24)
+n-1<9753> ssi:boot:base:linear: booting n24 (192.168.7.25)
+n-1<9753> ssi:boot:base:linear: booting n25 (192.168.7.26)
+n-1<9753> ssi:boot:base:linear: booting n26 (192.168.7.27)
+n-1<9753> ssi:boot:base:linear: booting n27 (192.168.7.28)
+n-1<9753> ssi:boot:base:linear: booting n28 (192.168.7.29)
+n-1<9753> ssi:boot:base:linear: booting n29 (192.168.7.30)
+n-1<9753> ssi:boot:base:linear: finished
+
+LAM 7.1.2/MPI 2 C++/ROMIO - Indiana University
+
+> 
+> source("fcms.common.R")
+Loading required package: splines
+	60 slaves are spawned successfully. 0 failed.
+master  (rank 0 , comm 1) of size 61 is running on: karl01 
+slave1  (rank 1 , comm 1) of size 61 is running on: karl01 
+slave2  (rank 2 , comm 1) of size 61 is running on: karl01 
+slave3  (rank 3 , comm 1) of size 61 is running on: karl02 
+slave4  (rank 4 , comm 1) of size 61 is running on: karl02 
+slave5  (rank 5 , comm 1) of size 61 is running on: karl03 
+slave6  (rank 6 , comm 1) of size 61 is running on: karl03 
+slave7  (rank 7 , comm 1) of size 61 is running on: karl04 
+slave8  (rank 8 , comm 1) of size 61 is running on: karl04 
+slave9  (rank 9 , comm 1) of size 61 is running on: karl05 
+slave10 (rank 10, comm 1) of size 61 is running on: karl05 
+slave11 (rank 11, comm 1) of size 61 is running on: karl06 
+slave12 (rank 12, comm 1) of size 61 is running on: karl06 
+slave13 (rank 13, comm 1) of size 61 is running on: karl07 
+slave14 (rank 14, comm 1) of size 61 is running on: karl07 
+slave15 (rank 15, comm 1) of size 61 is running on: karl08 
+slave16 (rank 16, comm 1) of size 61 is running on: karl08 
+slave17 (rank 17, comm 1) of size 61 is running on: karl09 
+slave18 (rank 18, comm 1) of size 61 is running on: karl09 
+slave19 (rank 19, comm 1) of size 61 is running on: karl10 
+slave20 (rank 20, comm 1) of size 61 is running on: karl10 
+slave21 (rank 21, comm 1) of size 61 is running on: karl11 
+slave22 (rank 22, comm 1) of size 61 is running on: karl11 
+slave23 (rank 23, comm 1) of size 61 is running on: karl12 
+slave24 (rank 24, comm 1) of size 61 is running on: karl12 
+slave25 (rank 25, comm 1) of size 61 is running on: karl13 
+slave26 (rank 26, comm 1) of size 61 is running on: karl13 
+slave27 (rank 27, comm 1) of size 61 is running on: karl14 
+slave28 (rank 28, comm 1) of size 61 is running on: karl14 
+slave29 (rank 29, comm 1) of size 61 is running on: karl15 
+slave30 (rank 30, comm 1) of size 61 is running on: karl15 
+slave31 (rank 31, comm 1) of size 61 is running on: karl16 
+slave32 (rank 32, comm 1) of size 61 is running on: karl16 
+slave33 (rank 33, comm 1) of size 61 is running on: karl17 
+slave34 (rank 34, comm 1) of size 61 is running on: karl17 
+slave35 (rank 35, comm 1) of size 61 is running on: karl18 
+slave36 (rank 36, comm 1) of size 61 is running on: karl18 
+slave37 (rank 37, comm 1) of size 61 is running on: karl19 
+slave38 (rank 38, comm 1) of size 61 is running on: karl19 
+slave39 (rank 39, comm 1) of size 61 is running on: karl20 
+slave40 (rank 40, comm 1) of size 61 is running on: karl20 
+slave41 (rank 41, comm 1) of size 61 is running on: karl21 
+slave42 (rank 42, comm 1) of size 61 is running on: karl21 
+slave43 (rank 43, comm 1) of size 61 is running on: karl22 
+slave44 (rank 44, comm 1) of size 61 is running on: karl22 
+slave45 (rank 45, comm 1) of size 61 is running on: karl23 
+slave46 (rank 46, comm 1) of size 61 is running on: karl23 
+slave47 (rank 47, comm 1) of size 61 is running on: karl24 
+slave48 (rank 48, comm 1) of size 61 is running on: karl24 
+slave49 (rank 49, comm 1) of size 61 is running on: karl25 
+slave50 (rank 50, comm 1) of size 61 is running on: karl25 
+slave51 (rank 51, comm 1) of size 61 is running on: karl26 
+slave52 (rank 52, comm 1) of size 61 is running on: karl26 
+slave53 (rank 53, comm 1) of size 61 is running on: karl27 
+slave54 (rank 54, comm 1) of size 61 is running on: karl27 
+slave55 (rank 55, comm 1) of size 61 is running on: karl28 
+slave56 (rank 56, comm 1) of size 61 is running on: karl28 
+slave57 (rank 57, comm 1) of size 61 is running on: karl29 
+slave58 (rank 58, comm 1) of size 61 is running on: karl29 
+slave59 (rank 59, comm 1) of size 61 is running on: karl30 
+slave60 (rank 60, comm 1) of size 61 is running on: karl30 
+Loading required package: splines
+Loading required package: splines
+
+Attaching package: 'combinat'
+
+
+Attaching package: 'combinat'
+
+
+	The following object(s) are masked from package:utils :
+
+	 combn 
+
+
+	The following object(s) are masked from package:utils :
+
+	 combn 
+
+
+Attaching package: 'imagemap'
+
+
+Attaching package: 'imagemap'
+
+
+	The following object(s) are masked from package:SignS2 :
+
+	 imClose 
+
+
+	The following object(s) are masked from package:SignS2 :
+
+	 imClose 
+
+> 
+> fcms.paral.60cpu <- matrix(cbind(rep(NA, 8),
++                                  narrays = c(rep(160, 4), 20, 40, 80, 100),
++                                  ngenes = c(1000, 2000, 4000, 6000, rep(7399, 4))),
++                            ncol = 3)
+>                          
+> colnames(fcms.paral.60cpu) <- c("time", "narrays", "ngenes")
+>                                           
+> for(i in 1:nrow(fcms.paral.60cpu)) {
++     cat(" \n\n arrays = ", fcms.paral.60cpu[i, 2],
++         " genes = ", fcms.paral.60cpu[i, 3], "\n")
++ 
++     fcms.paral.60cpu[i, 1] <- fParal("dlbcl", arrays = fcms.paral.60cpu[i, 2],
++                                    genes = fcms.paral.60cpu[i, 3])
++ }
+ 
+
+ arrays =  160  genes =  1000 
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  295829 15.8     531268 28.4   531268 28.4
+Vcells 2461542 18.8    3673890 28.1  2962391 22.7
+
+
+ Running one iteration 
+
+
+ Starting fitDave.res1Given at  Wed Jul 25 11:15:26 2007  
+
+
+       Starting dStep2 at  Wed Jul 25 11:15:26 2007  
+
+
+ Finished dStep2 at  Wed Jul 25 11:15:26 2007 ; took  0.032  
+
+
+ ..... Starting dStep3 at  Wed Jul 25 11:15:26 2007  
+
+
+ ..... Finishing dStep3 at  Wed Jul 25 11:15:26 2007 ; took  0.012  
+
+
+ Ended fitDave.res1Given at  Wed Jul 25 11:15:26 2007 ; took  0.045  seconds 
+
+
+ Starting cvDave.parallel3 at  Wed Jul 25 11:15:26 2007  
+
+
+     cvDave.parallel3:  cond 3 
+
+
+ Computing gene-wise cox p-value
+
+
+ Cleaning up MPI slaves
+
+
+
+ Computing the rest
+
+ Ending cvDave.parallel3 at  Wed Jul 25 11:15:30 2007 ; it took  3.214  
+
+ 
+
+ arrays =  160  genes =  2000 
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  312172 16.7     597831 32.0   531268 28.4
+Vcells 2464151 18.8    6042818 46.2  6033289 46.1
+
+
+ Running one iteration 
+
+
+ Starting fitDave.res1Given at  Wed Jul 25 11:15:32 2007  
+
+
+       Starting dStep2 at  Wed Jul 25 11:15:32 2007  
+
+
+ Finished dStep2 at  Wed Jul 25 11:15:32 2007 ; took  0.54  
+
+
+ ..... Starting dStep3 at  Wed Jul 25 11:15:32 2007  
+
+
+                  Number of models of size two:  36 
+Start:  AIC=796.32
+sobject ~ P.269 + P.270
+
+        Df    AIC
+<none>     796.32
++ P.11   1 796.35
+- P.270  1 796.55
++ P.266  1 797.81
++ P.268  1 797.96
++ P.262  1 798.03
++ P.271  1 798.20
++ P.264  1 798.31
++ P.272  1 798.32
+- P.269  1 804.88
+
+ ..... Finishing dStep3 at  Wed Jul 25 11:15:32 2007 ; took  0.269  
+
+
+ Ended fitDave.res1Given at  Wed Jul 25 11:15:32 2007 ; took  0.809  seconds 
+
+
+ Starting cvDave.parallel3 at  Wed Jul 25 11:15:32 2007  
+
+
+     cvDave.parallel3:  cond 3 
+
+
+ Computing gene-wise cox p-value
+
+
+ Cleaning up MPI slaves
+
+
+
+ Computing the rest
+Start:  AIC=698.22
+sobject ~ P.196 + P.201
+
+
+Step:  AIC=696.58
+sobject ~ P.201
+
+Start:  AIC=713.51
+sobject ~ P.256 + N.93
+
+
+Step:  AIC=713.24
+sobject ~ P.256
+
+
+ Ending cvDave.parallel3 at  Wed Jul 25 11:15:39 2007 ; it took  6.5  
+
+ 
+
+ arrays =  160  genes =  4000 
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  320453 17.2     597831 32.0   597831 32.0
+Vcells 2465420 18.9    6042818 46.2  6042815 46.2
+
+
+ Running one iteration 
+
+
+ Starting fitDave.res1Given at  Wed Jul 25 11:15:43 2007  
+
+
+       Starting dStep2 at  Wed Jul 25 11:15:43 2007  
+
+
+ Finished dStep2 at  Wed Jul 25 11:15:47 2007 ; took  4.439  
+
+
+ ..... Starting dStep3 at  Wed Jul 25 11:15:47 2007  
+
+
+                  Number of models of size two:  435 
+Start:  AIC=785.82
+sobject ~ P.269 + N.172
+
+        Df    AIC
++ P.651  1 780.08
++ P.494  1 784.76
++ P.442  1 785.22
+<none>     785.82
++ P.468  1 786.07
++ P.11   1 786.40
++ N.132  1 786.46
++ P.270  1 787.00
++ P.268  1 787.28
++ P.391  1 787.40
++ P.262  1 787.40
++ N.166  1 787.43
++ P.266  1 787.50
++ N.173  1 787.51
++ P.436  1 787.53
++ P.425  1 787.60
++ P.272  1 787.64
++ P.424  1 787.69
++ P.402  1 787.69
++ P.271  1 787.70
++ P.431  1 787.73
++ P.399  1 787.74
++ P.408  1 787.75
++ P.264  1 787.75
++ P.410  1 787.81
++ P.444  1 787.81
++ P.366  1 787.82
++ P.371  1 787.82
++ P.422  1 787.82
+- N.172  1 796.55
+- P.269  1 800.30
+
+Step:  AIC=780.08
+sobject ~ P.269 + N.172 + P.651
+
+        Df    AIC
++ P.11   1 778.49
++ P.436  1 780.08
+<none>     780.08
++ P.408  1 780.11
++ P.391  1 780.34
++ P.431  1 780.65
++ N.132  1 780.67
++ P.494  1 780.90
++ P.399  1 781.29
++ P.268  1 781.36
++ P.270  1 781.43
++ P.266  1 781.47
++ P.424  1 781.59
++ P.402  1 781.62
++ P.444  1 781.64
++ P.262  1 781.67
++ P.410  1 781.67
++ N.166  1 781.73
++ P.425  1 781.79
++ P.366  1 781.89
++ P.468  1 781.91
++ P.272  1 781.94
++ N.173  1 781.95
++ P.442  1 781.95
++ P.422  1 781.95
++ P.371  1 782.04
++ P.264  1 782.05
++ P.271  1 782.08
+- P.651  1 785.82
+- P.269  1 792.29
+- N.172  1 794.52
+
+Step:  AIC=778.49
+sobject ~ P.269 + N.172 + P.651 + P.11
+
+        Df    AIC
++ P.391  1 777.52
++ P.408  1 777.64
++ P.436  1 777.65
++ P.431  1 778.40
+<none>     778.49
++ P.399  1 778.82
++ P.402  1 779.12
++ N.132  1 779.16
++ P.262  1 779.55
++ P.270  1 779.70
++ P.444  1 779.70
++ P.424  1 779.82
++ P.371  1 779.87
++ P.266  1 779.92
++ N.166  1 779.98
++ P.410  1 779.99
++ P.425  1 779.99
+- P.11   1 780.08
++ P.268  1 780.13
++ P.494  1 780.17
++ P.366  1 780.25
++ P.422  1 780.26
++ N.173  1 780.47
++ P.272  1 780.47
++ P.264  1 780.48
++ P.271  1 780.48
++ P.468  1 780.48
++ P.442  1 780.49
+- P.651  1 786.40
+- P.269  1 787.82
+- N.172  1 792.21
+
+Step:  AIC=777.52
+sobject ~ P.269 + N.172 + P.651 + P.11 + P.391
+
+        Df    AIC
+<none>     777.52
++ P.442  1 778.08
++ P.494  1 778.30
++ N.132  1 778.46
+- P.391  1 778.49
++ P.408  1 778.64
++ P.436  1 778.83
++ P.266  1 778.98
++ P.468  1 779.11
++ N.166  1 779.20
++ P.270  1 779.27
++ P.431  1 779.29
++ P.399  1 779.37
++ P.262  1 779.38
++ P.402  1 779.41
++ P.424  1 779.44
++ P.422  1 779.46
++ P.444  1 779.46
++ P.264  1 779.47
++ P.272  1 779.48
++ P.271  1 779.49
++ N.173  1 779.50
++ P.366  1 779.51
++ P.268  1 779.51
++ P.371  1 779.52
++ P.425  1 779.52
++ P.410  1 779.52
+- P.11   1 780.34
+- P.651  1 787.61
+- P.269  1 788.72
+- N.172  1 791.38
+
+ ..... Finishing dStep3 at  Wed Jul 25 11:15:50 2007 ; took  3.056  
+
+
+ Ended fitDave.res1Given at  Wed Jul 25 11:15:50 2007 ; took  7.495  seconds 
+
+
+ Starting cvDave.parallel3 at  Wed Jul 25 11:15:50 2007  
+
+
+     cvDave.parallel3:  cond 3 
+
+
+ Computing gene-wise cox p-value
+
+
+ Cleaning up MPI slaves
+
+
+
+ Computing the rest
+Start:  AIC=705.26
+sobject ~ P.215 + N.210
+
+
+Step:  AIC=704.12
+sobject ~ P.215 + N.210 + N.161
+
+
+Step:  AIC=702.33
+sobject ~ P.215 + N.210 + N.161 + P.395
+
+
+Step:  AIC=700.62
+sobject ~ P.215 + N.210 + N.161 + P.395 + P.323
+
+
+Step:  AIC=698.87
+sobject ~ P.215 + N.210 + N.161 + P.395 + P.323 + P.355
+
+
+Step:  AIC=697.99
+sobject ~ P.215 + N.210 + N.161 + P.395 + P.323 + P.355 + P.296
+
+
+Step:  AIC=695.85
+sobject ~ P.215 + N.210 + N.161 + P.395 + P.323 + P.355 + P.296 + 
+    P.354
+
+
+Step:  AIC=695.65
+sobject ~ P.215 + N.210 + N.161 + P.395 + P.323 + P.355 + P.296 + 
+    P.354 + P.206
+
+
+Step:  AIC=695.45
+sobject ~ P.215 + N.210 + N.161 + P.395 + P.323 + P.355 + P.296 + 
+    P.354 + P.206 + P.212
+
+
+Step:  AIC=695.32
+sobject ~ P.215 + N.210 + N.161 + P.395 + P.323 + P.355 + P.296 + 
+    P.354 + P.206 + P.212 + P.350
+
+
+Step:  AIC=695.2
+sobject ~ N.210 + N.161 + P.395 + P.323 + P.355 + P.296 + P.354 + 
+    P.206 + P.212 + P.350
+
+
+Step:  AIC=694.71
+sobject ~ N.210 + N.161 + P.395 + P.323 + P.355 + P.296 + P.354 + 
+    P.212 + P.350
+
+
+ Ending cvDave.parallel3 at  Wed Jul 25 11:16:14 2007 ; it took  23.561  
+
+ 
+
+ arrays =  160  genes =  6000 
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  320748 17.2     597831 32.0   597831 32.0
+Vcells 2465512 18.9    8205210 62.7  8718888 66.6
+
+
+ Running one iteration 
+
+
+ Starting fitDave.res1Given at  Wed Jul 25 11:16:19 2007  
+
+
+       Starting dStep2 at  Wed Jul 25 11:16:19 2007  
+
+
+ Finished dStep2 at  Wed Jul 25 11:16:27 2007 ; took  8.133  
+
+
+ ..... Starting dStep3 at  Wed Jul 25 11:16:27 2007  
+
+
+                  Number of models of size two:  820 
+Start:  AIC=785.82
+sobject ~ P.269 + N.172
+
+        Df    AIC
++ P.651  1 780.08
++ P.845  1 783.19
++ N.317  1 783.99
++ N.203  1 784.36
++ N.341  1 784.45
++ P.494  1 784.76
++ P.442  1 785.22
+<none>     785.82
++ P.838  1 785.91
++ P.468  1 786.07
++ P.805  1 786.08
++ P.11   1 786.40
++ N.379  1 786.41
++ N.132  1 786.46
++ N.365  1 786.66
++ P.270  1 787.00
++ N.332  1 787.09
++ P.268  1 787.28
++ P.391  1 787.40
++ P.262  1 787.40
++ N.166  1 787.43
++ P.266  1 787.50
++ N.173  1 787.51
++ P.436  1 787.53
++ P.425  1 787.60
++ P.272  1 787.64
++ P.424  1 787.69
++ P.402  1 787.69
++ P.271  1 787.70
++ P.431  1 787.73
++ P.399  1 787.74
++ P.408  1 787.75
++ P.264  1 787.75
++ N.383  1 787.77
++ P.410  1 787.81
++ P.444  1 787.81
++ P.366  1 787.82
++ P.371  1 787.82
++ P.422  1 787.82
++ N.335  1 787.82
+- N.172  1 796.55
+- P.269  1 800.30
+
+Step:  AIC=780.08
+sobject ~ P.269 + N.172 + P.651
+
+        Df    AIC
++ P.11   1 778.49
++ N.341  1 779.64
++ N.317  1 779.88
++ P.436  1 780.08
+<none>     780.08
++ P.408  1 780.11
++ P.391  1 780.34
++ P.431  1 780.65
++ N.132  1 780.67
++ P.494  1 780.90
++ N.203  1 781.27
++ P.399  1 781.29
++ P.268  1 781.36
++ P.270  1 781.43
++ P.266  1 781.47
++ P.424  1 781.59
++ P.402  1 781.62
++ P.444  1 781.64
++ P.262  1 781.67
++ P.410  1 781.67
++ N.365  1 781.70
++ N.166  1 781.73
++ P.425  1 781.79
++ N.383  1 781.88
++ P.366  1 781.89
++ P.845  1 781.90
++ P.468  1 781.91
++ P.272  1 781.94
++ N.173  1 781.95
++ P.442  1 781.95
++ P.422  1 781.95
++ P.371  1 782.04
++ P.264  1 782.05
++ N.335  1 782.06
++ P.271  1 782.08
++ P.805  1 782.08
++ N.332  1 782.08
++ N.379  1 782.08
++ P.838  1 782.08
+- P.651  1 785.82
+- P.269  1 792.29
+- N.172  1 794.52
+
+Step:  AIC=778.49
+sobject ~ P.269 + N.172 + P.651 + P.11
+
+        Df    AIC
++ P.391  1 777.52
++ P.408  1 777.64
++ P.436  1 777.65
++ N.203  1 777.92
++ N.317  1 778.40
++ P.431  1 778.40
+<none>     778.49
++ P.399  1 778.82
++ N.341  1 778.92
++ P.402  1 779.12
++ N.132  1 779.16
++ P.262  1 779.55
++ P.270  1 779.70
++ P.444  1 779.70
++ P.424  1 779.82
++ P.845  1 779.82
++ P.371  1 779.87
++ P.266  1 779.92
++ N.166  1 779.98
++ P.410  1 779.99
++ P.425  1 779.99
+- P.11   1 780.08
++ N.365  1 780.11
++ P.268  1 780.13
++ P.494  1 780.17
++ P.366  1 780.25
++ P.422  1 780.26
++ N.383  1 780.40
++ N.379  1 780.42
++ N.332  1 780.46
++ N.173  1 780.47
++ P.272  1 780.47
++ P.805  1 780.47
++ P.264  1 780.48
++ P.271  1 780.48
++ P.838  1 780.48
++ P.468  1 780.48
++ N.335  1 780.48
++ P.442  1 780.49
+- P.651  1 786.40
+- P.269  1 787.82
+- N.172  1 792.21
+
+Step:  AIC=777.52
+sobject ~ P.269 + N.172 + P.651 + P.11 + P.391
+
+        Df    AIC
++ N.203  1 777.29
+<none>     777.52
++ N.317  1 777.82
++ P.442  1 778.08
++ N.341  1 778.12
++ P.494  1 778.30
++ N.132  1 778.46
+- P.391  1 778.49
++ P.408  1 778.64
++ P.845  1 778.80
++ P.436  1 778.83
++ P.266  1 778.98
++ P.468  1 779.11
++ N.166  1 779.20
++ N.365  1 779.22
++ P.270  1 779.27
++ P.431  1 779.29
++ P.399  1 779.37
++ P.262  1 779.38
++ P.402  1 779.41
++ P.424  1 779.44
++ P.805  1 779.45
++ N.383  1 779.46
++ P.422  1 779.46
++ P.444  1 779.46
++ P.264  1 779.47
++ P.272  1 779.48
++ N.332  1 779.48
++ P.271  1 779.49
++ N.173  1 779.50
++ P.366  1 779.51
++ P.268  1 779.51
++ N.335  1 779.51
++ P.371  1 779.52
++ N.379  1 779.52
++ P.425  1 779.52
++ P.838  1 779.52
++ P.410  1 779.52
+- P.11   1 780.34
+- P.651  1 787.61
+- P.269  1 788.72
+- N.172  1 791.38
+
+Step:  AIC=777.29
+sobject ~ P.269 + N.172 + P.651 + P.11 + P.391 + N.203
+
+        Df    AIC
++ P.442  1 776.92
+<none>     777.29
+- N.203  1 777.52
++ N.317  1 777.53
++ P.494  1 777.61
+- P.391  1 777.92
++ N.341  1 778.02
++ P.266  1 778.46
++ P.422  1 778.60
++ P.468  1 778.73
++ P.408  1 778.79
++ N.383  1 778.89
++ P.410  1 778.93
++ P.264  1 778.98
++ P.444  1 778.99
++ P.436  1 779.03
++ P.845  1 779.04
++ P.366  1 779.08
++ P.402  1 779.10
++ P.272  1 779.14
++ N.132  1 779.16
++ P.268  1 779.19
++ P.262  1 779.21
++ P.425  1 779.21
++ P.431  1 779.21
++ P.371  1 779.23
++ P.399  1 779.25
++ N.173  1 779.25
++ P.838  1 779.27
++ N.166  1 779.28
++ P.270  1 779.28
++ N.365  1 779.28
++ P.271  1 779.29
++ N.332  1 779.29
++ P.424  1 779.29
++ P.805  1 779.29
++ N.335  1 779.29
++ N.379  1 779.29
+- P.11   1 781.70
+- P.651  1 783.58
+- N.172  1 787.42
+- P.269  1 787.84
+
+Step:  AIC=776.92
+sobject ~ P.269 + N.172 + P.651 + P.11 + P.391 + N.203 + P.442
+
+        Df    AIC
++ P.408  1 776.39
+<none>     776.92
++ N.317  1 777.22
+- P.442  1 777.29
++ N.341  1 777.29
++ P.436  1 777.32
++ N.132  1 777.80
++ P.494  1 777.80
++ N.166  1 777.95
+- N.203  1 778.08
+- P.651  1 778.17
++ P.431  1 778.24
++ P.399  1 778.28
++ P.424  1 778.34
++ N.383  1 778.37
++ P.266  1 778.41
++ P.264  1 778.49
++ P.402  1 778.53
++ P.270  1 778.53
++ P.845  1 778.63
++ P.262  1 778.69
++ P.444  1 778.73
++ P.838  1 778.76
++ P.425  1 778.80
++ P.272  1 778.89
++ N.173  1 778.90
++ P.805  1 778.91
++ P.410  1 778.91
++ N.335  1 778.91
++ P.468  1 778.92
++ P.268  1 778.92
++ P.366  1 778.92
++ N.332  1 778.92
++ N.365  1 778.92
++ P.422  1 778.92
++ P.371  1 778.92
++ N.379  1 778.92
++ P.271  1 778.92
+- P.391  1 779.77
+- P.11   1 780.97
+- P.269  1 785.04
+- N.172  1 788.24
+
+Step:  AIC=776.39
+sobject ~ P.269 + N.172 + P.651 + P.11 + P.391 + N.203 + P.442 + 
+    P.408
+
+        Df    AIC
++ P.494  1 773.56
+<none>     776.39
++ N.341  1 776.84
++ P.422  1 776.88
+- P.408  1 776.92
++ N.166  1 777.07
++ N.317  1 777.19
++ N.383  1 777.20
++ P.371  1 777.21
+- N.203  1 777.22
+- P.391  1 777.28
++ P.268  1 777.63
++ P.845  1 777.66
++ P.264  1 777.70
++ P.262  1 777.74
++ P.436  1 777.94
++ P.366  1 777.99
++ P.468  1 778.02
++ N.173  1 778.07
++ P.272  1 778.13
++ N.132  1 778.19
++ P.399  1 778.20
++ P.266  1 778.26
++ P.838  1 778.27
++ P.270  1 778.27
++ N.332  1 778.28
++ P.271  1 778.33
++ N.335  1 778.33
++ P.410  1 778.34
++ P.805  1 778.34
++ P.402  1 778.35
++ P.425  1 778.35
++ N.365  1 778.37
++ P.431  1 778.38
++ P.424  1 778.38
++ N.379  1 778.38
++ P.444  1 778.39
+- P.651  1 778.55
+- P.442  1 778.79
+- P.11   1 780.63
+- P.269  1 786.91
+- N.172  1 788.38
+
+Step:  AIC=773.56
+sobject ~ P.269 + N.172 + P.651 + P.11 + P.391 + N.203 + P.442 + 
+    P.408 + P.494
+
+        Df    AIC
++ P.468  1 773.54
+<none>     773.56
++ P.422  1 773.87
++ P.268  1 774.11
++ P.271  1 774.64
++ N.383  1 774.66
+- P.391  1 774.67
++ P.436  1 774.72
++ P.845  1 774.80
+- P.651  1 774.85
++ P.266  1 774.89
+- N.203  1 774.92
++ P.262  1 774.92
++ N.166  1 774.93
++ P.402  1 774.99
++ P.371  1 775.00
++ P.444  1 775.00
++ P.264  1 775.04
++ N.341  1 775.05
++ P.410  1 775.08
++ P.399  1 775.24
++ P.366  1 775.25
++ P.272  1 775.26
++ N.132  1 775.33
++ N.317  1 775.36
++ N.335  1 775.36
++ P.805  1 775.37
+- P.11   1 775.42
++ P.270  1 775.43
++ N.332  1 775.45
++ N.173  1 775.50
++ N.379  1 775.52
++ N.365  1 775.53
++ P.431  1 775.53
++ P.424  1 775.54
++ P.425  1 775.56
++ P.838  1 775.56
+- P.494  1 776.39
+- P.442  1 777.14
+- P.408  1 777.80
+- N.172  1 782.30
+- P.269  1 786.73
+
+Step:  AIC=773.54
+sobject ~ P.269 + N.172 + P.651 + P.11 + P.391 + N.203 + P.442 + 
+    P.408 + P.494 + P.468
+
+        Df    AIC
+<none>     773.54
+- P.468  1 773.56
++ N.341  1 773.75
++ P.422  1 773.75
++ P.268  1 773.92
+- P.391  1 774.25
+- P.11   1 774.27
++ P.444  1 774.37
++ P.436  1 774.40
++ P.266  1 774.45
++ N.383  1 774.48
++ N.317  1 774.48
+- P.651  1 774.53
+- N.203  1 774.78
++ P.402  1 774.82
++ P.264  1 774.87
++ P.271  1 774.91
++ P.262  1 775.08
++ P.845  1 775.11
++ N.166  1 775.15
++ P.270  1 775.22
++ P.399  1 775.22
++ P.371  1 775.24
+- P.442  1 775.25
++ P.805  1 775.27
++ P.272  1 775.30
++ N.332  1 775.31
++ N.132  1 775.39
++ P.410  1 775.40
++ N.379  1 775.44
++ P.366  1 775.46
++ N.335  1 775.47
++ P.425  1 775.49
++ N.173  1 775.49
++ N.365  1 775.51
++ P.424  1 775.51
++ P.431  1 775.52
++ P.838  1 775.53
+- P.494  1 778.02
+- P.408  1 779.79
+- N.172  1 782.60
+- P.269  1 788.46
+
+ ..... Finishing dStep3 at  Wed Jul 25 11:16:35 2007 ; took  7.594  
+
+
+ Ended fitDave.res1Given at  Wed Jul 25 11:16:35 2007 ; took  15.728  seconds 
+
+
+ Starting cvDave.parallel3 at  Wed Jul 25 11:16:35 2007  
+
+
+     cvDave.parallel3:  cond 3 
+
+
+ Computing gene-wise cox p-value
+
+
+ Cleaning up MPI slaves
+
+
+
+ Computing the rest
+Start:  AIC=675.27
+sobject ~ P.341 + N.145
+
+
+Step:  AIC=668.58
+sobject ~ P.341 + N.145 + P.798
+
+
+Step:  AIC=662.89
+sobject ~ P.341 + N.145 + P.798 + P.548
+
+
+Step:  AIC=660
+sobject ~ P.341 + N.145 + P.798 + P.548 + P.610
+
+
+Step:  AIC=656.17
+sobject ~ P.341 + N.145 + P.798 + P.548 + P.610 + P.580
+
+
+Step:  AIC=655.26
+sobject ~ P.341 + N.145 + P.798 + P.548 + P.610 + P.580 + N.172
+
+
+Step:  AIC=654.12
+sobject ~ P.341 + N.145 + P.798 + P.548 + P.610 + P.580 + N.172 + 
+    P.534
+
+
+Step:  AIC=653.17
+sobject ~ P.341 + N.145 + P.798 + P.548 + P.610 + P.580 + N.172 + 
+    P.534 + P.527
+
+
+Step:  AIC=652.29
+sobject ~ P.341 + N.145 + P.798 + P.548 + P.610 + P.580 + N.172 + 
+    P.534 + P.527 + P.544
+
+
+Step:  AIC=652.26
+sobject ~ P.341 + N.145 + P.798 + P.548 + P.610 + P.580 + N.172 + 
+    P.534 + P.527 + P.544 + N.356
+
+
+Step:  AIC=652.04
+sobject ~ P.341 + N.145 + P.798 + P.548 + P.610 + P.580 + N.172 + 
+    P.527 + P.544 + N.356
+
+
+Step:  AIC=651.24
+sobject ~ P.341 + N.145 + P.798 + P.548 + P.610 + P.580 + N.172 + 
+    P.527 + P.544 + N.356 + P.532
+
+
+ Ending cvDave.parallel3 at  Wed Jul 25 11:17:13 2007 ; it took  37.996  
+
+ 
+
+ arrays =  20  genes =  7399 
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  320997 17.2     597831 32.0   597831 32.0
+Vcells 2465594 18.9    9757528 74.5 11573418 88.3
+
+
+ Running one iteration 
+
+
+ Starting fitDave.res1Given at  Wed Jul 25 11:17:17 2007  
+
+
+       Starting dStep2 at  Wed Jul 25 11:17:17 2007  
+
+
+ Finished dStep2 at  Wed Jul 25 11:17:24 2007 ; took  6.88  
+
+
+ ..... Starting dStep3 at  Wed Jul 25 11:17:24 2007  
+
+
+                  Number of models of size two:  5253 
+Start:  AIC=42.85
+sobject ~ N.30 + N.140
+
+        Df    AIC
++ P.156  1 39.763
++ P.72   1 41.465
++ P.131  1 41.586
++ P.66   1 41.596
++ P.142  1 42.153
++ P.141  1 42.189
++ P.146  1 42.191
++ P.144  1 42.191
++ P.143  1 42.266
++ P.173  1 42.362
++ N.198  1 42.381
++ P.122  1 42.423
++ P.176  1 42.439
++ P.16   1 42.532
++ P.351  1 42.756
+<none>     42.846
++ P.6    1 43.060
++ P.306  1 43.070
++ P.120  1 43.076
++ P.55   1 43.162
++ P.205  1 43.173
++ P.149  1 43.297
++ P.130  1 43.305
++ P.262  1 43.418
++ P.264  1 43.504
++ P.105  1 43.531
++ N.21   1 43.565
++ P.64   1 43.568
++ P.154  1 43.598
++ P.167  1 43.630
++ P.194  1 43.650
++ P.110  1 43.651
++ P.218  1 43.755
++ P.197  1 43.760
++ P.209  1 43.763
++ P.2    1 43.846
++ P.44   1 43.884
++ P.285  1 43.907
++ P.103  1 43.931
++ P.121  1 43.939
++ P.147  1 44.038
++ P.275  1 44.067
++ N.149  1 44.069
++ P.269  1 44.075
++ P.18   1 44.097
++ P.152  1 44.103
++ P.140  1 44.129
++ P.98   1 44.136
++ P.67   1 44.138
++ N.139  1 44.174
++ P.181  1 44.175
++ P.187  1 44.204
++ P.56   1 44.245
++ P.159  1 44.321
++ N.7    1 44.346
++ P.109  1 44.360
++ P.279  1 44.370
++ P.114  1 44.377
++ P.87   1 44.395
++ P.85   1 44.398
++ P.74   1 44.404
++ P.188  1 44.420
++ N.125  1 44.441
++ P.200  1 44.464
++ P.163  1 44.488
++ P.174  1 44.507
++ P.38   1 44.510
++ P.139  1 44.521
++ P.136  1 44.524
++ P.113  1 44.533
++ P.35   1 44.606
++ P.295  1 44.609
++ P.166  1 44.655
++ P.101  1 44.666
++ P.340  1 44.692
++ N.80   1 44.708
++ N.64   1 44.716
++ N.20   1 44.730
++ N.31   1 44.731
++ P.203  1 44.759
++ N.136  1 44.761
++ N.116  1 44.768
++ N.74   1 44.769
++ P.330  1 44.773
++ P.259  1 44.775
++ P.183  1 44.779
++ P.305  1 44.780
++ P.191  1 44.789
++ N.44   1 44.790
++ N.28   1 44.795
++ P.99   1 44.795
++ P.95   1 44.797
++ P.165  1 44.802
++ P.117  1 44.808
++ P.62   1 44.815
++ N.61   1 44.824
++ P.327  1 44.831
++ P.97   1 44.839
++ P.134  1 44.842
++ P.4    1 44.846
++ P.193  1 44.846
++ P.196  1 44.846
+- N.30   1 47.643
+- N.140  1 54.039
+
+Step:  AIC=39.76
+sobject ~ N.30 + N.140 + P.156
+
+        Df    AIC
++ P.340  1 39.436
+<none>     39.763
++ N.7    1 39.819
++ P.139  1 40.414
++ N.21   1 40.501
++ P.117  1 40.517
++ P.152  1 40.779
++ N.31   1 40.835
++ P.264  1 40.949
++ P.110  1 40.980
++ P.285  1 41.071
++ P.97   1 41.151
++ P.114  1 41.175
++ P.85   1 41.230
++ P.209  1 41.250
++ P.159  1 41.269
++ P.143  1 41.288
++ P.131  1 41.320
++ P.64   1 41.344
++ N.198  1 41.345
++ P.163  1 41.356
++ P.95   1 41.366
++ P.38   1 41.366
++ P.259  1 41.371
++ P.166  1 41.376
++ N.116  1 41.384
++ P.18   1 41.425
++ P.109  1 41.429
++ P.275  1 41.441
++ P.72   1 41.444
++ P.146  1 41.446
++ P.121  1 41.451
++ P.188  1 41.470
++ P.67   1 41.485
++ P.183  1 41.485
++ P.35   1 41.498
++ P.194  1 41.512
++ P.105  1 41.523
++ P.147  1 41.529
++ P.134  1 41.547
++ N.61   1 41.552
++ N.44   1 41.568
++ P.66   1 41.588
++ P.176  1 41.601
++ P.149  1 41.617
++ P.2    1 41.628
++ P.122  1 41.635
++ P.200  1 41.638
++ P.197  1 41.643
++ N.139  1 41.646
++ P.351  1 41.647
++ P.306  1 41.663
++ P.98   1 41.676
++ P.305  1 41.690
++ P.74   1 41.691
++ P.113  1 41.700
++ N.64   1 41.703
++ P.218  1 41.709
++ P.56   1 41.714
++ P.181  1 41.714
++ P.141  1 41.714
++ P.87   1 41.718
++ P.140  1 41.719
++ P.136  1 41.720
++ P.4    1 41.723
++ N.149  1 41.724
++ P.6    1 41.726
++ N.74   1 41.727
++ P.99   1 41.733
++ P.174  1 41.739
++ P.295  1 41.741
++ P.62   1 41.742
++ P.103  1 41.745
++ P.44   1 41.748
++ P.187  1 41.748
++ N.28   1 41.749
++ P.191  1 41.750
++ P.193  1 41.751
++ P.262  1 41.752
++ P.130  1 41.753
++ P.55   1 41.753
++ P.154  1 41.755
++ N.136  1 41.755
++ P.142  1 41.755
++ P.120  1 41.756
++ P.173  1 41.756
++ P.327  1 41.757
++ P.330  1 41.758
++ P.16   1 41.759
++ P.203  1 41.759
++ P.167  1 41.759
++ P.279  1 41.760
++ N.125  1 41.760
++ P.165  1 41.761
++ P.269  1 41.761
++ P.144  1 41.762
++ N.80   1 41.762
++ P.101  1 41.762
++ P.205  1 41.762
++ N.20   1 41.763
++ P.196  1 41.763
+- P.156  1 42.846
+- N.140  1 46.415
+- N.30   1 47.995
+
+Step:  AIC=39.44
+sobject ~ N.30 + N.140 + P.156 + P.340
+
+        Df    AIC
++ N.198  1 36.662
++ P.120  1 37.950
++ P.205  1 38.080
++ P.209  1 38.097
++ N.7    1 38.572
++ N.136  1 38.891
++ N.21   1 39.140
++ N.125  1 39.165
+<none>     39.436
++ P.66   1 39.748
+- P.340  1 39.763
++ P.141  1 39.960
++ P.72   1 40.112
++ N.61   1 40.139
++ N.116  1 40.139
++ N.31   1 40.158
++ P.2    1 40.271
++ P.140  1 40.438
++ P.197  1 40.532
++ P.62   1 40.546
++ P.264  1 40.550
++ P.139  1 40.641
++ P.110  1 40.646
++ P.18   1 40.675
++ P.196  1 40.680
++ P.279  1 40.731
++ P.152  1 40.742
++ P.176  1 40.829
++ P.173  1 40.913
++ P.218  1 40.922
++ P.295  1 40.952
++ P.146  1 40.959
++ P.159  1 40.960
++ P.187  1 40.993
++ P.101  1 41.004
++ P.193  1 41.022
++ P.275  1 41.065
++ P.130  1 41.094
++ P.117  1 41.110
++ P.165  1 41.127
++ P.44   1 41.135
++ P.95   1 41.140
++ P.269  1 41.148
++ P.200  1 41.178
++ P.351  1 41.205
++ P.183  1 41.223
++ P.144  1 41.226
++ P.85   1 41.248
++ P.56   1 41.250
++ P.98   1 41.252
++ P.4    1 41.254
++ P.259  1 41.273
++ P.181  1 41.278
++ P.163  1 41.283
++ P.131  1 41.293
++ N.74   1 41.299
++ P.167  1 41.303
++ P.136  1 41.303
++ P.174  1 41.309
++ P.87   1 41.313
++ P.285  1 41.320
++ P.191  1 41.329
++ P.105  1 41.329
++ P.55   1 41.334
++ P.154  1 41.339
++ P.35   1 41.343
++ P.114  1 41.345
++ P.262  1 41.346
++ P.143  1 41.350
++ N.44   1 41.361
++ P.306  1 41.362
++ P.122  1 41.363
++ P.147  1 41.376
++ P.188  1 41.380
++ N.139  1 41.382
++ N.64   1 41.384
++ P.121  1 41.387
++ P.327  1 41.387
++ P.166  1 41.388
++ P.305  1 41.389
++ P.134  1 41.398
++ N.149  1 41.400
++ P.64   1 41.408
++ P.149  1 41.409
++ P.67   1 41.414
++ P.113  1 41.417
++ P.203  1 41.418
++ P.142  1 41.418
++ N.80   1 41.422
++ N.28   1 41.426
++ P.38   1 41.428
++ N.20   1 41.428
++ P.330  1 41.429
++ P.109  1 41.431
++ P.16   1 41.431
++ P.103  1 41.434
++ P.99   1 41.435
++ P.6    1 41.435
++ P.74   1 41.435
++ P.97   1 41.436
++ P.194  1 41.436
+- P.156  1 44.692
+- N.140  1 47.658
+- N.30   1 49.899
+
+Step:  AIC=36.66
+sobject ~ N.30 + N.140 + P.156 + P.340 + N.198
+
+        Df    AIC
++ N.7    1 33.337
++ N.31   1 35.015
++ P.264  1 35.135
++ P.193  1 35.345
++ N.21   1 35.489
++ P.62   1 35.796
++ P.205  1 35.958
++ P.275  1 36.486
++ N.116  1 36.628
++ P.120  1 36.639
+<none>     36.662
++ P.295  1 36.676
++ N.64   1 36.708
++ P.110  1 36.839
++ P.167  1 37.124
++ P.176  1 37.328
++ P.327  1 37.355
++ P.196  1 37.365
++ P.279  1 37.375
++ P.2    1 37.380
++ P.351  1 37.466
++ P.165  1 37.510
++ P.191  1 37.533
++ P.121  1 37.542
++ P.197  1 37.577
++ N.80   1 37.580
++ P.146  1 37.637
++ P.209  1 37.641
++ P.285  1 37.667
++ P.98   1 37.801
++ P.4    1 37.823
++ P.330  1 37.847
++ P.99   1 37.851
++ P.183  1 37.873
++ P.55   1 37.876
++ P.174  1 37.879
++ P.306  1 37.885
++ P.144  1 37.916
++ N.136  1 37.927
++ P.166  1 37.970
++ P.35   1 38.005
++ N.61   1 38.019
++ P.187  1 38.021
++ N.44   1 38.094
++ P.305  1 38.095
++ P.181  1 38.100
++ N.74   1 38.109
++ P.66   1 38.151
++ P.117  1 38.159
++ P.139  1 38.160
++ P.173  1 38.174
++ P.105  1 38.189
++ P.200  1 38.200
++ P.141  1 38.225
++ P.142  1 38.226
++ P.101  1 38.282
++ P.72   1 38.362
++ N.28   1 38.375
++ N.139  1 38.400
++ P.56   1 38.404
++ N.20   1 38.469
++ P.136  1 38.507
++ P.6    1 38.516
++ P.38   1 38.520
++ P.113  1 38.528
++ P.109  1 38.532
++ N.149  1 38.543
++ P.203  1 38.552
++ P.149  1 38.560
++ P.97   1 38.565
++ P.64   1 38.579
++ P.262  1 38.582
++ P.140  1 38.583
++ P.74   1 38.590
++ P.154  1 38.596
++ P.131  1 38.611
++ P.130  1 38.619
++ P.114  1 38.622
++ P.87   1 38.625
++ P.18   1 38.626
++ P.85   1 38.638
++ P.16   1 38.641
++ P.159  1 38.642
++ P.152  1 38.643
++ P.44   1 38.645
++ P.147  1 38.645
++ P.194  1 38.646
++ N.125  1 38.648
++ P.269  1 38.649
++ P.67   1 38.650
++ P.134  1 38.653
++ P.259  1 38.653
++ P.143  1 38.658
++ P.103  1 38.659
++ P.218  1 38.659
++ P.163  1 38.660
++ P.122  1 38.660
++ P.188  1 38.661
++ P.95   1 38.662
+- N.198  1 39.436
+- N.140  1 41.318
+- P.340  1 41.345
+- P.156  1 42.394
+- N.30   1 51.651
+
+Step:  AIC=33.34
+sobject ~ N.30 + N.140 + P.156 + P.340 + N.198 + N.7
+
+Error in fitter(X, Y, strats, offset, init, control, weights = weights,  : 
+	NA/NaN/Inf in foreign function call (arg 6)
+In addition: Warning messages:
+1: No groups of negative coeff. genes that meet the p, minimum correlation and size restrictions. in: dStep2(x, res1, maxSize, minSize, minCor, plot, interactive) 
+2: Loglik converged before variable  1 ; beta may be infinite.  in: coxph.fit.pomelo0(x, sobject, control = coxph.control(iter.max = MaxIterationsCox)) 
+3: No groups of negative coeff. genes that meet the p, minimum correlation and size restrictions. in: dStep2(x, res1, maxSize, minSize, minCor, plot, interactive) 
+4: Loglik converged before variable  1 ; beta may be infinite.  in: coxph.fit.pomelo0(x, sobject, control = coxph.control(iter.max = MaxIterationsCox)) 
+5: Loglik converged before variable  1 ; beta may be infinite.  in: coxph.fit.pomelo0(x, sobject, control = coxph.control(iter.max = MaxIterationsCox)) 
+6: Ran out of iterations and did not converge in: fitter(X, Y, strats, offset, init, control, weights = weights,  
+Start:  AIC=42.85
+sobject ~ N.30 + N.140
+
+        Df    AIC
++ P.156  1 39.763
++ P.72   1 41.465
++ P.131  1 41.586
++ P.66   1 41.596
++ P.142  1 42.153
++ P.141  1 42.189
++ P.146  1 42.191
++ P.144  1 42.191
++ P.143  1 42.266
++ P.173  1 42.362
++ N.198  1 42.381
++ P.122  1 42.423
++ P.176  1 42.439
++ P.16   1 42.532
++ P.351  1 42.756
+<none>     42.846
++ P.6    1 43.060
++ P.306  1 43.070
++ P.120  1 43.076
++ P.55   1 43.162
++ P.205  1 43.173
++ P.149  1 43.297
++ P.130  1 43.305
++ P.262  1 43.418
++ P.264  1 43.504
++ P.105  1 43.531
++ N.21   1 43.565
++ P.64   1 43.568
++ P.154  1 43.598
++ P.167  1 43.630
++ P.194  1 43.650
++ P.110  1 43.651
++ P.218  1 43.755
++ P.197  1 43.760
++ P.209  1 43.763
++ P.2    1 43.846
++ P.44   1 43.884
++ P.285  1 43.907
++ P.103  1 43.931
++ P.121  1 43.939
++ P.147  1 44.038
++ P.275  1 44.067
++ N.149  1 44.069
++ P.269  1 44.075
++ P.18   1 44.097
++ P.152  1 44.103
++ P.140  1 44.129
++ P.98   1 44.136
++ P.67   1 44.138
++ N.139  1 44.174
++ P.181  1 44.175
++ P.187  1 44.204
++ P.56   1 44.245
++ P.159  1 44.321
++ N.7    1 44.346
++ P.109  1 44.360
++ P.279  1 44.370
++ P.114  1 44.377
++ P.87   1 44.395
++ P.85   1 44.398
++ P.74   1 44.404
++ P.188  1 44.420
++ N.125  1 44.441
++ P.200  1 44.464
++ P.163  1 44.488
++ P.174  1 44.507
++ P.38   1 44.510
++ P.139  1 44.521
++ P.136  1 44.524
++ P.113  1 44.533
++ P.35   1 44.606
++ P.295  1 44.609
++ P.166  1 44.655
++ P.101  1 44.666
++ P.340  1 44.692
++ N.80   1 44.708
++ N.64   1 44.716
++ N.20   1 44.730
++ N.31   1 44.731
++ P.203  1 44.759
++ N.136  1 44.761
++ N.116  1 44.768
++ N.74   1 44.769
++ P.330  1 44.773
++ P.259  1 44.775
++ P.183  1 44.779
++ P.305  1 44.780
++ P.191  1 44.789
++ N.44   1 44.790
++ N.28   1 44.795
++ P.99   1 44.795
++ P.95   1 44.797
++ P.165  1 44.802
++ P.117  1 44.808
++ P.62   1 44.815
++ N.61   1 44.824
++ P.327  1 44.831
++ P.97   1 44.839
++ P.134  1 44.842
++ P.4    1 44.846
++ P.193  1 44.846
++ P.196  1 44.846
+
+Step:  AIC=39.76
+sobject ~ N.30 + N.140 + P.156
+
+        Df    AIC
++ P.340  1 39.436
+<none>     39.763
++ N.7    1 39.819
++ P.139  1 40.414
++ N.21   1 40.501
++ P.117  1 40.517
++ P.152  1 40.779
++ N.31   1 40.835
++ P.264  1 40.949
++ P.110  1 40.980
++ P.285  1 41.071
++ P.97   1 41.151
++ P.114  1 41.175
++ P.85   1 41.230
++ P.209  1 41.250
++ P.159  1 41.269
++ P.143  1 41.288
++ P.131  1 41.320
++ P.64   1 41.344
++ N.198  1 41.345
++ P.163  1 41.356
++ P.95   1 41.366
++ P.38   1 41.366
++ P.259  1 41.371
++ P.166  1 41.376
++ N.116  1 41.384
++ P.18   1 41.425
++ P.109  1 41.429
++ P.275  1 41.441
++ P.72   1 41.444
++ P.146  1 41.446
++ P.121  1 41.451
++ P.188  1 41.470
++ P.67   1 41.485
++ P.183  1 41.485
++ P.35   1 41.498
++ P.194  1 41.512
++ P.105  1 41.523
++ P.147  1 41.529
++ P.134  1 41.547
++ N.61   1 41.552
++ N.44   1 41.568
++ P.66   1 41.588
++ P.176  1 41.601
++ P.149  1 41.617
++ P.2    1 41.628
++ P.122  1 41.635
++ P.200  1 41.638
++ P.197  1 41.643
++ N.139  1 41.646
++ P.351  1 41.647
++ P.306  1 41.663
++ P.98   1 41.676
++ P.305  1 41.690
++ P.74   1 41.691
++ P.113  1 41.700
++ N.64   1 41.703
++ P.218  1 41.709
++ P.56   1 41.714
++ P.181  1 41.714
++ P.141  1 41.714
++ P.87   1 41.718
++ P.140  1 41.719
++ P.136  1 41.720
++ P.4    1 41.723
++ N.149  1 41.724
++ P.6    1 41.726
++ N.74   1 41.727
++ P.99   1 41.733
++ P.174  1 41.739
++ P.295  1 41.741
++ P.62   1 41.742
++ P.103  1 41.745
++ P.44   1 41.748
++ P.187  1 41.748
++ N.28   1 41.749
++ P.191  1 41.750
++ P.193  1 41.751
++ P.262  1 41.752
++ P.130  1 41.753
++ P.55   1 41.753
++ P.154  1 41.755
++ N.136  1 41.755
++ P.142  1 41.755
++ P.120  1 41.756
++ P.173  1 41.756
++ P.327  1 41.757
++ P.330  1 41.758
++ P.16   1 41.759
++ P.203  1 41.759
++ P.167  1 41.759
++ P.279  1 41.760
++ N.125  1 41.760
++ P.165  1 41.761
++ P.269  1 41.761
++ P.144  1 41.762
++ N.80   1 41.762
++ P.101  1 41.762
++ P.205  1 41.762
++ N.20   1 41.763
++ P.196  1 41.763
+
+Step:  AIC=39.44
+sobject ~ N.30 + N.140 + P.156 + P.340
+
+        Df    AIC
++ N.198  1 36.662
++ P.120  1 37.950
++ P.205  1 38.080
++ P.209  1 38.097
++ N.7    1 38.572
++ N.136  1 38.891
++ N.21   1 39.140
++ N.125  1 39.165
+<none>     39.436
++ P.66   1 39.748
++ P.141  1 39.960
++ P.72   1 40.112
++ N.61   1 40.139
++ N.116  1 40.139
++ N.31   1 40.158
++ P.2    1 40.271
++ P.140  1 40.438
++ P.197  1 40.532
++ P.62   1 40.546
++ P.264  1 40.550
++ P.139  1 40.641
++ P.110  1 40.646
++ P.18   1 40.675
++ P.196  1 40.680
++ P.279  1 40.731
++ P.152  1 40.742
++ P.176  1 40.829
++ P.173  1 40.913
++ P.218  1 40.922
++ P.295  1 40.952
++ P.146  1 40.959
++ P.159  1 40.960
++ P.187  1 40.993
++ P.101  1 41.004
++ P.193  1 41.022
++ P.275  1 41.065
++ P.130  1 41.094
++ P.117  1 41.110
++ P.165  1 41.127
++ P.44   1 41.135
++ P.95   1 41.140
++ P.269  1 41.148
++ P.200  1 41.178
++ P.351  1 41.205
++ P.183  1 41.223
++ P.144  1 41.226
++ P.85   1 41.248
++ P.56   1 41.250
++ P.98   1 41.252
++ P.4    1 41.254
++ P.259  1 41.273
++ P.181  1 41.278
++ P.163  1 41.283
++ P.131  1 41.293
++ N.74   1 41.299
++ P.167  1 41.303
++ P.136  1 41.303
++ P.174  1 41.309
++ P.87   1 41.313
++ P.285  1 41.320
++ P.191  1 41.329
++ P.105  1 41.329
++ P.55   1 41.334
++ P.154  1 41.339
++ P.35   1 41.343
++ P.114  1 41.345
++ P.262  1 41.346
++ P.143  1 41.350
++ N.44   1 41.361
++ P.306  1 41.362
++ P.122  1 41.363
++ P.147  1 41.376
++ P.188  1 41.380
++ N.139  1 41.382
++ N.64   1 41.384
++ P.121  1 41.387
++ P.327  1 41.387
++ P.166  1 41.388
++ P.305  1 41.389
++ P.134  1 41.398
++ N.149  1 41.400
++ P.64   1 41.408
++ P.149  1 41.409
++ P.67   1 41.414
++ P.113  1 41.417
++ P.203  1 41.418
++ P.142  1 41.418
++ N.80   1 41.422
++ N.28   1 41.426
++ P.38   1 41.428
++ N.20   1 41.428
++ P.330  1 41.429
++ P.109  1 41.431
++ P.16   1 41.431
++ P.103  1 41.434
++ P.99   1 41.435
++ P.6    1 41.435
++ P.74   1 41.435
++ P.97   1 41.436
++ P.194  1 41.436
+
+Step:  AIC=36.66
+sobject ~ N.30 + N.140 + P.156 + P.340 + N.198
+
+        Df    AIC
++ N.7    1 33.337
++ N.31   1 35.015
++ P.264  1 35.135
++ P.193  1 35.345
++ N.21   1 35.489
++ P.62   1 35.796
++ P.205  1 35.958
++ P.275  1 36.486
++ N.116  1 36.628
++ P.120  1 36.639
+<none>     36.662
++ P.295  1 36.676
++ N.64   1 36.708
++ P.110  1 36.839
++ P.167  1 37.124
++ P.176  1 37.328
++ P.327  1 37.355
++ P.196  1 37.365
++ P.279  1 37.375
++ P.2    1 37.380
++ P.351  1 37.466
++ P.165  1 37.510
++ P.191  1 37.533
++ P.121  1 37.542
++ P.197  1 37.577
++ N.80   1 37.580
++ P.146  1 37.637
++ P.209  1 37.641
++ P.285  1 37.667
++ P.98   1 37.801
++ P.4    1 37.823
++ P.330  1 37.847
++ P.99   1 37.851
++ P.183  1 37.873
++ P.55   1 37.876
++ P.174  1 37.879
++ P.306  1 37.885
++ P.144  1 37.916
++ N.136  1 37.927
++ P.166  1 37.970
++ P.35   1 38.005
++ N.61   1 38.019
++ P.187  1 38.021
++ N.44   1 38.094
++ P.305  1 38.095
++ P.181  1 38.100
++ N.74   1 38.109
++ P.66   1 38.151
++ P.117  1 38.159
++ P.139  1 38.160
++ P.173  1 38.174
++ P.105  1 38.189
++ P.200  1 38.200
++ P.141  1 38.225
++ P.142  1 38.226
++ P.101  1 38.282
++ P.72   1 38.362
++ N.28   1 38.375
++ N.139  1 38.400
++ P.56   1 38.404
++ N.20   1 38.469
++ P.136  1 38.507
++ P.6    1 38.516
++ P.38   1 38.520
++ P.113  1 38.528
++ P.109  1 38.532
++ N.149  1 38.543
++ P.203  1 38.552
++ P.149  1 38.560
++ P.97   1 38.565
++ P.64   1 38.579
++ P.262  1 38.582
++ P.140  1 38.583
++ P.74   1 38.590
++ P.154  1 38.596
++ P.131  1 38.611
++ P.130  1 38.619
++ P.114  1 38.622
++ P.87   1 38.625
++ P.18   1 38.626
++ P.85   1 38.638
++ P.16   1 38.641
++ P.159  1 38.642
++ P.152  1 38.643
++ P.44   1 38.645
++ P.147  1 38.645
++ P.194  1 38.646
++ N.125  1 38.648
++ P.269  1 38.649
++ P.67   1 38.650
++ P.134  1 38.653
++ P.259  1 38.653
++ P.143  1 38.658
++ P.103  1 38.659
++ P.218  1 38.659
++ P.163  1 38.660
++ P.122  1 38.660
++ P.188  1 38.661
++ P.95   1 38.662
+
+Step:  AIC=33.34
+sobject ~ N.30 + N.140 + P.156 + P.340 + N.198 + N.7
+
+Error in fitter(X, Y, strats, offset, init, control, weights = weights,  : 
+	NA/NaN/Inf in foreign function call (arg 6)
+In addition: Warning message:
+Ran out of iterations and did not converge in: fitter(X, Y, strats, offset, init, control, weights = weights,  
+Start:  AIC=42.85
+sobject ~ N.30 + N.140
+
+        Df    AIC
++ P.156  1 39.763
++ P.72   1 41.465
++ P.131  1 41.586
++ P.66   1 41.596
++ P.142  1 42.153
++ P.141  1 42.189
++ P.146  1 42.191
++ P.144  1 42.191
++ P.143  1 42.266
++ P.173  1 42.362
++ N.198  1 42.381
++ P.122  1 42.423
++ P.176  1 42.439
++ P.16   1 42.532
++ P.351  1 42.756
+<none>     42.846
++ P.6    1 43.060
++ P.306  1 43.070
++ P.120  1 43.076
++ P.55   1 43.162
++ P.205  1 43.173
++ P.149  1 43.297
++ P.130  1 43.305
++ P.262  1 43.418
++ P.264  1 43.504
++ P.105  1 43.531
++ N.21   1 43.565
++ P.64   1 43.568
++ P.154  1 43.598
++ P.167  1 43.630
++ P.194  1 43.650
++ P.110  1 43.651
++ P.218  1 43.755
++ P.197  1 43.760
++ P.209  1 43.763
++ P.2    1 43.846
++ P.44   1 43.884
++ P.285  1 43.907
++ P.103  1 43.931
++ P.121  1 43.939
++ P.147  1 44.038
++ P.275  1 44.067
++ N.149  1 44.069
++ P.269  1 44.075
++ P.18   1 44.097
++ P.152  1 44.103
++ P.140  1 44.129
++ P.98   1 44.136
++ P.67   1 44.138
++ N.139  1 44.174
++ P.181  1 44.175
++ P.187  1 44.204
++ P.56   1 44.245
++ P.159  1 44.321
++ N.7    1 44.346
++ P.109  1 44.360
++ P.279  1 44.370
++ P.114  1 44.377
++ P.87   1 44.395
++ P.85   1 44.398
++ P.74   1 44.404
++ P.188  1 44.420
++ N.125  1 44.441
++ P.200  1 44.464
++ P.163  1 44.488
++ P.174  1 44.507
++ P.38   1 44.510
++ P.139  1 44.521
++ P.136  1 44.524
++ P.113  1 44.533
++ P.35   1 44.606
++ P.295  1 44.609
++ P.166  1 44.655
++ P.101  1 44.666
++ P.340  1 44.692
++ N.80   1 44.708
++ N.64   1 44.716
++ N.20   1 44.730
++ N.31   1 44.731
++ P.203  1 44.759
++ N.136  1 44.761
++ N.116  1 44.768
++ N.74   1 44.769
++ P.330  1 44.773
++ P.259  1 44.775
++ P.183  1 44.779
++ P.305  1 44.780
++ P.191  1 44.789
++ N.44   1 44.790
++ N.28   1 44.795
++ P.99   1 44.795
++ P.95   1 44.797
++ P.165  1 44.802
++ P.117  1 44.808
++ P.62   1 44.815
++ N.61   1 44.824
++ P.327  1 44.831
++ P.97   1 44.839
++ P.134  1 44.842
++ P.4    1 44.846
++ P.193  1 44.846
++ P.196  1 44.846
+
+Step:  AIC=39.76
+sobject ~ N.30 + N.140 + P.156
+
+        Df    AIC
++ P.340  1 39.436
+<none>     39.763
++ N.7    1 39.819
++ P.139  1 40.414
++ N.21   1 40.501
++ P.117  1 40.517
++ P.152  1 40.779
++ N.31   1 40.835
++ P.264  1 40.949
++ P.110  1 40.980
++ P.285  1 41.071
++ P.97   1 41.151
++ P.114  1 41.175
++ P.85   1 41.230
++ P.209  1 41.250
++ P.159  1 41.269
++ P.143  1 41.288
++ P.131  1 41.320
++ P.64   1 41.344
++ N.198  1 41.345
++ P.163  1 41.356
++ P.95   1 41.366
++ P.38   1 41.366
++ P.259  1 41.371
++ P.166  1 41.376
++ N.116  1 41.384
++ P.18   1 41.425
++ P.109  1 41.429
++ P.275  1 41.441
++ P.72   1 41.444
++ P.146  1 41.446
++ P.121  1 41.451
++ P.188  1 41.470
++ P.67   1 41.485
++ P.183  1 41.485
++ P.35   1 41.498
++ P.194  1 41.512
++ P.105  1 41.523
++ P.147  1 41.529
++ P.134  1 41.547
++ N.61   1 41.552
++ N.44   1 41.568
++ P.66   1 41.588
++ P.176  1 41.601
++ P.149  1 41.617
++ P.2    1 41.628
++ P.122  1 41.635
++ P.200  1 41.638
++ P.197  1 41.643
++ N.139  1 41.646
++ P.351  1 41.647
++ P.306  1 41.663
++ P.98   1 41.676
++ P.305  1 41.690
++ P.74   1 41.691
++ P.113  1 41.700
++ N.64   1 41.703
++ P.218  1 41.709
++ P.56   1 41.714
++ P.181  1 41.714
++ P.141  1 41.714
++ P.87   1 41.718
++ P.140  1 41.719
++ P.136  1 41.720
++ P.4    1 41.723
++ N.149  1 41.724
++ P.6    1 41.726
++ N.74   1 41.727
++ P.99   1 41.733
++ P.174  1 41.739
++ P.295  1 41.741
++ P.62   1 41.742
++ P.103  1 41.745
++ P.44   1 41.748
++ P.187  1 41.748
++ N.28   1 41.749
++ P.191  1 41.750
++ P.193  1 41.751
++ P.262  1 41.752
++ P.130  1 41.753
++ P.55   1 41.753
++ P.154  1 41.755
++ N.136  1 41.755
++ P.142  1 41.755
++ P.120  1 41.756
++ P.173  1 41.756
++ P.327  1 41.757
++ P.330  1 41.758
++ P.16   1 41.759
++ P.203  1 41.759
++ P.167  1 41.759
++ P.279  1 41.760
++ N.125  1 41.760
++ P.165  1 41.761
++ P.269  1 41.761
++ P.144  1 41.762
++ N.80   1 41.762
++ P.101  1 41.762
++ P.205  1 41.762
++ N.20   1 41.763
++ P.196  1 41.763
+
+Step:  AIC=39.44
+sobject ~ N.30 + N.140 + P.156 + P.340
+
+        Df    AIC
++ N.198  1 36.662
++ P.120  1 37.950
++ P.205  1 38.080
++ P.209  1 38.097
++ N.7    1 38.572
++ N.136  1 38.891
++ N.21   1 39.140
++ N.125  1 39.165
+<none>     39.436
++ P.66   1 39.748
++ P.141  1 39.960
++ P.72   1 40.112
++ N.61   1 40.139
++ N.116  1 40.139
++ N.31   1 40.158
++ P.2    1 40.271
++ P.140  1 40.438
++ P.197  1 40.532
++ P.62   1 40.546
++ P.264  1 40.550
++ P.139  1 40.641
++ P.110  1 40.646
++ P.18   1 40.675
++ P.196  1 40.680
++ P.279  1 40.731
++ P.152  1 40.742
++ P.176  1 40.829
++ P.173  1 40.913
++ P.218  1 40.922
++ P.295  1 40.952
++ P.146  1 40.959
++ P.159  1 40.960
++ P.187  1 40.993
++ P.101  1 41.004
++ P.193  1 41.022
++ P.275  1 41.065
++ P.130  1 41.094
++ P.117  1 41.110
++ P.165  1 41.127
++ P.44   1 41.135
++ P.95   1 41.140
++ P.269  1 41.148
++ P.200  1 41.178
++ P.351  1 41.205
++ P.183  1 41.223
++ P.144  1 41.226
++ P.85   1 41.248
++ P.56   1 41.250
++ P.98   1 41.252
++ P.4    1 41.254
++ P.259  1 41.273
++ P.181  1 41.278
++ P.163  1 41.283
++ P.131  1 41.293
++ N.74   1 41.299
++ P.167  1 41.303
++ P.136  1 41.303
++ P.174  1 41.309
++ P.87   1 41.313
++ P.285  1 41.320
++ P.191  1 41.329
++ P.105  1 41.329
++ P.55   1 41.334
++ P.154  1 41.339
++ P.35   1 41.343
++ P.114  1 41.345
++ P.262  1 41.346
++ P.143  1 41.350
++ N.44   1 41.361
++ P.306  1 41.362
++ P.122  1 41.363
++ P.147  1 41.376
++ P.188  1 41.380
++ N.139  1 41.382
++ N.64   1 41.384
++ P.121  1 41.387
++ P.327  1 41.387
++ P.166  1 41.388
++ P.305  1 41.389
++ P.134  1 41.398
++ N.149  1 41.400
++ P.64   1 41.408
++ P.149  1 41.409
++ P.67   1 41.414
++ P.113  1 41.417
++ P.203  1 41.418
++ P.142  1 41.418
++ N.80   1 41.422
++ N.28   1 41.426
++ P.38   1 41.428
++ N.20   1 41.428
++ P.330  1 41.429
++ P.109  1 41.431
++ P.16   1 41.431
++ P.103  1 41.434
++ P.99   1 41.435
++ P.6    1 41.435
++ P.74   1 41.435
++ P.97   1 41.436
++ P.194  1 41.436
+
+Step:  AIC=36.66
+sobject ~ N.30 + N.140 + P.156 + P.340 + N.198
+
+        Df    AIC
++ N.7    1 33.337
++ N.31   1 35.015
++ P.264  1 35.135
++ P.193  1 35.345
++ N.21   1 35.489
++ P.62   1 35.796
++ P.205  1 35.958
++ P.275  1 36.486
++ N.116  1 36.628
++ P.120  1 36.639
+<none>     36.662
++ P.295  1 36.676
++ N.64   1 36.708
++ P.110  1 36.839
++ P.167  1 37.124
++ P.176  1 37.328
++ P.327  1 37.355
++ P.196  1 37.365
++ P.279  1 37.375
++ P.2    1 37.380
++ P.351  1 37.466
++ P.165  1 37.510
++ P.191  1 37.533
++ P.121  1 37.542
++ P.197  1 37.577
++ N.80   1 37.580
++ P.146  1 37.637
++ P.209  1 37.641
++ P.285  1 37.667
++ P.98   1 37.801
++ P.4    1 37.823
++ P.330  1 37.847
++ P.99   1 37.851
++ P.183  1 37.873
++ P.55   1 37.876
++ P.174  1 37.879
++ P.306  1 37.885
++ P.144  1 37.916
++ N.136  1 37.927
++ P.166  1 37.970
++ P.35   1 38.005
++ N.61   1 38.019
++ P.187  1 38.021
++ N.44   1 38.094
++ P.305  1 38.095
++ P.181  1 38.100
++ N.74   1 38.109
++ P.66   1 38.151
++ P.117  1 38.159
++ P.139  1 38.160
++ P.173  1 38.174
++ P.105  1 38.189
++ P.200  1 38.200
++ P.141  1 38.225
++ P.142  1 38.226
++ P.101  1 38.282
++ P.72   1 38.362
++ N.28   1 38.375
++ N.139  1 38.400
++ P.56   1 38.404
++ N.20   1 38.469
++ P.136  1 38.507
++ P.6    1 38.516
++ P.38   1 38.520
++ P.113  1 38.528
++ P.109  1 38.532
++ N.149  1 38.543
++ P.203  1 38.552
++ P.149  1 38.560
++ P.97   1 38.565
++ P.64   1 38.579
++ P.262  1 38.582
++ P.140  1 38.583
++ P.74   1 38.590
++ P.154  1 38.596
++ P.131  1 38.611
++ P.130  1 38.619
++ P.114  1 38.622
++ P.87   1 38.625
++ P.18   1 38.626
++ P.85   1 38.638
++ P.16   1 38.641
++ P.159  1 38.642
++ P.152  1 38.643
++ P.44   1 38.645
++ P.147  1 38.645
++ P.194  1 38.646
++ N.125  1 38.648
++ P.269  1 38.649
++ P.67   1 38.650
++ P.134  1 38.653
++ P.259  1 38.653
++ P.143  1 38.658
++ P.103  1 38.659
++ P.218  1 38.659
++ P.163  1 38.660
++ P.122  1 38.660
++ P.188  1 38.661
++ P.95   1 38.662
+
+Step:  AIC=33.34
+sobject ~ N.30 + N.140 + P.156 + P.340 + N.198 + N.7
+
+Error in fitter(X, Y, strats, offset, init, control, weights = weights,  : 
+	NA/NaN/Inf in foreign function call (arg 6)
+In addition: Warning message:
+Ran out of iterations and did not converge in: fitter(X, Y, strats, offset, init, control, weights = weights,  
+Start:  AIC=42.85
+sobject ~ N.30 + N.140
+
+        Df    AIC
++ P.156  1 39.763
++ P.72   1 41.465
++ P.131  1 41.586
++ P.66   1 41.596
++ P.142  1 42.153
++ P.141  1 42.189
++ P.146  1 42.191
++ P.144  1 42.191
++ P.143  1 42.266
++ P.173  1 42.362
++ N.198  1 42.381
++ P.122  1 42.423
++ P.176  1 42.439
++ P.16   1 42.532
++ P.351  1 42.756
+<none>     42.846
++ P.6    1 43.060
++ P.306  1 43.070
++ P.120  1 43.076
++ P.55   1 43.162
++ P.205  1 43.173
++ P.149  1 43.297
++ P.130  1 43.305
++ P.262  1 43.418
++ P.264  1 43.504
++ P.105  1 43.531
++ N.21   1 43.565
++ P.64   1 43.568
++ P.154  1 43.598
++ P.167  1 43.630
++ P.194  1 43.650
++ P.110  1 43.651
++ P.218  1 43.755
++ P.197  1 43.760
++ P.209  1 43.763
++ P.2    1 43.846
++ P.44   1 43.884
++ P.285  1 43.907
++ P.103  1 43.931
++ P.121  1 43.939
++ P.147  1 44.038
++ P.275  1 44.067
++ N.149  1 44.069
++ P.269  1 44.075
++ P.18   1 44.097
++ P.152  1 44.103
++ P.140  1 44.129
++ P.98   1 44.136
++ P.67   1 44.138
++ N.139  1 44.174
++ P.181  1 44.175
++ P.187  1 44.204
++ P.56   1 44.245
++ P.159  1 44.321
++ N.7    1 44.346
++ P.109  1 44.360
++ P.279  1 44.370
++ P.114  1 44.377
++ P.87   1 44.395
++ P.85   1 44.398
++ P.74   1 44.404
++ P.188  1 44.420
++ N.125  1 44.441
++ P.200  1 44.464
++ P.163  1 44.488
++ P.174  1 44.507
++ P.38   1 44.510
++ P.139  1 44.521
++ P.136  1 44.524
++ P.113  1 44.533
++ P.35   1 44.606
++ P.295  1 44.609
++ P.166  1 44.655
++ P.101  1 44.666
++ P.340  1 44.692
++ N.80   1 44.708
++ N.64   1 44.716
++ N.20   1 44.730
++ N.31   1 44.731
++ P.203  1 44.759
++ N.136  1 44.761
++ N.116  1 44.768
++ N.74   1 44.769
++ P.330  1 44.773
++ P.259  1 44.775
++ P.183  1 44.779
++ P.305  1 44.780
++ P.191  1 44.789
++ N.44   1 44.790
++ N.28   1 44.795
++ P.99   1 44.795
++ P.95   1 44.797
++ P.165  1 44.802
++ P.117  1 44.808
++ P.62   1 44.815
++ N.61   1 44.824
++ P.327  1 44.831
++ P.97   1 44.839
++ P.134  1 44.842
++ P.4    1 44.846
++ P.193  1 44.846
++ P.196  1 44.846
+
+Step:  AIC=39.76
+sobject ~ N.30 + N.140 + P.156
+
+        Df    AIC
++ P.340  1 39.436
+<none>     39.763
++ N.7    1 39.819
++ P.139  1 40.414
++ N.21   1 40.501
++ P.117  1 40.517
++ P.152  1 40.779
++ N.31   1 40.835
++ P.264  1 40.949
++ P.110  1 40.980
++ P.285  1 41.071
++ P.97   1 41.151
++ P.114  1 41.175
++ P.85   1 41.230
++ P.209  1 41.250
++ P.159  1 41.269
++ P.143  1 41.288
++ P.131  1 41.320
++ P.64   1 41.344
++ N.198  1 41.345
++ P.163  1 41.356
++ P.95   1 41.366
++ P.38   1 41.366
++ P.259  1 41.371
++ P.166  1 41.376
++ N.116  1 41.384
++ P.18   1 41.425
++ P.109  1 41.429
++ P.275  1 41.441
++ P.72   1 41.444
++ P.146  1 41.446
++ P.121  1 41.451
++ P.188  1 41.470
++ P.67   1 41.485
++ P.183  1 41.485
++ P.35   1 41.498
++ P.194  1 41.512
++ P.105  1 41.523
++ P.147  1 41.529
++ P.134  1 41.547
++ N.61   1 41.552
++ N.44   1 41.568
++ P.66   1 41.588
++ P.176  1 41.601
++ P.149  1 41.617
++ P.2    1 41.628
++ P.122  1 41.635
++ P.200  1 41.638
++ P.197  1 41.643
++ N.139  1 41.646
++ P.351  1 41.647
++ P.306  1 41.663
++ P.98   1 41.676
++ P.305  1 41.690
++ P.74   1 41.691
++ P.113  1 41.700
++ N.64   1 41.703
++ P.218  1 41.709
++ P.56   1 41.714
++ P.181  1 41.714
++ P.141  1 41.714
++ P.87   1 41.718
++ P.140  1 41.719
++ P.136  1 41.720
++ P.4    1 41.723
++ N.149  1 41.724
++ P.6    1 41.726
++ N.74   1 41.727
++ P.99   1 41.733
++ P.174  1 41.739
++ P.295  1 41.741
++ P.62   1 41.742
++ P.103  1 41.745
++ P.44   1 41.748
++ P.187  1 41.748
++ N.28   1 41.749
++ P.191  1 41.750
++ P.193  1 41.751
++ P.262  1 41.752
++ P.130  1 41.753
++ P.55   1 41.753
++ P.154  1 41.755
++ N.136  1 41.755
++ P.142  1 41.755
++ P.120  1 41.756
++ P.173  1 41.756
++ P.327  1 41.757
++ P.330  1 41.758
++ P.16   1 41.759
++ P.203  1 41.759
++ P.167  1 41.759
++ P.279  1 41.760
++ N.125  1 41.760
++ P.165  1 41.761
++ P.269  1 41.761
++ P.144  1 41.762
++ N.80   1 41.762
++ P.101  1 41.762
++ P.205  1 41.762
++ N.20   1 41.763
++ P.196  1 41.763
+
+Step:  AIC=39.44
+sobject ~ N.30 + N.140 + P.156 + P.340
+
+        Df    AIC
++ N.198  1 36.662
++ P.120  1 37.950
++ P.205  1 38.080
++ P.209  1 38.097
++ N.7    1 38.572
++ N.136  1 38.891
++ N.21   1 39.140
++ N.125  1 39.165
+<none>     39.436
++ P.66   1 39.748
++ P.141  1 39.960
++ P.72   1 40.112
++ N.61   1 40.139
++ N.116  1 40.139
++ N.31   1 40.158
++ P.2    1 40.271
++ P.140  1 40.438
++ P.197  1 40.532
++ P.62   1 40.546
++ P.264  1 40.550
++ P.139  1 40.641
++ P.110  1 40.646
++ P.18   1 40.675
++ P.196  1 40.680
++ P.279  1 40.731
++ P.152  1 40.742
++ P.176  1 40.829
++ P.173  1 40.913
++ P.218  1 40.922
++ P.295  1 40.952
++ P.146  1 40.959
++ P.159  1 40.960
++ P.187  1 40.993
++ P.101  1 41.004
++ P.193  1 41.022
++ P.275  1 41.065
++ P.130  1 41.094
++ P.117  1 41.110
++ P.165  1 41.127
++ P.44   1 41.135
++ P.95   1 41.140
++ P.269  1 41.148
++ P.200  1 41.178
++ P.351  1 41.205
++ P.183  1 41.223
++ P.144  1 41.226
++ P.85   1 41.248
++ P.56   1 41.250
++ P.98   1 41.252
++ P.4    1 41.254
++ P.259  1 41.273
++ P.181  1 41.278
++ P.163  1 41.283
++ P.131  1 41.293
++ N.74   1 41.299
++ P.167  1 41.303
++ P.136  1 41.303
++ P.174  1 41.309
++ P.87   1 41.313
++ P.285  1 41.320
++ P.191  1 41.329
++ P.105  1 41.329
++ P.55   1 41.334
++ P.154  1 41.339
++ P.35   1 41.343
++ P.114  1 41.345
++ P.262  1 41.346
++ P.143  1 41.350
++ N.44   1 41.361
++ P.306  1 41.362
++ P.122  1 41.363
++ P.147  1 41.376
++ P.188  1 41.380
++ N.139  1 41.382
++ N.64   1 41.384
++ P.121  1 41.387
++ P.327  1 41.387
++ P.166  1 41.388
++ P.305  1 41.389
++ P.134  1 41.398
++ N.149  1 41.400
++ P.64   1 41.408
++ P.149  1 41.409
++ P.67   1 41.414
++ P.113  1 41.417
++ P.203  1 41.418
++ P.142  1 41.418
++ N.80   1 41.422
++ N.28   1 41.426
++ P.38   1 41.428
++ N.20   1 41.428
++ P.330  1 41.429
++ P.109  1 41.431
++ P.16   1 41.431
++ P.103  1 41.434
++ P.99   1 41.435
++ P.6    1 41.435
++ P.74   1 41.435
++ P.97   1 41.436
++ P.194  1 41.436
+
+Step:  AIC=36.66
+sobject ~ N.30 + N.140 + P.156 + P.340 + N.198
+
+        Df    AIC
++ N.7    1 33.337
++ N.31   1 35.015
++ P.264  1 35.135
++ P.193  1 35.345
++ N.21   1 35.489
++ P.62   1 35.796
++ P.205  1 35.958
++ P.275  1 36.486
++ N.116  1 36.628
++ P.120  1 36.639
+<none>     36.662
++ P.295  1 36.676
++ N.64   1 36.708
++ P.110  1 36.839
++ P.167  1 37.124
++ P.176  1 37.328
++ P.327  1 37.355
++ P.196  1 37.365
++ P.279  1 37.375
++ P.2    1 37.380
++ P.351  1 37.466
++ P.165  1 37.510
++ P.191  1 37.533
++ P.121  1 37.542
++ P.197  1 37.577
++ N.80   1 37.580
++ P.146  1 37.637
++ P.209  1 37.641
++ P.285  1 37.667
++ P.98   1 37.801
++ P.4    1 37.823
++ P.330  1 37.847
++ P.99   1 37.851
++ P.183  1 37.873
++ P.55   1 37.876
++ P.174  1 37.879
++ P.306  1 37.885
++ P.144  1 37.916
++ N.136  1 37.927
++ P.166  1 37.970
++ P.35   1 38.005
++ N.61   1 38.019
++ P.187  1 38.021
++ N.44   1 38.094
++ P.305  1 38.095
++ P.181  1 38.100
++ N.74   1 38.109
++ P.66   1 38.151
++ P.117  1 38.159
++ P.139  1 38.160
++ P.173  1 38.174
++ P.105  1 38.189
++ P.200  1 38.200
++ P.141  1 38.225
++ P.142  1 38.226
++ P.101  1 38.282
++ P.72   1 38.362
++ N.28   1 38.375
++ N.139  1 38.400
++ P.56   1 38.404
++ N.20   1 38.469
++ P.136  1 38.507
++ P.6    1 38.516
++ P.38   1 38.520
++ P.113  1 38.528
++ P.109  1 38.532
++ N.149  1 38.543
++ P.203  1 38.552
++ P.149  1 38.560
++ P.97   1 38.565
++ P.64   1 38.579
++ P.262  1 38.582
++ P.140  1 38.583
++ P.74   1 38.590
++ P.154  1 38.596
++ P.131  1 38.611
++ P.130  1 38.619
++ P.114  1 38.622
++ P.87   1 38.625
++ P.18   1 38.626
++ P.85   1 38.638
++ P.16   1 38.641
++ P.159  1 38.642
++ P.152  1 38.643
++ P.44   1 38.645
++ P.147  1 38.645
++ P.194  1 38.646
++ N.125  1 38.648
++ P.269  1 38.649
++ P.67   1 38.650
++ P.134  1 38.653
++ P.259  1 38.653
++ P.143  1 38.658
++ P.103  1 38.659
++ P.218  1 38.659
++ P.163  1 38.660
++ P.122  1 38.660
++ P.188  1 38.661
++ P.95   1 38.662
+
+Step:  AIC=33.34
+sobject ~ N.30 + N.140 + P.156 + P.340 + N.198 + N.7
+
+Error in fitter(X, Y, strats, offset, init, control, weights = weights,  : 
+	NA/NaN/Inf in foreign function call (arg 6)
+In addition: Warning message:
+Ran out of iterations and did not converge in: fitter(X, Y, strats, offset, init, control, weights = weights,  
+Start:  AIC=42.85
+sobject ~ N.30 + N.140
+
+        Df    AIC
++ P.156  1 39.763
++ P.72   1 41.465
++ P.131  1 41.586
++ P.66   1 41.596
++ P.142  1 42.153
++ P.141  1 42.189
++ P.146  1 42.191
++ P.144  1 42.191
++ P.143  1 42.266
++ P.173  1 42.362
++ N.198  1 42.381
++ P.122  1 42.423
++ P.176  1 42.439
++ P.16   1 42.532
++ P.351  1 42.756
+<none>     42.846
++ P.6    1 43.060
++ P.306  1 43.070
++ P.120  1 43.076
++ P.55   1 43.162
++ P.205  1 43.173
++ P.149  1 43.297
++ P.130  1 43.305
++ P.262  1 43.418
++ P.264  1 43.504
++ P.105  1 43.531
++ N.21   1 43.565
++ P.64   1 43.568
++ P.154  1 43.598
++ P.167  1 43.630
++ P.194  1 43.650
++ P.110  1 43.651
++ P.218  1 43.755
++ P.197  1 43.760
++ P.209  1 43.763
++ P.2    1 43.846
++ P.44   1 43.884
++ P.285  1 43.907
++ P.103  1 43.931
++ P.121  1 43.939
++ P.147  1 44.038
++ P.275  1 44.067
++ N.149  1 44.069
++ P.269  1 44.075
++ P.18   1 44.097
++ P.152  1 44.103
++ P.140  1 44.129
++ P.98   1 44.136
++ P.67   1 44.138
++ N.139  1 44.174
++ P.181  1 44.175
++ P.187  1 44.204
++ P.56   1 44.245
++ P.159  1 44.321
++ N.7    1 44.346
++ P.109  1 44.360
++ P.279  1 44.370
++ P.114  1 44.377
++ P.87   1 44.395
++ P.85   1 44.398
++ P.74   1 44.404
++ P.188  1 44.420
++ N.125  1 44.441
++ P.200  1 44.464
++ P.163  1 44.488
++ P.174  1 44.507
++ P.38   1 44.510
++ P.139  1 44.521
++ P.136  1 44.524
++ P.113  1 44.533
++ P.35   1 44.606
++ P.295  1 44.609
++ P.166  1 44.655
++ P.101  1 44.666
++ P.340  1 44.692
++ N.80   1 44.708
++ N.64   1 44.716
++ N.20   1 44.730
++ N.31   1 44.731
++ P.203  1 44.759
++ N.136  1 44.761
++ N.116  1 44.768
++ N.74   1 44.769
++ P.330  1 44.773
++ P.259  1 44.775
++ P.183  1 44.779
++ P.305  1 44.780
++ P.191  1 44.789
++ N.44   1 44.790
++ N.28   1 44.795
++ P.99   1 44.795
++ P.95   1 44.797
++ P.165  1 44.802
++ P.117  1 44.808
++ P.62   1 44.815
++ N.61   1 44.824
++ P.327  1 44.831
++ P.97   1 44.839
++ P.134  1 44.842
++ P.4    1 44.846
++ P.193  1 44.846
++ P.196  1 44.846
+
+Step:  AIC=39.76
+sobject ~ N.30 + N.140 + P.156
+
+        Df    AIC
++ P.340  1 39.436
+<none>     39.763
++ N.7    1 39.819
++ P.139  1 40.414
++ N.21   1 40.501
++ P.117  1 40.517
++ P.152  1 40.779
++ N.31   1 40.835
++ P.264  1 40.949
++ P.110  1 40.980
++ P.285  1 41.071
++ P.97   1 41.151
++ P.114  1 41.175
++ P.85   1 41.230
++ P.209  1 41.250
++ P.159  1 41.269
++ P.143  1 41.288
++ P.131  1 41.320
++ P.64   1 41.344
++ N.198  1 41.345
++ P.163  1 41.356
++ P.95   1 41.366
++ P.38   1 41.366
++ P.259  1 41.371
++ P.166  1 41.376
++ N.116  1 41.384
++ P.18   1 41.425
++ P.109  1 41.429
++ P.275  1 41.441
++ P.72   1 41.444
++ P.146  1 41.446
++ P.121  1 41.451
++ P.188  1 41.470
++ P.67   1 41.485
++ P.183  1 41.485
++ P.35   1 41.498
++ P.194  1 41.512
++ P.105  1 41.523
++ P.147  1 41.529
++ P.134  1 41.547
++ N.61   1 41.552
++ N.44   1 41.568
++ P.66   1 41.588
++ P.176  1 41.601
++ P.149  1 41.617
++ P.2    1 41.628
++ P.122  1 41.635
++ P.200  1 41.638
++ P.197  1 41.643
++ N.139  1 41.646
++ P.351  1 41.647
++ P.306  1 41.663
++ P.98   1 41.676
++ P.305  1 41.690
++ P.74   1 41.691
++ P.113  1 41.700
++ N.64   1 41.703
++ P.218  1 41.709
++ P.56   1 41.714
++ P.181  1 41.714
++ P.141  1 41.714
++ P.87   1 41.718
++ P.140  1 41.719
++ P.136  1 41.720
++ P.4    1 41.723
++ N.149  1 41.724
++ P.6    1 41.726
++ N.74   1 41.727
++ P.99   1 41.733
++ P.174  1 41.739
++ P.295  1 41.741
++ P.62   1 41.742
++ P.103  1 41.745
++ P.44   1 41.748
++ P.187  1 41.748
++ N.28   1 41.749
++ P.191  1 41.750
++ P.193  1 41.751
++ P.262  1 41.752
++ P.130  1 41.753
++ P.55   1 41.753
++ P.154  1 41.755
++ N.136  1 41.755
++ P.142  1 41.755
++ P.120  1 41.756
++ P.173  1 41.756
++ P.327  1 41.757
++ P.330  1 41.758
++ P.16   1 41.759
++ P.203  1 41.759
++ P.167  1 41.759
++ P.279  1 41.760
++ N.125  1 41.760
++ P.165  1 41.761
++ P.269  1 41.761
++ P.144  1 41.762
++ N.80   1 41.762
++ P.101  1 41.762
++ P.205  1 41.762
++ N.20   1 41.763
++ P.196  1 41.763
+
+Step:  AIC=39.44
+sobject ~ N.30 + N.140 + P.156 + P.340
+
+        Df    AIC
++ N.198  1 36.662
++ P.120  1 37.950
++ P.205  1 38.080
++ P.209  1 38.097
++ N.7    1 38.572
++ N.136  1 38.891
++ N.21   1 39.140
++ N.125  1 39.165
+<none>     39.436
++ P.66   1 39.748
++ P.141  1 39.960
++ P.72   1 40.112
++ N.61   1 40.139
++ N.116  1 40.139
++ N.31   1 40.158
++ P.2    1 40.271
++ P.140  1 40.438
++ P.197  1 40.532
++ P.62   1 40.546
++ P.264  1 40.550
++ P.139  1 40.641
++ P.110  1 40.646
++ P.18   1 40.675
++ P.196  1 40.680
++ P.279  1 40.731
++ P.152  1 40.742
++ P.176  1 40.829
++ P.173  1 40.913
++ P.218  1 40.922
++ P.295  1 40.952
++ P.146  1 40.959
++ P.159  1 40.960
++ P.187  1 40.993
++ P.101  1 41.004
++ P.193  1 41.022
++ P.275  1 41.065
++ P.130  1 41.094
++ P.117  1 41.110
++ P.165  1 41.127
++ P.44   1 41.135
++ P.95   1 41.140
++ P.269  1 41.148
++ P.200  1 41.178
++ P.351  1 41.205
++ P.183  1 41.223
++ P.144  1 41.226
++ P.85   1 41.248
++ P.56   1 41.250
++ P.98   1 41.252
++ P.4    1 41.254
++ P.259  1 41.273
++ P.181  1 41.278
++ P.163  1 41.283
++ P.131  1 41.293
++ N.74   1 41.299
++ P.167  1 41.303
++ P.136  1 41.303
++ P.174  1 41.309
++ P.87   1 41.313
++ P.285  1 41.320
++ P.191  1 41.329
++ P.105  1 41.329
++ P.55   1 41.334
++ P.154  1 41.339
++ P.35   1 41.343
++ P.114  1 41.345
++ P.262  1 41.346
++ P.143  1 41.350
++ N.44   1 41.361
++ P.306  1 41.362
++ P.122  1 41.363
++ P.147  1 41.376
++ P.188  1 41.380
++ N.139  1 41.382
++ N.64   1 41.384
++ P.121  1 41.387
++ P.327  1 41.387
++ P.166  1 41.388
++ P.305  1 41.389
++ P.134  1 41.398
++ N.149  1 41.400
++ P.64   1 41.408
++ P.149  1 41.409
++ P.67   1 41.414
++ P.113  1 41.417
++ P.203  1 41.418
++ P.142  1 41.418
++ N.80   1 41.422
++ N.28   1 41.426
++ P.38   1 41.428
++ N.20   1 41.428
++ P.330  1 41.429
++ P.109  1 41.431
++ P.16   1 41.431
++ P.103  1 41.434
++ P.99   1 41.435
++ P.6    1 41.435
++ P.74   1 41.435
++ P.97   1 41.436
++ P.194  1 41.436
+
+Step:  AIC=36.66
+sobject ~ N.30 + N.140 + P.156 + P.340 + N.198
+
+        Df    AIC
++ N.7    1 33.337
++ N.31   1 35.015
++ P.264  1 35.135
++ P.193  1 35.345
++ N.21   1 35.489
++ P.62   1 35.796
++ P.205  1 35.958
++ P.275  1 36.486
++ N.116  1 36.628
++ P.120  1 36.639
+<none>     36.662
++ P.295  1 36.676
++ N.64   1 36.708
++ P.110  1 36.839
++ P.167  1 37.124
++ P.176  1 37.328
++ P.327  1 37.355
++ P.196  1 37.365
++ P.279  1 37.375
++ P.2    1 37.380
++ P.351  1 37.466
++ P.165  1 37.510
++ P.191  1 37.533
++ P.121  1 37.542
++ P.197  1 37.577
++ N.80   1 37.580
++ P.146  1 37.637
++ P.209  1 37.641
++ P.285  1 37.667
++ P.98   1 37.801
++ P.4    1 37.823
++ P.330  1 37.847
++ P.99   1 37.851
++ P.183  1 37.873
++ P.55   1 37.876
++ P.174  1 37.879
++ P.306  1 37.885
++ P.144  1 37.916
++ N.136  1 37.927
++ P.166  1 37.970
++ P.35   1 38.005
++ N.61   1 38.019
++ P.187  1 38.021
++ N.44   1 38.094
++ P.305  1 38.095
++ P.181  1 38.100
++ N.74   1 38.109
++ P.66   1 38.151
++ P.117  1 38.159
++ P.139  1 38.160
++ P.173  1 38.174
++ P.105  1 38.189
++ P.200  1 38.200
++ P.141  1 38.225
++ P.142  1 38.226
++ P.101  1 38.282
++ P.72   1 38.362
++ N.28   1 38.375
++ N.139  1 38.400
++ P.56   1 38.404
++ N.20   1 38.469
++ P.136  1 38.507
++ P.6    1 38.516
++ P.38   1 38.520
++ P.113  1 38.528
++ P.109  1 38.532
++ N.149  1 38.543
++ P.203  1 38.552
++ P.149  1 38.560
++ P.97   1 38.565
++ P.64   1 38.579
++ P.262  1 38.582
++ P.140  1 38.583
++ P.74   1 38.590
++ P.154  1 38.596
++ P.131  1 38.611
++ P.130  1 38.619
++ P.114  1 38.622
++ P.87   1 38.625
++ P.18   1 38.626
++ P.85   1 38.638
++ P.16   1 38.641
++ P.159  1 38.642
++ P.152  1 38.643
++ P.44   1 38.645
++ P.147  1 38.645
++ P.194  1 38.646
++ N.125  1 38.648
++ P.269  1 38.649
++ P.67   1 38.650
++ P.134  1 38.653
++ P.259  1 38.653
++ P.143  1 38.658
++ P.103  1 38.659
++ P.218  1 38.659
++ P.163  1 38.660
++ P.122  1 38.660
++ P.188  1 38.661
++ P.95   1 38.662
+
+Step:  AIC=33.34
+sobject ~ N.30 + N.140 + P.156 + P.340 + N.198 + N.7
+
+Error in fitter(X, Y, strats, offset, init, control, weights = weights,  : 
+	NA/NaN/Inf in foreign function call (arg 6)
+In addition: Warning message:
+Ran out of iterations and did not converge in: fitter(X, Y, strats, offset, init, control, weights = weights,  
+Start:  AIC=42.85
+sobject ~ N.30 + N.140
+
+        Df    AIC
++ P.156  1 39.763
++ P.72   1 41.465
++ P.131  1 41.586
++ P.66   1 41.596
++ P.142  1 42.153
++ P.141  1 42.189
++ P.146  1 42.191
++ P.144  1 42.191
++ P.143  1 42.266
++ P.173  1 42.362
++ N.198  1 42.381
++ P.122  1 42.423
++ P.176  1 42.439
++ P.16   1 42.532
++ P.351  1 42.756
+<none>     42.846
++ P.6    1 43.060
++ P.306  1 43.070
++ P.120  1 43.076
++ P.55   1 43.162
++ P.205  1 43.173
++ P.149  1 43.297
++ P.130  1 43.305
++ P.262  1 43.418
++ P.264  1 43.504
++ P.105  1 43.531
++ N.21   1 43.565
++ P.64   1 43.568
++ P.154  1 43.598
++ P.167  1 43.630
++ P.194  1 43.650
++ P.110  1 43.651
++ P.218  1 43.755
++ P.197  1 43.760
++ P.209  1 43.763
++ P.2    1 43.846
++ P.44   1 43.884
++ P.285  1 43.907
++ P.103  1 43.931
++ P.121  1 43.939
++ P.147  1 44.038
++ P.275  1 44.067
++ N.149  1 44.069
++ P.269  1 44.075
++ P.18   1 44.097
++ P.152  1 44.103
++ P.140  1 44.129
++ P.98   1 44.136
++ P.67   1 44.138
++ N.139  1 44.174
++ P.181  1 44.175
++ P.187  1 44.204
++ P.56   1 44.245
++ P.159  1 44.321
++ N.7    1 44.346
++ P.109  1 44.360
++ P.279  1 44.370
++ P.114  1 44.377
++ P.87   1 44.395
++ P.85   1 44.398
++ P.74   1 44.404
++ P.188  1 44.420
++ N.125  1 44.441
++ P.200  1 44.464
++ P.163  1 44.488
++ P.174  1 44.507
++ P.38   1 44.510
++ P.139  1 44.521
++ P.136  1 44.524
++ P.113  1 44.533
++ P.35   1 44.606
++ P.295  1 44.609
++ P.166  1 44.655
++ P.101  1 44.666
++ P.340  1 44.692
++ N.80   1 44.708
++ N.64   1 44.716
++ N.20   1 44.730
++ N.31   1 44.731
++ P.203  1 44.759
++ N.136  1 44.761
++ N.116  1 44.768
++ N.74   1 44.769
++ P.330  1 44.773
++ P.259  1 44.775
++ P.183  1 44.779
++ P.305  1 44.780
++ P.191  1 44.789
++ N.44   1 44.790
++ N.28   1 44.795
++ P.99   1 44.795
++ P.95   1 44.797
++ P.165  1 44.802
++ P.117  1 44.808
++ P.62   1 44.815
++ N.61   1 44.824
++ P.327  1 44.831
++ P.97   1 44.839
++ P.134  1 44.842
++ P.4    1 44.846
++ P.193  1 44.846
++ P.196  1 44.846
+
+Step:  AIC=39.76
+sobject ~ N.30 + N.140 + P.156
+
+        Df    AIC
++ P.340  1 39.436
+<none>     39.763
++ N.7    1 39.819
++ P.139  1 40.414
++ N.21   1 40.501
++ P.117  1 40.517
++ P.152  1 40.779
++ N.31   1 40.835
++ P.264  1 40.949
++ P.110  1 40.980
++ P.285  1 41.071
++ P.97   1 41.151
++ P.114  1 41.175
++ P.85   1 41.230
++ P.209  1 41.250
++ P.159  1 41.269
++ P.143  1 41.288
++ P.131  1 41.320
++ P.64   1 41.344
++ N.198  1 41.345
++ P.163  1 41.356
++ P.95   1 41.366
++ P.38   1 41.366
++ P.259  1 41.371
++ P.166  1 41.376
++ N.116  1 41.384
++ P.18   1 41.425
++ P.109  1 41.429
++ P.275  1 41.441
++ P.72   1 41.444
++ P.146  1 41.446
++ P.121  1 41.451
++ P.188  1 41.470
++ P.67   1 41.485
++ P.183  1 41.485
++ P.35   1 41.498
++ P.194  1 41.512
++ P.105  1 41.523
++ P.147  1 41.529
++ P.134  1 41.547
++ N.61   1 41.552
++ N.44   1 41.568
++ P.66   1 41.588
++ P.176  1 41.601
++ P.149  1 41.617
++ P.2    1 41.628
++ P.122  1 41.635
++ P.200  1 41.638
++ P.197  1 41.643
++ N.139  1 41.646
++ P.351  1 41.647
++ P.306  1 41.663
++ P.98   1 41.676
++ P.305  1 41.690
++ P.74   1 41.691
++ P.113  1 41.700
++ N.64   1 41.703
++ P.218  1 41.709
++ P.56   1 41.714
++ P.181  1 41.714
++ P.141  1 41.714
++ P.87   1 41.718
++ P.140  1 41.719
++ P.136  1 41.720
++ P.4    1 41.723
++ N.149  1 41.724
++ P.6    1 41.726
++ N.74   1 41.727
++ P.99   1 41.733
++ P.174  1 41.739
++ P.295  1 41.741
++ P.62   1 41.742
++ P.103  1 41.745
++ P.44   1 41.748
++ P.187  1 41.748
++ N.28   1 41.749
++ P.191  1 41.750
++ P.193  1 41.751
++ P.262  1 41.752
++ P.130  1 41.753
++ P.55   1 41.753
++ P.154  1 41.755
++ N.136  1 41.755
++ P.142  1 41.755
++ P.120  1 41.756
++ P.173  1 41.756
++ P.327  1 41.757
++ P.330  1 41.758
++ P.16   1 41.759
++ P.203  1 41.759
++ P.167  1 41.759
++ P.279  1 41.760
++ N.125  1 41.760
++ P.165  1 41.761
++ P.269  1 41.761
++ P.144  1 41.762
++ N.80   1 41.762
++ P.101  1 41.762
++ P.205  1 41.762
++ N.20   1 41.763
++ P.196  1 41.763
+
+Step:  AIC=39.44
+sobject ~ N.30 + N.140 + P.156 + P.340
+
+        Df    AIC
++ N.198  1 36.662
++ P.120  1 37.950
++ P.205  1 38.080
++ P.209  1 38.097
++ N.7    1 38.572
++ N.136  1 38.891
++ N.21   1 39.140
++ N.125  1 39.165
+<none>     39.436
++ P.66   1 39.748
++ P.141  1 39.960
++ P.72   1 40.112
++ N.61   1 40.139
++ N.116  1 40.139
++ N.31   1 40.158
++ P.2    1 40.271
++ P.140  1 40.438
++ P.197  1 40.532
++ P.62   1 40.546
++ P.264  1 40.550
++ P.139  1 40.641
++ P.110  1 40.646
++ P.18   1 40.675
++ P.196  1 40.680
++ P.279  1 40.731
++ P.152  1 40.742
++ P.176  1 40.829
++ P.173  1 40.913
++ P.218  1 40.922
++ P.295  1 40.952
++ P.146  1 40.959
++ P.159  1 40.960
++ P.187  1 40.993
++ P.101  1 41.004
++ P.193  1 41.022
++ P.275  1 41.065
++ P.130  1 41.094
++ P.117  1 41.110
++ P.165  1 41.127
++ P.44   1 41.135
++ P.95   1 41.140
++ P.269  1 41.148
++ P.200  1 41.178
++ P.351  1 41.205
++ P.183  1 41.223
++ P.144  1 41.226
++ P.85   1 41.248
++ P.56   1 41.250
++ P.98   1 41.252
++ P.4    1 41.254
++ P.259  1 41.273
++ P.181  1 41.278
++ P.163  1 41.283
++ P.131  1 41.293
++ N.74   1 41.299
++ P.167  1 41.303
++ P.136  1 41.303
++ P.174  1 41.309
++ P.87   1 41.313
++ P.285  1 41.320
++ P.191  1 41.329
++ P.105  1 41.329
++ P.55   1 41.334
++ P.154  1 41.339
++ P.35   1 41.343
++ P.114  1 41.345
++ P.262  1 41.346
++ P.143  1 41.350
++ N.44   1 41.361
++ P.306  1 41.362
++ P.122  1 41.363
++ P.147  1 41.376
++ P.188  1 41.380
++ N.139  1 41.382
++ N.64   1 41.384
++ P.121  1 41.387
++ P.327  1 41.387
++ P.166  1 41.388
++ P.305  1 41.389
++ P.134  1 41.398
++ N.149  1 41.400
++ P.64   1 41.408
++ P.149  1 41.409
++ P.67   1 41.414
++ P.113  1 41.417
++ P.203  1 41.418
++ P.142  1 41.418
++ N.80   1 41.422
++ N.28   1 41.426
++ P.38   1 41.428
++ N.20   1 41.428
++ P.330  1 41.429
++ P.109  1 41.431
++ P.16   1 41.431
++ P.103  1 41.434
++ P.99   1 41.435
++ P.6    1 41.435
++ P.74   1 41.435
++ P.97   1 41.436
++ P.194  1 41.436
+
+Step:  AIC=36.66
+sobject ~ N.30 + N.140 + P.156 + P.340 + N.198
+
+        Df    AIC
++ N.7    1 33.337
++ N.31   1 35.015
++ P.264  1 35.135
++ P.193  1 35.345
++ N.21   1 35.489
++ P.62   1 35.796
++ P.205  1 35.958
++ P.275  1 36.486
++ N.116  1 36.628
++ P.120  1 36.639
+<none>     36.662
++ P.295  1 36.676
++ N.64   1 36.708
++ P.110  1 36.839
++ P.167  1 37.124
++ P.176  1 37.328
++ P.327  1 37.355
++ P.196  1 37.365
++ P.279  1 37.375
++ P.2    1 37.380
++ P.351  1 37.466
++ P.165  1 37.510
++ P.191  1 37.533
++ P.121  1 37.542
++ P.197  1 37.577
++ N.80   1 37.580
++ P.146  1 37.637
++ P.209  1 37.641
++ P.285  1 37.667
++ P.98   1 37.801
++ P.4    1 37.823
++ P.330  1 37.847
++ P.99   1 37.851
++ P.183  1 37.873
++ P.55   1 37.876
++ P.174  1 37.879
++ P.306  1 37.885
++ P.144  1 37.916
++ N.136  1 37.927
++ P.166  1 37.970
++ P.35   1 38.005
++ N.61   1 38.019
++ P.187  1 38.021
++ N.44   1 38.094
++ P.305  1 38.095
++ P.181  1 38.100
++ N.74   1 38.109
++ P.66   1 38.151
++ P.117  1 38.159
++ P.139  1 38.160
++ P.173  1 38.174
++ P.105  1 38.189
++ P.200  1 38.200
++ P.141  1 38.225
++ P.142  1 38.226
++ P.101  1 38.282
++ P.72   1 38.362
++ N.28   1 38.375
++ N.139  1 38.400
++ P.56   1 38.404
++ N.20   1 38.469
++ P.136  1 38.507
++ P.6    1 38.516
++ P.38   1 38.520
++ P.113  1 38.528
++ P.109  1 38.532
++ N.149  1 38.543
++ P.203  1 38.552
++ P.149  1 38.560
++ P.97   1 38.565
++ P.64   1 38.579
++ P.262  1 38.582
++ P.140  1 38.583
++ P.74   1 38.590
++ P.154  1 38.596
++ P.131  1 38.611
++ P.130  1 38.619
++ P.114  1 38.622
++ P.87   1 38.625
++ P.18   1 38.626
++ P.85   1 38.638
++ P.16   1 38.641
++ P.159  1 38.642
++ P.152  1 38.643
++ P.44   1 38.645
++ P.147  1 38.645
++ P.194  1 38.646
++ N.125  1 38.648
++ P.269  1 38.649
++ P.67   1 38.650
++ P.134  1 38.653
++ P.259  1 38.653
++ P.143  1 38.658
++ P.103  1 38.659
++ P.218  1 38.659
++ P.163  1 38.660
++ P.122  1 38.660
++ P.188  1 38.661
++ P.95   1 38.662
+
+Step:  AIC=33.34
+sobject ~ N.30 + N.140 + P.156 + P.340 + N.198 + N.7
+
+Error in fitter(X, Y, strats, offset, init, control, weights = weights,  : 
+	NA/NaN/Inf in foreign function call (arg 6)
+In addition: Warning message:
+Ran out of iterations and did not converge in: fitter(X, Y, strats, offset, init, control, weights = weights,  
+Start:  AIC=42.85
+sobject ~ N.30 + N.140
+
+        Df    AIC
++ P.156  1 39.763
++ P.72   1 41.465
++ P.131  1 41.586
++ P.66   1 41.596
++ P.142  1 42.153
++ P.141  1 42.189
++ P.146  1 42.191
++ P.144  1 42.191
++ P.143  1 42.266
++ P.173  1 42.362
++ N.198  1 42.381
++ P.122  1 42.423
++ P.176  1 42.439
++ P.16   1 42.532
++ P.351  1 42.756
+<none>     42.846
++ P.6    1 43.060
++ P.306  1 43.070
++ P.120  1 43.076
++ P.55   1 43.162
++ P.205  1 43.173
++ P.149  1 43.297
++ P.130  1 43.305
++ P.262  1 43.418
++ P.264  1 43.504
++ P.105  1 43.531
++ N.21   1 43.565
++ P.64   1 43.568
++ P.154  1 43.598
++ P.167  1 43.630
++ P.194  1 43.650
++ P.110  1 43.651
++ P.218  1 43.755
++ P.197  1 43.760
++ P.209  1 43.763
++ P.2    1 43.846
++ P.44   1 43.884
++ P.285  1 43.907
++ P.103  1 43.931
++ P.121  1 43.939
++ P.147  1 44.038
++ P.275  1 44.067
++ N.149  1 44.069
++ P.269  1 44.075
++ P.18   1 44.097
++ P.152  1 44.103
++ P.140  1 44.129
++ P.98   1 44.136
++ P.67   1 44.138
++ N.139  1 44.174
++ P.181  1 44.175
++ P.187  1 44.204
++ P.56   1 44.245
++ P.159  1 44.321
++ N.7    1 44.346
++ P.109  1 44.360
++ P.279  1 44.370
++ P.114  1 44.377
++ P.87   1 44.395
++ P.85   1 44.398
++ P.74   1 44.404
++ P.188  1 44.420
++ N.125  1 44.441
++ P.200  1 44.464
++ P.163  1 44.488
++ P.174  1 44.507
++ P.38   1 44.510
++ P.139  1 44.521
++ P.136  1 44.524
++ P.113  1 44.533
++ P.35   1 44.606
++ P.295  1 44.609
++ P.166  1 44.655
++ P.101  1 44.666
++ P.340  1 44.692
++ N.80   1 44.708
++ N.64   1 44.716
++ N.20   1 44.730
++ N.31   1 44.731
++ P.203  1 44.759
++ N.136  1 44.761
++ N.116  1 44.768
++ N.74   1 44.769
++ P.330  1 44.773
++ P.259  1 44.775
++ P.183  1 44.779
++ P.305  1 44.780
++ P.191  1 44.789
++ N.44   1 44.790
++ N.28   1 44.795
++ P.99   1 44.795
++ P.95   1 44.797
++ P.165  1 44.802
++ P.117  1 44.808
++ P.62   1 44.815
++ N.61   1 44.824
++ P.327  1 44.831
++ P.97   1 44.839
++ P.134  1 44.842
++ P.4    1 44.846
++ P.193  1 44.846
++ P.196  1 44.846
+
+Step:  AIC=39.76
+sobject ~ N.30 + N.140 + P.156
+
+        Df    AIC
++ P.340  1 39.436
+<none>     39.763
++ N.7    1 39.819
++ P.139  1 40.414
++ N.21   1 40.501
++ P.117  1 40.517
++ P.152  1 40.779
++ N.31   1 40.835
++ P.264  1 40.949
++ P.110  1 40.980
++ P.285  1 41.071
++ P.97   1 41.151
++ P.114  1 41.175
++ P.85   1 41.230
++ P.209  1 41.250
++ P.159  1 41.269
++ P.143  1 41.288
++ P.131  1 41.320
++ P.64   1 41.344
++ N.198  1 41.345
++ P.163  1 41.356
++ P.95   1 41.366
++ P.38   1 41.366
++ P.259  1 41.371
++ P.166  1 41.376
++ N.116  1 41.384
++ P.18   1 41.425
++ P.109  1 41.429
++ P.275  1 41.441
++ P.72   1 41.444
++ P.146  1 41.446
++ P.121  1 41.451
++ P.188  1 41.470
++ P.67   1 41.485
++ P.183  1 41.485
++ P.35   1 41.498
++ P.194  1 41.512
++ P.105  1 41.523
++ P.147  1 41.529
++ P.134  1 41.547
++ N.61   1 41.552
++ N.44   1 41.568
++ P.66   1 41.588
++ P.176  1 41.601
++ P.149  1 41.617
++ P.2    1 41.628
++ P.122  1 41.635
++ P.200  1 41.638
++ P.197  1 41.643
++ N.139  1 41.646
++ P.351  1 41.647
++ P.306  1 41.663
++ P.98   1 41.676
++ P.305  1 41.690
++ P.74   1 41.691
++ P.113  1 41.700
++ N.64   1 41.703
++ P.218  1 41.709
++ P.56   1 41.714
++ P.181  1 41.714
++ P.141  1 41.714
++ P.87   1 41.718
++ P.140  1 41.719
++ P.136  1 41.720
++ P.4    1 41.723
++ N.149  1 41.724
++ P.6    1 41.726
++ N.74   1 41.727
++ P.99   1 41.733
++ P.174  1 41.739
++ P.295  1 41.741
++ P.62   1 41.742
++ P.103  1 41.745
++ P.44   1 41.748
++ P.187  1 41.748
++ N.28   1 41.749
++ P.191  1 41.750
++ P.193  1 41.751
++ P.262  1 41.752
++ P.130  1 41.753
++ P.55   1 41.753
++ P.154  1 41.755
++ N.136  1 41.755
++ P.142  1 41.755
++ P.120  1 41.756
++ P.173  1 41.756
++ P.327  1 41.757
++ P.330  1 41.758
++ P.16   1 41.759
++ P.203  1 41.759
++ P.167  1 41.759
++ P.279  1 41.760
++ N.125  1 41.760
++ P.165  1 41.761
++ P.269  1 41.761
++ P.144  1 41.762
++ N.80   1 41.762
++ P.101  1 41.762
++ P.205  1 41.762
++ N.20   1 41.763
++ P.196  1 41.763
+
+Step:  AIC=39.44
+sobject ~ N.30 + N.140 + P.156 + P.340
+
+        Df    AIC
++ N.198  1 36.662
++ P.120  1 37.950
++ P.205  1 38.080
++ P.209  1 38.097
++ N.7    1 38.572
++ N.136  1 38.891
++ N.21   1 39.140
++ N.125  1 39.165
+<none>     39.436
++ P.66   1 39.748
++ P.141  1 39.960
++ P.72   1 40.112
++ N.61   1 40.139
++ N.116  1 40.139
++ N.31   1 40.158
++ P.2    1 40.271
++ P.140  1 40.438
++ P.197  1 40.532
++ P.62   1 40.546
++ P.264  1 40.550
++ P.139  1 40.641
++ P.110  1 40.646
++ P.18   1 40.675
++ P.196  1 40.680
++ P.279  1 40.731
++ P.152  1 40.742
++ P.176  1 40.829
++ P.173  1 40.913
++ P.218  1 40.922
++ P.295  1 40.952
++ P.146  1 40.959
++ P.159  1 40.960
++ P.187  1 40.993
++ P.101  1 41.004
++ P.193  1 41.022
++ P.275  1 41.065
++ P.130  1 41.094
++ P.117  1 41.110
++ P.165  1 41.127
++ P.44   1 41.135
++ P.95   1 41.140
++ P.269  1 41.148
++ P.200  1 41.178
++ P.351  1 41.205
++ P.183  1 41.223
++ P.144  1 41.226
++ P.85   1 41.248
++ P.56   1 41.250
++ P.98   1 41.252
++ P.4    1 41.254
++ P.259  1 41.273
++ P.181  1 41.278
++ P.163  1 41.283
++ P.131  1 41.293
++ N.74   1 41.299
++ P.167  1 41.303
++ P.136  1 41.303
++ P.174  1 41.309
++ P.87   1 41.313
++ P.285  1 41.320
++ P.191  1 41.329
++ P.105  1 41.329
++ P.55   1 41.334
++ P.154  1 41.339
++ P.35   1 41.343
++ P.114  1 41.345
++ P.262  1 41.346
++ P.143  1 41.350
++ N.44   1 41.361
++ P.306  1 41.362
++ P.122  1 41.363
++ P.147  1 41.376
++ P.188  1 41.380
++ N.139  1 41.382
++ N.64   1 41.384
++ P.121  1 41.387
++ P.327  1 41.387
++ P.166  1 41.388
++ P.305  1 41.389
++ P.134  1 41.398
++ N.149  1 41.400
++ P.64   1 41.408
++ P.149  1 41.409
++ P.67   1 41.414
++ P.113  1 41.417
++ P.203  1 41.418
++ P.142  1 41.418
++ N.80   1 41.422
++ N.28   1 41.426
++ P.38   1 41.428
++ N.20   1 41.428
++ P.330  1 41.429
++ P.109  1 41.431
++ P.16   1 41.431
++ P.103  1 41.434
++ P.99   1 41.435
++ P.6    1 41.435
++ P.74   1 41.435
++ P.97   1 41.436
++ P.194  1 41.436
+
+Step:  AIC=36.66
+sobject ~ N.30 + N.140 + P.156 + P.340 + N.198
+
+        Df    AIC
++ N.7    1 33.337
++ N.31   1 35.015
++ P.264  1 35.135
++ P.193  1 35.345
++ N.21   1 35.489
++ P.62   1 35.796
++ P.205  1 35.958
++ P.275  1 36.486
++ N.116  1 36.628
++ P.120  1 36.639
+<none>     36.662
++ P.295  1 36.676
++ N.64   1 36.708
++ P.110  1 36.839
++ P.167  1 37.124
++ P.176  1 37.328
++ P.327  1 37.355
++ P.196  1 37.365
++ P.279  1 37.375
++ P.2    1 37.380
++ P.351  1 37.466
++ P.165  1 37.510
++ P.191  1 37.533
++ P.121  1 37.542
++ P.197  1 37.577
++ N.80   1 37.580
++ P.146  1 37.637
++ P.209  1 37.641
++ P.285  1 37.667
++ P.98   1 37.801
++ P.4    1 37.823
++ P.330  1 37.847
++ P.99   1 37.851
++ P.183  1 37.873
++ P.55   1 37.876
++ P.174  1 37.879
++ P.306  1 37.885
++ P.144  1 37.916
++ N.136  1 37.927
++ P.166  1 37.970
++ P.35   1 38.005
++ N.61   1 38.019
++ P.187  1 38.021
++ N.44   1 38.094
++ P.305  1 38.095
++ P.181  1 38.100
++ N.74   1 38.109
++ P.66   1 38.151
++ P.117  1 38.159
++ P.139  1 38.160
++ P.173  1 38.174
++ P.105  1 38.189
++ P.200  1 38.200
++ P.141  1 38.225
++ P.142  1 38.226
++ P.101  1 38.282
++ P.72   1 38.362
++ N.28   1 38.375
++ N.139  1 38.400
++ P.56   1 38.404
++ N.20   1 38.469
++ P.136  1 38.507
++ P.6    1 38.516
++ P.38   1 38.520
++ P.113  1 38.528
++ P.109  1 38.532
++ N.149  1 38.543
++ P.203  1 38.552
++ P.149  1 38.560
++ P.97   1 38.565
++ P.64   1 38.579
++ P.262  1 38.582
++ P.140  1 38.583
++ P.74   1 38.590
++ P.154  1 38.596
++ P.131  1 38.611
++ P.130  1 38.619
++ P.114  1 38.622
++ P.87   1 38.625
++ P.18   1 38.626
++ P.85   1 38.638
++ P.16   1 38.641
++ P.159  1 38.642
++ P.152  1 38.643
++ P.44   1 38.645
++ P.147  1 38.645
++ P.194  1 38.646
++ N.125  1 38.648
++ P.269  1 38.649
++ P.67   1 38.650
++ P.134  1 38.653
++ P.259  1 38.653
++ P.143  1 38.658
++ P.103  1 38.659
++ P.218  1 38.659
++ P.163  1 38.660
++ P.122  1 38.660
++ P.188  1 38.661
++ P.95   1 38.662
+
+Step:  AIC=33.34
+sobject ~ N.30 + N.140 + P.156 + P.340 + N.198 + N.7
+
+
+ ..... Finishing dStep3 at  Wed Jul 25 11:18:06 2007 ; took  42.289  
+
+
+ Ended fitDave.res1Given at  Wed Jul 25 11:18:06 2007 ; took  49.169  seconds 
+
+
+ Starting cvDave.parallel3 at  Wed Jul 25 11:18:06 2007  
+
+
+     cvDave.parallel3:  cond 3 
+
+
+ Computing gene-wise cox p-value
+
+
+ Cleaning up MPI slaves
+
+
+
+ Computing the rest
+
+ Ending cvDave.parallel3 at  Wed Jul 25 11:19:08 2007 ; it took  62.237  
+
+ 
+
+ arrays =  40  genes =  7399 
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  321426 17.2     597831 32.0   597831 32.0
+Vcells 2465563 18.9    7016111 53.6 11573418 88.3
+
+
+ Running one iteration 
+
+
+ Starting fitDave.res1Given at  Wed Jul 25 11:19:13 2007  
+
+
+       Starting dStep2 at  Wed Jul 25 11:19:13 2007  
+
+
+ Finished dStep2 at  Wed Jul 25 11:19:18 2007 ; took  4.496  
+
+
+ ..... Starting dStep3 at  Wed Jul 25 11:19:18 2007  
+
+
+                  Number of models of size two:  465 
+Start:  AIC=114.43
+sobject ~ N.155 + N.160
+
+        Df    AIC
++ P.169  1 108.68
++ P.317  1 109.39
++ P.236  1 109.45
++ P.160  1 110.69
++ P.172  1 110.97
++ P.176  1 111.06
++ P.233  1 111.41
++ P.1    1 111.59
++ P.331  1 111.74
++ P.179  1 111.74
++ P.57   1 112.24
++ P.195  1 112.71
++ P.170  1 112.91
++ P.461  1 113.07
++ P.115  1 113.87
++ P.209  1 114.00
++ P.232  1 114.03
++ P.198  1 114.10
+<none>     114.43
++ P.127  1 114.58
++ P.222  1 114.80
++ P.210  1 115.02
++ P.217  1 115.21
++ P.485  1 115.36
++ P.480  1 115.85
++ N.154  1 115.97
++ P.391  1 116.11
++ N.156  1 116.32
++ N.147  1 116.33
++ N.19   1 116.43
+- N.160  1 122.18
+- N.155  1 131.21
+
+Step:  AIC=108.68
+sobject ~ N.155 + N.160 + P.169
+
+        Df    AIC
++ P.1    1 106.89
++ P.317  1 107.53
+<none>     108.68
++ P.57   1 109.01
++ P.331  1 109.10
++ P.236  1 109.24
++ P.160  1 109.59
++ P.233  1 109.65
++ P.485  1 109.79
++ P.179  1 109.84
++ N.19   1 110.11
++ N.156  1 110.30
++ P.195  1 110.39
++ P.176  1 110.41
++ P.217  1 110.42
++ P.172  1 110.49
++ P.480  1 110.50
++ N.147  1 110.54
++ P.209  1 110.58
++ P.232  1 110.59
++ P.461  1 110.60
++ P.391  1 110.61
++ P.210  1 110.62
++ P.127  1 110.64
++ P.170  1 110.66
++ P.115  1 110.67
++ P.198  1 110.67
++ P.222  1 110.68
++ N.154  1 110.68
+- P.169  1 114.43
+- N.160  1 121.56
+- N.155  1 124.41
+
+Step:  AIC=106.89
+sobject ~ N.155 + N.160 + P.169 + P.1
+
+        Df    AIC
+<none>     106.89
++ P.317  1 107.09
++ N.19   1 107.39
++ P.217  1 107.86
++ P.331  1 108.09
++ N.154  1 108.13
++ P.57   1 108.31
++ N.156  1 108.42
++ P.127  1 108.53
++ N.147  1 108.59
++ P.391  1 108.60
++ P.236  1 108.66
++ P.210  1 108.67
++ P.480  1 108.67
+- P.1    1 108.68
++ P.233  1 108.69
++ P.179  1 108.73
++ P.172  1 108.75
++ P.209  1 108.77
++ P.160  1 108.83
++ P.176  1 108.83
++ P.222  1 108.84
++ P.232  1 108.86
++ P.485  1 108.86
++ P.170  1 108.88
++ P.195  1 108.88
++ P.115  1 108.89
++ P.461  1 108.89
++ P.198  1 108.89
+- P.169  1 111.59
+- N.155  1 114.64
+- N.160  1 122.98
+
+ ..... Finishing dStep3 at  Wed Jul 25 11:19:20 2007 ; took  2.636  
+
+
+ Ended fitDave.res1Given at  Wed Jul 25 11:19:20 2007 ; took  7.132  seconds 
+
+
+ Starting cvDave.parallel3 at  Wed Jul 25 11:19:20 2007  
+
+
+     cvDave.parallel3:  cond 3 
+
+
+ Computing gene-wise cox p-value
+
+
+ Cleaning up MPI slaves
+
+
+
+ Computing the rest
+
+ Ending cvDave.parallel3 at  Wed Jul 25 11:20:16 2007 ; it took  55.328  
+
+ 
+
+ arrays =  80  genes =  7399 
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  321674 17.2     597831 32.0   597831 32.0
+Vcells 2465744 18.9    7098348 54.2 11573418 88.3
+
+
+ Running one iteration 
+
+
+ Starting fitDave.res1Given at  Wed Jul 25 11:20:21 2007  
+
+
+       Starting dStep2 at  Wed Jul 25 11:20:21 2007  
+
+
+ Finished dStep2 at  Wed Jul 25 11:20:25 2007 ; took  3.45  
+
+
+ ..... Starting dStep3 at  Wed Jul 25 11:20:25 2007  
+
+
+                  Number of models of size two:  496 
+Start:  AIC=306.69
+sobject ~ P.153 + N.214
+
+        Df    AIC
++ N.221  1 303.90
++ N.330  1 304.58
++ N.389  1 305.85
++ N.347  1 306.36
++ P.398  1 306.43
++ P.156  1 306.60
+<none>     306.69
++ N.344  1 306.76
++ P.252  1 306.86
++ N.205  1 306.99
++ P.159  1 307.07
++ N.318  1 307.19
++ N.338  1 307.26
++ P.157  1 307.48
++ N.244  1 308.06
++ N.115  1 308.21
++ P.160  1 308.28
++ P.209  1 308.31
++ P.235  1 308.34
++ P.161  1 308.40
++ P.450  1 308.42
++ P.217  1 308.46
++ P.152  1 308.46
++ P.165  1 308.53
++ P.234  1 308.56
+- P.153  1 308.58
++ P.146  1 308.65
++ P.207  1 308.65
++ N.349  1 308.68
++ N.213  1 308.68
++ P.145  1 308.68
++ P.224  1 308.69
+- N.214  1 321.06
+
+Step:  AIC=303.9
+sobject ~ P.153 + N.214 + N.221
+
+        Df    AIC
++ P.252  1 303.15
++ N.330  1 303.60
++ N.389  1 303.70
+<none>     303.90
++ P.159  1 304.28
++ P.398  1 304.56
++ N.205  1 304.82
++ N.338  1 304.82
++ P.234  1 304.85
++ P.209  1 304.88
++ N.318  1 305.00
++ N.115  1 305.18
++ P.217  1 305.21
++ N.347  1 305.30
++ P.161  1 305.43
++ P.156  1 305.43
++ N.344  1 305.50
++ P.224  1 305.52
++ N.213  1 305.60
++ P.207  1 305.64
++ P.160  1 305.67
++ N.349  1 305.67
++ P.165  1 305.79
++ P.146  1 305.83
++ P.157  1 305.87
++ P.450  1 305.87
++ P.235  1 305.88
++ P.145  1 305.89
++ N.244  1 305.89
++ P.152  1 305.90
+- N.221  1 306.69
+- P.153  1 307.62
+- N.214  1 316.05
+
+Step:  AIC=303.16
+sobject ~ P.153 + N.214 + N.221 + P.252
+
+        Df    AIC
++ N.330  1 302.24
++ P.156  1 302.96
++ P.159  1 303.00
+<none>     303.15
++ N.389  1 303.30
++ P.152  1 303.33
++ P.224  1 303.34
++ P.160  1 303.35
+- P.252  1 303.90
++ P.146  1 303.90
++ P.165  1 304.00
++ P.145  1 304.01
++ P.157  1 304.17
++ P.235  1 304.22
++ N.347  1 304.33
++ N.318  1 304.37
++ N.338  1 304.54
++ P.207  1 304.56
++ N.344  1 304.67
++ P.398  1 304.70
++ N.349  1 304.77
++ N.115  1 304.78
++ N.205  1 304.79
++ N.213  1 304.91
++ P.450  1 305.08
++ N.244  1 305.12
++ P.217  1 305.13
++ P.234  1 305.14
++ P.209  1 305.14
++ P.161  1 305.15
+- P.153  1 306.22
+- N.221  1 306.86
+- N.214  1 313.28
+
+Step:  AIC=302.24
+sobject ~ P.153 + N.214 + N.221 + P.252 + N.330
+
+        Df    AIC
++ N.389  1 301.89
+<none>     302.24
++ N.213  1 302.40
++ P.145  1 302.51
++ P.159  1 302.61
++ N.318  1 302.74
++ P.224  1 302.74
++ P.160  1 302.78
++ P.152  1 302.91
+- N.330  1 303.15
++ P.156  1 303.18
++ P.450  1 303.48
+- N.221  1 303.54
++ N.347  1 303.55
+- P.252  1 303.60
++ N.344  1 303.66
++ P.234  1 303.68
++ N.244  1 303.70
++ P.146  1 303.70
++ P.161  1 303.75
++ P.157  1 304.01
++ P.209  1 304.08
++ N.115  1 304.09
++ P.217  1 304.12
++ P.398  1 304.15
++ P.165  1 304.17
++ N.338  1 304.18
++ N.349  1 304.19
++ P.235  1 304.21
++ P.207  1 304.24
++ N.205  1 304.24
+- P.153  1 305.21
+- N.214  1 311.95
+
+Step:  AIC=301.89
+sobject ~ P.153 + N.214 + N.221 + P.252 + N.330 + N.389
+
+        Df    AIC
++ P.145  1 299.75
++ P.156  1 301.33
++ P.159  1 301.50
+<none>     301.89
++ P.160  1 302.06
++ N.213  1 302.08
++ P.152  1 302.20
+- N.389  1 302.24
++ P.146  1 302.54
++ N.244  1 302.66
+- N.221  1 302.67
++ N.318  1 302.80
+- P.252  1 302.86
++ P.450  1 302.96
++ P.224  1 303.14
+- N.330  1 303.30
++ N.347  1 303.41
++ P.235  1 303.62
++ P.157  1 303.65
++ P.207  1 303.65
++ P.161  1 303.69
++ N.344  1 303.73
++ P.398  1 303.78
++ P.234  1 303.79
++ P.209  1 303.81
++ P.165  1 303.82
++ N.349  1 303.85
++ N.338  1 303.89
++ N.115  1 303.89
++ P.217  1 303.89
++ N.205  1 303.89
+- P.153  1 304.41
+- N.214  1 310.30
+
+Step:  AIC=299.75
+sobject ~ P.153 + N.214 + N.221 + P.252 + N.330 + N.389 + P.145
+
+        Df    AIC
+<none>     299.75
++ N.244  1 300.35
++ N.213  1 300.37
++ P.450  1 300.43
++ P.217  1 301.03
+- N.221  1 301.24
++ P.161  1 301.24
++ N.205  1 301.31
++ N.318  1 301.36
++ P.234  1 301.51
++ P.165  1 301.51
++ P.398  1 301.52
++ N.347  1 301.57
++ P.209  1 301.60
++ P.152  1 301.60
++ P.157  1 301.64
++ N.115  1 301.65
++ P.146  1 301.66
++ P.207  1 301.68
++ P.156  1 301.69
++ N.349  1 301.70
++ P.159  1 301.70
++ N.338  1 301.71
++ P.224  1 301.72
++ P.160  1 301.75
++ P.235  1 301.75
++ N.344  1 301.75
+- P.145  1 301.89
+- N.389  1 302.51
+- N.330  1 302.69
+- P.252  1 303.80
+- P.153  1 306.31
+- N.214  1 311.60
+
+ ..... Finishing dStep3 at  Wed Jul 25 11:20:28 2007 ; took  3.692  
+
+
+ Ended fitDave.res1Given at  Wed Jul 25 11:20:28 2007 ; took  7.142  seconds 
+
+
+ Starting cvDave.parallel3 at  Wed Jul 25 11:20:28 2007  
+
+
+     cvDave.parallel3:  cond 3 
+
+
+ Computing gene-wise cox p-value
+
+
+ Cleaning up MPI slaves
+
+
+
+ Computing the rest
+Start:  AIC=275.53
+sobject ~ P.320 + N.237
+
+
+Step:  AIC=273.06
+sobject ~ P.320 + N.237 + N.246
+
+
+Step:  AIC=270.77
+sobject ~ P.320 + N.237 + N.246 + P.153
+
+
+Step:  AIC=270.02
+sobject ~ P.320 + N.237 + N.246 + P.153 + N.429
+
+
+Step:  AIC=269.1
+sobject ~ P.320 + N.237 + N.246 + P.153 + N.429 + P.159
+
+Start:  AIC=254.96
+sobject ~ P.403 + N.188
+
+
+Step:  AIC=253.71
+sobject ~ P.403 + N.188 + N.385
+
+
+Step:  AIC=252.01
+sobject ~ P.403 + N.188 + N.385 + N.332
+
+
+Step:  AIC=251.06
+sobject ~ P.403 + N.188 + N.385 + N.332 + N.301
+
+
+Step:  AIC=249.97
+sobject ~ P.403 + N.188 + N.385 + N.332 + N.301 + P.223
+
+
+Step:  AIC=249.35
+sobject ~ P.403 + N.188 + N.385 + N.301 + P.223
+
+
+ Ending cvDave.parallel3 at  Wed Jul 25 11:20:50 2007 ; it took  21.371  
+
+ 
+
+ arrays =  100  genes =  7399 
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  321839 17.2     597831   32   597831 32.0
+Vcells 2465788 18.9    7591478   58 11573418 88.3
+
+
+ Running one iteration 
+
+
+ Starting fitDave.res1Given at  Wed Jul 25 11:20:55 2007  
+
+
+       Starting dStep2 at  Wed Jul 25 11:20:55 2007  
+
+
+ Finished dStep2 at  Wed Jul 25 11:21:01 2007 ; took  5.888  
+
+
+ ..... Starting dStep3 at  Wed Jul 25 11:21:01 2007  
+
+
+                  Number of models of size two:  465 
+Start:  AIC=446.88
+sobject ~ P.253 + N.135
+
+        Df    AIC
++ P.231  1 443.94
++ P.597  1 446.70
++ P.257  1 446.73
+<none>     446.88
++ N.256  1 446.89
++ N.213  1 447.13
++ P.261  1 447.46
++ P.406  1 447.52
++ P.259  1 447.53
++ P.270  1 447.75
++ N.326  1 447.83
++ P.250  1 447.91
++ N.331  1 448.32
++ P.379  1 448.32
++ N.127  1 448.38
++ N.277  1 448.39
++ P.370  1 448.40
++ P.255  1 448.41
++ P.356  1 448.51
++ P.364  1 448.63
++ P.258  1 448.68
++ P.349  1 448.71
++ N.134  1 448.71
++ P.246  1 448.71
++ N.274  1 448.79
++ P.360  1 448.79
++ P.376  1 448.85
++ P.260  1 448.86
++ P.380  1 448.87
++ P.363  1 448.87
+- P.253  1 452.21
+- N.135  1 457.78
+
+Step:  AIC=443.94
+sobject ~ P.253 + N.135 + P.231
+
+        Df    AIC
+<none>     443.94
++ P.255  1 444.22
++ N.331  1 444.28
++ N.127  1 444.46
++ P.259  1 444.55
++ N.256  1 445.17
++ P.270  1 445.39
++ P.257  1 445.39
++ N.326  1 445.45
++ P.246  1 445.47
++ P.250  1 445.60
++ N.274  1 445.64
++ P.379  1 445.66
++ P.356  1 445.67
++ P.364  1 445.69
++ N.213  1 445.71
++ P.406  1 445.71
++ P.261  1 445.72
++ P.363  1 445.74
++ P.380  1 445.77
++ P.370  1 445.77
++ P.597  1 445.80
++ P.260  1 445.81
++ P.360  1 445.91
++ P.376  1 445.92
++ P.258  1 445.92
++ N.277  1 445.93
++ N.134  1 445.94
++ P.349  1 445.94
+- P.231  1 446.88
+- P.253  1 448.49
+- N.135  1 457.78
+
+ ..... Finishing dStep3 at  Wed Jul 25 11:21:04 2007 ; took  2.623  
+
+
+ Ended fitDave.res1Given at  Wed Jul 25 11:21:04 2007 ; took  8.512  seconds 
+
+
+ Starting cvDave.parallel3 at  Wed Jul 25 11:21:04 2007  
+
+
+     cvDave.parallel3:  cond 3 
+
+
+ Computing gene-wise cox p-value
+
+
+ Cleaning up MPI slaves
+
+
+
+ Computing the rest
+Start:  AIC=386.39
+sobject ~ P.251 + N.115
+
+
+Step:  AIC=385.24
+sobject ~ P.251 + N.115 + N.237
+
+
+Step:  AIC=383.78
+sobject ~ P.251 + N.115 + N.237 + P.268
+
+
+Step:  AIC=383.12
+sobject ~ P.251 + N.115 + N.237 + P.268 + N.188
+
+
+ Ending cvDave.parallel3 at  Wed Jul 25 11:21:29 2007 ; it took  25.494  
+
+Warning messages:
+1: Loglik converged before variable  1 ; beta may be infinite.  in: coxph.fit.pomelo0(x, sobject, control = coxph.control(iter.max = MaxIterationsCox)) 
+2: Loglik converged before variable  1 ; beta may be infinite.  in: coxph.fit.pomelo0(x, sobject, control = coxph.control(iter.max = MaxIterationsCox)) 
+> 
+> save(file = "fcms.paral.60cpu.RData", fcms.paral.60cpu)
+> 
+> 
+> 
+> 
+> 
+> proc.time()
+[1] 144.164   4.924 380.720   0.367   0.367
+> 
+Warning message:
+No groups of negative coeff. genes that meet the p, minimum correlation and size restrictions. in: dStep2(x, res1, maxSize, minSize, minCor, plot, interactive) 
+[1] "Exiting Rmpi. Rmpi cannot be used unless relaunching R."

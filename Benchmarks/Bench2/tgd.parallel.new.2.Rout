@@ -1,0 +1,90 @@
+
+ numero is  2 
+
+LAM 7.1.2/MPI 2 C++/ROMIO - Indiana University
+
+n-1<19450> ssi:boot:base:linear: booting n0 (192.168.7.2)
+n-1<19450> ssi:boot:base:linear: finished
+
+LAM 7.1.2/MPI 2 C++/ROMIO - Indiana University
+
+Loading required package: splines
+	2 slaves are spawned successfully. 0 failed.
+master (rank 0, comm 1) of size 3 is running on: karl02 
+slave1 (rank 1, comm 1) of size 3 is running on: karl02 
+slave2 (rank 2, comm 1) of size 3 is running on: karl02 
+Loading required package: splines
+Loading required package: splines
+
+Attaching package: 'combinat'
+
+
+	The following object(s) are masked from package:utils :
+
+	 combn 
+
+
+Attaching package: 'combinat'
+
+
+	The following object(s) are masked from package:utils :
+
+	 combn 
+
+
+Attaching package: 'imagemap'
+
+
+	The following object(s) are masked from package:SignS2 :
+
+	 imClose 
+
+
+Attaching package: 'imagemap'
+
+
+	The following object(s) are masked from package:SignS2 :
+
+	 imClose 
+
+$slave1
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave2
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+ 
+
+ arrays =  160  genes =  12000 
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  303166 16.2     531268 28.4   440163 23.6
+Vcells 7907067 60.4    8547562 65.3  7990152 61.0
+
+
+ Running one iteration 
+
+ 
+
+ arrays =  160  genes =  24000 
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells  306407 16.4     597831  32.0   597831  32.0
+Vcells 7907535 60.4   23147981 176.7 25326866 193.3
+
+
+ Running one iteration 
+
+ 
+
+ arrays =  160  genes =  48000 
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells  306407 16.4     597831  32.0   597831  32.0
+Vcells 7907535 60.4   23148400 176.7 27281677 208.2
+
+
+ Running one iteration 
+
+[1] "Exiting Rmpi. Rmpi cannot be used unless relaunching R."

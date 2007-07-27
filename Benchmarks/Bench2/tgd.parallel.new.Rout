@@ -1,0 +1,467 @@
+
+ numero is  60 
+-----------------------------------------------------------------------------
+It seems that there is no lamd running on the host karl01.
+
+This indicates that the LAM/MPI runtime environment is not operating.
+The LAM/MPI runtime environment is necessary for the "lamhalt" command.
+
+Please run the "lamboot" command the start the LAM/MPI runtime
+environment.  See the LAM/MPI documentation for how to invoke
+"lamboot" across multiple machines.
+-----------------------------------------------------------------------------
+
+LAM 7.1.2/MPI 2 C++/ROMIO - Indiana University
+
+n-1<27876> ssi:boot:base:linear: booting n0 (192.168.7.1)
+n-1<27876> ssi:boot:base:linear: booting n1 (192.168.7.2)
+n-1<27876> ssi:boot:base:linear: booting n2 (192.168.7.3)
+n-1<27876> ssi:boot:base:linear: booting n3 (192.168.7.4)
+n-1<27876> ssi:boot:base:linear: booting n4 (192.168.7.5)
+n-1<27876> ssi:boot:base:linear: booting n5 (192.168.7.6)
+n-1<27876> ssi:boot:base:linear: booting n6 (192.168.7.7)
+n-1<27876> ssi:boot:base:linear: booting n7 (192.168.7.8)
+n-1<27876> ssi:boot:base:linear: booting n8 (192.168.7.9)
+n-1<27876> ssi:boot:base:linear: booting n9 (192.168.7.10)
+n-1<27876> ssi:boot:base:linear: booting n10 (192.168.7.11)
+n-1<27876> ssi:boot:base:linear: booting n11 (192.168.7.12)
+n-1<27876> ssi:boot:base:linear: booting n12 (192.168.7.13)
+n-1<27876> ssi:boot:base:linear: booting n13 (192.168.7.14)
+n-1<27876> ssi:boot:base:linear: booting n14 (192.168.7.15)
+n-1<27876> ssi:boot:base:linear: booting n15 (192.168.7.16)
+n-1<27876> ssi:boot:base:linear: booting n16 (192.168.7.17)
+n-1<27876> ssi:boot:base:linear: booting n17 (192.168.7.18)
+n-1<27876> ssi:boot:base:linear: booting n18 (192.168.7.19)
+n-1<27876> ssi:boot:base:linear: booting n19 (192.168.7.20)
+n-1<27876> ssi:boot:base:linear: booting n20 (192.168.7.21)
+n-1<27876> ssi:boot:base:linear: booting n21 (192.168.7.22)
+n-1<27876> ssi:boot:base:linear: booting n22 (192.168.7.23)
+n-1<27876> ssi:boot:base:linear: booting n23 (192.168.7.24)
+n-1<27876> ssi:boot:base:linear: booting n24 (192.168.7.25)
+n-1<27876> ssi:boot:base:linear: booting n25 (192.168.7.26)
+n-1<27876> ssi:boot:base:linear: booting n26 (192.168.7.27)
+n-1<27876> ssi:boot:base:linear: booting n27 (192.168.7.28)
+n-1<27876> ssi:boot:base:linear: booting n28 (192.168.7.29)
+n-1<27876> ssi:boot:base:linear: booting n29 (192.168.7.30)
+n-1<27876> ssi:boot:base:linear: finished
+
+LAM 7.1.2/MPI 2 C++/ROMIO - Indiana University
+
+Loading required package: splines
+	60 slaves are spawned successfully. 0 failed.
+master  (rank 0 , comm 1) of size 61 is running on: karl01 
+slave1  (rank 1 , comm 1) of size 61 is running on: karl01 
+slave2  (rank 2 , comm 1) of size 61 is running on: karl01 
+slave3  (rank 3 , comm 1) of size 61 is running on: karl02 
+slave4  (rank 4 , comm 1) of size 61 is running on: karl02 
+slave5  (rank 5 , comm 1) of size 61 is running on: karl03 
+slave6  (rank 6 , comm 1) of size 61 is running on: karl03 
+slave7  (rank 7 , comm 1) of size 61 is running on: karl04 
+slave8  (rank 8 , comm 1) of size 61 is running on: karl04 
+slave9  (rank 9 , comm 1) of size 61 is running on: karl05 
+slave10 (rank 10, comm 1) of size 61 is running on: karl05 
+slave11 (rank 11, comm 1) of size 61 is running on: karl06 
+slave12 (rank 12, comm 1) of size 61 is running on: karl06 
+slave13 (rank 13, comm 1) of size 61 is running on: karl07 
+slave14 (rank 14, comm 1) of size 61 is running on: karl07 
+slave15 (rank 15, comm 1) of size 61 is running on: karl08 
+slave16 (rank 16, comm 1) of size 61 is running on: karl08 
+slave17 (rank 17, comm 1) of size 61 is running on: karl09 
+slave18 (rank 18, comm 1) of size 61 is running on: karl09 
+slave19 (rank 19, comm 1) of size 61 is running on: karl10 
+slave20 (rank 20, comm 1) of size 61 is running on: karl10 
+slave21 (rank 21, comm 1) of size 61 is running on: karl11 
+slave22 (rank 22, comm 1) of size 61 is running on: karl11 
+slave23 (rank 23, comm 1) of size 61 is running on: karl12 
+slave24 (rank 24, comm 1) of size 61 is running on: karl12 
+slave25 (rank 25, comm 1) of size 61 is running on: karl13 
+slave26 (rank 26, comm 1) of size 61 is running on: karl13 
+slave27 (rank 27, comm 1) of size 61 is running on: karl14 
+slave28 (rank 28, comm 1) of size 61 is running on: karl14 
+slave29 (rank 29, comm 1) of size 61 is running on: karl15 
+slave30 (rank 30, comm 1) of size 61 is running on: karl15 
+slave31 (rank 31, comm 1) of size 61 is running on: karl16 
+slave32 (rank 32, comm 1) of size 61 is running on: karl16 
+slave33 (rank 33, comm 1) of size 61 is running on: karl17 
+slave34 (rank 34, comm 1) of size 61 is running on: karl17 
+slave35 (rank 35, comm 1) of size 61 is running on: karl18 
+slave36 (rank 36, comm 1) of size 61 is running on: karl18 
+slave37 (rank 37, comm 1) of size 61 is running on: karl19 
+slave38 (rank 38, comm 1) of size 61 is running on: karl19 
+slave39 (rank 39, comm 1) of size 61 is running on: karl20 
+slave40 (rank 40, comm 1) of size 61 is running on: karl20 
+slave41 (rank 41, comm 1) of size 61 is running on: karl21 
+slave42 (rank 42, comm 1) of size 61 is running on: karl21 
+slave43 (rank 43, comm 1) of size 61 is running on: karl22 
+slave44 (rank 44, comm 1) of size 61 is running on: karl22 
+slave45 (rank 45, comm 1) of size 61 is running on: karl23 
+slave46 (rank 46, comm 1) of size 61 is running on: karl23 
+slave47 (rank 47, comm 1) of size 61 is running on: karl24 
+slave48 (rank 48, comm 1) of size 61 is running on: karl24 
+slave49 (rank 49, comm 1) of size 61 is running on: karl25 
+slave50 (rank 50, comm 1) of size 61 is running on: karl25 
+slave51 (rank 51, comm 1) of size 61 is running on: karl26 
+slave52 (rank 52, comm 1) of size 61 is running on: karl26 
+slave53 (rank 53, comm 1) of size 61 is running on: karl27 
+slave54 (rank 54, comm 1) of size 61 is running on: karl27 
+slave55 (rank 55, comm 1) of size 61 is running on: karl28 
+slave56 (rank 56, comm 1) of size 61 is running on: karl28 
+slave57 (rank 57, comm 1) of size 61 is running on: karl29 
+slave58 (rank 58, comm 1) of size 61 is running on: karl29 
+slave59 (rank 59, comm 1) of size 61 is running on: karl30 
+slave60 (rank 60, comm 1) of size 61 is running on: karl30 
+Loading required package: splines
+
+Attaching package: 'combinat'
+
+
+	The following object(s) are masked from package:utils :
+
+	 combn 
+
+
+Attaching package: 'combinat'
+
+
+	The following object(s) are masked from package:utils :
+
+	 combn 
+
+
+Attaching package: 'imagemap'
+
+
+Attaching package: 'imagemap'
+
+
+	The following object(s) are masked from package:SignS2 :
+
+	 imClose 
+
+
+	The following object(s) are masked from package:SignS2 :
+
+	 imClose 
+
+$slave1
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave2
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave3
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave4
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave5
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave6
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave7
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave8
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave9
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave10
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave11
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave12
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave13
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave14
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave15
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave16
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave17
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave18
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave19
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave20
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave21
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave22
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave23
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave24
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave25
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave26
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave27
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave28
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave29
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave30
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave31
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave32
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave33
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave34
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave35
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave36
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave37
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave38
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave39
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave40
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave41
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave42
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave43
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave44
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave45
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave46
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave47
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave48
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave49
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave50
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave51
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave52
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave53
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave54
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave55
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave56
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave57
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave58
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave59
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave60
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  303142 16.2     597831 32.0   597831 32.0
+Vcells 7907057 60.4   10147295 77.5  7996074 61.1
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells  306384 16.4     597831  32.0   597831  32.0
+Vcells 7907525 60.4   23147970 176.7 25326856 193.3
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells  306384 16.4     597831  32.0   597831  32.0
+Vcells 7907525 60.4   23148391 176.7 27281667 208.2
+
+
+ Running one iteration 
+
+[1] "Exiting Rmpi. Rmpi cannot be used unless relaunching R."

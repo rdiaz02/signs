@@ -1,0 +1,192 @@
+-----------------------------------------------------------------------------
+It seems that there is no lamd running on the host karl02.
+
+This indicates that the LAM/MPI runtime environment is not operating.
+The LAM/MPI runtime environment is necessary for the "lamhalt" command.
+
+Please run the "lamboot" command the start the LAM/MPI runtime
+environment.  See the LAM/MPI documentation for how to invoke
+"lamboot" across multiple machines.
+-----------------------------------------------------------------------------
+
+LAM 7.1.2/MPI 2 C++/ROMIO - Indiana University
+
+n-1<5215> ssi:boot:base:linear: booting n0 (192.168.7.2)
+n-1<5215> ssi:boot:base:linear: finished
+
+LAM 7.1.2/MPI 2 C++/ROMIO - Indiana University
+
+	2 slaves are spawned successfully. 0 failed.
+master (rank 0, comm 1) of size 3 is running on: karl02 
+slave1 (rank 1, comm 1) of size 3 is running on: karl02 
+slave2 (rank 2, comm 1) of size 3 is running on: karl02 
+Loading required package: splines
+
+Attaching package: 'combinat'
+
+
+Attaching package: 'combinat'
+
+
+	The following object(s) are masked from package:utils :
+
+	 combn 
+
+
+	The following object(s) are masked from package:utils :
+
+	 combn 
+
+
+Attaching package: 'imagemap'
+
+
+	The following object(s) are masked from package:SignS2 :
+
+	 imClose 
+
+
+Attaching package: 'imagemap'
+
+
+	The following object(s) are masked from package:SignS2 :
+
+	 imClose 
+
+$slave1
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+$slave2
+ [1] "imagemap"  "R2HTML"    "GDD"       "MASS"      "SignS2"    "combinat" 
+ [7] "survival"  "splines"   "Rmpi"      "stats"     "graphics"  "grDevices"
+[13] "utils"     "datasets"  "methods"   "base"     
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  261517 14.0     531268 28.4   467875 25.0
+Vcells 2444492 18.7    2963245 22.7  2574790 19.7
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6023081 46.0  5128495 39.2
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6023081 46.0  6019500 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6023081 46.0  6019500 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6023081 46.0  6019500 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6023081 46.0  6019500 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6023081 46.0  6019500 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6023081 46.0  6019500 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6404235 48.9  6023139 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264758 14.2     531268 28.4   531268 28.4
+Vcells 2444961 18.7    6404235 48.9  6023575 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264772 14.2     531268 28.4   531268 28.4
+Vcells 2444995 18.7    6404235 48.9  6023575 46.0
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264772 14.2     531268 28.4   531268 28.4
+Vcells 2444995 18.7    6404235 48.9  6177973 47.2
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264772 14.2     531268 28.4   531268 28.4
+Vcells 2444995 18.7    6404235 48.9  6339473 48.4
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264772 14.2     531268 28.4   531268 28.4
+Vcells 2444995 18.7    6404235 48.9  6343815 48.4
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264772 14.2     531268 28.4   531268 28.4
+Vcells 2444995 18.7    7909800 60.4  7304535 55.8
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264772 14.2     531268 28.4   531268 28.4
+Vcells 2444995 18.7    7909800 60.4  7525873 57.5
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264772 14.2     531268 28.4   531268 28.4
+Vcells 2444995 18.7    7909800 60.4  7821937 59.7
+
+
+ Running one iteration 
+
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  264772 14.2     531268 28.4   531268 28.4
+Vcells 2444995 18.7    7909800 60.4  7821937 59.7
+
+
+ Running one iteration 
+
+[1] "Exiting Rmpi. Rmpi cannot be used unless relaunching R."
