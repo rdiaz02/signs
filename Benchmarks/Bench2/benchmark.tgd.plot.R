@@ -36,7 +36,7 @@ tgd.seq.out[8, 1] <- tgd.seqC[8, 1]
 tgd.seq.out[5:7, 1] <- tgd.seq2[5:7, 1]
 tgd.seq.out <- data.frame(tgd.seq.out)
 
-tgd.seq.out$CPUS <- NA
+tgd.seq.out$CPUS <- -99
 tgd.all <- rbind(tgd.seq.out, tgd.paral.out)
 miny <- min(tgd.all[, 1])
 maxy <- max(tgd.all[, 1])
@@ -44,118 +44,116 @@ maxy <- max(tgd.all[, 1])
 
 tgd.all$farrays <- factor(tgd.all$narrays)
 
-tgd.all <- tgd.all[order(tgd.all$CPUS, tgd.all$narrays, tgd.all$ngenes), ]
+tgd.all <- tgd.all[order(abs(tgd.all$CPUS), tgd.all$narrays, tgd.all$ngenes), ]
 tgd.all$ratio <- tgd.all$time/tgd.all$time[1:11]
 tgd.all$ratio <- 1/tgd.all$ratio
 
-postscript(file = "bench.tgd.eps", height = 9.6, width = 14.4,
-           horizontal = FALSE,
-           onefile = FALSE, paper = "special")
+## postscript(file = "bench.tgd.eps", height = 9.6, width = 14.4,
+##            horizontal = FALSE,
+##            onefile = FALSE, paper = "special")
 
-par(mfrow = c(1, 2))
-par(las = 1)
-par(cex = 1.3)
-par(cex.lab = 1)
-par(cex.main = 0.9)
-par(cex.axis = 0.8)
+## par(mfrow = c(1, 2))
+## par(las = 1)
+## par(cex = 1.3)
+## par(cex.lab = 1)
+## par(cex.main = 0.9)
+## par(cex.axis = 0.8)
 
-plot(time ~ narrays,
-     ylim = c(miny, maxy),
-     xlab = "Number of arrays (samples)",
-     ylab = "User wall time (seconds)",
-     type = "b",
-     log = "y",
-     data = subset(tgd.all, is.na(CPUS) & ngenes == 7399),
-     axes = FALSE,
-     main = "Effect of number of arrays (number of genes = 7399)",
-     lwd = 2)
-axis(2)
-box()
-axis(1, at = c(20, 40, 80, 100))
+## plot(time ~ narrays,
+##      ylim = c(miny, maxy),
+##      xlab = "Number of arrays (samples)",
+##      ylab = "User wall time (seconds)",
+##      type = "b",
+##      log = "y",
+##      data = subset(tgd.all, is.na(CPUS) & ngenes == 7399),
+##      axes = FALSE,
+##      main = "Effect of number of arrays (number of genes = 7399)",
+##      lwd = 2)
+## axis(2)
+## box()
+## axis(1, at = c(20, 40, 80, 100))
 
-points(time ~ narrays,
-       type = "b", log = "y",
-       data = subset(tgd.all, (CPUS == 1)  & (ngenes == 7399)),
-       lwd = 2,
-       col = "blue")
-points(time ~ narrays,
-       type = "b", log = "y",
-       data = subset(tgd.all, (CPUS == 2)  & (ngenes == 7399)),
-       lwd = 2,
-       col = "green"
-)
-points(time ~ narrays,
-       type = "b", log = "y",
-       data = subset(tgd.all, (CPUS == 10)  & (ngenes == 7399)),
-       lwd = 2,
-       col = "violet")
-points(time ~ narrays,
-       type = "b", log = "y",
-       data = subset(tgd.all, (CPUS == 20)  & (ngenes == 7399)),
-       lwd = 2,
-       col = "orange")
-points(time ~ narrays,
-       type = "b", log = "y",
-       data = subset(tgd.all, (CPUS == 60)  & (ngenes == 7399)),
-       lwd = 2,
-       col = "red")
+## points(time ~ narrays,
+##        type = "b", log = "y",
+##        data = subset(tgd.all, (CPUS == 1)  & (ngenes == 7399)),
+##        lwd = 2,
+##        col = "blue")
+## points(time ~ narrays,
+##        type = "b", log = "y",
+##        data = subset(tgd.all, (CPUS == 2)  & (ngenes == 7399)),
+##        lwd = 2,
+##        col = "green"
+## )
+## points(time ~ narrays,
+##        type = "b", log = "y",
+##        data = subset(tgd.all, (CPUS == 10)  & (ngenes == 7399)),
+##        lwd = 2,
+##        col = "violet")
+## points(time ~ narrays,
+##        type = "b", log = "y",
+##        data = subset(tgd.all, (CPUS == 20)  & (ngenes == 7399)),
+##        lwd = 2,
+##        col = "orange")
+## points(time ~ narrays,
+##        type = "b", log = "y",
+##        data = subset(tgd.all, (CPUS == 60)  & (ngenes == 7399)),
+##        lwd = 2,
+##        col = "red")
 
-legend(20, 55000, c("Original Sequential",
-                   "New sequential",
-                   "Parall. 2 CPUs",
-                   "Parall. 10 CPUs",
-                   "Parall. 20 CPUs",
-                   "Parall. 60 CPUs"),
-       col = c("black", "blue", "green", "violet", "orange", "red"),
-       pch = 21,
-       lty = 1,
-       lwd = 2,
-       cex = 0.75)
+## legend(20, 55000, c("Original Sequential",
+##                    "New sequential",
+##                    "Parall. 2 CPUs",
+##                    "Parall. 10 CPUs",
+##                    "Parall. 20 CPUs",
+##                    "Parall. 60 CPUs"),
+##        col = c("black", "blue", "green", "violet", "orange", "red"),
+##        pch = 21,
+##        lty = 1,
+##        lwd = 2,
+##        cex = 0.75)
 
-plot(time ~ ngenes,
-     ylim = c(miny, maxy),
-     xlab = "Number of genes",
-     ylab = "User wall time (seconds)",
-     type = "b",
-     log = "xy",
-     xlim = c(1000, 48000),
-     data = subset(tgd.all, is.na(CPUS) & narrays == 160),
-     axes = FALSE,
-     main = "Effect of number of genes (number of arrays = 160)",
-     lwd = 2)
-axis(2)
-box()
-axis(1, at = c(1000, 2000, 4000, 6000, 12000, 24000, 48000))
+## plot(time ~ ngenes,
+##      ylim = c(miny, maxy),
+##      xlab = "Number of genes",
+##      ylab = "User wall time (seconds)",
+##      type = "b",
+##      log = "xy",
+##      xlim = c(1000, 48000),
+##      data = subset(tgd.all, is.na(CPUS) & narrays == 160),
+##      axes = FALSE,
+##      main = "Effect of number of genes (number of arrays = 160)",
+##      lwd = 2)
+## axis(2)
+## box()
+## axis(1, at = c(1000, 2000, 4000, 6000, 12000, 24000, 48000))
 
-points(time ~ ngenes,
-       type = "b", log = "xy",
-       data = subset(tgd.all, (CPUS == 1)  & (narrays == 160)),
-       lwd = 2,
-       col = "blue")
-points(time ~ ngenes,
-       type = "b", log = "xy",
-       data = subset(tgd.all, (CPUS == 2)  & (narrays == 160)),
-       lwd = 2,
-       col = "green")
-points(time ~ ngenes,
-       type = "b", log = "xy",
-       data = subset(tgd.all, (CPUS == 10)  & (narrays == 160)),
-       lwd = 2,
-       col = "violet")
-points(time ~ ngenes,
-       type = "b", log = "xy",
-       data = subset(tgd.all, (CPUS == 20)  & (narrays == 160)),
-       lwd = 2,
-       col = "orange")
-points(time ~ ngenes,
-       type = "b", log = "xy",
-       data = subset(tgd.all, (CPUS == 60)  & (narrays == 160)),
-       lwd = 2,
-       col = "red")
+## points(time ~ ngenes,
+##        type = "b", log = "xy",
+##        data = subset(tgd.all, (CPUS == 1)  & (narrays == 160)),
+##        lwd = 2,
+##        col = "blue")
+## points(time ~ ngenes,
+##        type = "b", log = "xy",
+##        data = subset(tgd.all, (CPUS == 2)  & (narrays == 160)),
+##        lwd = 2,
+##        col = "green")
+## points(time ~ ngenes,
+##        type = "b", log = "xy",
+##        data = subset(tgd.all, (CPUS == 10)  & (narrays == 160)),
+##        lwd = 2,
+##        col = "violet")
+## points(time ~ ngenes,
+##        type = "b", log = "xy",
+##        data = subset(tgd.all, (CPUS == 20)  & (narrays == 160)),
+##        lwd = 2,
+##        col = "orange")
+## points(time ~ ngenes,
+##        type = "b", log = "xy",
+##        data = subset(tgd.all, (CPUS == 60)  & (narrays == 160)),
+##        lwd = 2,
+##        col = "red")
 
-dev.off()
-
-
+## dev.off()
 
 
 
@@ -164,6 +162,19 @@ dev.off()
 
 
 
+
+flab <- function(cpus, nge, narr, cex = 0.8) {
+    if (is.null(narr)) {
+        tmp <- subset(tgd.all, (CPUS == cpus)  & (ngenes == nge))
+        text(y = 1.2 * tmp$ratio, x = tmp$narrays,
+             labels = round(tmp$time), cex = cex)
+    }
+    else {
+        tmp <- subset(tgd.all, (CPUS == cpus)  & (narrays == narr))
+        text(y = 1.2 * tmp$ratio, x = tmp$ngenes,
+             labels = round(tmp$time), cex = cex)
+    }
+}
 
 
 postscript(file = "bench.tgd.eps", height = 9.6, width = 14.4,
@@ -181,12 +192,13 @@ par(cex.main = 0.9)
 par(cex.axis = 0.8)
 
 plot(ratio ~ narrays,
-     ylim = c(miny, maxy),
+     ylim = c(miny, maxy + 5),
+     xlim = c(20, 103),
      xlab = "Number of arrays (samples)",
      ylab = "Fold increase in speed (relative to 1 CPU)",
      type = "b",
      log = "y",
-     data = subset(tgd.all, is.na(CPUS) & ngenes == 7399),
+     data = subset(tgd.all, (CPUS== -99) & (ngenes == 7399)),
      axes = FALSE,
      main = "Effect of number of arrays (number of genes = 7399)",
      lwd = 2)
@@ -195,47 +207,46 @@ box()
 axis(1, at = c(20, 40, 80, 100))
 
 points(ratio ~ narrays,
-       type = "b", log = "y",
+       type = "b",
        data = subset(tgd.all, (CPUS == 1)  & (ngenes == 7399)),
        lwd = 2,
        col = "blue")
 points(ratio ~ narrays,
-       type = "b", log = "y",
+       type = "b",
        data = subset(tgd.all, (CPUS == 2)  & (ngenes == 7399)),
        lwd = 2,
        col = "green"
 )
 points(ratio ~ narrays,
-       type = "b", log = "y",
+       type = "b", 
        data = subset(tgd.all, (CPUS == 10)  & (ngenes == 7399)),
        lwd = 2,
        col = "violet")
 points(ratio ~ narrays,
-       type = "b", log = "y",
+       type = "b", 
        data = subset(tgd.all, (CPUS == 20)  & (ngenes == 7399)),
        lwd = 2,
        col = "orange")
 points(ratio ~ narrays,
-       type = "b", log = "y",
+       type = "b", 
        data = subset(tgd.all, (CPUS == 60)  & (ngenes == 7399)),
        lwd = 2,
        col = "red")
 
-tmp <- subset(tgd.all, (CPUS == 1)  & (ngenes == 7399))
-text(y = tmp$ratio + 0.1, x = tmp$narrays,
-     labels = round(tmp$time),
-     log = "y")
-     
+
+flab(1, 7399, NULL)
+flab(-99, 7399, NULL)
+flab(60, 7399, NULL)
 
 
 plot(ratio ~ ngenes,
-     ylim = c(miny, maxy),
+     ylim = c(miny, maxy + 5),
      xlab = "Number of genes",
      ylab = "Fold increase in speed (relative to 1 CPU)",
      type = "b",
      log = "xy",
-     xlim = c(1000, 48000),
-     data = subset(tgd.all, is.na(CPUS) & narrays == 160),
+     xlim = c(990, 48000 + 1500),
+     data = subset(tgd.all, (CPUS == -99) & (narrays == 160)),
      axes = FALSE,
      main = "Effect of number of genes (number of arrays = 160)",
      lwd = 2)
@@ -244,40 +255,38 @@ box()
 axis(1, at = c(1000, 2000, 4000, 6000, 12000, 24000, 48000))
 
 points(ratio ~ ngenes,
-       type = "b", log = "xy",
+       type = "b",
        data = subset(tgd.all, (CPUS == 1)  & (narrays == 160)),
        lwd = 2,
        col = "blue")
 points(ratio ~ ngenes,
-       type = "b", log = "xy",
+       type = "b",
        data = subset(tgd.all, (CPUS == 2)  & (narrays == 160)),
        lwd = 2,
        col = "green")
 points(ratio ~ ngenes,
-       type = "b", log = "xy",
+       type = "b",
        data = subset(tgd.all, (CPUS == 10)  & (narrays == 160)),
        lwd = 2,
        col = "violet")
 points(ratio ~ ngenes,
-       type = "b", log = "xy",
+       type = "b",
        data = subset(tgd.all, (CPUS == 20)  & (narrays == 160)),
        lwd = 2,
        col = "orange")
 points(ratio ~ ngenes,
-       type = "b", log = "xy",
+       type = "b",
        data = subset(tgd.all, (CPUS == 60)  & (narrays == 160)),
        lwd = 2,
        col = "red")
 
-
-tmp <- subset(tgd.all, (CPUS == 1)  & (narrays == 160))
-text(y = tmp$ratio + 0.1, x = tmp$ngenes,
-     labels = round(tmp$time),
-     log = "y")
+flab(1, NULL, 160)
+flab(-99, NULL, 160)
+flab(60, NULL, 160)
 
 
-legend(6200, 0.99, c("Original Sequential",
-                   "New sequential",
+legend(9400, 0.8, c("Original Sequential",
+                   "New sequential (1 CPU)",
                    "Parall. 2 CPUs",
                    "Parall. 10 CPUs",
                    "Parall. 20 CPUs",

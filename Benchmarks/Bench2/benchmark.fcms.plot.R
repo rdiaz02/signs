@@ -18,9 +18,29 @@ maxy <- max(fcms.all[, 1])
 
 fcms.all$farrays <- factor(fcms.all$narrays)
 
+fcms.all$ratio <- fcms.all$time/fcms.all$time[1:11]
+fcms.all$ratio <- 1/fcms.all$ratio
 
 
 
+
+flab <- function(cpus, nge, narr, cex = 0.8) {
+    if (is.null(narr)) {
+        tmp <- subset(fcms.all, (CPUS == cpus)  & (ngenes == nge))
+        text(y = 0.1 + tmp$ratio, x = tmp$narrays,
+             labels = round(tmp$time), cex = cex)
+    }
+    else {
+        tmp <- subset(fcms.all, (CPUS == cpus)  & (narrays == narr))
+        text(y = 0.1 + tmp$ratio, x = tmp$ngenes,
+             labels = round(tmp$time), cex = cex)
+    }
+}
+
+
+miny <- min(fcms.all$ratio)
+maxy <- max(fcms.all$ratio)
+maxy <- 5
 
 postscript(file = "bench.fcms.eps", height = 9.6, width = 14.4,
            horizontal = FALSE,
@@ -32,13 +52,15 @@ par(cex = 1.3)
 par(cex.lab = 1)
 par(cex.main = 0.9)
 par(cex.axis = 0.8)
+par(mgp = c(2.5, 1, 0))
+par(mar = c(4, 4, 3, 2)) 
 
-plot(time ~ narrays,
+plot(ratio ~ narrays,
      ylim = c(miny, maxy),
      xlab = "Number of arrays (samples)",
-     ylab = "User wall time (seconds)",
+     ylab = "Fold increase in speed (relative to 1 CPU)",
      type = "b",
-     log = "y",
+#     log = "y",
      data = subset(fcms.all, (CPUS == 1) & (ngenes == 7399)),
      axes = FALSE,
      main = "Effect of number of arrays (number of genes = 7399)",
@@ -48,34 +70,34 @@ axis(2)
 box()
 axis(1, at = c(20, 40, 80, 100))
 
-## points(time ~ as.numeric(farrays),
-##        type = "b", log = "y",
-##        data = subset(fcms.all, (CPUS == 1)  & (ngenes == 7399)),
-##        lwd = 2,
-##        col = "blue")
-points(time ~ narrays,
-       type = "b", log = "y",
+points(ratio ~ narrays,
+       type = "b", 
        data = subset(fcms.all, (CPUS == 2)  & (ngenes == 7399)),
        lwd = 2,
        col = "green"
 )
-points(time ~ narrays,
-       type = "b", log = "y",
+points(ratio ~ narrays,
+       type = "b", 
        data = subset(fcms.all, (CPUS == 10)  & (ngenes == 7399)),
        lwd = 2,
        col = "violet")
-points(time ~ narrays,
-       type = "b", log = "y",
+points(ratio ~ narrays,
+       type = "b", 
        data = subset(fcms.all, (CPUS == 20)  & (ngenes == 7399)),
        lwd = 2,
        col = "orange")
-points(time ~ narrays,
-       type = "b", log = "y",
+points(ratio ~ narrays,
+       type = "b", 
        data = subset(fcms.all, (CPUS == 60)  & (ngenes == 7399)),
        lwd = 2,
        col = "red")
 
-legend(20, 5000, c("1 CPU",
+
+flab(1, 7399, NULL)
+flab(2, 7399, NULL)
+flab(10, 7399, NULL)
+
+legend(60, 3, c("1 CPU",
                    "Parall. 2 CPUs",
                    "Parall. 10 CPUs",
                    "Parall. 20 CPUs",
@@ -86,12 +108,12 @@ legend(20, 5000, c("1 CPU",
        lwd = 2,
        cex = 0.75)
 
-plot(time ~ ngenes,
+plot(ratio ~ ngenes,
      ylim = c(miny, maxy),
      xlab = "Number of genes",
-     ylab = "User wall time (seconds)",
+     ylab = "Fold increase in speed (relative to 1 CPU)",
      type = "b",
-     log = "xy",
+     log = "x",
      data = subset(fcms.all, (CPUS == 1) & (narrays == 160)),
      axes = FALSE,
      main = "Effect of number of genes (number of arrays = 160)",
@@ -102,30 +124,148 @@ box()
 #par(las = 3)
 axis(1, at =  c(1000, 2000, 4000, 6000, 12000, 24000, 48000))
 
-## points(time ~ ngenes,
-##        type = "b", log = "y",
-##        data = subset(fcms.all, (CPUS == 1)  & (narrays == 160)),
-##        lwd = 2,
-##        col = "blue")
-points(time ~ ngenes,
-       type = "b", log = "xy",
+points(ratio ~ ngenes,
+       type = "b", 
        data = subset(fcms.all, (CPUS == 2)  & (narrays == 160)),
        lwd = 2,
        col = "green")
-points(time ~ ngenes,
-       type = "b", log = "xy",
+points(ratio ~ ngenes,
+       type = "b", 
        data = subset(fcms.all, (CPUS == 10)  & (narrays == 160)),
        lwd = 2,
        col = "violet")
-points(time ~ ngenes,
-       type = "b", log = "xy",
+points(ratio ~ ngenes,
+       type = "b", 
        data = subset(fcms.all, (CPUS == 20)  & (narrays == 160)),
        lwd = 2,
        col = "orange")
-points(time ~ ngenes,
-       type = "b", log = "xy",
+points(ratio ~ ngenes,
+       type = "b", 
        data = subset(fcms.all, (CPUS == 60)  & (narrays == 160)),
        lwd = 2,
        col = "red")
 
+
+flab(1, NULL, 160)
+flab(2, NULL, 160)
+flab(10, NULL, 160)
+
 dev.off()
+
+
+
+
+
+
+
+
+
+
+
+## postscript(file = "bench.fcms.eps", height = 9.6, width = 14.4,
+##            horizontal = FALSE,
+##            onefile = FALSE, paper = "special")
+
+## par(mfrow = c(1, 2))
+## par(las = 1)
+## par(cex = 1.3)
+## par(cex.lab = 1)
+## par(cex.main = 0.9)
+## par(cex.axis = 0.8)
+
+## plot(time ~ narrays,
+##      ylim = c(miny, maxy),
+##      xlab = "Number of arrays (samples)",
+##      ylab = "User wall time (seconds)",
+##      type = "b",
+##      log = "y",
+##      data = subset(fcms.all, (CPUS == 1) & (ngenes == 7399)),
+##      axes = FALSE,
+##      main = "Effect of number of arrays (number of genes = 7399)",
+##      lwd = 2,
+##      col = "blue")
+## axis(2)
+## box()
+## axis(1, at = c(20, 40, 80, 100))
+
+## ## points(time ~ as.numeric(farrays),
+## ##        type = "b", log = "y",
+## ##        data = subset(fcms.all, (CPUS == 1)  & (ngenes == 7399)),
+## ##        lwd = 2,
+## ##        col = "blue")
+## points(time ~ narrays,
+##        type = "b", log = "y",
+##        data = subset(fcms.all, (CPUS == 2)  & (ngenes == 7399)),
+##        lwd = 2,
+##        col = "green"
+## )
+## points(time ~ narrays,
+##        type = "b", log = "y",
+##        data = subset(fcms.all, (CPUS == 10)  & (ngenes == 7399)),
+##        lwd = 2,
+##        col = "violet")
+## points(time ~ narrays,
+##        type = "b", log = "y",
+##        data = subset(fcms.all, (CPUS == 20)  & (ngenes == 7399)),
+##        lwd = 2,
+##        col = "orange")
+## points(time ~ narrays,
+##        type = "b", log = "y",
+##        data = subset(fcms.all, (CPUS == 60)  & (ngenes == 7399)),
+##        lwd = 2,
+##        col = "red")
+
+## legend(20, 5000, c("1 CPU",
+##                    "Parall. 2 CPUs",
+##                    "Parall. 10 CPUs",
+##                    "Parall. 20 CPUs",
+##                    "Parall. 60 CPUs"),
+##        col = c("blue", "green", "violet", "orange", "red"),
+##        pch = 21,
+##        lty = 1,
+##        lwd = 2,
+##        cex = 0.75)
+
+## plot(time ~ ngenes,
+##      ylim = c(miny, maxy),
+##      xlab = "Number of genes",
+##      ylab = "User wall time (seconds)",
+##      type = "b",
+##      log = "xy",
+##      data = subset(fcms.all, (CPUS == 1) & (narrays == 160)),
+##      axes = FALSE,
+##      main = "Effect of number of genes (number of arrays = 160)",
+##      lwd = 2,
+##      col = "blue")
+## axis(2)
+## box()
+## #par(las = 3)
+## axis(1, at =  c(1000, 2000, 4000, 6000, 12000, 24000, 48000))
+
+## ## points(time ~ ngenes,
+## ##        type = "b", log = "y",
+## ##        data = subset(fcms.all, (CPUS == 1)  & (narrays == 160)),
+## ##        lwd = 2,
+## ##        col = "blue")
+## points(time ~ ngenes,
+##        type = "b", log = "xy",
+##        data = subset(fcms.all, (CPUS == 2)  & (narrays == 160)),
+##        lwd = 2,
+##        col = "green")
+## points(time ~ ngenes,
+##        type = "b", log = "xy",
+##        data = subset(fcms.all, (CPUS == 10)  & (narrays == 160)),
+##        lwd = 2,
+##        col = "violet")
+## points(time ~ ngenes,
+##        type = "b", log = "xy",
+##        data = subset(fcms.all, (CPUS == 20)  & (narrays == 160)),
+##        lwd = 2,
+##        col = "orange")
+## points(time ~ ngenes,
+##        type = "b", log = "xy",
+##        data = subset(fcms.all, (CPUS == 60)  & (narrays == 160)),
+##        lwd = 2,
+##        col = "red")
+
+## dev.off()
