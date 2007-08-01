@@ -211,14 +211,15 @@ if( methodSurv == "TGD") {
 
 #########################################################
 
-MPI_MIN_UNIVERSE_SIZE <- 15
+MPI_MIN_UNIVERSE_SIZE <- 10
 
 if (mpi.universe.size () < MPI_MIN_UNIVERSE_SIZE) {
     cat("\n\n mpi.universe.size () < MPI_MIN_UNIVERSE_SIZE \n\n")
     quit(save = "no", status = 11, runLast = FALSE)
 }
 
-mpiSpawnAll()
+if(methodSurv == "TGD") mpiSpawnAll()
+if(methodSurv == "FCMS") mpiSpawnAll(10)
 
 ## if(methodSurv == "TGD") {
 ##     TheCluster <- makeCluster(mpi.universe.size(), "MPI")

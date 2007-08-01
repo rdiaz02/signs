@@ -107,7 +107,7 @@ rdf:resource="http://web.resource.org/cc/ShareAlike"
       <li><a href="#output">Output</a></li>
 </ul> 
 </li>
-       <li><a href="#speed">How long does it take?</a></li> 
+<!--        <li><a href="#speed">How long does it take?</a></li>  -->
        <li><a href="#examples">Examples</a></li> 
   
     <li><a href="#authors">Author and Acknowledgements</a></li>
@@ -139,31 +139,31 @@ rdf:resource="http://web.resource.org/cc/ShareAlike"
       intrinsically limited as to the maximum number of genes that can be
       used for fitting (such as the lasso). </p>
 
-<p>These two approaches are, thus, promising regarding the above
-      objectives (recovery of molecular signatures). It should be noted,
-      though, that neither these, nor any other, approaches are still
-      widely used, and that there have not been extensive studies
-      comparing relative performance and characteristics. Thus, in
-      contrast to other of our tools (e.g., <a
-      href="http://pomelo.bioinfo.cnio.es">Pomelo</a>, <a
-      href="http://tnasas.bioinfo.cnio.es">Tnasas</a>, or <a
-      href="http://genesrf.bioinfo.cnio.es">GeneSrF</a>) the nature and
-      status of these methods is much more experimental.   In addition,
-      the implementation of this tool is still <b>largely experimental</b>. In
-      particular, it is not obvious how to set one of the parameters for
-      the threshold gradient descent method, and we are working on
-      implementing several additional ideas for selecting the "best
-      solution". Moreover, TGD is also very computationally demanding, and
-      we are experimenting with different approaches to speed it up. Right
-      now most of the execution is parallelized over 60 CPUs, but additional
-      tricks and shortcuts could allow faster execution. In addition, it
-      is not clear what is the most useful presentation of results, so we
-      are of course open to comments and suggestions. Finally, we provide
-      little checking of lack of convergence and similar problems; we are
-      trying to figure out the best way to return this information to the user.</p>
+<!-- <p>These two approaches are, thus, promising regarding the above -->
+<!--       objectives (recovery of molecular signatures). It should be noted, -->
+<!--       though, that neither these, nor any other, approaches are still -->
+<!--       widely used, and that there have not been extensive studies -->
+<!--       comparing relative performance and characteristics. Thus, in -->
+<!--       contrast to other of our tools (e.g., <a -->
+<!--       href="http://pomelo.bioinfo.cnio.es">Pomelo</a>, <a -->
+<!--       href="http://tnasas.bioinfo.cnio.es">Tnasas</a>, or <a -->
+<!--       href="http://genesrf.bioinfo.cnio.es">GeneSrF</a>) the nature and -->
+<!--       status of these methods is much more experimental.   In addition, -->
+<!--       the implementation of this tool is still <b>largely experimental</b>. In -->
+<!--       particular, it is not obvious how to set one of the parameters for -->
+<!--       the threshold gradient descent method, and we are working on -->
+<!--       implementing several additional ideas for selecting the "best -->
+<!--       solution". Moreover, TGD is also very computationally demanding, and -->
+<!--       we are experimenting with different approaches to speed it up. Right -->
+<!--       now most of the execution is parallelized over 60 CPUs, but additional -->
+<!--       tricks and shortcuts could allow faster execution. In addition, it -->
+<!--       is not clear what is the most useful presentation of results, so we -->
+<!--       are of course open to comments and suggestions. Finally, we provide -->
+<!--       little checking of lack of convergence and similar problems; we are -->
+<!--       trying to figure out the best way to return this information to the user.</p> -->
 
-<p>Regardless of the caveats, please enjoy and let us know your
-      suggestions, comments and complaints.</p>
+<!-- <p>Regardless of the caveats, please enjoy and let us know your -->
+<!--       suggestions, comments and complaints.</p> -->
 
 
 <h2><a name="methods">Methods implemented</a></h2>
@@ -290,7 +290,7 @@ series of steps very similar to those in Dave et al. </p>
       gene.</p>
 
 
-<p><b>NEW</b>We have re-enabled this method. This method is still slow, so
+<p><b>NEW</b> We have re-enabled this method. As this method is slow, 
 following a suggestion from Jiang Gui, we now do not examine the CVPL over
 a range of threshold parameters &#964; (tau), but instead use a fixed
 one. By default, it is set at 1. You can vary it, but you are likely to
@@ -678,16 +678,16 @@ options.</p>
 
 
 
- <h3><a name="speed">How long does it take?</a></h3> 
+<!--  <h3><a name="speed">How long does it take?</a></h3>  -->
 
-<p>With the default
-settings, FCMS takes about 5 minutes on the 78 patients by 4751 genes
-breast cancer data set of van't Veer et al. (2002, Nature, 415: 530--536),
-and the 160 patients and 7399 genes DLBCL data set of
-Rosenwald et al. (2002, N. Eng. J. Med, 346: 1937--1947). With the default settings, TGD 
-takes about 2 hours with the van't Veer data set (and about 4 with the DLBCL data set).
-These are timings when the server was moderately loaded
-      (about 50% of the CPUs being completely busy with another task).</p>
+<!-- <p>With the default -->
+<!-- settings, FCMS takes about 5 minutes on the 78 patients by 4751 genes -->
+<!-- breast cancer data set of van't Veer et al. (2002, Nature, 415: 530--536), -->
+<!-- and the 160 patients and 7399 genes DLBCL data set of -->
+<!-- Rosenwald et al. (2002, N. Eng. J. Med, 346: 1937--1947). With the default settings, TGD  -->
+<!-- takes about 2 hours with the van't Veer data set (and about 4 with the DLBCL data set). -->
+<!-- These are timings when the server was moderately loaded -->
+<!--       (about 50% of the CPUs being completely busy with another task).</p> -->
 
 
 

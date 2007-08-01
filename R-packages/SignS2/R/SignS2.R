@@ -251,7 +251,7 @@ tgd1InternalSnow <- function(x.train, time.train, event.train,
                             lik1(c(ita, scores),
                                  c(time.train,  time.test),
                                  c(event.train, event.test)))/length(time.test)
-
+        
     }
     ## what are these for?
     ##     rm("beta1GlobalEnv", envir = .GlobalEnv)
@@ -653,11 +653,11 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
     
     thresS <- seq(from = thres[1], to = thres[2],
                   length.out = thresGrid)
-
+    
     mins.at <- apply(z$cvpl.mat, 1, function(x) which.min(x))
     mins <- apply(z$cvpl.mat, 1, function(x) min(x, na.rm = TRUE ))
     cvpls <- z$cvpl.mat[matrix(c(1:thresGrid, mins.at), ncol = 2)]
-
+    
     ## why is bestBetas.m a list and not an array?
     ## I think because initially I'd return only non-zero
     ## betas.
@@ -763,14 +763,14 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
 }
    
 tgdCVPred <- function(x, time, event,
-                     xtest, 
-                     thres, epi, thresGrid,
-                     maxiter,
-                     nfold) {
+                      xtest, 
+                      thres, epi, thresGrid,
+                      maxiter,
+                      nfold) {
     ## find best params by CV and predict on a new set.
     bestTrain <- tauBestP(x, time, event,
-                         thres, epi, thresGrid,
-                         maxiter, nfold)
+                          thres, epi, thresGrid,
+                          maxiter, nfold)
     
     return(list(scoresTest = xtest %*% bestTrain$betas,
                 betas = bestTrain$betas,
@@ -957,9 +957,9 @@ summary.cvTGD <- function(object, allDataObject, subjectNames, html = TRUE) {
 
 
 coxph.fit.pomelo0 <- function (x, y, init = NULL,
-                              control, method = "efron",  rownames = NULL) {
+                               control, method = "efron",  rownames = NULL) {
     warnStatus <- 0
-        naindex <- which(is.na(x))
+    naindex <- which(is.na(x))
     if(length(naindex)) {
         x <- x[-naindex]
         y <- y[naindex, ]
@@ -1002,19 +1002,19 @@ coxph.fit.pomelo0 <- function (x, y, init = NULL,
             mean(offset)), as.double(weights), newstrat, means = double(nvar), 
         coef = as.double(init), u = double(nvar), imat = double(nvar * 
             nvar), loglik = double(2), flag = integer(1), double(2 * 
-            n + 2 * nvar * nvar + 3 * nvar), as.double(control$eps), 
+                                       n + 2 * nvar * nvar + 3 * nvar), as.double(control$eps), 
         as.double(control$toler.chol), sctest = as.double(method == 
             "efron"), PACKAGE = "survival")
     if (nullmodel) {
         score <- exp(offset[sorted])
         coxres <- .C("coxmart", as.integer(n), as.integer(method == 
-            "efron"), stime, sstat, newstrat, as.double(score), 
-            as.double(weights), resid = double(n), PACKAGE = "survival")
+                                                          "efron"), stime, sstat, newstrat, as.double(score), 
+                     as.double(weights), resid = double(n), PACKAGE = "survival")
         resid <- double(n)
         resid[sorted] <- coxres$resid
         names(resid) <- rownames
         list(loglik = coxfit$loglik[1], linear.predictors = offset, 
-            residuals = resid, method = c("coxph.null", "coxph"))
+             residuals = resid, method = c("coxph.null", "coxph"))
     }
     else {
         var <- matrix(coxfit$imat, nvar, nvar)
@@ -1030,12 +1030,12 @@ coxph.fit.pomelo0 <- function (x, y, init = NULL,
             }
             else {
                 infs <- ((infs > control$eps) & infs > control$toler.inf * 
-                  abs(coef))
+                         abs(coef))
                 if (any(infs)) {
-                  warning(paste("Loglik converged before variable ", 
-                    paste((1:nvar)[infs], collapse = ","), "; beta may be infinite. "))
-                  warnStatus <- 1
-              }
+                    warning(paste("Loglik converged before variable ", 
+                                  paste((1:nvar)[infs], collapse = ","), "; beta may be infinite. "))
+                    warnStatus <- 1
+                }
             }
         }
         names(coef) <- dimnames(x)[[2]]
@@ -1064,36 +1064,32 @@ coxph.fit.pomelo0 <- function (x, y, init = NULL,
 ## dlbcl 8x          50.327           49.303             78.267 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 dStep1.serial <- function(x, time, event, p, MaxIterationsCox) {
-    res.mat <- matrix(NA, nrow = ncol(x), ncol = 6) sobject <-
-    Surv(time, event) ## cat("\n Starting dStep1.serial at ", date(),
-    " \n\n"); ptm <- proc.time() funpap3 <- function (x) { out1 <-
-    coxph.fit.pomelo0(x, sobject, control = coxph.control(iter.max =
-    MaxIterationsCox)) if(out1$warnStatus > 1) { return(c(0, NA,
-    out1$warnStatus)) } else { sts <- out1$coef/sqrt(out1$var)
-    return(c(out1$coef, 1- pchisq((sts^2), df = 1), out1$warnStatus))
-    } } tmp <- t(apply(x, 2, funpap3)) res.mat[, 1:2] <- tmp[, 1:2]
-    res.mat[, 3] <- ifelse(res.mat[, 2] < p, 1, 0) res.mat[, 4] <-
-    sign(res.mat[, 1]) * res.mat[, 3] res.mat[, 5] <- tmp[, 3]
+    res.mat <- matrix(NA, nrow = ncol(x), ncol = 6)
+    sobject <- Surv(time, event)
+    ## cat("\n Starting dStep1.serial at ", date(), " \n\n"); ptm <- proc.time()
+    funpap3 <- function (x) {
+        out1 <-
+            coxph.fit.pomelo0(x, sobject,
+                              control = coxph.control(iter.max =  MaxIterationsCox))
+        if(out1$warnStatus > 1) {
+            return(c(0, NA, out1$warnStatus))
+        } else {
+            sts <- out1$coef/sqrt(out1$var)
+            return(c(out1$coef, 1- pchisq((sts^2), df = 1), out1$warnStatus))
+        }
+    }
+    tmp <- t(apply(x, 2, funpap3))
+    res.mat[, 1:2] <- tmp[, 1:2]
+    res.mat[, 3] <- ifelse(res.mat[, 2] < p, 1, 0)
+    res.mat[, 4] <- sign(res.mat[, 1]) * res.mat[, 3]
+    res.mat[, 5] <- tmp[, 3]
     res.mat[, 6] <- p.adjust(tmp[, 2], method = "BH")
-    res.mat[is.na(res.mat[, 2]), c(2, 6)] <- 999 colnames(res.mat) <-
-    c("coeff", "p.value", "keep", "pos.neg", "Warning", "FDR") ##
-    cat("\n Finished dStep1.serial at ", date(), "; took ",
-    (proc.time() - ptm)[3], " \n\n") return(res.mat) }
+    res.mat[is.na(res.mat[, 2]), c(2, 6)] <- 999
+    colnames(res.mat) <-  c("coeff", "p.value", "keep", "pos.neg", "Warning", "FDR")
+    ##  cat("\n Finished dStep1.serial at ", date(), "; took ", (proc.time() - ptm)[3], " \n\n")
+    return(res.mat)
+}
 
 
 
@@ -1184,15 +1180,6 @@ dStep1.parallel.old <- function(x, time, event, p, MaxIterationsCox) {
     cat("\n Finished dStep1.parallel at ", date(), "; took ", (proc.time() - ptm)[3], " \n\n")
     return(res.mat)
 }
-
-
-
-
-
-
-
-
-
 
 
 ##  2. Cluster; independently for those with pos and neg beta.
@@ -2095,8 +2082,9 @@ DaveCVPred.res1Given.InternalMPI <- function() {
                 fmDaveObject = bestTrain))
 }
 
-mpiSpawnAll <- function() {
-    mpi.spawn.Rslaves(nslaves = mpi.universe.size())
+mpiSpawnAll <- function(numslaves = NULL) {
+    if (is.null(numslaves)) numslaves <- mpi.universe.size()
+    mpi.spawn.Rslaves(nslaves = numslaves)
     mpiMyCleanSetup()
 }
 
@@ -2149,7 +2137,7 @@ cvDave.parallel3 <- function(x, time, event,
     index.select <- sample(rep(1:nfold, length = n), n, replace = FALSE)
     OOB.scores <- rep(NA, n)
 
-
+    
     cat("\n\n Computing gene-wise cox p-value\n")
     ##    res1s <- list()
     ##     for(i in 1:nfold) {
