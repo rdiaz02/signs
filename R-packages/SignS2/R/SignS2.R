@@ -2115,17 +2115,18 @@ cvDave.parallel3 <- function(x, time, event,
                              p, maxSize,
                              minSize, minCor,
                              MaxIterationsCox,
-                             nfold) {
+                             nfold,
+                             universeSize = 10) {
     cat("\n Starting cvDave.parallel3 at ", date(), " \n\n"); ptm <- proc.time()
     
     if (mpi.comm.size(comm = 1) == 0) {
-        mpiSpawnAll()
+        mpiSpawnAll(universeSize)
         cat("\n      cvDave.parallel3:  cond 1 \n")
     } else { ## so mpi is running
-        if ((mpi.comm.size(comm = 1) - 1) < mpi.universe.size()) {
+        if ((mpi.comm.size(comm = 1) - 1) < universeSize) {
             ## but few salves
             mpi.close.Rslaves()
-            mpiSpawnAll()
+            mpiSpawnAll(universeSize)
             cat("\n     cvDave.parallel3:  cond 2 \n")
         } else {
             mpiDelete()
