@@ -327,9 +327,10 @@ def relaunchCGI():
 ## Output-generating functions
 
 ## Output-generating functions
-def printErrorRun():
+def printErrorRun(errorfile):
     Rresults = open(tmpDir + "/results.txt")
     resultsFile = Rresults.read()
+    errormsg = open(errorfile).read()
     outf = open(tmpDir + "/pre-results.html", mode = "w")
     outf.write("<html><head><title>SignS results </title></head><body>\n")
     outf.write("<h1> ERROR: There was a problem with the R code </h1> \n")
@@ -345,7 +346,7 @@ def printErrorRun():
     outf.write("</pre>")
     outf.write("<p> And this the error messages file:</p>")
     outf.write("<pre>")
-    outf.write(cgi.escape(error.msg))
+    outf.write(cgi.escape(errormsg))
     outf.write("</pre>")
     outf.write("</body></html>")
     outf.close()
@@ -550,10 +551,10 @@ def printOKRun():
             outf.flush()
             os.system('html2text -width 200 -nobs -o Results.txt pre-results.html')
             
-            ll1 = glob.glob('*.log')
-            for dname in ll1:
-                try: os.remove(dname)
-                except: None
+#             ll1 = glob.glob('*.log')
+#             for dname in ll1:
+#                 try: os.remove(dname)
+#                 except: None
             
             lll = glob.glob('*')
             for flname in lll:
@@ -852,6 +853,7 @@ def cleanups(tmpDir, newDir, newnamepid,
     """ Clean up actions; kill lam, delete running.procs files, clean process table."""
     lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
     rinfo = open(tmpDir + '/current_R_proc_info', mode = 'r').readline().split()
+
     try:
         kill_pid_machine(rinfo[1], rinfo[0])
     except:

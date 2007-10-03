@@ -1808,8 +1808,11 @@ wrapDendmapp <- function(li) {
 
 ## 3. fit model
 
+tryCatch2 <- function(x) tryCatch(x, error = function(e) "Error")
+
 dStep3 <- function(res2, time, event, MaxIterationsCox) {
-    ### this is a terrible hack, but I am getting scoping problems in stepAIC
+    
+    ## this is a terrible hack, but I am getting scoping problems in stepAIC
     assign("..___MaxIterationsCox", MaxIterationsCox, env = .GlobalEnv)
     
     cat("\n ..... Starting dStep3 at ", date(), " \n\n"); ptm <- proc.time()
@@ -1829,21 +1832,28 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
             ## iterations, some scores end up being infinite. That sometimes
             ## can be "fixed" if we use a smaller number of iterations.
             ## If that does not work, then we set the value to NA
-            trycox <- try(logliks[i] <-
+            trycox <- tryCatch(logliks[i] <-
                           coxph(sobject ~ md[, modelsSizeTwo[i, ]],
-                                control = coxph.control(iter.max = MaxIterationsCox))$loglik[2])
-            
-            if(class(trycox) == "try-error")
-                trycox <- try(logliks[i] <-
+                                control = coxph.control(iter.max = MaxIterationsCox))$loglik[2],
+                          error = function(e) "Error")
+            cat("\n              tried iter.max = ", MaxIterationsCox)
+
+            if((length(trycox) == 1) & (trycox == "Error")) {
+                cat("\n              failed with iter.max = ", MaxIterationsCox)
+
+                trycox <- tryCatch2(logliks[i] <-
                               coxph(sobject ~ md[, modelsSizeTwo[i, ]],
-                                    control = coxph.control(iter.max = 20))$loglik[2]) 
-            
-            if(class(trycox) == "try-error")
-                trycox <- try(logliks[i] <-
+                                    control = coxph.control(iter.max = 20))$loglik[2])
+                cat("\n              tried iter.max = ", 20)
+
+            }
+            if((length(trycox) == 1) & (trycox == "Error")) {
+                trycox <- tryCatch2(logliks[i] <-
                               coxph(sobject ~ md[, modelsSizeTwo[i, ]],
-                                    control = coxph.control(iter.max = 10))$loglik[2]) 
-            
-            if(class(trycox) == "try-error")
+                                    control = coxph.control(iter.max = 10))$loglik[2])
+                cat("\n              tried iter.max = ", 10)
+            }
+            if((length(trycox) == 1) & (trycox == "Error"))
                 logliks[i] <- NA
         }
         ## zz: give warnings if any loglik is NA
@@ -1852,60 +1862,75 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
         mdf <- data.frame(md)
         attach(mdf) ## stepAIC not working otherwise
         thisenv <- environment()
-
-        trycox <- try(                      
+        cat("\n                 Fitting bestTwoModel\n")
+        trycox <- tryCatch2(                      
                       bestTwoModel <-
                       coxph(eval(parse(text = paste("sobject ~",
                                        paste(colnames(mdf)[bestTwoGenes],
                                              sep = "", collapse = " + ")))),
                             control = coxph.control(iter.max = ..___MaxIterationsCox))
                       )
-        if(class(trycox) == "try-error")
-            trycox <- try(
+        cat("\n              tried with iter.max = ", ..___MaxIterationsCox)
+
+        if((length(trycox) == 1) & (trycox == "Error")) {
+            cat("\n              failed with iter.max = ", ..___MaxIterationsCox)
+            trycox <- tryCatch2(
                           bestTwoModel <-
                           coxph(eval(parse(text = paste("sobject ~",
                                            paste(colnames(mdf)[bestTwoGenes],
                                                  sep = "", collapse = " + ")))),
                                 control = coxph.control(iter.max = 20))
                           )
-        if(class(trycox) == "try-error")
-            trycox <- try(
+            cat("\n              tried iter.max = ", 20)
+
+        }
+        if((length(trycox) == 1) & (trycox == "Error")) {
+            trycox <- tryCatch2(
                           bestTwoModel <-
                           coxph(eval(parse(text = paste("sobject ~",
                                            paste(colnames(mdf)[bestTwoGenes],
                                                  sep = "", collapse = " + ")))),
                                 control = coxph.control(iter.max = 10))
                           )
-        if(class(trycox) == "try-error")
-            trycox <- try(
+            cat("\n              tried iter.max = ", 10)
+        }
+        if((length(trycox) == 1) & (trycox == "Error")) {
+            trycox <- tryCatch2(
                           bestTwoModel <-
                           coxph(eval(parse(text = paste("sobject ~",
                                            paste(colnames(mdf)[bestTwoGenes],
                                                  sep = "", collapse = " + ")))),
                                 control = coxph.control(iter.max = 5))
                           )
-        if(class(trycox) == "try-error")
-            trycox <- try(
+            cat("\n              tried iter.max = ", 5)
+        }
+        if((length(trycox) == 1) & (trycox == "Error")) {
+            trycox <- tryCatch2(
                           bestTwoModel <-
                           coxph(eval(parse(text = paste("sobject ~",
                                            paste(colnames(mdf)[bestTwoGenes],
                                                  sep = "", collapse = " + ")))),
                                 control = coxph.control(iter.max = 2))
                           )
+            cat("\n              tried iter.max = ", 2)
+        }
         ## So we'll try stepwise; but if it doesn't work,
         ## we use forwards, with max size model  = num.variables.
         ## We could run into trouble, so we allow to decrease size
         ## of model, until we are back to bestTwoModel
+
+        cat("\n                   Fitting finalModel\n")
         upperScope <- paste("~", paste(colnames(mdf), sep = "",
                                        collapse = " + "))
-        tryaic <- try(
+        tryaic <- tryCatch2(
                       finalModel <- stepAIC(bestTwoModel, scope = upperScope,
                                             direction = "both")
                       )
         maxsize <- sum(event) - 2
-        while(class(tryaic) == "try-error") {
+        while((length(tryaic) == 1) & (tryaic == "Error")) {
+            cat("\n                stepwise failed; trying forward. Maxsize = ", maxsize, "\n")
             tryaic <-
-                try(finalModel <- stepAIC(bestTwoModel,
+                tryCatch2(finalModel <- stepAIC(bestTwoModel,
                                           scope = upperScope,
                                           direction = "forward",
                                           steps = maxsize)
@@ -1923,34 +1948,39 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
         predictsFinalModel <- predict(finalModel, type = "lp")
         detach(mdf)
     } else { ## so we do not need to look over several models
+        cat("\n                    Not looking over several models\n")
         mdf <- data.frame(md)
 
-        trycox <-
-          try(
-              finalModel <- coxph(sobject ~ ., data = mdf,
-                                  control = coxph.control(iter.max = MaxIterationsCox)))
-        if(class(trycox) == "try-error")
+        for (mitercox in c(MaxIterationsCox, 20, 10, 5, 2)) {
             trycox <-
-            try(
-                finalModel <- coxph(sobject ~ ., data = mdf,
-                                    control = coxph.control(iter.max = 20)))
-        if(class(trycox) == "try-error")
-          trycox <-
-            try(
-                finalModel <- coxph(sobject ~ ., data = mdf,
-                                    control = coxph.control(iter.max = 10)))
-        if(class(trycox) == "try-error")
-          trycox <-
-            try(
-                finalModel <- coxph(sobject ~ ., data = mdf,
-                                    control = coxph.control(iter.max = 5)))
-        if(class(trycox) == "try-error")
-          trycox <-
-            try(
-                finalModel <- coxph(sobject ~ ., data = mdf,
-                                    control = coxph.control(iter.max = 2)))
+                tryCatch2(
+                    finalModel <- coxph(sobject ~ ., data = mdf,
+                                        control = coxph.control(iter.max = mitercox)))
+            if((length(trycox) == 1) & (trycox == "Error")) break
+            cat("\n                         failed with iter.max = ", mitercox)
+        }
+##         if(class(trycox) == "try-error")
+##             trycox <-
+##             try(
+##                 finalModel <- coxph(sobject ~ ., data = mdf,
+##                                     control = coxph.control(iter.max = 20)))
+##         if(class(trycox) == "try-error")
+##           trycox <-
+##             try(
+##                 finalModel <- coxph(sobject ~ ., data = mdf,
+##                                     control = coxph.control(iter.max = 10)))
+##         if(class(trycox) == "try-error")
+##           trycox <-
+##             try(
+##                 finalModel <- coxph(sobject ~ ., data = mdf,
+##                                     control = coxph.control(iter.max = 5)))
+##         if(class(trycox) == "try-error")
+##           trycox <-
+##             try(
+##                 finalModel <- coxph(sobject ~ ., data = mdf,
+##                                     control = coxph.control(iter.max = 2)))
         
-        if(class(trycox) == "try-error")
+        if((length(trycox) == 1) & (trycox == "Error"))
           predictsFinalModel <- rep(NA, length(time))
         else
           predictsFinalModel <- predict(finalModel, type = "lp")
@@ -2248,6 +2278,8 @@ cvDave.parallel3 <- function(x, time, event,
                 OOB.scores = OOB.scores)
     class(out) <- "cvDave"
     cat("\n Ending cvDave.parallel3 at ", date(), "; it took ", (proc.time() - ptm)[3], " \n\n")
+    ## For debugging, mainly of lam logs
+    system("tar -czvf lam.logs.tar.gz *.log")
     return(out)
 }
 
