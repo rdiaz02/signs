@@ -364,7 +364,10 @@ if methodSurv == 'TGD':
 
 if(fs.getfirst("covariate2")!= None):
     prep_tmpdir = fs.getfirst("covariate2")
-    shutil.copy("/http/prep/www/tmp/" + prep_tmpdir +"/outdata.txt",tmpDir + "/covariate")
+        ## an ugly hack, as prep not in this filesystem
+    os.system('wget http://prep.bioinfo.cnio.es/tmp/' + prep_tmpdir +
+              '/outdata.txt -O ' + tmpDir + '/covariate')
+    ## shutil.copy("/http/prep/www/tmp/" + prep_tmpdir +"/outdata.txt",tmpDir + "/covariate")
 else:
 ## Uploading files and checking not abusively large
     fileUpload('covariate')
