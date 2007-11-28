@@ -9,6 +9,449 @@ require(GDD)
 require(survival)
 require(imagemap)
 
+
+###############################################
+##########                    #################
+########## cforest functions  #################
+##########                    #################
+###############################################
+
+
+geneSelect <- function(x, sobject, numgenes) {
+    ### Select the "best" (according to p-value from Cox) numgenes
+    ## a modification of dStep1.serial
+    
+    MaxIterationsCox <- 200
+    res.mat <- matrix(NA, nrow = ncol(x), ncol = 6)
+    funpap3 <- function (x) {
+        out1 <-
+            coxph.fit.pomelo0(x, sobject,
+                              control = coxph.control(iter.max =  MaxIterationsCox))
+        if(out1$warnStatus > 1) {
+            return(c(0, NA, out1$warnStatus))
+        } else {
+            sts <- out1$coef/sqrt(out1$var)
+            return(c(out1$coef, 1- pchisq((sts^2), df = 1), out1$warnStatus))
+        }
+    }
+    tmp0 <- t(apply(x, 2, funpap3))
+    oo <- order(tmp0[, 2])[1:numgenes]
+    tmp <- tmp0[oo, ]
+    tmp <- tmp[1:200, ]
+    to.keep <- 1:nrow(x)[oo]
+    res.mat[, 1:2] <- tmp[, 1:2]
+    res.mat[, 3] <- NA # ifelse(res.mat[, 2] < p, 1, 0)
+    res.mat[, 4] <- NA # sign(res.mat[, 1]) * res.mat[, 3]
+    res.mat[, 5] <- tmp[, 3]
+    res.mat[, 6] <- NA # p.adjust(tmp[, 2], method = "BH")
+    res.mat[is.na(res.mat[, 2]), c(2, 6)] <- 999
+    colnames(res.mat) <-  c("coeff", "p.value", "keep", "pos.neg", "Warning", "FDR")
+    return(list(res.mat = res.mat, to.keep = to.keep))
+}
+
+cf.median.pred.survtime <- function(object, newdata) {
+    ## Obtain the median predicted survival time for a cforest survival object
+    ## with data newdata
+    tmp <- treeresponse(object, newdata = newdata)
+    return(sapply(tmp, function(x) {x$time[which(x$surv < 0.50)[1]]}))
+}
+
+my.cforest <- function(x, time, event, ngenes, newdata) {
+    ## Does "everything":
+    ##   - select genes
+    ##   - fit cforest model
+    ##   - obtain predictions
+    ##   (in the future maybe variable importances, but time consuming and not used now)
+    sobject <- Surv(time, event)
+    selected.genes <- geneSelect(x, sobject, ngenes)
+    x1 <- x[selected.genes$to.keep, ]
+    cf1 <- cforest(sobject ~ ., data = x1,
+                   control = cforest_classical(ntree = 500))
+    if(!(is.null(newdata))) {
+        pred.stime <- cf.median.pred.survtime(cf1, newdata)
+    } else {
+        pred.stime <- NULL
+    }
+    overfit.pred.stime <- cf.median.pred.survtime(cf1, x)
+    return(list(selected.genes = selected.genes,
+                cforest_ob = cf1,
+                predicted_surv_time = pred.stime,
+                overfit_predicted_surv_time = overfit.pred.stime))
+}
+
+
+
+my.cforest.cv <- function(x, time, event, ngenes, nfold = 10,
+                              universeSize = 10) {
+### Take care of MPI stuff
+    if (mpi.comm.size(comm = 1) == 0) {
+        mpiSpawnAll(universeSize)
+        cat("\n      MPI:  cond 1 \n")
+    } else { ## so mpi is running
+        if ((mpi.comm.size(comm = 1) - 1) < universeSize) {
+            ## but few salves
+            mpi.close.Rslaves()
+            mpiSpawnAll(universeSize)
+            cat("\n     MPI:  cond 2 \n")
+        } else {
+            mpiDelete()
+            cat("\n     MPI:  cond 3 \n")
+        }
+    }
+    n <- length(time)
+    index.select <- sample(rep(1:nfold, length = n), n, replace = FALSE)
+    OOB.scores <- rep(NA, n)
+
+
+    my.cforest.internal.MPI <- function(fnum) {
+        ## to be used with papply
+        ## the following need to be passed with
+        ##    mpi.bcast.Robj2slave
+        ##    x, time, event, ,
+        ##    MaxIterationsCox,
+        ##    index.select
+        
+        xtrain <- x[index.select != fnum, , drop = FALSE]
+        xtest <- x[index.select == fnum, , drop = FALSE]
+        timetrain <- time[index.select != fnum]
+        eventtrain <- event[index.select != fnum]
+        
+        retval <- my.cforest(xtrain, timetrain, eventtrain, ngenes, xtest)
+        return(retval)
+    }
+
+    tmp1 <- papply(as.list(1:nfold),
+                   my.cforest.internal.MPI,
+                   papply_commondata = list(x = x,
+                   time = time, event = event, 
+                   ngenes = ngenes, index.select = index.select))
+    
+    for(i in 1:nfold) {
+        OOB.scores[index.select == i] <-
+            tmp1[[i]]$predicted_surv_time
+        tmp1[[i]]$predicted_surv_time <- NULL  ## don't need this anymore
+    }
+
+    out <- list(cved.models = tmp1,
+                OOB.scores = OOB.scores)
+    return(out)
+}
+
+
+###############################################
+##########                    #################
+########## util functions  #################
+##########                    #################
+###############################################
+
+
+print.selected.genes <- function(selected.genes,
+                                 geneNames,
+                                 idtype, organism) {
+    p.values.original <- data.frame(Names = geneNames[selected.genes$to.keep],
+                                    p.value = selected.genes[, 2],
+                                    coeff = selected.genes[, 1], 
+                                    abs.coeff = abs(selected.genes[, 1]),
+                                    fdr = selected.genes[, 6],
+                                    Warning = selected.genes[, 5])
+
+###     if (any(is.na(p.values.original))) {
+###         p.values.original[is.na(p.values.original)] <- 999.999
+###         cat("Oh, oh, some nas in p.values.originalll",
+###             file = "nas.in.p.values.WARN")
+###     }
+
+    write.table(file = "p.values.coeffs.txt",
+                p.values.original, row.names = FALSE, 
+                col.names = TRUE,
+                quote = FALSE,
+                sep = "\t")
+    system(paste("/http/signs/cgi/order.html.py", idtype, organism)) ## call python to generate pre-sorted HTML tables
+}
+
+
+print.cv.results <- function(object, subjectNames, html.level = 3, html = TRUE) {
+        if(html) {
+        oobs <- matrix(object$OOB.scores, ncol = 1)
+        rownames(oobs) <- subjectNames
+
+        cat("\n<h3>4.1. <a href=\"scores.oob.html\" target=\"scores_window\">View</a> out-of-bag scores.</h3>\n")
+        cleanHTMLhead(file = "scores.oob.html",
+                      title = "Linear predictor scores for out-of-bag data")
+        write(paste("<TABLE frame=\"box\">\n",
+                    "<tr><th>Subject/array</th> <th>Linear score</th></tr>\n"),
+              file = "scores.oob.html", append = TRUE)
+        wout <- ""
+        for(i in 1:nrow(oobs)) {
+            wout <- paste(wout, "\n <tr align=right>",
+            "<td>", rownames(oobs)[i], "</td><td>", oobs[i], "</td></tr>\n")
+        }
+        wout <- paste(wout, "</TABLE>")
+        write(wout, file = "scores.oob.html", append = TRUE)
+        cleanHTMLtail(file = "scores.oob.html")
+
+    } else {
+        
+        cat("\n Out-of-bag scores\n\n")
+        oobs <- matrix(object$OOB.scores, ncol = 1)
+        rownames(oobs) <- subjectNames
+        print(oobs)
+    }
+    
+    object <- object[[1]] ## don't need scores anymore. Simpler subsetting.
+
+    ks <- length(object)
+    
+    ngenes <- unlist(lapply(object, function(x) x$nonZeroBetas))
+    thresholds <- unlist(lapply(object, function(x) x$threshold))
+    steps <- unlist(lapply(object, function(x) x$step))
+
+
+    tmp.mat <- data.frame(Number.selected.genes = ngenes,
+                          Optimal.Threshold = thresholds,
+                          Optimal.Steps = steps)
+
+
+    cv.names <- paste("CV.run.", 1:ks, sep = "")    
+    rownames(tmp.mat) <- cv.names
+
+
+    if(html) {
+        cat("\n\n <h3>4.2 Number of selected genes and parameters in cross-validation runs</h3>\n")
+        print(tmp.mat)
+        
+        cat("\n\n <h3>4.3 Genes selected in each of the cross-validation runs</h3>\n")
+        for(i in 1:ks) {
+            cat("\n\n <h4>CV run ", i, "</h4>\n")
+            cat("\n <TABLE  frame=\"box\" rules=\"groups\">\n")
+            cat("<tr align=left><th width=200>Gene</th> </tr>")
+            thesegenes <- rownames(object[[i]]$betas)[object[[i]]$betas != 0]
+            for(thegene in thesegenes) {
+                cat("\n<tr><td>", linkGene(thegene), "</td></tr>")
+            }
+            cat("\n </TABLE>")
+        }
+    } else {
+        cat("\n\n Number of selected genes and parameters in cross-validation runs\n")
+        cat("-------------------------------------------------------------------\n\n")
+        print(tmp.mat)
+        
+        cat("\n\n Stability assessments \n")
+        cat(    " ---------------------\n")
+        cat("\n Genes selected in each of the cross-validation runs \n")
+        
+        for(i in 1:ks) {
+            cat(paste("CV run  ", i, " (", ngenes[i], " genes selected):   ", sep = ""), "\n")
+            print(rownames(object[[i]]$betas)[object[[i]]$betas != 0])
+            cat("\n---\n")
+        }
+    }
+
+
+    
+    tmp.genesSelected <- list()
+    tmp.genesSelected[[1]] <- rownames(allDataObject$betas)[allDataObject$betas != 0]
+    genesSelected.cv <- lapply(object, function(x)
+                               rownames(x$betas)[x$betas != 0])
+    tmp.genesSelected <- c(tmp.genesSelected, genesSelected.cv)
+
+    shared.genes <- matrix(NA, nrow = (ks + 1), ncol = (ks + 1))
+    for(i in 1:(ks + 1)) {
+        for(j in 1:(ks + 1)) { ## sure, need not be symmetric, but this is fast
+            shared.genes[i, j] <-
+                length(intersect(tmp.genesSelected[[i]],
+                                 tmp.genesSelected[[j]]))
+        }
+    }
+
+    ngenes <- c(allDataObject$nonZeroBetas, ngenes)
+    prop.shared <- round(shared.genes/ngenes, 3)
+    
+    ngenesS <- paste("(", ngenes, ")", sep = "")
+    colnames(shared.genes) <- colnames(prop.shared) <- c("OriginalSample", cv.names)
+    rownames(shared.genes) <- rownames(prop.shared) <- paste(c("OriginalSample", cv.names), ngenesS)
+    
+    options(width = 200)
+
+
+    if(html) {
+        cat("\n\n <h2>5. Stability assessments</h2>\n")
+        cat("\n\n <h3>5.1 Number of shared genes</h3> \n")
+    } else {
+        cat("\n\n Stability assessments \n")
+        cat("\n\n Number of shared genes \n")
+    }
+    print(as.table(shared.genes))
+
+    if(html) {
+        cat("\n\n <h3>5.2 Proportion of shared genes (relative to row total)</h3> \n")
+    } else {
+        cat("\n\n Proportion of shared genes (relative to row total) \n")
+    }
+    print(as.table(prop.shared))
+    
+    options(width = 80)
+    unlisted.genes.selected <- unlist(genesSelected.cv)
+    
+    in.all.data <-
+        which(names(table(unlisted.genes.selected, dnn = NULL)) %in% tmp.genesSelected[[1]])
+
+    if(html) {
+        tmptmp <- sort(table(unlisted.genes.selected, dnn = NULL)[in.all.data], decreasing = TRUE)
+        rntmptmp <- rownames(tmptmp)
+        cat("\n\n\n<h3> 5.3 Gene freqs. in cross-validated runs of genes selected in model with all data</h3> \n\n")
+        
+        cat("\n <TABLE  frame=\"box\" rules=\"groups\">\n")
+        cat("<tr align=left><th width=200>Gene</th> <th width=50>Frequency</th></tr>")
+            for(ii in 1:length(tmptmp)) {
+                cat("\n<tr><td>", linkGene(rntmptmp[ii]), "</td>",
+                    "<td>", tmptmp[ii], "</td></tr>")
+            }
+            cat("\n </TABLE>")
+    } else {
+        cat("\n\n\n Gene freqs. in cross-validated runs of genes selected in model with all data \n\n")
+        print(sort(table(unlisted.genes.selected, dnn = NULL)[in.all.data], decreasing = TRUE))
+    }
+
+    if(html) {
+        tmptmp <- sort(table(unlisted.genes.selected, dnn = NULL), decreasing = TRUE)
+        rntmptmp <- rownames(tmptmp)
+        cat("\n\n\n<h3> 5.4 Gene freqs. in cross-validated runs</h3> \n\n")
+        
+        cat("\n <TABLE  frame=\"box\" rules=\"groups\">\n")
+        cat("<tr align=left><th width=200>Gene</th> <th width=50>Frequency</th></tr>")
+            for(ii in 1:length(tmptmp)) {
+                cat("\n<tr><td>", linkGene(rntmptmp[ii]), "</td>",
+                    "<td>", tmptmp[ii], "</td></tr>")
+            }
+            cat("\n </TABLE>")
+    } else {
+        cat("\n\n\n Gene freqs. in cross-validated runs \n\n")
+        print(sort(table(unlisted.genes.selected, dnn = NULL), decreasing = TRUE))
+    }
+
+}
+
+
+
+kmplots <- function(cv.scores, overfitt.scores, Time, Event) {
+    gdd.width <- png.width <- 480
+    gdd.height <- png.height <- 410
+    pdf(file = "kmplot-honest.pdf", width = png.width,
+        height = png.height)
+    KM.visualize(cv.scores,  Time,
+                 Event,  addmain = NULL) ## Good              #### Fig 1
+    dev.off()
+    pdf(file = "kmplot-overfitt.pdf", width = png.width,
+        height = png.height)
+    KM.visualize(overfitt.scores,  Time,                         
+                 Event, ngroups = 2) ## Overfitt                   #### Fig 2
+    dev.off()
+    GDD(file = "kmplot-honest.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize,
+        type = "png")
+    KM.visualize(cv.scores,  Time,
+                 Event,  addmain = NULL) ## Good              #### Fig 1
+    dev.off()
+    GDD(file = "kmplot-overfitt.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize,
+        type = "png")
+    KM.visualize(overfitt.scores,  Time,                         
+                 Event, ngroups = 2) ## Overfitt                   #### Fig 2
+    dev.off()
+    pdf(file = "kmplot4-honest.pdf", width = png.width,
+        height = png.height)
+    KM.visualize4(cv.scores,  Time,
+                 Event,  addmain = NULL) ## Good              #### Fig 1.4
+    dev.off()
+    pdf(file = "kmplot4-overfitt.pdf", width = png.width,
+        height = png.height)
+    KM.visualize4(overfitt.scores,  Time,                         
+                 Event, ngroups = 2) ## Overfitt                   #### Fig 2.4
+    dev.off()
+    GDD(file = "kmplot4-honest.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize,
+        type = "png")
+    KM.visualize4(cv.scores,  Time,
+                 Event,  addmain = NULL) ## Good              #### Fig 1.4
+    dev.off()
+    GDD(file = "kmplot4-overfitt.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize,
+        type = "png")
+    KM.visualize4(overfitt.scores,  Time,                         
+                 Event, ngroups = 2) ## Overfitt                   #### Fig 2.4
+    dev.off()
+
+
+    pdf(file = "kmplot3-honest.pdf", width = png.width,
+        height = png.height)
+    KM.visualize3(cv.scores,  Time,
+                 Event,  addmain = NULL) ## Good              #### Fig 1.3
+    dev.off()
+    pdf(file = "kmplot3-overfitt.pdf", width = png.width,
+        height = png.height)
+    KM.visualize3(overfitt.scores,  Time,                         
+                 Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
+    dev.off()
+    GDD(file = "kmplot3-honest.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize,
+        type = "png")
+    KM.visualize3(cv.scores,  Time,
+                 Event,  addmain = NULL) ## Good              #### Fig 1.3
+    dev.off()
+    GDD(file = "kmplot3-overfitt.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize,
+        type = "png")
+    KM.visualize3(overfitt.scores,  Time,                         
+                 Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
+    dev.off()
+
+}
+
+kmplots.validation <- function(scores, validationTime, validationEvent) {
+    valpred <- scores
+    gdd.width <- png.width <- 480
+    gdd.height <- png.height <- 410
+    pdf(file = "kmplot-validation.pdf", width = png.width,
+        height = png.height)
+    KM.visualize(valpred, validationTime,
+                 validationEvent, addmain = NULL)
+    dev.off()
+    GDD(file = "kmplot-validation.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize,
+        type = "png")
+    KM.visualize(valpred, validationTime,                         
+                 validationEvent, addmain = NULL)
+    dev.off()
+    
+    pdf(file = "kmplot4-validation.pdf", width = png.width,
+        height = png.height)
+    KM.visualize4(valpred, validationTime,
+                  validationEvent, addmain = NULL)
+    dev.off()
+    GDD(file = "kmplot4-validation.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize,
+        type = "png")
+    KM.visualize4(valpred, validationTime,                         
+                  validationEvent, addmain = NULL)
+    dev.off()
+    
+    
+    pdf(file = "kmplot3-validation.pdf", width = png.width,
+        height = png.height)
+    KM.visualize3(valpred, validationTime,
+                  validationEvent, addmain = NULL)
+    dev.off()
+    GDD(file = "kmplot3-validation.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize,
+        type = "png")
+    KM.visualize3(valpred, validationTime,                         
+                  validationEvent,  addmain = NULL)
+    dev.off()
+}
+
+
+
 imClose <- function (im) {
     ## prevent all the "Closing PNG device ..."
     dev.off(im$Device)

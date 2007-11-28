@@ -1082,8 +1082,378 @@ doCheckpoint(5)
     save.image()
 ##    try(mpi.close.Rslaves())
 ##    mpi.quit(save = "no")
+} else if(methodSurv == "cforest") {
+
+    ## for CGI: ngenes, cforest as method
+    
+    if(checkpoint.num < 2) { ## Model for all data
+        mpi.bcast.Robj2slave(idtype)
+        mpi.bcast.Robj2slave(organism)
+        MaxIterationsCox <- 200
+
+        if(useValidation == "yes") {
+            trycode <- try(
+                            cf.all <- my.cforest(xdata, Time, Event, ngenes, validationxdata)
+                           )
+        } else {
+            trycode <- try(
+                           cf.all <- my.cforest(xdata, Time, Event, ngenes, NULL)
+                           )
+        }
+        if(class(trycode) == "try-error")
+            caughtOurError(paste("Function my.cforest bombed unexpectedly with error",
+                                 trycode, ". \n Please let us know so we can fix the code."))
+
+        doCheckpoint(2)
+    }
+    if(checkpoint.num < 3) { ## Cross-validation
+        trycode <- try(
+                       cf.cv.output <- my.cforest.cv(xdata, Time, Event, ngenes)
+                       )
+        if(class(trycode) == "try-error")
+            caughtOurError(paste("Function my.forest.cv bombed unexpectedly with error",
+                             trycode, ". \n Please let us know so we can fix the code."))
+        doCheckpoint(3)
+    }
+    if(checkpoint.num < 4) { ## plots
+        kmplots(cf.cv.output$OOB.scores, cf.all$overfit_predicted_surv_time,
+                Time, Event)
+        if(useValidation == "yes") {
+            kmplots.validation(cf.cv.output$OOB.scores, validationTime,
+                               validationEvent)
+        }
+        doCheckpoint(4)
+    }
+    if(checkpoint.num < 5) { ## all text output
+        print.selected.genes(cf.all$selected.genes, geneNames, idtype, organism)
+        
+
+    
+
+        
+#################    p-value tables      #################            
+
+    p.values.original <- data.frame(Names = geneNames,
+                                    p.value = all.res1[, 2],
+                                    coeff = all.res1[, 1], 
+                                    abs.coeff = abs(all.res1[, 1]),
+                                    fdr = all.res1[, 6],
+                                    Warning = all.res1[, 5])
+
+    if (any(is.na(p.values.original))) {
+        p.values.original[is.na(p.values.original)] <- 999.999
+        cat("Oh, oh, some nas in p.values.originalll",
+            file = "nas.in.p.values.WARN")
+    }
+    
+    ## zz: we will need, either here or in python, to generate the links al IDClight
+    write.table(file = "p.values.coeffs.txt",
+                p.values.original, row.names = FALSE, 
+                col.names = TRUE,
+                quote = FALSE,
+                sep = "\t")
+    system(paste("/http/signs/cgi/order.html.py", idtype, organism)) ## call python to generate pre-sorted HTML tables
+    
+
+
+        doCheckpoint(2)
+    }
+        
+#################    step AIC      #################                
+
+
+    if(checkpoint.num < 3) {
+
+    sink(file = "stepAIC.output.txt")
+    trycode <- try(
+    all.res3 <- fitDave.res1Given(xdata, Time, Event,              #### Fig 01:
+                                  res1 = all.res1,             #### Fig 02
+                                  Minp, MaxSize,                  ### ClusterNegativeCoeffs
+                                  MinSize, MinCor,             ### ClusterPositiveCoeffs
+                                  MaxIterationsCox,
+                                  plot = TRUE,
+                                  interactive = TRUE)
+                   )
+    if(class(trycode) == "try-error")
+    caughtOurError(paste("Function fitDave.res1Given bombed unexpectedly with error",
+                             trycode, ". \n Please let us know so we can fix the code."))
+
+    cat("\n\n Final model selected (beware: p-values are biased down!!)\n")
+
+    print(all.res3$model)
+    sink()
+
+    doCheckpoint(3)
 }
 
+#################    run all the rest      #################
+
+
+if(checkpoint.num < 4) {
+    
+    trycode <- try(
+                   cvDaveRun <- cvDave.parallel3(x = xdata, time = Time,
+                                                 event = Event,
+                                                 p = Minp, maxSize = MaxSize,
+                                                 minSize = MinSize,
+                                                 minCor = MinCor,
+                                                 MaxIterationsCox = MaxIterationsCox,
+                                                 nfold = nfold)
+                   )
+    
+    if(class(trycode) == "try-error")
+        caughtOurError(paste("Function cvDaveRun bombed unexpectedly with error",
+                             trycode, ". \n Please let us know so we can fix the code."))
+
+    sink(file = "results.txt")
+
+    cat("<h2>4. Model fitted to all data</h2>\n")
+    cat("<h3>4.1. Components, genes, coefficients</h3>\n")	
+    trycode <- try(
+                   all.res.out <- selectedSignatures(all.res3, colnames(xdata),
+                                                     print = TRUE, out = TRUE,
+                                                     html = TRUE)
+                   )
+    
+    if(class(trycode) == "try-error")
+        caughtOurError(paste("Function selectedSignatures bombed unexpectedly with error",
+                             trycode, ". \n Please let us know so we can fix the code."))
+
+    sink()
+
+    doCheckpoint(4)
+
+}
+
+if(checkpoint.num < 5) {   
+
+    sink(file = "results.txt", append = TRUE)
+
+
+    ### Output correlation matrix of clusters
+    tmp.cor <- cor(all.res3$clusterResults$md)
+    ## ugly hack to get bold for row names; yes, could use CSS
+    rownames(tmp.cor) <- paste("<b>", rownames(tmp.cor), "</b>", sep ="")
+
+    cleanHTMLhead(file = "correlationMatrixClusters.html",
+                  title = "Correlation matrix of clusters or components")
+    HTML(tmp.cor, file = "correlationMatrixClusters.html",
+         digits = 4, align = "right")
+    cleanHTMLtail(file = "correlationMatrixClusters.html")
+
+    ## get decent spacing
+    system("sed 's/<th>/<th width=50>/g' correlationMatrixClusters.html > cm; mv cm correlationMatrixClusters.html")
+
+    cleanHTMLhead(file = "stepAIC.output.html",
+                  title = "Steps from variable selection")
+    write(paste("A \"+\" means that the variable was considered for addition and ",
+                "a \"-\" means that the variable was considered for deletion. ",
+                "The number shows the AIC after the addition/deletion of ",
+                "each of the variables. Smaller AIC is better.\n"),
+          file = "stepAIC.output.html",append = TRUE)
+    write("<pre>", file = "stepAIC.output.html",append = TRUE)
+    system("cat stepAIC.output.html stepAIC.output.txt > tmp.s; mv tmp.s stepAIC.output.html")
+    write("</pre>", file = "stepAIC.output.html",append = TRUE)
+    cleanHTMLtail(file = "stepAIC.output.html")
+
+    
+    cat("\n <hr align=\"left\" width=80>")
+    cat("<h3>4.2. <a href=\"correlationMatrixClusters.html\" target=\"CorMatrix_window\">View</a> correlation matrix of clusters</h3>")
+    cat("<h3>4.3. <a href=\"stepAIC.output.html\" target=\"stepAIC_window\">View</a> steps of variable selection</h3>")
+
+
+
+    cat("\n<hr><h2>5. Cross-validation runs</h2>\n")
+   
+    trycode <- try(
+                   summary.cvDave(cvDaveRun, all.res.out, rownames(xdata),
+                                  colnames(xdata), html = TRUE)
+                   )
+
+    if(class(trycode) == "try-error")
+        caughtOurError(paste("Function summary.cvDave bombed unexpectedly with error",
+                             trycode, ". \n Please let us know so we can fix the code."))
+
+    sink()
+
+doCheckpoint(5)
+}
+
+   
+    if(checkpoint.num < 6) {
+        sink(file = "results.txt", append = TRUE)
+
+    if(useValidation == "yes") {
+        cat("\n <h2>6. Validation data</h2>\n")
+        trycode <- try(
+                       valpred <- dPredictNew(all.res3, validationxdata)
+                       )
+        if(class(trycode) == "try-error")
+            caughtOurError(paste("Function dPredictNew bombed unexpectedly with error",
+                                 trycode, ". \n Please let us know so we can fix the code."))
+
+
+        cat("\n\n <h3>6.1. <a href=\"scores.validation.html\" target=\"vscores_window\">View</a>",
+            "the scores (linear predictor) for validation data.</h3>\n")
+        cleanHTMLhead(file = "scores.validation.html",
+                      title = "Linear predictor scores for validation data")
+        write(paste("<TABLE frame=\"box\">\n",
+                    "<tr><th>Validation subject/array</th> <th>Linear score</th></tr>\n"),
+              file = "scores.validation.html", append = TRUE)
+        wout <- ""
+        for(i in 1:length(valpred)) {
+            wout <- paste(wout, "\n <tr align=right>",
+            "<td>", rownames(valpred)[i], "</td><td>", valpred[i], "</td></tr>\n")
+        }
+        wout <- paste(wout, "</TABLE>")
+        write(wout, file = "scores.validation.html", append = TRUE)
+        cleanHTMLtail(file = "scores.validation.html")
+
+       
+    }      
+
+    sink()
+
+        doCheckpoint(6)
+    }
+    
+
+#########################################################
+########
+########   Do the plots, and we are done
+########
+#########################################################
+
+    if(checkpoint.num < 7) {
+    gdd.width <- 480
+    gdd.height <- 410
+
+    pdf(file = "kmplot-honest.pdf", width = png.width,
+        height = png.height)
+    KM.visualize(cvDaveRun$OOB.scores, Time,
+                 Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1
+    dev.off()
+    pdf(file = "kmplot-overfitt.pdf", width = png.width,
+        height = png.height)
+    KM.visualize(all.res3$scores, Time,                         
+                 Event, ngroups = 2) ## Overfitt                   #### Fig 2
+    dev.off()
+    GDD(file = "kmplot-honest.png", w=gdd.width,
+           h = gdd.height, ps = png.pointsize,
+           type = "png")
+    KM.visualize(cvDaveRun$OOB.scores, Time,
+                 Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1
+    dev.off()
+    GDD(file = "kmplot-overfitt.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize,
+        type = "png")
+    KM.visualize(all.res3$scores, Time,                         
+                 Event, ngroups = 2) ## Overfitt                   #### Fig 2
+    dev.off()
+    pdf(file = "kmplot4-honest.pdf", width = png.width,
+        height = png.height)
+    KM.visualize4(cvDaveRun$OOB.scores, Time,
+                 Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1.4
+    dev.off()
+    pdf(file = "kmplot4-overfitt.pdf", width = png.width,
+        height = png.height)
+    KM.visualize4(all.res3$scores, Time,                         
+                 Event, ngroups = 2) ## Overfitt                   #### Fig 2.4
+    dev.off()
+    GDD(file = "kmplot4-honest.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize,
+        type = "png")
+    KM.visualize4(cvDaveRun$OOB.scores, Time,
+                 Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1.4
+    dev.off()
+    GDD(file = "kmplot4-overfitt.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize,
+        type = "png")
+    KM.visualize4(all.res3$scores, Time,                         
+                 Event, ngroups = 2) ## Overfitt                   #### Fig 2.4
+    dev.off()
+
+
+    pdf(file = "kmplot3-honest.pdf", width = png.width,
+        height = png.height)
+    KM.visualize3(cvDaveRun$OOB.scores, Time,
+                 Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1.3
+    dev.off()
+    pdf(file = "kmplot3-overfitt.pdf", width = png.width,
+        height = png.height)
+    KM.visualize3(all.res3$scores, Time,                         
+                 Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
+    dev.off()
+    GDD(file = "kmplot3-honest.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize,
+        type = "png")
+    KM.visualize3(cvDaveRun$OOB.scores, Time,
+                 Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1.3
+    dev.off()
+    GDD(file = "kmplot3-overfitt.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize,
+        type = "png")
+    KM.visualize3(all.res3$scores, Time,                         
+                 Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
+    dev.off()
+
+    doCheckpoint(7)
+}
+
+
+
+
+
+
+
+    
+
+    
+    if(useValidation == "yes") {
+        pdf(file = "kmplot-validation.pdf", width = png.width,
+            height = png.height)
+        KM.visualize(valpred, validationTime,
+                     validationEvent, ngroups = 2, addmain = NULL)
+        dev.off()
+        GDD(file = "kmplot-validation.png", w=gdd.width,
+               h = gdd.height, ps = png.pointsize,
+               type = "png")
+        KM.visualize(valpred, validationTime,                         
+                     validationEvent, ngroups = 2, addmain = NULL)
+        dev.off()
+
+        pdf(file = "kmplot4-validation.pdf", width = png.width,
+            height = png.height)
+        KM.visualize4(valpred, validationTime,
+                     validationEvent, ngroups = 2, addmain = NULL)
+        dev.off()
+        GDD(file = "kmplot4-validation.png", w=gdd.width,
+               h = gdd.height, ps = png.pointsize,
+               type = "png")
+        KM.visualize4(valpred, validationTime,                         
+                     validationEvent, ngroups = 2, addmain = NULL)
+        dev.off()
+
+
+        pdf(file = "kmplot3-validation.pdf", width = png.width,
+            height = png.height)
+        KM.visualize3(valpred, validationTime,
+                     validationEvent, ngroups = 2, addmain = NULL)
+        dev.off()
+        GDD(file = "kmplot3-validation.png", w=gdd.width,
+               h = gdd.height, ps = png.pointsize,
+               type = "png")
+        KM.visualize3(valpred, validationTime,                         
+                     validationEvent, ngroups = 2, addmain = NULL)
+        dev.off()
+    }
+    
+    
+
+    save.image()
+##    try(mpi.close.Rslaves())
+##    mpi.quit(save = "no")
+}
 
 ## turn the html into txt with:
 ## html2text -width 200 -nobs -o Results.txt pre-results.html 
