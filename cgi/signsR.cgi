@@ -26,7 +26,7 @@ MAX_time_size = 61897L
 ##                  paste(LETTERS, collapse="")), 1000)
 ## so each of 1000 labels has 48 chars.
 
-acceptedMethodSurvs = ('FCMS', 'TGD')
+acceptedMethodSurvs = ('FCMS', 'TGD', 'cforest')
 acceptedIDTypes = ('None', 'cnio', 'affy', 'clone', 'acc', 'ensembl', 'entrez', 'ug')
 acceptedOrganisms = ('None', 'Hs', 'Mm', 'Rn')
 
@@ -353,6 +353,9 @@ if methodSurv == 'TGD':
         print "<p> Please fill up the required fields and try again.</p>"
         print "</body></html>"
         sys.exit()
+if methodSurv == 'cforest':
+    ngenes = valueNumUpload('ngenes', 'int', 2)
+
 
 #     commonOutput()
 #     print "<h1> SignS INPUT ERROR </h1>"    

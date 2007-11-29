@@ -6,7 +6,7 @@
 #### library(MASS)
 
 require(GDD)
-require(survival)
+#require(survival)
 require(imagemap) ### FIXME: include the needed code below
 library(party)
 

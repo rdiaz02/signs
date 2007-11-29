@@ -200,6 +200,8 @@ if( methodSurv == "TGD") {
     MinSize <- scan("MinSize", what = double(0), n = 1)
     MinCor <- scan("MinCor", what = double(0), n = 1)
     Minp <- scan("Minp", what = double(0), n = 1)
+} else if (methodSurv = "cforest") {
+    ngenes <- scan("ngenes", what = double(0), n = 1)
 } else { ## nothing else for now
     caughtUserError("This method is not yet implemented.")
 }
@@ -392,6 +394,11 @@ if(length(Event) != dim(xdata)[1]) {
                       "Please fix this problem and try again.\n")
     caughtUserError(message)  
 }
+
+if(methodSurv == "cforest") {
+    if(ngenes > ncol(xdata)) ngenes <- ncol(xdata)
+}
+
 
 if(methodSurv == "FCMS")
     if((ncol(xdata) < MinSize)) {
@@ -1137,151 +1144,17 @@ doCheckpoint(5)
         if(useValidation == "yes") {
             print.validation.results(cf.all)
         }
-    }
-
-}
-
-
         doCheckpoint(6)
     }
-    
-
-#########################################################
-########
-########   Do the plots, and we are done
-########
-#########################################################
-
-    if(checkpoint.num < 7) {
-    gdd.width <- 480
-    gdd.height <- 410
-
-    pdf(file = "kmplot-honest.pdf", width = png.width,
-        height = png.height)
-    KM.visualize(cvDaveRun$OOB.scores, Time,
-                 Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1
-    dev.off()
-    pdf(file = "kmplot-overfitt.pdf", width = png.width,
-        height = png.height)
-    KM.visualize(all.res3$scores, Time,                         
-                 Event, ngroups = 2) ## Overfitt                   #### Fig 2
-    dev.off()
-    GDD(file = "kmplot-honest.png", w=gdd.width,
-           h = gdd.height, ps = png.pointsize,
-           type = "png")
-    KM.visualize(cvDaveRun$OOB.scores, Time,
-                 Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1
-    dev.off()
-    GDD(file = "kmplot-overfitt.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
-        type = "png")
-    KM.visualize(all.res3$scores, Time,                         
-                 Event, ngroups = 2) ## Overfitt                   #### Fig 2
-    dev.off()
-    pdf(file = "kmplot4-honest.pdf", width = png.width,
-        height = png.height)
-    KM.visualize4(cvDaveRun$OOB.scores, Time,
-                 Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1.4
-    dev.off()
-    pdf(file = "kmplot4-overfitt.pdf", width = png.width,
-        height = png.height)
-    KM.visualize4(all.res3$scores, Time,                         
-                 Event, ngroups = 2) ## Overfitt                   #### Fig 2.4
-    dev.off()
-    GDD(file = "kmplot4-honest.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
-        type = "png")
-    KM.visualize4(cvDaveRun$OOB.scores, Time,
-                 Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1.4
-    dev.off()
-    GDD(file = "kmplot4-overfitt.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
-        type = "png")
-    KM.visualize4(all.res3$scores, Time,                         
-                 Event, ngroups = 2) ## Overfitt                   #### Fig 2.4
-    dev.off()
-
-
-    pdf(file = "kmplot3-honest.pdf", width = png.width,
-        height = png.height)
-    KM.visualize3(cvDaveRun$OOB.scores, Time,
-                 Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1.3
-    dev.off()
-    pdf(file = "kmplot3-overfitt.pdf", width = png.width,
-        height = png.height)
-    KM.visualize3(all.res3$scores, Time,                         
-                 Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
-    dev.off()
-    GDD(file = "kmplot3-honest.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
-        type = "png")
-    KM.visualize3(cvDaveRun$OOB.scores, Time,
-                 Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1.3
-    dev.off()
-    GDD(file = "kmplot3-overfitt.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
-        type = "png")
-    KM.visualize3(all.res3$scores, Time,                         
-                 Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
-    dev.off()
-
-    doCheckpoint(7)
+    save.image()
 }
 
-
-
-
-
-
-
-    
-
-    
-    if(useValidation == "yes") {
-        pdf(file = "kmplot-validation.pdf", width = png.width,
-            height = png.height)
-        KM.visualize(valpred, validationTime,
-                     validationEvent, ngroups = 2, addmain = NULL)
-        dev.off()
-        GDD(file = "kmplot-validation.png", w=gdd.width,
-               h = gdd.height, ps = png.pointsize,
-               type = "png")
-        KM.visualize(valpred, validationTime,                         
-                     validationEvent, ngroups = 2, addmain = NULL)
-        dev.off()
-
-        pdf(file = "kmplot4-validation.pdf", width = png.width,
-            height = png.height)
-        KM.visualize4(valpred, validationTime,
-                     validationEvent, ngroups = 2, addmain = NULL)
-        dev.off()
-        GDD(file = "kmplot4-validation.png", w=gdd.width,
-               h = gdd.height, ps = png.pointsize,
-               type = "png")
-        KM.visualize4(valpred, validationTime,                         
-                     validationEvent, ngroups = 2, addmain = NULL)
-        dev.off()
-
-
-        pdf(file = "kmplot3-validation.pdf", width = png.width,
-            height = png.height)
-        KM.visualize3(valpred, validationTime,
-                     validationEvent, ngroups = 2, addmain = NULL)
-        dev.off()
-        GDD(file = "kmplot3-validation.png", w=gdd.width,
-               h = gdd.height, ps = png.pointsize,
-               type = "png")
-        KM.visualize3(valpred, validationTime,                         
-                     validationEvent, ngroups = 2, addmain = NULL)
-        dev.off()
-    }
     
     
 
-    save.image()
 ##    try(mpi.close.Rslaves())
 ##    mpi.quit(save = "no")
-}
+
 
 ## turn the html into txt with:
 ## html2text -width 200 -nobs -o Results.txt pre-results.html 
