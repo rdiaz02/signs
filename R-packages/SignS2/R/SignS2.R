@@ -46,7 +46,7 @@ geneSelect <- function(x, sobject, numgenes) {
     res.mat[, 6] <- NA # p.adjust(tmp[, 2], method = "BH")
     res.mat[is.na(res.mat[, 2]), c(2, 6)] <- 999
     colnames(res.mat) <-  c("coeff", "p.value", "keep", "pos.neg", "Warning", "FDR")
-    return(list(res.mat = res.mat, to.keep = to.keep))
+    return(list(res.mat = res.mat, rows.to.keep = to.keep))
 }
 
 cf.median.pred.survtime <- function(object, newdata) {
@@ -73,7 +73,10 @@ my.cforest <- function(x, time, event, ngenes, newdata) {
         pred.stime <- NULL
     }
     overfit.pred.stime <- cf.median.pred.survtime(cf1, x)
-    return(list(selected.genes = selected.genes,
+    return(list(selected.genes.stats = selected.genes$res.mat,
+                selected.genes.rows = selected.genes$rows.to.keep,
+                selected.genes.names = rownames(x)[selected.genes$rows.to.keep],
+                selected.genes.number = length(selected.genes$rows.to.keep),
                 cforest_ob = cf1,
                 predicted_surv_time = pred.stime,
                 overfit_predicted_surv_time = overfit.pred.stime))
@@ -145,15 +148,17 @@ my.cforest.cv <- function(x, time, event, ngenes, nfold = 10,
 ###############################################
 
 
-print.selected.genes <- function(selected.genes,
-                                 geneNames,
+print.selected.genes <- function(object,
                                  idtype, organism) {
-    p.values.original <- data.frame(Names = geneNames[selected.genes$to.keep],
-                                    p.value = selected.genes[, 2],
-                                    coeff = selected.genes[, 1], 
-                                    abs.coeff = abs(selected.genes[, 1]),
-                                    fdr = selected.genes[, 6],
-                                    Warning = selected.genes[, 5])
+    ## writes to a file, and python generates a bunch of HTML tables;
+    ##    these are then linked from the main HTML; code is in runAndCheck.py
+    
+    p.values.original <- data.frame(Names = object$selected.genes.names,
+                                    p.value = object$selected.genes.stats[, 2],
+                                    coeff = object$selected.genes.stats[, 1], 
+                                    abs.coeff = abs(object$selected.genes.stats[, 1]),
+                                    fdr = object$selected.genes.stats[, 6],
+                                    Warning = object$selected.genes.stats[, 5])
 
 ###     if (any(is.na(p.values.original))) {
 ###         p.values.original[is.na(p.values.original)] <- 999.999
@@ -170,62 +175,64 @@ print.selected.genes <- function(selected.genes,
 }
 
 
-print.cv.results <- function(object, subjectNames, html.level = 3, html = TRUE) {
-        if(html) {
-        oobs <- matrix(object$OOB.scores, ncol = 1)
+print.cv.results <- function(cvobject, allDataObject, subjectNames, html.level = 3, html = TRUE,
+                             outfile = "results.txt") {
+    sink(file = outfile)
+    if(html) {
+        oobs <- matrix(cvobject$OOB.scores, ncol = 1)
         rownames(oobs) <- subjectNames
-
-        cat("\n<h3>4.1. <a href=\"scores.oob.html\" target=\"scores_window\">View</a> out-of-bag scores.</h3>\n")
+        cat("\n <hr><h2>", html.level, ". Cross-validation runs</h2>\n", sep = "")
+        cat("\n<h3>", html.level, ".1. <a href=\"scores.oob.html\" target=\"scores_window\">View</a> out-of-bag scores.</h3>\n", sep ="")
         cleanHTMLhead(file = "scores.oob.html",
-                      title = "Linear predictor scores for out-of-bag data")
+                      title = "Predictor scores for out-of-bag data")
         write(paste("<TABLE frame=\"box\">\n",
                     "<tr><th>Subject/array</th> <th>Linear score</th></tr>\n"),
               file = "scores.oob.html", append = TRUE)
         wout <- ""
         for(i in 1:nrow(oobs)) {
             wout <- paste(wout, "\n <tr align=right>",
-            "<td>", rownames(oobs)[i], "</td><td>", oobs[i], "</td></tr>\n")
+                          "<td>", rownames(oobs)[i], "</td><td>", oobs[i], "</td></tr>\n")
         }
         wout <- paste(wout, "</TABLE>")
         write(wout, file = "scores.oob.html", append = TRUE)
         cleanHTMLtail(file = "scores.oob.html")
-
+        
     } else {
         
         cat("\n Out-of-bag scores\n\n")
-        oobs <- matrix(object$OOB.scores, ncol = 1)
+        oobs <- matrix(cvobject$OOB.scores, ncol = 1)
         rownames(oobs) <- subjectNames
         print(oobs)
     }
     
-    object <- object[[1]] ## don't need scores anymore. Simpler subsetting.
-
-    ks <- length(object)
+    cvobject <- cvobject[[1]] ## don't need scores anymore. Simpler subsetting.
     
-    ngenes <- unlist(lapply(object, function(x) x$nonZeroBetas))
-    thresholds <- unlist(lapply(object, function(x) x$threshold))
-    steps <- unlist(lapply(object, function(x) x$step))
-
-
-    tmp.mat <- data.frame(Number.selected.genes = ngenes,
-                          Optimal.Threshold = thresholds,
-                          Optimal.Steps = steps)
-
+    ks <- length(cvobject)
+    
+    ngenes <- unlist(lapply(cvobject, function(x) x$selected.genes.number))
+###     thresholds <- unlist(lapply(object, function(x) x$threshold))
+###     steps <- unlist(lapply(object, function(x) x$step))
+    
+###     tmp.mat <- data.frame(Number.selected.genes = ngenes,
+###                           Optimal.Threshold = thresholds,
+###                           Optimal.Steps = steps)
 
     cv.names <- paste("CV.run.", 1:ks, sep = "")    
-    rownames(tmp.mat) <- cv.names
-
-
+    ngenes <- matrix(ngenes, ncol = 1)
+    rownames(ngenes) <- cv.names
+    
     if(html) {
-        cat("\n\n <h3>4.2 Number of selected genes and parameters in cross-validation runs</h3>\n")
-        print(tmp.mat)
+        cat("\n\n <h3>", html.level,
+            ".2 Number of selected genes in cross-validation runs</h3>\n", sep = "")
+        print(ngenes)
         
-        cat("\n\n <h3>4.3 Genes selected in each of the cross-validation runs</h3>\n")
+        cat("\n\n <h3>", html.level,
+            ".3 Genes selected in each of the cross-validation runs</h3>\n", sep = "")
         for(i in 1:ks) {
             cat("\n\n <h4>CV run ", i, "</h4>\n")
             cat("\n <TABLE  frame=\"box\" rules=\"groups\">\n")
             cat("<tr align=left><th width=200>Gene</th> </tr>")
-            thesegenes <- rownames(object[[i]]$betas)[object[[i]]$betas != 0]
+            thesegenes <- cvobject[[i]]$selected.genes.names
             for(thegene in thesegenes) {
                 cat("\n<tr><td>", linkGene(thegene), "</td></tr>")
             }
@@ -234,7 +241,7 @@ print.cv.results <- function(object, subjectNames, html.level = 3, html = TRUE) 
     } else {
         cat("\n\n Number of selected genes and parameters in cross-validation runs\n")
         cat("-------------------------------------------------------------------\n\n")
-        print(tmp.mat)
+        print(ngenes)
         
         cat("\n\n Stability assessments \n")
         cat(    " ---------------------\n")
@@ -242,17 +249,14 @@ print.cv.results <- function(object, subjectNames, html.level = 3, html = TRUE) 
         
         for(i in 1:ks) {
             cat(paste("CV run  ", i, " (", ngenes[i], " genes selected):   ", sep = ""), "\n")
-            print(rownames(object[[i]]$betas)[object[[i]]$betas != 0])
+            print(cvobject[[i]]$selected.genes.names)
             cat("\n---\n")
         }
     }
-
-
     
     tmp.genesSelected <- list()
-    tmp.genesSelected[[1]] <- rownames(allDataObject$betas)[allDataObject$betas != 0]
-    genesSelected.cv <- lapply(object, function(x)
-                               rownames(x$betas)[x$betas != 0])
+    tmp.genesSelected[[1]] <- allDataObject$selected.genes.names
+    genesSelected.cv <- lapply(cvobject, function(x) x$selected.genes.names)
     tmp.genesSelected <- c(tmp.genesSelected, genesSelected.cv)
 
     shared.genes <- matrix(NA, nrow = (ks + 1), ncol = (ks + 1))
@@ -264,7 +268,7 @@ print.cv.results <- function(object, subjectNames, html.level = 3, html = TRUE) 
         }
     }
 
-    ngenes <- c(allDataObject$nonZeroBetas, ngenes)
+    ngenes <- c(allDataObject$selected.genes.number, ngenes)
     prop.shared <- round(shared.genes/ngenes, 3)
     
     ngenesS <- paste("(", ngenes, ")", sep = "")
@@ -272,11 +276,11 @@ print.cv.results <- function(object, subjectNames, html.level = 3, html = TRUE) 
     rownames(shared.genes) <- rownames(prop.shared) <- paste(c("OriginalSample", cv.names), ngenesS)
     
     options(width = 200)
-
-
+    
+    html.level <- html.level + 1
     if(html) {
-        cat("\n\n <h2>5. Stability assessments</h2>\n")
-        cat("\n\n <h3>5.1 Number of shared genes</h3> \n")
+        cat("\n\n <h2>", html.level, ". Stability assessments</h2>\n", sep = "")
+        cat("\n\n <h3>", html.level, ".1 Number of shared genes</h3> \n", sep = "")
     } else {
         cat("\n\n Stability assessments \n")
         cat("\n\n Number of shared genes \n")
@@ -284,7 +288,7 @@ print.cv.results <- function(object, subjectNames, html.level = 3, html = TRUE) 
     print(as.table(shared.genes))
 
     if(html) {
-        cat("\n\n <h3>5.2 Proportion of shared genes (relative to row total)</h3> \n")
+        cat("\n\n <h3>", html.level, ".2 Proportion of shared genes (relative to row total)</h3> \n", sep = "")
     } else {
         cat("\n\n Proportion of shared genes (relative to row total) \n")
     }
@@ -299,7 +303,7 @@ print.cv.results <- function(object, subjectNames, html.level = 3, html = TRUE) 
     if(html) {
         tmptmp <- sort(table(unlisted.genes.selected, dnn = NULL)[in.all.data], decreasing = TRUE)
         rntmptmp <- rownames(tmptmp)
-        cat("\n\n\n<h3> 5.3 Gene freqs. in cross-validated runs of genes selected in model with all data</h3> \n\n")
+        cat("\n\n\n<h3>", html.level, ".3 Gene freqs. in cross-validated runs of genes selected in model with all data</h3> \n\n", sep = "")
         
         cat("\n <TABLE  frame=\"box\" rules=\"groups\">\n")
         cat("<tr align=left><th width=200>Gene</th> <th width=50>Frequency</th></tr>")
@@ -316,7 +320,7 @@ print.cv.results <- function(object, subjectNames, html.level = 3, html = TRUE) 
     if(html) {
         tmptmp <- sort(table(unlisted.genes.selected, dnn = NULL), decreasing = TRUE)
         rntmptmp <- rownames(tmptmp)
-        cat("\n\n\n<h3> 5.4 Gene freqs. in cross-validated runs</h3> \n\n")
+        cat("\n\n\n<h3>", html.level, ".4 Gene freqs. in cross-validated runs</h3> \n\n", sep = "")
         
         cat("\n <TABLE  frame=\"box\" rules=\"groups\">\n")
         cat("<tr align=left><th width=200>Gene</th> <th width=50>Frequency</th></tr>")
@@ -329,10 +333,31 @@ print.cv.results <- function(object, subjectNames, html.level = 3, html = TRUE) 
         cat("\n\n\n Gene freqs. in cross-validated runs \n\n")
         print(sort(table(unlisted.genes.selected, dnn = NULL), decreasing = TRUE))
     }
-
+    sink()
 }
 
-
+print.validation.results <- function(object, html.level = 5,
+                                     outfile = "results.txt") {
+    sink(file = outfile, append = TRUE)
+    cat("\n <h2>", html.level, ". Validation data</h2>\n", sep = "")
+    cat("\n\n <h3>", html.level,
+        ".1. <a href=\"scores.validation.html\" target=\"vscores_window\">View</a>",
+        "the scores for validation data.</h3>\n", sep = "")
+    cleanHTMLhead(file = "scores.validation.html",
+                  title = "Scores for validation data")
+    write(paste("<TABLE frame=\"box\">\n",
+                "<tr><th>Validation subject/array</th> <th>Linear score</th></tr>\n"),
+          file = "scores.validation.html", append = TRUE)
+    wout <- ""
+    for(i in 1:length(valpred)) {
+        wout <- paste(wout, "\n <tr align=right>",
+                      "<td>", rownames(valpred)[i], "</td><td>", valpred[i], "</td></tr>\n")
+    }
+    wout <- paste(wout, "</TABLE>")
+    write(wout, file = "scores.validation.html", append = TRUE)
+    cleanHTMLtail(file = "scores.validation.html")
+    sink()
+}
 
 kmplots <- function(cv.scores, overfitt.scores, Time, Event) {
     gdd.width <- png.width <- 480
