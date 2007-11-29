@@ -7,8 +7,8 @@
 
 require(GDD)
 require(survival)
-require(imagemap)
-
+require(imagemap) ### FIXME: include the needed code below
+library(party)
 
 ###############################################
 ##########                    #################
@@ -22,7 +22,7 @@ geneSelect <- function(x, sobject, numgenes) {
     ## a modification of dStep1.serial
     
     MaxIterationsCox <- 200
-    res.mat <- matrix(NA, nrow = ncol(x), ncol = 6)
+    res.mat <- matrix(NA, nrow = numgenes, ncol = 6)
     funpap3 <- function (x) {
         out1 <-
             coxph.fit.pomelo0(x, sobject,
@@ -35,10 +35,8 @@ geneSelect <- function(x, sobject, numgenes) {
         }
     }
     tmp0 <- t(apply(x, 2, funpap3))
-    oo <- order(tmp0[, 2])[1:numgenes]
-    tmp <- tmp0[oo, ]
-    tmp <- tmp[1:200, ]
-    to.keep <- 1:nrow(x)[oo]
+    to.keep <- order(tmp0[, 2])[1:numgenes]
+    tmp <- tmp0[to.keep, ]
     res.mat[, 1:2] <- tmp[, 1:2]
     res.mat[, 3] <- NA # ifelse(res.mat[, 2] < p, 1, 0)
     res.mat[, 4] <- NA # sign(res.mat[, 1]) * res.mat[, 3]
@@ -56,6 +54,21 @@ cf.median.pred.survtime <- function(object, newdata) {
     return(sapply(tmp, function(x) {x$time[which(x$surv < 0.50)[1]]}))
 }
 
+
+cf.mean.survtime <- function(object, newdata) {
+    tmp <- treeresponse(object, newdata = newdata)
+    f1 <- function(times, survs) {
+        ## note that cforest returns estimated KM, but we do not know the max surv time.
+        ## so we need to truncate
+        diftime <- c(times[1], diff(times))
+        probs <- c(1, survs[-length(survs)])
+        return(sum(diftime * probs))
+    }
+    return(sapply(tmp, function(x) f1(x$time, x$surv)))
+}
+
+
+
 my.cforest <- function(x, time, event, ngenes, newdata) {
     ## Does "everything":
     ##   - select genes
@@ -64,18 +77,22 @@ my.cforest <- function(x, time, event, ngenes, newdata) {
     ##   (in the future maybe variable importances, but time consuming and not used now)
     sobject <- Surv(time, event)
     selected.genes <- geneSelect(x, sobject, ngenes)
-    x1 <- x[selected.genes$to.keep, ]
-    cf1 <- cforest(sobject ~ ., data = x1,
+    x1 <- data.frame(x[, selected.genes$rows.to.keep])
+    x1$time <- time
+    x1$event <- event
+    cf1 <- cforest(Surv(time, event) ~ ., data = x1,
                    control = cforest_classical(ntree = 500))
     if(!(is.null(newdata))) {
-        pred.stime <- cf.median.pred.survtime(cf1, newdata)
+        if(!(is.data.frame(newdata))) newdata <- data.frame(newdata)
+        pred.stime <- cf.mean.survtime(cf1, newdata)
     } else {
         pred.stime <- NULL
     }
-    overfit.pred.stime <- cf.median.pred.survtime(cf1, x)
+    if(!(is.data.frame(x))) x <- data.frame(x)
+    overfit.pred.stime <- cf.mean.survtime(cf1, data.frame(x))
     return(list(selected.genes.stats = selected.genes$res.mat,
                 selected.genes.rows = selected.genes$rows.to.keep,
-                selected.genes.names = rownames(x)[selected.genes$rows.to.keep],
+                selected.genes.names = colnames(x)[selected.genes$rows.to.keep],
                 selected.genes.number = length(selected.genes$rows.to.keep),
                 cforest_ob = cf1,
                 predicted_surv_time = pred.stime,
@@ -87,24 +104,23 @@ my.cforest <- function(x, time, event, ngenes, newdata) {
 my.cforest.cv <- function(x, time, event, ngenes, nfold = 10,
                               universeSize = 10) {
 ### Take care of MPI stuff
-    if (mpi.comm.size(comm = 1) == 0) {
-        mpiSpawnAll(universeSize)
-        cat("\n      MPI:  cond 1 \n")
-    } else { ## so mpi is running
-        if ((mpi.comm.size(comm = 1) - 1) < universeSize) {
-            ## but few salves
-            mpi.close.Rslaves()
-            mpiSpawnAll(universeSize)
-            cat("\n     MPI:  cond 2 \n")
-        } else {
-            mpiDelete()
-            cat("\n     MPI:  cond 3 \n")
-        }
-    }
+###     if (mpi.comm.size(comm = 1) == 0) {
+###         mpiSpawnAll(universeSize)
+###         cat("\n      MPI:  cond 1 \n")
+###     } else { ## so mpi is running
+###         if ((mpi.comm.size(comm = 1) - 1) < universeSize) {
+###             ## but few salves
+###             mpi.close.Rslaves()
+###             mpiSpawnAll(universeSize)
+###             cat("\n     MPI:  cond 2 \n")
+###         } else {
+###             mpiDelete()
+###             cat("\n     MPI:  cond 3 \n")
+###         }
+###     }
     n <- length(time)
     index.select <- sample(rep(1:nfold, length = n), n, replace = FALSE)
     OOB.scores <- rep(NA, n)
-
 
     my.cforest.internal.MPI <- function(fnum) {
         ## to be used with papply
@@ -113,7 +129,7 @@ my.cforest.cv <- function(x, time, event, ngenes, nfold = 10,
         ##    x, time, event, ,
         ##    MaxIterationsCox,
         ##    index.select
-        
+        cat("\n Doing fnum ", fnum, "\n") ## FIXME: debug
         xtrain <- x[index.select != fnum, , drop = FALSE]
         xtest <- x[index.select == fnum, , drop = FALSE]
         timetrain <- time[index.select != fnum]
@@ -2599,6 +2615,7 @@ mpiMyCleanSetup <- function() {
     mpi.remote.exec(library(MASS))
     mpi.remote.exec(library(GDD))
     mpi.remote.exec(library(R2HTML))
+    mpi.remote.exec(library(party))
     mpi.remote.exec(library(imagemap))
 }
 

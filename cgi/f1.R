@@ -112,7 +112,7 @@ library(papply)
 #library(snow)
 library(R2HTML)
 library(GDD)
-library(imagemap)
+library(imagemap) ## FIXME: remove
 
 
 imClose <- function (im) {
@@ -203,6 +203,10 @@ if( methodSurv == "TGD") {
 } else { ## nothing else for now
     caughtUserError("This method is not yet implemented.")
 }
+
+
+## FIXME: add params for cforest
+
 
 
 ########################################################
