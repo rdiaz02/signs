@@ -173,7 +173,7 @@ print.selected.genes <- function(object,
                                     p.value = object$selected.genes.stats[, 2],
                                     coeff = object$selected.genes.stats[, 1], 
                                     abs.coeff = abs(object$selected.genes.stats[, 1]),
-                                    fdr = object$selected.genes.stats[, 6],
+                                    fdr = 999,
                                     Warning = object$selected.genes.stats[, 5])
 
 ###     if (any(is.na(p.values.original))) {
@@ -365,9 +365,11 @@ print.validation.results <- function(object, html.level = 5,
                 "<tr><th>Validation subject/array</th> <th>Linear score</th></tr>\n"),
           file = "scores.validation.html", append = TRUE)
     wout <- ""
+    valpred <- object$predicted_surv_time
+    subjnames <- names(valpred)
     for(i in 1:length(valpred)) {
         wout <- paste(wout, "\n <tr align=right>",
-                      "<td>", rownames(valpred)[i], "</td><td>", valpred[i], "</td></tr>\n")
+                      "<td>", subjnames[i], "</td><td>", valpred[i], "</td></tr>\n")
     }
     wout <- paste(wout, "</TABLE>")
     write(wout, file = "scores.validation.html", append = TRUE)

@@ -1123,18 +1123,19 @@ doCheckpoint(5)
         kmplots(cf.cv.output$OOB.scores, cf.all$overfit_predicted_surv_time,
                 Time, Event)
         if(useValidation == "yes") {
-            kmplots.validation(cf.cv.output$OOB.scores, validationTime,
+            kmplots.validation(cf.all$predicted_surv_time, validationTime,
                                validationEvent)
         }
         doCheckpoint(4)
     }
     if(checkpoint.num < 5) { ## all text output
         print.selected.genes(cf.all, idtype, organism)
-        print.cv.results(cf.cv.output, cf.all, subjectNames, html.level = 3)
+        print.cv.results(cf.cv.output, cf.all, rownames(xdata), html.level = 3)
         doCheckpoint(5)
     }
     if(checkpoint.num < 6) {
         if(useValidation == "yes") {
+            print.validation.results(cf.all)
         }
     }
 
