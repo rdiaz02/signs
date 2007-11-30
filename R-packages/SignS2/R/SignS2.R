@@ -192,7 +192,9 @@ print.selected.genes <- function(object,
 
 
 print.cv.results <- function(cvobject, allDataObject, subjectNames, html.level = 3, html = TRUE,
-                             outfile = "results.txt") {
+                             outfile = "results.txt",
+                             pals_main = "Selected.genes.txt",
+                             pals_all  = "Selected.and.CV.selected.txt") {
     sink(file = outfile)
     if(html) {
         oobs <- matrix(cvobject$OOB.scores, ncol = 1)
@@ -226,13 +228,6 @@ print.cv.results <- function(cvobject, allDataObject, subjectNames, html.level =
     ks <- length(cvobject)
     
     ngenes <- unlist(lapply(cvobject, function(x) x$selected.genes.number))
-###     thresholds <- unlist(lapply(object, function(x) x$threshold))
-###     steps <- unlist(lapply(object, function(x) x$step))
-    
-###     tmp.mat <- data.frame(Number.selected.genes = ngenes,
-###                           Optimal.Threshold = thresholds,
-###                           Optimal.Steps = steps)
-
     cv.names <- paste("CV.run.", 1:ks, sep = "")    
     ngenes <- matrix(ngenes, ncol = 1)
     rownames(ngenes) <- cv.names
@@ -350,6 +345,35 @@ print.cv.results <- function(cvobject, allDataObject, subjectNames, html.level =
         print(sort(table(unlisted.genes.selected, dnn = NULL), decreasing = TRUE))
     }
     sink()
+
+    #####    PaLS   #####
+    writeForPaLS(tmp.genesSelected, pals_main, pals_all)
+}
+
+writeForPaLS <- function(genesSelected, pals_main, pals_all) {
+    #####    PaLS   #####
+    ## genesSelected is a list;
+    ## first element has genes from run on all data;
+    ## remaining components are each of the CV runs
+    ## Works for lists without additional structure, such as
+    ##    returned by TGD, cforest, etc. Not for Dave et al.
+    ##    approach which has signatures.
+    
+    for(nr in (1:length(genesSelected))) {
+        if(nr == 1) {
+            cat("#Run_on_all_data\n", file = pals_main)
+            cat("#Run_on_all_data\n", file = pals_all)
+            for(gene in genesSelected[[nr]]) {
+                cat(gene, "\n", file = pals_main, append = TRUE)
+                cat(gene, "\n", file = pals_all, append = TRUE)
+            }
+        } else {
+            cat("#CVRun_", nr - 1, sep = "", file = pals_all, append = TRUE)
+            for(gene in genesSelected[[nr]]) {
+                cat(gene, "\n", file = pals_all, append = TRUE)
+            }
+        }
+    }
 }
 
 print.validation.results <- function(object, html.level = 5,
@@ -1265,7 +1289,9 @@ tgdCVPred <- function(x, time, event,
                 step = bestTrain$step))
 }
 
-summary.cvTGD <- function(object, allDataObject, subjectNames, html = TRUE) {
+summary.cvTGD <- function(object, allDataObject, subjectNames, html = TRUE,
+                          pals_main = "Selected.genes.txt",
+                          pals_all  = "Selected.and.CV.selected.txt") {
 
     if(html) {
         oobs <- matrix(object$OOB.scores, ncol = 1)
@@ -1426,6 +1452,7 @@ summary.cvTGD <- function(object, allDataObject, subjectNames, html = TRUE) {
         print(sort(table(unlisted.genes.selected, dnn = NULL), decreasing = TRUE))
     }
 
+    writeForPaLS(tmp.genesSelected, pals_main, pals_all)
 }
 
 
