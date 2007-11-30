@@ -49,6 +49,26 @@ breast.fcms <-  c(d1, d2, d3)
 
 
 
+### cforest
+
+d1 <- scan("breast.web.cforest.10_1.txt", sep = "\t",
+               what = double(0), 10)
+d2 <- scan("breast.web.cforest.15_1.txt", sep = "\t",
+               what = double(0), 15)
+d3 <- scan("breastA.web.cforest.txt", sep = "\t",
+               what = double(0), 10)
+breast.cforest <- c(d1, d2, d3)
+
+d1 <- scan("dlbcl.web.cforest.10_1.txt", sep = "\t",
+               what = double(0), 10)
+d2 <- scan("dlbcl.web.cforest.15_1.txt", sep = "\t",
+               what = double(0), 15)
+d3 <- scan("dlbclA.web.cforest.txt", sep = "\t",
+               what = double(0), 10)
+dlbcl.cforest <- c(d1, d2, d3)
+
+
+
 
 
 postscript(file = "fcms.bench-web.eps", height = 8, width = 12,
@@ -84,6 +104,27 @@ boxplot(breast.tgd ~ nusers, xlab = "Number of simultaneous users",
 
 
 boxplot(dlbcl.tgd ~ nusers, xlab = "Number of simultaneous users",
+        ylab = "User wall time (seconds)",
+        main = "DLBCL data set (160 arrays x 7399 genes)")
+
+dev.off()
+
+
+
+
+postscript(file = "cforest.bench-web.eps", height = 8, width = 12,
+           horizontal = FALSE,
+           onefile = FALSE, paper = "special")
+par(mfrow = c(1, 2))
+par(las = 1)
+par(cex = 1.2)
+
+boxplot(breast.cforest ~ nusers, xlab = "Number of simultaneous users",
+        ylab = "User wall time (seconds)",
+        main = "Breast data set (78 arrays x 4751 genes)")
+
+
+boxplot(dlbcl.cforest ~ nusers, xlab = "Number of simultaneous users",
         ylab = "User wall time (seconds)",
         main = "DLBCL data set (160 arrays x 7399 genes)")
 
