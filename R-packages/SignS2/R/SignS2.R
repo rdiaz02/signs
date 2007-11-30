@@ -7,7 +7,7 @@
 
 require(GDD)
 #require(survival)
-require(imagemap) ### FIXME: include the needed code below
+#require(imagemap) ### FIXME: include the needed code below
 library(party)
 
 ###############################################
@@ -2645,7 +2645,7 @@ mpiMyCleanSetup <- function() {
     mpi.remote.exec(library(GDD))
     mpi.remote.exec(library(R2HTML))
     mpi.remote.exec(library(party))
-    mpi.remote.exec(library(imagemap))
+#    mpi.remote.exec(library(imagemap))
 }
 
 mpiDelete <- function() {

@@ -112,7 +112,7 @@ library(papply)
 #library(snow)
 library(R2HTML)
 library(GDD)
-library(imagemap) ## FIXME: remove
+#library(imagemap) ## FIXME: remove
 
 
 imClose <- function (im) {
@@ -200,7 +200,7 @@ if( methodSurv == "TGD") {
     MinSize <- scan("MinSize", what = double(0), n = 1)
     MinCor <- scan("MinCor", what = double(0), n = 1)
     Minp <- scan("Minp", what = double(0), n = 1)
-} else if (methodSurv = "cforest") {
+} else if (methodSurv == "cforest") {
     ngenes <- scan("ngenes", what = double(0), n = 1)
 } else { ## nothing else for now
     caughtUserError("This method is not yet implemented.")
@@ -226,6 +226,8 @@ if (mpi.universe.size () < MPI_MIN_UNIVERSE_SIZE) {
 
 if(methodSurv == "TGD") mpiSpawnAll()
 if(methodSurv == "FCMS") mpiSpawnAll(10)
+if(methodSurv == "cforest") mpiSpawnAll(10)
+
 
 ## if(methodSurv == "TGD") {
 ##     TheCluster <- makeCluster(mpi.universe.size(), "MPI")

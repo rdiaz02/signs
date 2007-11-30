@@ -389,7 +389,7 @@ def printOKRun():
 
 
         if(methodUsed == 'cforest') or (methodUsed == 'cforest\n'):
-            outf.write("<h2> Results using the Random forests (Hothorn et al.)</h2><br/ >\n")
+            outf.write("<h2> Results using Random forests (Hothorn et al.)</h2><br/ >\n")
             outf.write('<h2>1. Survival plots</h2>\n')
             outf.write('<h3>1.1. Survival plots using scores from final model <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h3> \n')
             outf.write('<h4>Two groups</h4>')
