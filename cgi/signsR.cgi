@@ -14,7 +14,7 @@ import random
 ##import re
 from stat import ST_SIZE
 import cgitb
-cgitb.enable() ## zz: eliminar for real work?
+cgitb.enable() 
 sys.stderr = sys.stdout
 
 MAX_signs = 155 ## MAX_genesrf + 1 = Maximum number of R processes running at same time.
@@ -247,30 +247,31 @@ def radioUpload(fieldName, acceptedValues):
 
 
 
-def restart_tryRrun(tmpDir, tsleep = 5, ntries = 5):
-    """Verify if left track in ApplicationCounter log. Otherwise
-    call tryRrun again and leave a file in the tmpDir. """
+### Looks like we are not using this anymore
+# def restart_tryRrun(tmpDir, tsleep = 5, ntries = 5):
+#     """Verify if left track in ApplicationCounter log. Otherwise
+#     call tryRrun again and leave a file in the tmpDir. """
     
-    for i in range(ntries + 1):
-        time.sleep(tsleep)
-        in_log = int(os.popen('grep "' + \
-                              tmpDir + \
-                              '" /http/mpi.log/ApplicationCounter | wc').readline().split()[0])
-        if in_log == 0:
-            leave_track = os.system('/bin/touch ' + tmpDir + \
-                                    '/had_to_restart_' + str(i + 1))
-            if i == ntries :
-                commonOutput()
-                print "<h1> SignS problem: Can't start the application. </h1>"
-                print "<p> Please try again later.</p>"
-                print "<p> We apologize for the inconvenience.</p>"    
-                print "</body></html>"
-                sys.exit()
-            else:
-                tryrrun = os.system('/http/mpi.log/tryRrun5.py ' + tmpDir + ' SignS &')
+#     for i in range(ntries + 1):
+#         time.sleep(tsleep)
+#         in_log = int(os.popen('grep "' + \
+#                               tmpDir + \
+#                               '" /http/mpi.log/ApplicationCounter | wc').readline().split()[0])
+#         if in_log == 0:
+#             leave_track = os.system('/bin/touch ' + tmpDir + \
+#                                     '/had_to_restart_' + str(i + 1))
+#             if i == ntries :
+#                 commonOutput()
+#                 print "<h1> SignS problem: Can't start the application. </h1>"
+#                 print "<p> Please try again later.</p>"
+#                 print "<p> We apologize for the inconvenience.</p>"    
+#                 print "</body></html>"
+#                 sys.exit()
+#             else:
+#                 tryrrun = os.system('/http/mpi.log/tryRrun5.py ' + tmpDir + ' SignS &')
                 
-        else:
-            break
+#         else:
+#             break
 
 
 
@@ -533,7 +534,7 @@ if fs.has_key('validation'):
 
 
 ## It would be good to use spawnl or similar instead of system,
-## but I have no luck with R. This, I keep using system.
+## but I have no luck with R. Thus, I keep using system.
 ## Its safety depends crucially on the newDir not being altered,
 ## but newDir is not passed from any other user-reachable place
 ## (it is created here).

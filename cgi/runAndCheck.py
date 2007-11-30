@@ -108,7 +108,7 @@ def kill_pid_machine(pid, machine):
 
 def clean_for_PaLS(file_in, file_out):
     """ Make sure no file has two consecutive lines that start with '#',
-    so there are not lists without genes."""
+    so there are no lists without genes."""
     f1 = open(file_in, mode = 'r').readlines()
     f2 = open(file_out, mode = 'w')
     maxi = len(f1) - 1
@@ -437,6 +437,9 @@ def printOKRun():
                 allResults.add(flname)
             allResults.close()
             outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')  
+            outf.write(printPalsURL(newDir, tmpDir, 
+                                    s1 = "Genes selected in run with all data",
+                                    s2 = "Genes selected in run with all data and in CV runs"))
             outf.write("</body></html>")
             outf.close()
             Rresults.close()
@@ -510,6 +513,9 @@ def printOKRun():
 
             allResults.close()
             outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')  
+            outf.write(printPalsURL(newDir, tmpDir, 
+                                    s1 = "Genes selected in run with all data",
+                                    s2 = "Genes selected in run with all data and in CV runs"))
             outf.write("</body></html>")
             outf.close()
             Rresults.close()
