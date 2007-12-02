@@ -202,6 +202,7 @@ if( methodSurv == "TGD") {
     Minp <- scan("Minp", what = double(0), n = 1)
 } else if (methodSurv == "cforest") {
     ngenes <- scan("ngenes", what = double(0), n = 1)
+} else if (methodSurv == "glmboost") {
 } else { ## nothing else for now
     caughtUserError("This method is not yet implemented.")
 }
