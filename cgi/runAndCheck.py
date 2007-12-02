@@ -848,6 +848,7 @@ def did_R_crash_in_slaves(tmpDir, machine_root = 'karl'):
 def did_lam_crash(tmpDir, machine_root = 'karl'):
     """ Verify whether LAM/MPI crashed by checking logs and f1.Rout
     for single universe lamboot."""
+    issue_echo('          did_lam_crash ?', tmpDir)
     OTHER_LAM_MSGS = 'Call stack within LAM:'
     lam_logs = glob.glob(tmpDir + '/' + machine_root + '*.*.*.log')
     in_error_msg = int(os.popen('grep MPI_Error_string ' + \
@@ -876,6 +877,7 @@ def did_lam_crash(tmpDir, machine_root = 'karl'):
     
 def did_mpi_crash(tmpDir, machine_root = 'karl'):
     """ Either Rmpi or LAM crashed"""
+    issue_echo('    did Rmpi or LAM crash (did_mpi_crash)?', tmpDir)
     if (status_run(tmpDir) == 'Error_mpi') or \
        did_lam_crash(tmpDir, machine_root):
         return True
