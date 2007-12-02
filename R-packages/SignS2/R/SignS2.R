@@ -9,6 +9,91 @@ require(GDD)
 #require(survival)
 #require(imagemap) ### FIXME: include the needed code below
 library(party)
+library(mboost)
+
+
+
+###############################################
+##########                    #################
+########## glmboost functions #################
+##########                    #################
+###############################################
+
+my.glmboost <- function(x, time, event, newdata, mstop = 500) {
+
+    if(!is.matrix(x)) x <- as.matrix(x)
+    gb1 <- glmboost(x, Surv(time, event), family = CoxPH(),
+                    control = boost_control(mstop = mstop,
+                    center = TRUE))
+    ## for 10-fold CV for risk; from help for cvrisk
+    n <- nrow(x)
+    k <- 10
+    ntest <- floor(n / k)
+    cv10f <- matrix(c(rep(c(rep(0, ntest), rep(1, n)), k - 1), 
+                      rep(0, n * k - (k - 1) * (n + ntest))), nrow = n)
+    gridf <- c(5, 10, 25, seq(from = 50, to = 500, length = 10))
+    cvm <- cvrisk(gb1, folds = cv10f, grid = gridf)
+    best.mstop <- mstop(cvm)
+    cat("\n Best mstop is ", best.mstop, "\n")
+    gb1 <- gb1[mstop(cvm)]
+    selected.genes.rows <- which(abs(coef(gb1)) > 0)
+    lsgenes <- length(selected.genes.rows)
+    selected.genes.names <- names(selected.genes.rows)
+    selected.genes.stats <- cbind(coef(gb1)[selected.genes.rows],
+                                  rep(999, lsgenes),
+                                  rep(999, lsgenes),
+                                  rep(999, lsgenes),
+                                  rep(999, lsgenes),
+                                  rep(999, lsgenes))
+    overfit_predicted_surv_time <- predict(gb1, newdata = x, type = "lp")
+    if(!(is.null(newdata))) {
+        pred.stime <- predict(gb1, newdata = newdata, type = "lp")
+    } else {
+        pred.stime <- NULL
+    }
+    return(list(selected.genes.stats = selected.genes.stats,
+                selected.genes.rows = selected.genes.rows,
+                selected.genes.names = selected.genes.names,
+                selected.genes.number = lsgenes,
+                glmboost_ob = gb1,
+                predicted_surv_time = pred.stime,
+                overfit_predicted_surv_time = overfit_predicted_surv_time))
+}
+
+my.glmboost.cv <- function(x, time, event, mstop = 500, nfold = 10) {
+    n <- length(time)
+    index.select <- sample(rep(1:nfold, length = n), n, replace = FALSE)
+    OOB.scores <- rep(NA, n)
+
+    my.glmboost.internal.MPI <- function(fnum) {
+        ## to be used with papply
+        cat("\n Doing fnum ", fnum, "\n") ## FIXME: debug
+        xtrain <- x[index.select != fnum, , drop = FALSE]
+        xtest <- x[index.select == fnum, , drop = FALSE]
+        timetrain <- time[index.select != fnum]
+        eventtrain <- event[index.select != fnum]
+        retval <- my.glmboost(xtrain, timetrain, eventtrain, xtest)
+        return(retval)
+    }
+
+    tmp1 <- papply(as.list(1:nfold),
+                   my.glmboost.internal.MPI,
+                   papply_commondata = list(x = x,
+                   time = time, event = event, 
+                   index.select = index.select))
+    
+    for(i in 1:nfold) {
+        OOB.scores[index.select == i] <-
+            tmp1[[i]]$predicted_surv_time
+        tmp1[[i]]$predicted_surv_time <- NULL  ## don't need this anymore
+    }
+
+    out <- list(cved.models = tmp1,
+                OOB.scores = OOB.scores)
+    return(out)
+}
+
+    
 
 ###############################################
 ##########                    #################
@@ -66,8 +151,7 @@ cf.mean.survtime <- function(object, newdata) {
     }
     return(sapply(tmp, function(x) f1(x$time, x$surv)))
 }
-
-
+         
 
 my.cforest <- function(x, time, event, ngenes, newdata) {
     ## Does "everything":

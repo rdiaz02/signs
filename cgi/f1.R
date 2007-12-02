@@ -1098,14 +1098,10 @@ doCheckpoint(5)
 ##    try(mpi.close.Rslaves())
 ##    mpi.quit(save = "no")
 } else if(methodSurv == "cforest") {
-
-    ## for CGI: ngenes, cforest as method
-    
     if(checkpoint.num < 2) { ## Model for all data
         mpi.bcast.Robj2slave(idtype)
         mpi.bcast.Robj2slave(organism)
         MaxIterationsCox <- 200
-
         if(useValidation == "yes") {
             trycode <- try(
                             cf.all <- my.cforest(xdata, Time, Event, ngenes, validationxdata)
@@ -1118,7 +1114,6 @@ doCheckpoint(5)
         if(class(trycode) == "try-error")
             caughtOurError(paste("Function my.cforest bombed unexpectedly with error",
                                  trycode, ". \n Please let us know so we can fix the code."))
-
         doCheckpoint(2)
     }
     if(checkpoint.num < 3) { ## Cross-validation
@@ -1147,6 +1142,54 @@ doCheckpoint(5)
     if(checkpoint.num < 6) {
         if(useValidation == "yes") {
             print.validation.results(cf.all)
+        }
+        doCheckpoint(6)
+    }
+    save.image()
+} else if(methodSurv == "glmboost") {
+    if(checkpoint.num < 2) { ## Model for all data
+        mpi.bcast.Robj2slave(idtype)
+        mpi.bcast.Robj2slave(organism)
+        if(useValidation == "yes") {
+            trycode <- try(
+                            glmb.all <- my.glmboost(xdata, Time, Event, validationxdata)
+                           )
+        } else {
+            trycode <- try(
+                           glmb.all <- my.glmboost(xdata, Time, Event, NULL)
+                           )
+        }
+        if(class(trycode) == "try-error")
+            caughtOurError(paste("Function my.glmboost bombed unexpectedly with error",
+                                 trycode, ". \n Please let us know so we can fix the code."))
+        doCheckpoint(2)
+    }
+    if(checkpoint.num < 3) { ## Cross-validation
+        trycode <- try(
+                       gb.cv.output <- my.glmboost.cv(xdata, Time, Event)
+                       )
+        if(class(trycode) == "try-error")
+            caughtOurError(paste("Function my.glmboost.cv bombed unexpectedly with error",
+                             trycode, ". \n Please let us know so we can fix the code."))
+        doCheckpoint(3)
+    }
+    if(checkpoint.num < 4) { ## plots
+        kmplots(gb.cv.output$OOB.scores, glmb.all$overfit_predicted_surv_time,
+                Time, Event)
+        if(useValidation == "yes") {
+            kmplots.validation(glmb.all$predicted_surv_time, validationTime,
+                               validationEvent)
+        }
+        doCheckpoint(4)
+    }
+    if(checkpoint.num < 5) { ## all text output
+        print.selected.genes(glmb.all, idtype, organism)
+        print.cv.results(gb.cv.output, glmb.all, rownames(xdata), html.level = 3)
+        doCheckpoint(5)
+    }
+    if(checkpoint.num < 6) {
+        if(useValidation == "yes") {
+            print.validation.results(glmb.all)
         }
         doCheckpoint(6)
     }

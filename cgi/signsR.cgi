@@ -26,7 +26,7 @@ MAX_time_size = 61897L
 ##                  paste(LETTERS, collapse="")), 1000)
 ## so each of 1000 labels has 48 chars.
 
-acceptedMethodSurvs = ('FCMS', 'TGD', 'cforest')
+acceptedMethodSurvs = ('FCMS', 'TGD', 'cforest', 'glmboost')
 acceptedIDTypes = ('None', 'cnio', 'affy', 'clone', 'acc', 'ensembl', 'entrez', 'ug')
 acceptedOrganisms = ('None', 'Hs', 'Mm', 'Rn')
 
