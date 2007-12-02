@@ -24,8 +24,8 @@ def for_print_p_value(x):
     if x < 1e-7:
         return '< 0.0000001'
     else:
-        return str(round(x, 7))
-
+        try:  return str(round(x, 7))
+        except: return(x)
 
 def print_warning(x):
     if x == 0:
@@ -91,14 +91,22 @@ l4=[]
 l5=[]
 l6=[]
 
+def read_float_other(x):
+    try:
+        y = float(x)
+    except:
+        y = x
+    return y
+    
+
 for i in range(1, len(df11)): ## skip first line
     splitted = df11[i].split('\t')
     l1.append(splitted[0])
-    l2.append(float(splitted[1]))
-    l3.append(float(splitted[2]))
-    l4.append(float(splitted[3]))
-    l5.append(float(splitted[4]))
-    l6.append(float(splitted[5]))
+    l2.append(read_float_other(splitted[1]))
+    l3.append(read_float_other(splitted[2]))
+    l4.append(read_float_other(splitted[3]))
+    l5.append(read_float_other(splitted[4]))
+    l6.append(read_float_other(splitted[5]))
 
 df1.close()
 

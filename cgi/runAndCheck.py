@@ -57,7 +57,7 @@ def set_defaults_lam(tmpDir):
     in the lamb-host file. max_num_procs is the maximum number of simultaneous
     adacgh processes running at any time.
     We return the tuple ncpu, max_num_procs"""
-    return(4, 100)
+    return(2, 5)
 ## In contrast to ADaCGH, we do not see swapping here, so no need to do
 ## size-dependent lam boots
 #     datsize1 = 0
@@ -388,8 +388,11 @@ def printOKRun():
 ##        listPNGS = glob.glob(tmpDir + "/*.png")
 
 
-        if(methodUsed == 'cforest') or (methodUsed == 'cforest\n'):
-            outf.write("<h2> Results using Random forests (Hothorn et al.)</h2><br/ >\n")
+        if(methodUsed == 'cforest') or (methodUsed == 'cforest\n') or (methodUsed == 'glmboost') or (methodUsed == 'glmboost\n'):
+            if(methodUsed == 'cforest') or (methodUsed == 'cforest\n'):
+                outf.write("<h2> Results using Random forests (Hothorn et al., 2006a)</h2><br/ >\n")
+            if (methodUsed == 'glmboost') or (methodUsed == 'glmboost\n'):
+                outf.write("<h2> Results using boosting of component-wise Cox models (Hothorn et al., 2006b)</h2><br/ >\n")
             outf.write('<h2>1. Survival plots</h2>\n')
             outf.write('<h3>1.1. Survival plots using scores from final model <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h3> \n')
             outf.write('<h4>Two groups</h4>')
@@ -413,7 +416,7 @@ def printOKRun():
                 outf.write('<h4>Four groups</h4>')
                 outf.write('<IMG BORDER="0" SRC="kmplot4-validation.png">')
 
-	    outf.write('<h2>2. Single gene statistics and p-values for the chosen number of genes</h2>\n')
+	    outf.write('<h2>2. Single gene for the chosen number of genes</h2>\n')
             outf.write('<ul class="aqtree3clickable">\n')
 	    outf.write('<li><a>Single-gene Cox model p-values and statistics</a><ul>\n')
 	    outf.write('<li><a href="p.v.sort.pv.a.html" target="pv_window">Sorted by p-value, ascending</a>')
@@ -912,7 +915,7 @@ def did_run_out_of_time(tmpDir, R_MAX_time):
 def cleanups(tmpDir, newDir, newnamepid,
              lamSuffix,
              runningProcs = runningProcs,
-             appl = 'adacgh2'):
+             appl = 'signs2'):
     """ Clean up actions; kill lam, delete running.procs files, clean process table."""
     lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
     rinfo = open(tmpDir + '/current_R_proc_info', mode = 'r').readline().split()

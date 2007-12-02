@@ -40,11 +40,11 @@ my.glmboost <- function(x, time, event, newdata, mstop = 500) {
     lsgenes <- length(selected.genes.rows)
     selected.genes.names <- names(selected.genes.rows)
     selected.genes.stats <- cbind(coef(gb1)[selected.genes.rows],
-                                  rep(999, lsgenes),
-                                  rep(999, lsgenes),
-                                  rep(999, lsgenes),
-                                  rep(999, lsgenes),
-                                  rep(999, lsgenes))
+                                  rep(NA, lsgenes),
+                                  rep(NA, lsgenes),
+                                  rep(NA, lsgenes),
+                                  rep(0, lsgenes),
+                                  rep(NA, lsgenes))
     overfit_predicted_surv_time <- predict(gb1, newdata = x, type = "lp")
     if(!(is.null(newdata))) {
         pred.stime <- predict(gb1, newdata = newdata, type = "lp")
@@ -127,7 +127,7 @@ geneSelect <- function(x, sobject, numgenes) {
     res.mat[, 4] <- NA # sign(res.mat[, 1]) * res.mat[, 3]
     res.mat[, 5] <- tmp[, 3]
     res.mat[, 6] <- NA # p.adjust(tmp[, 2], method = "BH")
-    res.mat[is.na(res.mat[, 2]), c(2, 6)] <- 999
+    res.mat[is.na(res.mat[, 2]), c(2, 6)] <- NA
     colnames(res.mat) <-  c("coeff", "p.value", "keep", "pos.neg", "Warning", "FDR")
     return(list(res.mat = res.mat, rows.to.keep = to.keep))
 }
@@ -257,7 +257,7 @@ print.selected.genes <- function(object,
                                     p.value = object$selected.genes.stats[, 2],
                                     coeff = object$selected.genes.stats[, 1], 
                                     abs.coeff = abs(object$selected.genes.stats[, 1]),
-                                    fdr = 999,
+                                    fdr = NA,
                                     Warning = object$selected.genes.stats[, 5])
 
 ###     if (any(is.na(p.values.original))) {
@@ -2729,7 +2729,8 @@ mpiMyCleanSetup <- function() {
     mpi.remote.exec(library(GDD))
     mpi.remote.exec(library(R2HTML))
     mpi.remote.exec(library(party))
-#    mpi.remote.exec(library(imagemap))
+    mpi.remote.exec(library(mboost))
+#    Mpi.remote.exec(library(imagemap))
 }
 
 mpiDelete <- function() {

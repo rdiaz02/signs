@@ -294,7 +294,10 @@ series of steps very similar to those in Dave et al. </p>
 following a suggestion from Jiang Gui, we now do not examine the CVPL over
 a range of threshold parameters &#964; (tau), but instead use a fixed
 one. By default, it is set at 1. You can vary it, but you are likely to
-want large values (between 0.9 and 1.).</p>
+want large values (between 0.9 and 1.). The main reason is that this
+method can add genes but not remove them, so small values of the threshold
+will result in hundreds or thousands of genes selected in the very first
+steps of the method, that are then carried along all the way.</p>
 
 <h3><a name="errorstab">Assessment</a> of predictive performance and stability</h3>
 

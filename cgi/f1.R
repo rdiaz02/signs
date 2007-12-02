@@ -751,7 +751,7 @@ if(checkpoint.num < 4) {
     }
 
 
-    
+    gc()
 ##    stopCluster(TheCluster)
     save.image()
     
@@ -1094,7 +1094,7 @@ doCheckpoint(5)
     }
     
     
-
+    gc()
     save.image()
 ##    try(mpi.close.Rslaves())
 ##    mpi.quit(save = "no")
@@ -1146,6 +1146,7 @@ doCheckpoint(5)
         }
         doCheckpoint(6)
     }
+    gc()
     save.image()
 } else if(methodSurv == "glmboost") {
     if(checkpoint.num < 2) { ## Model for all data
@@ -1194,6 +1195,7 @@ doCheckpoint(5)
         }
         doCheckpoint(6)
     }
+    gc()
     save.image()
 }
 
