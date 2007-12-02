@@ -227,7 +227,7 @@ if (mpi.universe.size () < MPI_MIN_UNIVERSE_SIZE) {
 if(methodSurv == "TGD") mpiSpawnAll()
 if(methodSurv == "FCMS") mpiSpawnAll(10)
 if(methodSurv == "cforest") mpiSpawnAll(10)
-
+if(methodSurv == "glmboost") mpiSpawnAll(10)
 
 ## if(methodSurv == "TGD") {
 ##     TheCluster <- makeCluster(mpi.universe.size(), "MPI")
