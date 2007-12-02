@@ -49,7 +49,7 @@ def table_gen_sort(l1, l2, l3, l4, l5, l6, order, idtype,
                          '<td width=100>FDR-adjusted p-value</td><td width=150>Warnings?</td></tr>\n'])
     fout.write(outstring)
     for i in range(len(df11)-1):
-	if (l2[order[i]] > 98):
+	if (not(l2[order[i]] == 'NA')) and (l2[order[i]] > 98):
 	    outstring = ''.join(['<tr><td>', linkGene(l1[order[i]], idtype, organism),
                             '</td><td>', 'NA',
                             '</td><td>', 'NA',

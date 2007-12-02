@@ -275,7 +275,8 @@ print.selected.genes <- function(object,
 }
 
 
-print.cv.results <- function(cvobject, allDataObject, subjectNames, html.level = 3, html = TRUE,
+print.cv.results <- function(cvobject, allDataObject, subjectNames, html.level = 3,
+                             html = TRUE,
                              outfile = "results.txt",
                              pals_main = "Selected.genes.txt",
                              pals_all  = "Selected.and.CV.selected.txt") {
@@ -376,19 +377,22 @@ print.cv.results <- function(cvobject, allDataObject, subjectNames, html.level =
     if(html) {
         cat("\n\n <h2>", html.level, ". Stability assessments</h2>\n", sep = "")
         cat("\n\n <h3>", html.level, ".1 Number of shared genes</h3> \n", sep = "")
+        cat("<pre>")
     } else {
         cat("\n\n Stability assessments \n")
         cat("\n\n Number of shared genes \n")
     }
     print(as.table(shared.genes))
-
+    if(html) cat("</pre>")
+    
     if(html) {
         cat("\n\n <h3>", html.level, ".2 Proportion of shared genes (relative to row total)</h3> \n", sep = "")
+        cat("<pre>")
     } else {
         cat("\n\n Proportion of shared genes (relative to row total) \n")
     }
     print(as.table(prop.shared))
-    
+    if(html) cat("</pre>")
     options(width = 80)
     unlisted.genes.selected <- unlist(genesSelected.cv)
     
