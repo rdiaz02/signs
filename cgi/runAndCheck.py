@@ -57,9 +57,15 @@ def set_defaults_lam(tmpDir):
     in the lamb-host file. max_num_procs is the maximum number of simultaneous
     adacgh processes running at any time.
     We return the tuple ncpu, max_num_procs"""
-    return(2, 5)
+    return(1, 5)
 ## In contrast to ADaCGH, we do not see swapping here, so no need to do
-## size-dependent lam boots
+## size-dependent lam boots. FIXME: cforest and glmboost can use a lot of RAM ...
+## Maybe enable again? Use (1, something); the 1, to launch each node
+## only one process (though different runs could use the same node).
+
+## All methods, except, TGD, use only 10 spawned procs. Maybe use this to
+## optimize how to allocate procs. to nodes, etc?
+
 #     datsize1 = 0
 #     datsize2 = 0
 #     if os.path.exists(tmpDir + '/acghData'):
