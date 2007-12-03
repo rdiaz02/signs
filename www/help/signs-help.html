@@ -98,7 +98,11 @@ rdf:resource="http://web.resource.org/cc/ShareAlike"
 	      Dave et al.  (FCMS)</a></li>
 	  <li><a href="#TGD">Threshold gradient descent for censored data of Gui and
 	      Li (TGD)</a></li>
-	  <li><a href="#errorstab">Assessment of predictive performance and stability</a></li>
+<li><a href="#cforest">Random forests with conditional inference tress by
+	Hothorn et al.</a></li>
+<li><a href="#glmboost">Boosting with component-wise univariate Cox models
+(Hothorn et al.)</a></li>
+	      <li><a href="#errorstab">Assessment of predictive performance and stability</a></li>
 	</ul>
       </li>
       <li><a href="#usage">Usage</a>
@@ -122,11 +126,14 @@ rdf:resource="http://web.resource.org/cc/ShareAlike"
 
 <p>SignS is web-based tool for gene selection and signature finding in
     problems where the dependent variable is patient survival or, more
-    generally, a right-censored variable. Two approaches have been
-    implemented: the <b>threshold gradient descent
-    method (TGD)</b> of <cite>Gui & Lui (2005)</cite> and a method that uses a
-    combination of gene filtering, clustering and survival model building (FCMS),
-    very similar to the one used in <cite>Dave et al. (2004)</cite>.</p>
+    generally, a right-censored variable. Four approaches have been
+    implemented: the <b>threshold gradient descent method (TGD)</b> of
+    <cite>Gui & Lui (2005)</cite>, a method that uses a combination of
+    gene filtering, clustering and survival model building (FCMS), very
+    similar to the one used in <cite>Dave et al. (2004)</cite>, a method
+    that uses random forests with conditional inference tress by <cite>Hothorn
+    et al. (2006a)</cite>, and a method that uses boosting with component-wise
+    univariate Cox models (Hothorn et al., 2006a) .</p>
 
 <p>There are other approaches that will analyze gene expression (in
       general, high-dimensional) data when the response is a
@@ -299,6 +306,55 @@ method can add genes but not remove them, so small values of the threshold
 will result in hundreds or thousands of genes selected in the very first
 steps of the method, that are then carried along all the way.</p>
 
+
+<h3><a name="cforest">Random forests with conditional inference tress by
+	Hothorn et al.</a></h3>
+
+<p>The approach of Hothorn et al. for using random forests utilizes
+conditional inference trees as base learners. A conditional inference tree
+is built by recursively splitting the data into two groups according to
+the value of the covariables. First, test the global null hypothesis of
+independence between any of the variables and the response. If this
+hypothesis is rejected, select the variable with strongest association
+with the response, and implement a binary split in the selected input
+variable. Continue recursively (in each branch of the tree) until the
+global null is no longer rejected. The tests are carried out in a
+conditional inference framework (for details see <cite>Hothorn et al.,
+2006b</cite>). A forest is built by fitting a conditional inference tree
+to each of the many (in our case, 500) bootstrap samples of the data. The
+type of response returned by these forests are Kaplan-Meir curves. In
+contrast to the previous two methods, there is no variable (gene)
+selection performed here although, implicitly, the construction of each
+tree involves choosing the best variable for a split. </p>
+
+<p>Following <cite>van Wieringen et al. (2007)</cite>, we fit the forests
+to the best genes, as determined from gene-wise Cox models. The actual
+number of genes used is the parameter "Number of genes", that can be chosen by the user of the
+application. The default is 200, as in the reference above.</p>
+
+
+<h3><a name="glmboost">Boosting with component-wise univariate Cox models
+(Hothorn et al.)</a></h3>
+
+<p>Boosting is a general iterative optimization method that, at each
+iteration, fits the best predictor variable reducing the appropriate
+criterion (<cite>Bühlmann and Hothorn, 2008</cite>) and updating the
+estimates; the algorithm used is equivalent to refitting
+residuals multiple times.</p>
+
+<p> For survival data, <cite>Hothorn et al. (2006)</cite>, and
+<cite>Bühlmann and Hothorn (2008)</cite> use component-wise univariate Cox
+models. Boosting requires choosing the number of boosting iterations, but
+as shown in those references, we can use cross-validation to select this
+parameter. This method performs variable selection, similar to the Lasso
+and other L1-penalty methods. We select for the final results the
+variables (genes) with non-zero coefficients at the optimal number of
+iterations as chosen via cross-validation.</p>
+
+
+
+
+
 <h3><a name="errorstab">Assessment</a> of predictive performance and stability</h3>
 
 <p>Assessing predictive performance with censored data is more complex
@@ -312,6 +368,8 @@ steps of the method, that are then carried along all the way.</p>
       scores and those with low scores (i.e. we split them into two
       equally sized groups). Then, we <a name="kmplot">plot the survival curves</a>and compare
       the survival of the two groups with a log-rank test.</p>
+<p>(Note that with random forests, we use the expected survival time, not
+      the linear predictor scores).</p>
 
 <p>It must be emphasized that these are out-of-bag predictions, so these
       are predictions for each subject obtained from a <b>complete</b>
@@ -321,11 +379,11 @@ steps of the method, that are then carried along all the way.</p>
 
 
 <p>Stability is assessed showing the parameters chosen in each
-      crossvalidation run (for TGD) and
-      the signatures, their coefficients, and the composing genes (for
-      FCMS). For both methods we show the frequency with which each
-      selected gene appears in the output, and the percentage of
-      coincidence between the different runs. (See <a
+      crossvalidation run (for TGD) and the signatures, their
+      coefficients, and the composing genes (for FCMS), or the selected
+      genes (random forests and boosting). For all we show the frequency
+      with which each selected gene appears in the output, and the
+      percentage of coincidence between the different runs. (See <a
       href="#output">output</a> section, below).</p>
 
  
@@ -481,8 +539,9 @@ tool.</p>
     <h3><a name="output">Output</a></h3>
     <h4><a name="outputPlots">Plots</a></h4>
 
-    <p> The plots depend on the method used. For both TGD and FCMS we show
-    the <a name="outKM">survival</a> plots as explained <a href="#kmplots">above</a>. </p>
+    <p> The plots depend on the method used. For all methods we show the
+    <a name="outKM">survival</a> plots as explained <a
+    href="#kmplots">above</a>. </p>
     
     <p>For <a name="out.fcms">FCMS</a> we also show the dendrograms
     from the clustering of the positive and negative coefficient genes
@@ -533,12 +592,20 @@ tool.</p>
 
     <h4><a name="outputText">Textual output</a></h4>
     <h5>Single-gene statistics and p-values</h5>
-    <p><b>NEW</b> We now provide several tables (ordered using different
-    criteria) that show the p-values and coefficients for the single-gene
-    (or gene-by-gene) Cox models that are the first part of the FCMS method.</p>
 
-    <h5><a name="f1">OOB predictions</a></h5>
-    
+<p><b>NEW</b> We now provide several tables (ordered using different
+    criteria) that show the p-values and coefficients for the single-gene
+    (or gene-by-gene) Cox models that are the first part of the FCMS
+    method.</p>
+<p>For random forests the statistics shown are those corresponding to
+    single-gene Cox models. No FDR information is shown, to emphasize that
+    we choose, by decree, and regardless of p-value, the best K genes (K,
+    by default, is 200).</p>
+
+<p>Likewise, for boosting, only the coefficients have any meaningful value.</p>
+
+
+
     <h5><a name="f2">OOB predictions</a></h5>
     <p>For each sample, its out-of-bag score. This is just the matrix
     product of the coefficients and the value of the covariates. It is
@@ -553,7 +620,7 @@ tool.</p>
 
     
     <h5>Model results and parameters</h5>
-    <p>Each of TGD and FCMS have somewhat slightly different output,
+    <p>Each method has somewhat slightly different output,
     that shows the results of the models fitted, parameters used,
     etc. The output should be self-explanatory. (If it is not, please
     let me know, and I'll do my best to fix it).</p>
@@ -639,7 +706,9 @@ tool.</p>
     selected clusters). It is unlikely to provide any insight by
     itself, but allows to order cases, see which are very far away
     from others, etc.</p>
-
+<p>For random forests, the values provided are not linear scores but
+    expected survival time.</p>
+    
 <h4><a name="download">Download figures and results</a></h4> <p>You can download a single
 compressed file with all figures, in both the png format showed in the web
 results as well as in pdf format ---which gives better quality for
@@ -716,7 +785,13 @@ options.</p>
       href="http://dna.ucdavis.edu/~hli/gd1.SSC">R code</a> provided by Li
       and Gui, and rewrote large parts of it to increase its speed and
       parallelize it (using Rmpi and Snow, see below), and to add
-      additional functionality. I have also used the following R packages: <a
+      additional functionality. For random forests I use the <a
+      href="http://cran.r-project.org/src/contrib/Descriptions/party.html">party</a>
+      package by Torsten Hothorn, Kurt Hornik and Achim Zeileis. For
+      boosting I use <a
+      href="http://cran.r-project.org/src/contrib/Descriptions/mboost.html">mboost</a>
+      by Torsten Hothorn and Peter Buhlmann with contributions by Thomas
+      Kneib and Matthias Schmid. I have also used the following R packages: <a
       href="http://www.warwick.ac.uk/go/cgiwithr">CGIwithR</a> by David
       Firth, <a
       href="http://cran.r-project.org/src/contrib/Descriptions/snow.html">snow</a>,
@@ -744,7 +819,7 @@ Barry Rowlingson,
       by S. Chasalow. We have also
       used the JavaScript <a
       href="http://www.kryogenix.org/code/browser/aqlists/">aqtree</a>
-      code by   Stuart Langridge, for the expandable lists.</p>. 
+      code by   Stuart Langridge, for the expandable lists.</p> 
     
     
 <p>This application is running on a cluster of machines using <a
@@ -818,7 +893,8 @@ cluster of machines purchased with funds from the
     <h2><a name="refs">References</a></h2>
 
 
-
+<p>Bühlmann P, Hothorn T. (2008). Boosting Algorithms: Regularization,
+  Prediction and Model Fitting. <i>Statistical Science</i>, in press.</p>
 
 <p>Dave, SS, Wrigth, G, Tan B, Rosenwald A, Gascoyne RD, et
       al. (2004). Prediction of survival in follicular lymphoma based on
@@ -830,11 +906,21 @@ cluster of machines purchased with funds from the
  Biocomputing. <a href = "http://helix-web.stanford.edu/psb05/gui.pdf">pdf</a>.</p>
 
 
+<p>Hothorn T, Bühlmann P, Dudoit S, Molinaro A, van~der Laan MJ. (2006a).
+  Survival Ensembles. <i>Biostatistics</i> 2006,7:355--373.</p>
+
+<p>Hothorn T, Hornik K, Zeileis A. (2006b). Unbiased Recursive Partitioning: A
+  Conditional Inference Framework. <i>Journal of Computational and
+  Graphical Statistics</i>, 15:651--674.</p>
+
+
 <p> Simon, R. M., E. L. Korn, L. M. McShane, M. D. Radmacher,
     G. W. Wright, and Y. Zhao (2003).  <i>Design and analysis of DNA
     microarray investigations</i>.  New York: Springer.</p>
 
 
+<p>van Wieringen WN, Kun D, Hampel R, Boulesteix AL: (2007). Survival prediction
+  using gene expression data: a review and comparison. In review.</p>
 
 <h3>Copyright</h3>
 This document is copyrighted. Copyright © 2005, 2006, 2007 Ramón Díaz-Uriarte.
