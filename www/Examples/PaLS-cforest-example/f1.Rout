@@ -1,0 +1,92 @@
+	10 slaves are spawned successfully. 0 failed.
+master  (rank 0 , comm 1) of size 11 is running on: karl28 
+slave1  (rank 1 , comm 1) of size 11 is running on: karl28 
+slave2  (rank 2 , comm 1) of size 11 is running on: karl28 
+slave3  (rank 3 , comm 1) of size 11 is running on: karl28 
+slave4  (rank 4 , comm 1) of size 11 is running on: karl28 
+slave5  (rank 5 , comm 1) of size 11 is running on: karl29 
+slave6  (rank 6 , comm 1) of size 11 is running on: karl29 
+slave7  (rank 7 , comm 1) of size 11 is running on: karl29 
+slave8  (rank 8 , comm 1) of size 11 is running on: karl29 
+slave9  (rank 9 , comm 1) of size 11 is running on: karl30 
+slave10 (rank 10, comm 1) of size 11 is running on: karl30 
+$slave1
+ [1] "SignS2"      "R2HTML"      "GDD"         "party"       "vcd"        
+ [6] "colorspace"  "MASS"        "strucchange" "sandwich"    "zoo"        
+[11] "coin"        "mvtnorm"     "modeltools"  "stats4"      "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave2
+ [1] "SignS2"      "R2HTML"      "GDD"         "party"       "vcd"        
+ [6] "colorspace"  "MASS"        "strucchange" "sandwich"    "zoo"        
+[11] "coin"        "mvtnorm"     "modeltools"  "stats4"      "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave3
+ [1] "SignS2"      "R2HTML"      "GDD"         "party"       "vcd"        
+ [6] "colorspace"  "MASS"        "strucchange" "sandwich"    "zoo"        
+[11] "coin"        "mvtnorm"     "modeltools"  "stats4"      "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave4
+ [1] "SignS2"      "R2HTML"      "GDD"         "party"       "vcd"        
+ [6] "colorspace"  "MASS"        "strucchange" "sandwich"    "zoo"        
+[11] "coin"        "mvtnorm"     "modeltools"  "stats4"      "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave5
+ [1] "SignS2"      "R2HTML"      "GDD"         "party"       "vcd"        
+ [6] "colorspace"  "MASS"        "strucchange" "sandwich"    "zoo"        
+[11] "coin"        "mvtnorm"     "modeltools"  "stats4"      "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave6
+ [1] "SignS2"      "R2HTML"      "GDD"         "party"       "vcd"        
+ [6] "colorspace"  "MASS"        "strucchange" "sandwich"    "zoo"        
+[11] "coin"        "mvtnorm"     "modeltools"  "stats4"      "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave7
+ [1] "SignS2"      "R2HTML"      "GDD"         "party"       "vcd"        
+ [6] "colorspace"  "MASS"        "strucchange" "sandwich"    "zoo"        
+[11] "coin"        "mvtnorm"     "modeltools"  "stats4"      "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave8
+ [1] "SignS2"      "R2HTML"      "GDD"         "party"       "vcd"        
+ [6] "colorspace"  "MASS"        "strucchange" "sandwich"    "zoo"        
+[11] "coin"        "mvtnorm"     "modeltools"  "stats4"      "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave9
+ [1] "SignS2"      "R2HTML"      "GDD"         "party"       "vcd"        
+ [6] "colorspace"  "MASS"        "strucchange" "sandwich"    "zoo"        
+[11] "coin"        "mvtnorm"     "modeltools"  "stats4"      "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave10
+ [1] "SignS2"      "R2HTML"      "GDD"         "party"       "vcd"        
+ [6] "colorspace"  "MASS"        "strucchange" "sandwich"    "zoo"        
+[11] "coin"        "mvtnorm"     "modeltools"  "stats4"      "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+

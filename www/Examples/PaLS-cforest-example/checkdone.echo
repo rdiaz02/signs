@@ -1,0 +1,84 @@
+##########   30 Nov 2007 11:18:22
+starting
+    
+##########   30 Nov 2007 11:18:22
+at 2
+    
+##########   30 Nov 2007 11:18:22
+at 3
+    
+##########   30 Nov 2007 11:18:34
+     inside my_queue 
+    
+##########   30 Nov 2007 11:18:34
+     OK; num_lamd = 6; num_sentinel = 9
+    
+##########   30 Nov 2007 11:18:34
+after check_room
+    
+##########   30 Nov 2007 11:18:34
+before lamboot
+    
+##########   30 Nov 2007 11:18:34
+before sentinel inside lamboot
+    
+##########   30 Nov 2007 11:18:34
+newDir is 552295873696311964178989132
+    
+##########   30 Nov 2007 11:18:34
+lamSuffix 651196417902295922143
+    
+##########   30 Nov 2007 11:18:34
+runningProcs /http/signs/www/R.running.procs/
+    
+##########   30 Nov 2007 11:18:34
+before fullCommand inside lamboot
+    
+##########   30 Nov 2007 11:18:34
+before os.system inside lamboot
+    
+##########   30 Nov 2007 11:18:41
+after lboot ---os.system--- inside lamboot. Exiting lamboot
+    
+##########   30 Nov 2007 11:18:41
+after lamboot
+    
+##########   30 Nov 2007 11:19:30
+did we run out of time?
+    
+##########   30 Nov 2007 11:20:15
+did we run out of time?
+    
+##########   30 Nov 2007 11:21:00
+did we run out of time?
+    
+##########   30 Nov 2007 11:21:45
+did we run out of time?
+    
+##########   30 Nov 2007 11:22:30
+did we run out of time?
+    
+##########   30 Nov 2007 11:23:16
+did we run out of time?
+    
+##########   30 Nov 2007 11:24:01
+did we run out of time?
+    
+##########   30 Nov 2007 11:24:46
+did we run out of time?
+    
+##########   30 Nov 2007 11:25:31
+did we run out of time?
+    
+##########   30 Nov 2007 11:25:31
+finished OK
+    
+##########   30 Nov 2007 11:25:32
+starting printOKRun
+    
+##########   30 Nov 2007 11:25:34
+end of printOKRun
+    
+##########   30 Nov 2007 11:25:34
+at the very end!
+    

@@ -12,6 +12,8 @@ library(party)
 library(mboost)
 
 
+MAX_NCOL_FOR_CLUSTER <- 3000
+
 
 ###############################################
 ##########                    #################
@@ -2162,6 +2164,15 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
         pmgc("     dStep2: start of pdok")
         cat("     pdok: columns = ", ncol(pos.data), "; rows = ", nrow(pos.data), "\n")
 
+        if(ncol(pos.data) > MAX_NCOL_FOR_CLUSTER)
+            caughtUserError(paste("With the p-value you have chosen, there are more than ",
+                                  MAX_NCOL_FOR_CLUSTER,
+                                  "genes with positive coefficient for clustering.\n",
+                                  "This could take forever. \nPlease, use a smaller p-value as threshold.\n",
+                                  "In addition, with these many genes, you can afford to be\n",
+                                  "much more strict in your requirements."))
+
+
         pos.clus <- hclust(as.dist(1 -cor(pos.data)), method = "complete")
         pmgc("     dStep2: pdok: after hclust")
 
@@ -2194,6 +2205,16 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
     if(pnok) {
         pmgc("     dStep2: start of pnok")
         cat("     pnok: columns = ", ncol(neg.data), "; rows = ", nrow(neg.data), "\n")
+        if(ncol(neg.data) > MAX_NCOL_FOR_CLUSTER)
+            caughtUserError(paste("With the p-value you have chosen, there are more than\n ",
+                                  MAX_NCOL_FOR_CLUSTER,
+                                  "genes with negative coefficient for clustering.\n",
+                                  "This could take forever. Please, use a smaller p-value as threshold.\n",
+                                  "In addition, with these many genes, you can afford to be\n",
+                                  "much more strict in your requirements."))
+
+
+
         neg.clus <- hclust(as.dist(1 -cor(neg.data)), method = "complete")
         pmgc("     dStep2: pnok: after hclust")
 
