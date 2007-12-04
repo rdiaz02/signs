@@ -809,6 +809,7 @@ if(checkpoint.num < 4) {
 
     if(checkpoint.num < 3) {
 
+        pmgc("Before fitDave.res1Given")
     sink(file = "stepAIC.output.txt")
     trycode <- try(
     all.res3 <- fitDave.res1Given(xdata, Time, Event,              #### Fig 01:
@@ -827,7 +828,9 @@ if(checkpoint.num < 4) {
 
     print(all.res3$model)
     sink()
+        pmgc("After fitDave.res1Given")
 
+        
     doCheckpoint(3)
 }
 
@@ -835,7 +838,9 @@ if(checkpoint.num < 4) {
 
 
 if(checkpoint.num < 4) {
-    
+
+            pmgc("Before cvDave.parallel3")
+
     trycode <- try(
                    cvDaveRun <- cvDave.parallel3(x = xdata, time = Time,
                                                  event = Event,
@@ -849,7 +854,9 @@ if(checkpoint.num < 4) {
     if(class(trycode) == "try-error")
         caughtOurError(paste("Function cvDaveRun bombed unexpectedly with error",
                              trycode, ". \n Please let us know so we can fix the code."))
+            pmgc("After cvDave.parallel3")
 
+            
     sink(file = "results.txt")
 
     cat("<h2>4. Model fitted to all data</h2>\n")
@@ -894,7 +901,8 @@ if(checkpoint.num < 5) {
     write(paste("A \"+\" means that the variable was considered for addition and ",
                 "a \"-\" means that the variable was considered for deletion. ",
                 "The number shows the AIC after the addition/deletion of ",
-                "each of the variables. Smaller AIC is better.\n"),
+                "each of the variables. Smaller AIC is better.\n",
+                "(There could be additional output, for debugging purposes; ignore it, please)\n"),
           file = "stepAIC.output.html",append = TRUE)
     write("<pre>", file = "stepAIC.output.html",append = TRUE)
     system("cat stepAIC.output.html stepAIC.output.txt > tmp.s; mv tmp.s stepAIC.output.html")

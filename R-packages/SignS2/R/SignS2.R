@@ -19,6 +19,7 @@ library(mboost)
 ##########                    #################
 ###############################################
 
+
 my.glmboost <- function(x, time, event, newdata = NULL,
                         mstop = 500, return.fit = FALSE) {
 
@@ -28,12 +29,22 @@ my.glmboost <- function(x, time, event, newdata = NULL,
                     center = TRUE))
     pmgc("my.glmboost, after gb1 fit")
     ## for 10-fold CV for risk; from help for cvrisk
+    ## might not be 10-fold if fewer than 10
     n <- nrow(x)
-    k <- 10
+    cat("\n *** inside my.glmboost:  n is ", n , "\n")    
+    k <- min(10, n)
     ntest <- floor(n / k)
+    cat("\n *** inside my.glmboost:  ntest is ", ntest , "\n")    
+
     cv10f <- matrix(c(rep(c(rep(0, ntest), rep(1, n)), k - 1), 
                       rep(0, n * k - (k - 1) * (n + ntest))), nrow = n)
-    gridf <- c(5, 10, 25, seq(from = 50, to = 500, length = 10))
+    cat("\n *** inside my.glmboost:  cv10f is \n")
+    print(cv10f)
+    cat("\n")
+
+    gridf <- c(5, 10, 25, seq(from = 50, to = mstop, length = 10))
+    cat("\n *** inside my.glmboost:  gridf is ", gridf , "\n")    
+
     cvm <- cvrisk(gb1, folds = cv10f, grid = gridf)
     pmgc("my.glmboost, after cvrisk")
 
@@ -78,6 +89,7 @@ my.glmboost.cv <- function(x, time, event, mstop = 500, nfold = 10, return.fit =
         xtest <- x[index.select == fnum, , drop = FALSE]
         timetrain <- time[index.select != fnum]
         eventtrain <- event[index.select != fnum]
+        cat("\n *** glmboost.internal.MPI: before call to my.glmboost\n") ## FIXME: debug
         retval <- my.glmboost(xtrain, timetrain, eventtrain, xtest,
                               mstop = mstop,
                               return.fit = return.fit)
@@ -2115,6 +2127,8 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
                    minCor, plot,
                    interactive,
                    plotSizes = c(0.5, 1, 2)) {
+    pmgc("     Starting dStep2")
+
     cat("\n       Starting dStep2 at ", date(), " \n\n"); ptm <- proc.time()
     
     res.mat[is.na(res.mat[, 4]), 4] <- 0
@@ -2145,7 +2159,12 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
 
     tn <- tp <- FALSE
     if(pdok) {
+        pmgc("     dStep2: start of pdok")
+        cat("     pdok: columns = ", ncol(pos.data), "; rows = ", nrow(pos.data), "\n")
+
         pos.clus <- hclust(as.dist(1 -cor(pos.data)), method = "complete")
+        pmgc("     dStep2: pdok: after hclust")
+
         pos.groups <- paste("P.", cutree(pos.clus, h = 1- minCor), sep = "")
         tpos <- table(pos.groups)
         pos.accept <- names(which((tpos >= minSize) & (tpos <= maxSize)))
@@ -2168,10 +2187,16 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
             warning(paste("No groups of positive coeff genes that",
                           "meet the p, minimum correlation and size restrictions."))
         }
+        pmgc("     dStep2: end of pdok")
+
     }
 
     if(pnok) {
+        pmgc("     dStep2: start of pnok")
+        cat("     pnok: columns = ", ncol(neg.data), "; rows = ", nrow(neg.data), "\n")
         neg.clus <- hclust(as.dist(1 -cor(neg.data)), method = "complete")
+        pmgc("     dStep2: pnok: after hclust")
+
         neg.groups <- paste("N.", cutree(neg.clus, h = 1- minCor), sep = "")
         npos <- table(neg.groups)
         neg.accept <- names(which((npos >= minSize) & (npos <= maxSize)))
@@ -2194,6 +2219,8 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
             warning(paste("No groups of negative coeff. genes that",
                           "meet the p, minimum correlation and size restrictions."))
         }
+        pmgc("     dStep2: end of pnok")
+
     }
 
     if(!tn & !tp) {
@@ -2205,6 +2232,8 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
     pnok <- tn & pnok
     
     if(plot) {
+        pmgc("     dStep2: start of plot")
+
         if(pdok & (! pnok)) {
             system("touch NoNegativeCluster")
 
@@ -2295,7 +2324,9 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
         } else {
             stop("We should never get here!!! Plot error ")
         }
-       
+
+        pmgc("     dStep2: end of plot")
+
     } ##</ if plot>
 
     ## For predictions and results, which vars. correspond
@@ -2331,6 +2362,8 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
         posPositions <- NA
     }
     cat("\n Finished dStep2 at ", date(), "; took ", (proc.time() - ptm)[3], " \n\n")    
+    pmgc("     Finished dStep2")
+
     return(list(md = cbind(posMeanData, negMeanData),
                 filteredGroupsPositive = groupsPositive,
                 filteredGroupsNegative = groupsNegative,
@@ -2360,7 +2393,8 @@ pdnokf <- function(pn.groups,  pn.data, pn.accept, pn.clus,
     dfp$y <- nrow(dfp) - as.numeric(rownames(dfp)) + 1
     rainbow.col <- rainbow(length(pnGroups))
     cat("\n ... main is ", main, "\n")
-    for(i in 1:length(pnGroups)) {
+    cat("\n ..... have to loop over ", length(pnGroups), "pnGroup\n")
+    for(i in 1:length(pnGroups)) {        
         dfpt <- dfp[dfp$pn.gr == pnGroups[i], ]
         miny <- min(dfpt$y) ## by not setting na.rm = TRUE we would bomb if wrong set
         maxy <- max(dfpt$y)
@@ -2371,10 +2405,16 @@ pdnokf <- function(pn.groups,  pn.data, pn.accept, pn.clus,
              col.axis = rainbow.col[i],
              tick = FALSE, labels = pnGroups[i], lw = 0,
              cex.axis = 1.5)
-        for(j in 1:nrow(dfpt))
+        cat(" \n                 about to enter loop of text with coloring; will do ",
+            nrow(dfpt), " iterations\n")
+        for(j in 1:nrow(dfpt)) {
+            cat("\n ...................... inside loop of text with coloring: j = ", j, " \n")
             text(dfpt$name[j], x = dfpt$height[j],
                  y = dfpt$y[j], col = rainbow.col[i],
                  font = 2, pos = 4)
+        }
+        cat("\n ................. ended loop of text with coloring \n")
+
     }
     if (alllabels) {
         dfpt <- dfp[dfp$chosen.clus == FALSE,]
@@ -2384,6 +2424,7 @@ pdnokf <- function(pn.groups,  pn.data, pn.accept, pn.clus,
                      y = dfpt$y[j], col = "black", cex = 0.8, pos = 4)
         }
     }
+    cat("\n   Exiting pdnokf \n")
     return(dfp)
 } ##</pdokf within plotting>
 
@@ -2416,7 +2457,10 @@ dendmapp <- function(factor, alllabels,
     
     createIM(im1, file = paste(theName, factor, ".alllabels",
                   alllabels, ".html", sep = ""))
+    cat("\n before imClose inside dendmapp\n")
     imClose(im1)
+    cat("\n after  imClose inside dendmapp\n")
+
 }
 
 
@@ -2433,7 +2477,8 @@ wrapDendmapp <- function(li) {
 tryCatch2 <- function(x) tryCatch(x, error = function(e) "Error")
 
 dStep3 <- function(res2, time, event, MaxIterationsCox) {
-    
+    pmgc("     Starting dStep3")
+
     ## this is a terrible hack, but I am getting scoping problems in stepAIC
     assign("..___MaxIterationsCox", MaxIterationsCox, env = .GlobalEnv)
     
@@ -2612,6 +2657,8 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
                 clusterResults = res2)
     class(out) <- "fmDave"
     cat("\n ..... Finishing dStep3 at ", date(), "; took ", (proc.time() - ptm)[3], " \n\n")
+    pmgc("     Ended dStep3")
+
     return(out)
 }
 
@@ -2669,7 +2716,9 @@ fitDave.res1Given <- function(x, time, event, res1,
                               interactive) {
     cat("\n Starting fitDave.res1Given at ", date(), " \n\n"); ptm <- proc.time()
     res2 <- dStep2(x, res1, maxSize, minSize, minCor, plot, interactive)
+    pmgc("     fitDave.res1Given: after dStep2")
     res3 <- dStep3(res2, time, event, MaxIterationsCox)
+    pmgc("     fitDave.res1Given: after dStep3")
     cat("\n Ended fitDave.res1Given at ", date(), "; took ", (proc.time() - ptm)[3], " seconds \n\n")
     return(res3) ## i.e., an fmDave object returned
 }    
@@ -2771,6 +2820,7 @@ cvDave.parallel3 <- function(x, time, event,
                              MaxIterationsCox,
                              nfold,
                              universeSize = 10) {
+    pmgc("Beginning of cvDave.parallel3")
     cat("\n Starting cvDave.parallel3 at ", date(), " \n\n"); ptm <- proc.time()
     
     if (mpi.comm.size(comm = 1) == 0) {
@@ -2810,6 +2860,8 @@ cvDave.parallel3 <- function(x, time, event,
         return(dStep1.serial(xtr, ttr, etr, p = p,
                                MaxIterationsCox = MaxIterationsCox))
     }
+    pmgc("     cvDave.parallel3: before res1s")
+
     res1s <- papply(as.list(1:nfold),
                     f00,
                     papply_commondata = list(
@@ -2819,6 +2871,7 @@ cvDave.parallel3 <- function(x, time, event,
                     p = p,
                     MaxIterationsCox = MaxIterationsCox,
                     index.select = index.select))
+    pmgc("     cvDave.parallel3: after res1s")
         
     cat("\n\n Cleaning up MPI slaves\n\n")	
     mpiDelete()
@@ -2865,7 +2918,8 @@ cvDave.parallel3 <- function(x, time, event,
         xtest <- x[index.select == fnum, , drop = FALSE]
         timetrain <- time[index.select != fnum]
         eventtrain <- event[index.select != fnum]
-        
+        pmgc("     cvDave.parallel3: inside InternalMPI2. Before bestTrain")
+
         ## find best params by CV and predict on a new set.
         bestTrain <- fitDave.res1Given(xtrain, timetrain, eventtrain,
                                        res1 = res1,
@@ -2874,8 +2928,12 @@ cvDave.parallel3 <- function(x, time, event,
                                        MaxIterationsCox = MaxIterationsCox,
                                        plot = FALSE,
                                        interactive =FALSE)
-        
+        pmgc("     cvDave.parallel3: inside InternalMPI2. After bestTrain")
+
         testPred <- dPredictNew(res3 = bestTrain, newdata = xtest)
+
+        pmgc("     cvDave.parallel3: inside InternalMPI2. After testPred")
+
         
         return(list(scoresTest = testPred,
                     fmDaveObject = bestTrain))

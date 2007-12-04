@@ -53,10 +53,11 @@ createIM <- function(im,file='',imgTags=list()){
   cat(buildIM(im,imgTags),sep='\n',file=file)
 }
 
-imClose <- function(im){
-  cat(paste("Closing PNG file ",paste(im$Filename,".png",sep=''),"\n",sep=''))
-  dev.off(im$Device)
-}
+## imClose <- function(im){
+##   cat(paste("Closing PNG file ",paste(im$Filename,".png",sep=''),"\n",sep=''))
+##   dev.off(im$Device)
+## }
+
 
 lines.imagemap <- function(x,...){
 ### draw the imagemap objects on the current plot
