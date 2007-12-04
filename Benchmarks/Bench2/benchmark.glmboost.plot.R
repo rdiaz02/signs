@@ -1,47 +1,48 @@
-load("cforest.paral.1cpu.RData")
-load("cforest.paral.2cpu.RData")
-load("cforest.paral.20cpu.RData")
-load("cforest.paral.60cpu.RData")
-load("cforest.paral.10cpu.RData")
+load("glmboost.paral.1cpu.RData")
+load("glmboost.paral.2cpu.RData")
+load("glmboost.paral.20cpu.RData")
+load("glmboost.paral.60cpu.RData")
+load("glmboost.paral.10cpu.RData")
 
 
-cforest.paral.out <- data.frame(rbind(cforest.paral.1cpu,
-                                   cforest.paral.2cpu,
-                                   cforest.paral.10cpu,
-                                   cforest.paral.20cpu,
-                                   cforest.paral.60cpu))
-cforest.paral.out$CPUS <- c(rep(1, 11), rep(2, 11), rep(10, 11),
+glmboost.paral.out <- data.frame(rbind(glmboost.paral.1cpu,
+                                   glmboost.paral.2cpu,
+                                   glmboost.paral.10cpu,
+                                   glmboost.paral.20cpu,
+                                   glmboost.paral.60cpu))
+glmboost.paral.out$CPUS <- c(rep(1, 11), rep(2, 11), rep(10, 11),
                          rep(20, 11), rep(60, 11))
-cforest.all <- cforest.paral.out
-miny <- min(cforest.all[, 1])
-maxy <- max(cforest.all[, 1])
+glmboost.all <- glmboost.paral.out
+miny <- min(glmboost.all[, 1])
+maxy <- max(glmboost.all[, 1])
 
-cforest.all$farrays <- factor(cforest.all$narrays)
+glmboost.all$farrays <- factor(glmboost.all$narrays)
 
-cforest.all$ratio <- cforest.all$time/cforest.all$time[1:11]
-cforest.all$ratio <- 1/cforest.all$ratio
+glmboost.all$ratio <- glmboost.all$time/glmboost.all$time[1:11]
+glmboost.all$ratio <- 1/glmboost.all$ratio
 
 
 
 
 flab <- function(cpus, nge, narr, cex = 0.8) {
     if (is.null(narr)) {
-        tmp <- subset(cforest.all, (CPUS == cpus)  & (ngenes == nge))
+        tmp <- subset(glmboost.all, (CPUS == cpus)  & (ngenes == nge))
         text(y = 0.1 + tmp$ratio, x = tmp$narrays,
              labels = round(tmp$time), cex = cex)
     }
     else {
-        tmp <- subset(cforest.all, (CPUS == cpus)  & (narrays == narr))
+        tmp <- subset(glmboost.all, (CPUS == cpus)  & (narrays == narr))
         text(y = 0.1 + tmp$ratio, x = tmp$ngenes,
              labels = round(tmp$time), cex = cex)
     }
 }
 
 
-miny <- min(cforest.all$ratio)
-maxy <- max(cforest.all$ratio)
+miny <- min(glmboost.all$ratio)
+maxy <- max(glmboost.all$ratio)
+#maxy <- 5
 
-postscript(file = "bench.cforest.eps", height = 9.6, width = 14.4,
+postscript(file = "bench.glmboost.eps", height = 9.6, width = 14.4,
            horizontal = FALSE,
            onefile = FALSE, paper = "special")
 
@@ -60,7 +61,7 @@ plot(ratio ~ narrays,
      ylab = "Fold increase in speed (relative to 1 CPU)",
      type = "b",
 #     log = "y",
-     data = subset(cforest.all, (CPUS == 1) & (ngenes == 7399)),
+     data = subset(glmboost.all, (CPUS == 1) & (ngenes == 7399)),
      axes = FALSE,
      main = "Effect of number of arrays (number of genes = 7399)",
      lwd = 2,
@@ -71,23 +72,23 @@ axis(1, at = c(20, 40, 80, 100))
 
 points(ratio ~ narrays,
        type = "b", 
-       data = subset(cforest.all, (CPUS == 2)  & (ngenes == 7399)),
+       data = subset(glmboost.all, (CPUS == 2)  & (ngenes == 7399)),
        lwd = 2,
        col = "green"
 )
 points(ratio ~ narrays,
        type = "b", 
-       data = subset(cforest.all, (CPUS == 10)  & (ngenes == 7399)),
+       data = subset(glmboost.all, (CPUS == 10)  & (ngenes == 7399)),
        lwd = 2,
        col = "violet")
 points(ratio ~ narrays,
        type = "b", 
-       data = subset(cforest.all, (CPUS == 20)  & (ngenes == 7399)),
+       data = subset(glmboost.all, (CPUS == 20)  & (ngenes == 7399)),
        lwd = 2,
        col = "orange")
 points(ratio ~ narrays,
        type = "b", 
-       data = subset(cforest.all, (CPUS == 60)  & (ngenes == 7399)),
+       data = subset(glmboost.all, (CPUS == 60)  & (ngenes == 7399)),
        lwd = 2,
        col = "red")
 
@@ -113,7 +114,7 @@ plot(ratio ~ ngenes,
      ylab = "Fold increase in speed (relative to 1 CPU)",
      type = "b",
      log = "x",
-     data = subset(cforest.all, (CPUS == 1) & (narrays == 160)),
+     data = subset(glmboost.all, (CPUS == 1) & (narrays == 160)),
      axes = FALSE,
      main = "Effect of number of genes (number of arrays = 160)",
      lwd = 2,
@@ -125,22 +126,22 @@ axis(1, at =  c(1000, 2000, 4000, 6000, 12000, 24000, 48000))
 
 points(ratio ~ ngenes,
        type = "b", 
-       data = subset(cforest.all, (CPUS == 2)  & (narrays == 160)),
+       data = subset(glmboost.all, (CPUS == 2)  & (narrays == 160)),
        lwd = 2,
        col = "green")
 points(ratio ~ ngenes,
        type = "b", 
-       data = subset(cforest.all, (CPUS == 10)  & (narrays == 160)),
+       data = subset(glmboost.all, (CPUS == 10)  & (narrays == 160)),
        lwd = 2,
        col = "violet")
 points(ratio ~ ngenes,
        type = "b", 
-       data = subset(cforest.all, (CPUS == 20)  & (narrays == 160)),
+       data = subset(glmboost.all, (CPUS == 20)  & (narrays == 160)),
        lwd = 2,
        col = "orange")
 points(ratio ~ ngenes,
        type = "b", 
-       data = subset(cforest.all, (CPUS == 60)  & (narrays == 160)),
+       data = subset(glmboost.all, (CPUS == 60)  & (narrays == 160)),
        lwd = 2,
        col = "red")
 

@@ -769,7 +769,7 @@ if(checkpoint.num < 4) {
     MaxIterationsCox <- 200
     
     trycode <- try(
-                   all.res1 <- dStep1.parallel(xdata, Time, Event,
+                   all.res1 <- dStep1.serial(xdata, Time, Event,
                                                Minp, MaxIterationsCox)
                    )
     if(class(trycode) == "try-error")

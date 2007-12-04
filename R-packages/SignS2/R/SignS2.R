@@ -159,6 +159,7 @@ my.cforest <- function(x, time, event, ngenes, newdata) {
     ##   - fit cforest model
     ##   - obtain predictions
     ##   (in the future maybe variable importances, but time consuming and not used now)
+    ngenes <- min(ngenes, ncol(x))
     sobject <- Surv(time, event)
     selected.genes <- geneSelect(x, sobject, ngenes)
     x1 <- data.frame(x[, selected.genes$rows.to.keep])
