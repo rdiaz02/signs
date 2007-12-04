@@ -25,6 +25,7 @@ my.glmboost <- function(x, time, event, newdata, mstop = 500) {
     gb1 <- glmboost(x, Surv(time, event), family = CoxPH(),
                     control = boost_control(mstop = mstop,
                     center = TRUE))
+    pmgc("my.glmboost, after gb1 fit")
     ## for 10-fold CV for risk; from help for cvrisk
     n <- nrow(x)
     k <- 10
@@ -33,9 +34,12 @@ my.glmboost <- function(x, time, event, newdata, mstop = 500) {
                       rep(0, n * k - (k - 1) * (n + ntest))), nrow = n)
     gridf <- c(5, 10, 25, seq(from = 50, to = 500, length = 10))
     cvm <- cvrisk(gb1, folds = cv10f, grid = gridf)
+    pmgc("my.glmboost, after cvrisk")
+
     best.mstop <- mstop(cvm)
     cat("\n Best mstop is ", best.mstop, "\n")
     gb1 <- gb1[mstop(cvm)]
+    pmgc("my.glmboost, after mstop")
     selected.genes.rows <- which(abs(coef(gb1)) > 0)
     lsgenes <- length(selected.genes.rows)
     selected.genes.names <- names(selected.genes.rows)
@@ -46,6 +50,7 @@ my.glmboost <- function(x, time, event, newdata, mstop = 500) {
                                   rep(0, lsgenes),
                                   rep(NA, lsgenes))
     overfit_predicted_surv_time <- predict(gb1, newdata = x, type = "lp")
+    pmgc("my.glmboost, after overfit_predicted_surv_time")
     if(!(is.null(newdata))) {
         pred.stime <- predict(gb1, newdata = newdata, type = "lp")
     } else {
@@ -67,12 +72,13 @@ my.glmboost.cv <- function(x, time, event, mstop = 500, nfold = 10) {
 
     my.glmboost.internal.MPI <- function(fnum) {
         ## to be used with papply
-        cat("\n Doing fnum ", fnum, "\n") ## FIXME: debug
+        cat("\n *** glmboost.internal.MPI: Doing fnum ", fnum, "\n") ## FIXME: debug
         xtrain <- x[index.select != fnum, , drop = FALSE]
         xtest <- x[index.select == fnum, , drop = FALSE]
         timetrain <- time[index.select != fnum]
         eventtrain <- event[index.select != fnum]
         retval <- my.glmboost(xtrain, timetrain, eventtrain, xtest)
+        pmgc("glmboost.internal.MPI, after retval")
         return(retval)
     }
 
@@ -81,7 +87,7 @@ my.glmboost.cv <- function(x, time, event, mstop = 500, nfold = 10) {
                    papply_commondata = list(x = x,
                    time = time, event = event, 
                    index.select = index.select))
-    
+    pmgc("glmboost.cv, after papply")
     for(i in 1:nfold) {
         OOB.scores[index.select == i] <-
             tmp1[[i]]$predicted_surv_time
@@ -167,6 +173,7 @@ my.cforest <- function(x, time, event, ngenes, newdata) {
     x1$event <- event
     cf1 <- cforest(Surv(time, event) ~ ., data = x1,
                    control = cforest_classical(ntree = 500))
+    pmgc("my.cforest, after cforest call")
     if(!(is.null(newdata))) {
         if(!(is.data.frame(newdata))) newdata <- data.frame(newdata)
         pred.stime <- cf.mean.survtime(cf1, newdata)
@@ -219,8 +226,8 @@ my.cforest.cv <- function(x, time, event, ngenes, nfold = 10,
         xtest <- x[index.select == fnum, , drop = FALSE]
         timetrain <- time[index.select != fnum]
         eventtrain <- event[index.select != fnum]
-        
-        retval <- my.cforest(xtrain, timetrain, eventtrain, ngenes, xtest)
+        retval <- my.cforest(xtrain, timetrain, eventtrain, ngenes, xtest)        
+        pmgc("cforest.internal.MPI, after retval")
         return(retval)
     }
 
@@ -248,6 +255,11 @@ my.cforest.cv <- function(x, time, event, ngenes, nfold = 10,
 ##########                    #################
 ###############################################
 
+pmgc <- function(message) {
+    cat("\n\n    Running gc():", message, "\n")
+    print(gc())
+    cat("\n")
+}
 
 print.selected.genes <- function(object,
                                  idtype, organism) {
