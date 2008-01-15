@@ -27,7 +27,7 @@ MAX_time_size = 61897L
 ## so each of 1000 labels has 48 chars.
 
 acceptedMethodSurvs = ('FCMS', 'TGD', 'cforest', 'glmboost')
-acceptedIDTypes = ('None', 'cnio', 'affy', 'clone', 'acc', 'ensembl', 'entrez', 'ug')
+acceptedIDTypes = ('None', 'cnio', 'affy', 'clone', 'acc', 'ensembl', 'entrez', 'ug', 'rsrna', 'rspeptide', 'hugo')
 acceptedOrganisms = ('None', 'Hs', 'Mm', 'Rn')
 
 def commonOutput():

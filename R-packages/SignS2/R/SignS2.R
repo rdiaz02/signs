@@ -492,6 +492,7 @@ writeForPaLS <- function(genesSelected, pals_main, pals_all) {
             }
         } else {
             cat("#CVRun_", nr - 1, sep = "", file = pals_all, append = TRUE)
+            cat("\n", file = pals_all, append = TRUE)
             for(gene in genesSelected[[nr]]) {
                 cat(gene, "\n", file = pals_all, append = TRUE)
             }
