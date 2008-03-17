@@ -1,0 +1,223 @@
+NULL
+	10 slaves are spawned successfully. 0 failed.
+master  (rank 0 , comm 1) of size 11 is running on: karl29 
+slave1  (rank 1 , comm 1) of size 11 is running on: karl29 
+slave2  (rank 2 , comm 1) of size 11 is running on: karl30 
+slave3  (rank 3 , comm 1) of size 11 is running on: karl31 
+slave4  (rank 4 , comm 1) of size 11 is running on: karl01 
+slave5  (rank 5 , comm 1) of size 11 is running on: karl02 
+slave6  (rank 6 , comm 1) of size 11 is running on: karl03 
+slave7  (rank 7 , comm 1) of size 11 is running on: karl04 
+slave8  (rank 8 , comm 1) of size 11 is running on: karl05 
+slave9  (rank 9 , comm 1) of size 11 is running on: karl06 
+slave10 (rank 10, comm 1) of size 11 is running on: karl07 
+$slave1
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave2
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave3
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave4
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave5
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave6
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave7
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave8
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave9
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave10
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+
+
+    Running gc(): my.glmboost, after gb1 fit 
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  312903 16.8     597831   32   419702 22.5
+Vcells 2304239 17.6    2874378   22  2305064 17.6
+
+
+ *** inside my.glmboost:  n is  78 
+
+ *** inside my.glmboost:  ntest is  7 
+
+ *** inside my.glmboost:  cv10f is 
+      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+ [1,]    0    1    1    1    1    1    1    1    1     1
+ [2,]    0    1    1    1    1    1    1    1    1     1
+ [3,]    0    1    1    1    1    1    1    1    1     1
+ [4,]    0    1    1    1    1    1    1    1    1     1
+ [5,]    0    1    1    1    1    1    1    1    1     1
+ [6,]    0    1    1    1    1    1    1    1    1     1
+ [7,]    0    1    1    1    1    1    1    1    1     1
+ [8,]    1    0    1    1    1    1    1    1    1     1
+ [9,]    1    0    1    1    1    1    1    1    1     1
+[10,]    1    0    1    1    1    1    1    1    1     1
+[11,]    1    0    1    1    1    1    1    1    1     1
+[12,]    1    0    1    1    1    1    1    1    1     1
+[13,]    1    0    1    1    1    1    1    1    1     1
+[14,]    1    0    1    1    1    1    1    1    1     1
+[15,]    1    1    0    1    1    1    1    1    1     1
+[16,]    1    1    0    1    1    1    1    1    1     1
+[17,]    1    1    0    1    1    1    1    1    1     1
+[18,]    1    1    0    1    1    1    1    1    1     1
+[19,]    1    1    0    1    1    1    1    1    1     1
+[20,]    1    1    0    1    1    1    1    1    1     1
+[21,]    1    1    0    1    1    1    1    1    1     1
+[22,]    1    1    1    0    1    1    1    1    1     1
+[23,]    1    1    1    0    1    1    1    1    1     1
+[24,]    1    1    1    0    1    1    1    1    1     1
+[25,]    1    1    1    0    1    1    1    1    1     1
+[26,]    1    1    1    0    1    1    1    1    1     1
+[27,]    1    1    1    0    1    1    1    1    1     1
+[28,]    1    1    1    0    1    1    1    1    1     1
+[29,]    1    1    1    1    0    1    1    1    1     1
+[30,]    1    1    1    1    0    1    1    1    1     1
+[31,]    1    1    1    1    0    1    1    1    1     1
+[32,]    1    1    1    1    0    1    1    1    1     1
+[33,]    1    1    1    1    0    1    1    1    1     1
+[34,]    1    1    1    1    0    1    1    1    1     1
+[35,]    1    1    1    1    0    1    1    1    1     1
+[36,]    1    1    1    1    1    0    1    1    1     1
+[37,]    1    1    1    1    1    0    1    1    1     1
+[38,]    1    1    1    1    1    0    1    1    1     1
+[39,]    1    1    1    1    1    0    1    1    1     1
+[40,]    1    1    1    1    1    0    1    1    1     1
+[41,]    1    1    1    1    1    0    1    1    1     1
+[42,]    1    1    1    1    1    0    1    1    1     1
+[43,]    1    1    1    1    1    1    0    1    1     1
+[44,]    1    1    1    1    1    1    0    1    1     1
+[45,]    1    1    1    1    1    1    0    1    1     1
+[46,]    1    1    1    1    1    1    0    1    1     1
+[47,]    1    1    1    1    1    1    0    1    1     1
+[48,]    1    1    1    1    1    1    0    1    1     1
+[49,]    1    1    1    1    1    1    0    1    1     1
+[50,]    1    1    1    1    1    1    1    0    1     1
+[51,]    1    1    1    1    1    1    1    0    1     1
+[52,]    1    1    1    1    1    1    1    0    1     1
+[53,]    1    1    1    1    1    1    1    0    1     1
+[54,]    1    1    1    1    1    1    1    0    1     1
+[55,]    1    1    1    1    1    1    1    0    1     1
+[56,]    1    1    1    1    1    1    1    0    1     1
+[57,]    1    1    1    1    1    1    1    1    0     1
+[58,]    1    1    1    1    1    1    1    1    0     1
+[59,]    1    1    1    1    1    1    1    1    0     1
+[60,]    1    1    1    1    1    1    1    1    0     1
+[61,]    1    1    1    1    1    1    1    1    0     1
+[62,]    1    1    1    1    1    1    1    1    0     1
+[63,]    1    1    1    1    1    1    1    1    0     1
+[64,]    1    1    1    1    1    1    1    1    1     0
+[65,]    1    1    1    1    1    1    1    1    1     0
+[66,]    1    1    1    1    1    1    1    1    1     0
+[67,]    1    1    1    1    1    1    1    1    1     0
+[68,]    1    1    1    1    1    1    1    1    1     0
+[69,]    1    1    1    1    1    1    1    1    1     0
+[70,]    1    1    1    1    1    1    1    1    1     0
+[71,]    1    1    1    1    1    1    1    1    1     0
+[72,]    1    1    1    1    1    1    1    1    1     0
+[73,]    1    1    1    1    1    1    1    1    1     0
+[74,]    1    1    1    1    1    1    1    1    1     0
+[75,]    1    1    1    1    1    1    1    1    1     0
+[76,]    1    1    1    1    1    1    1    1    1     0
+[77,]    1    1    1    1    1    1    1    1    1     0
+[78,]    1    1    1    1    1    1    1    1    1     0
+
+
+ *** inside my.glmboost:  gridf is  5 10 25 50 100 150 200 250 300 350 400 450 500 
+
+
+    Running gc(): my.glmboost, after cvrisk 
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  313243 16.8     597831 32.0   597831 32.0
+Vcells 2305304 17.6    6884749 52.6  6884728 52.6
+
+
+ Best mstop is  5 
+
+
+    Running gc(): my.glmboost, after mstop 
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  313713 16.8     597831 32.0   597831 32.0
+Vcells 2718192 20.8    6884749 52.6  6884728 52.6
+
+
+
+    Running gc(): my.glmboost, after overfit_predicted_surv_time 
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  313836 16.8     597831 32.0   597831 32.0
+Vcells 2718391 20.8    6884749 52.6  6884728 52.6
+
+
+
+    Running gc(): glmboost.cv, after papply 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 313785 16.8     597831 32.0   597831 32.0
+Vcells 644229  5.0    5507799 42.1  6884728 52.6
+
+[1] "Please use mpi.close.Rslaves() to close slaves."
+[1] "Please use mpi.quit() to quit R"
+
+
+ Normal termination

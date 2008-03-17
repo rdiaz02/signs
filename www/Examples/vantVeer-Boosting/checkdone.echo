@@ -1,0 +1,69 @@
+##########   15 Jan 2008 15:33:36
+starting
+    
+##########   15 Jan 2008 15:33:36
+at 2
+    
+##########   15 Jan 2008 15:33:36
+at 3
+    
+##########   15 Jan 2008 15:33:47
+     inside my_queue 
+    
+##########   15 Jan 2008 15:33:47
+     OK; num_lamd = 0; num_sentinel = 0
+    
+##########   15 Jan 2008 15:33:47
+after check_room
+    
+##########   15 Jan 2008 15:33:47
+before lamboot
+    
+##########   15 Jan 2008 15:33:47
+before sentinel inside lamboot
+    
+##########   15 Jan 2008 15:33:47
+newDir is 14551670276012004076169059
+    
+##########   15 Jan 2008 15:33:47
+lamSuffix 981200407616167079027
+    
+##########   15 Jan 2008 15:33:47
+runningProcs /http/signs/www/R.running.procs/
+    
+##########   15 Jan 2008 15:33:47
+before fullCommand inside lamboot
+    
+##########   15 Jan 2008 15:33:47
+before os.system inside lamboot
+    
+##########   15 Jan 2008 15:33:51
+after lboot ---os.system--- inside lamboot. Exiting lamboot
+    
+##########   15 Jan 2008 15:33:51
+after lamboot
+    
+##########   15 Jan 2008 15:34:39
+did we run out of time?
+    
+##########   15 Jan 2008 15:34:39
+    did Rmpi or LAM crash (did_mpi_crash)?
+    
+##########   15 Jan 2008 15:34:39
+          did_lam_crash ?
+    
+##########   15 Jan 2008 15:35:24
+did we run out of time?
+    
+##########   15 Jan 2008 15:35:24
+finished OK
+    
+##########   15 Jan 2008 15:35:25
+starting printOKRun
+    
+##########   15 Jan 2008 15:35:27
+end of printOKRun
+    
+##########   15 Jan 2008 15:35:27
+at the very end!
+    

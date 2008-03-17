@@ -1,0 +1,174 @@
+	10 slaves are spawned successfully. 0 failed.
+master  (rank 0 , comm 1) of size 11 is running on: karl30 
+slave1  (rank 1 , comm 1) of size 11 is running on: karl30 
+slave2  (rank 2 , comm 1) of size 11 is running on: karl31 
+slave3  (rank 3 , comm 1) of size 11 is running on: karl01 
+slave4  (rank 4 , comm 1) of size 11 is running on: karl02 
+slave5  (rank 5 , comm 1) of size 11 is running on: karl03 
+slave6  (rank 6 , comm 1) of size 11 is running on: karl04 
+slave7  (rank 7 , comm 1) of size 11 is running on: karl05 
+slave8  (rank 8 , comm 1) of size 11 is running on: karl06 
+slave9  (rank 9 , comm 1) of size 11 is running on: karl07 
+slave10 (rank 10, comm 1) of size 11 is running on: karl08 
+$slave1
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave2
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave3
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave4
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave5
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave6
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave7
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave8
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave9
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+$slave10
+ [1] "SignS2"      "mboost"      "R2HTML"      "GDD"         "party"      
+ [6] "vcd"         "colorspace"  "MASS"        "strucchange" "sandwich"   
+[11] "zoo"         "coin"        "mvtnorm"     "modeltools"  "grid"       
+[16] "combinat"    "survival"    "splines"     "Rmpi"        "stats"      
+[21] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+[26] "base"       
+
+
+
+    Running gc(): Before fitDave.res1Given 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 312016 16.7     597831 32.0   467866 25.0
+Vcells 673601  5.2    1445757 11.1  1445757 11.1
+
+
+
+    Running gc(): After fitDave.res1Given 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 334238 17.9     597831 32.0   523359 28.0
+Vcells 679948  5.2    1927986 14.8  1906284 14.6
+
+
+
+    Running gc(): Before cvDave.parallel3 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 334241 17.9     597831 32.0   523359 28.0
+Vcells 679954  5.2    1927986 14.8  1906284 14.6
+
+
+
+    Running gc(): Beginning of cvDave.parallel3 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 334830 17.9     597831 32.0   523359 28.0
+Vcells 680110  5.2    1927986 14.8  1906284 14.6
+
+
+ Starting cvDave.parallel3 at  Tue Jan 15 15:12:42 2008  
+
+
+     cvDave.parallel3:  cond 3 
+
+
+ Computing gene-wise cox p-value
+
+
+    Running gc():      cvDave.parallel3: before res1s 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 334929 17.9     597831 32.0   523359 28.0
+Vcells 680205  5.2    1927986 14.8  1906284 14.6
+
+
+
+    Running gc():      cvDave.parallel3: after res1s 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 334991 17.9     597831 32.0   597831 32.0
+Vcells 834691  6.4    1927986 14.8  1906284 14.6
+
+
+
+ Cleaning up MPI slaves
+
+
+
+ Computing the rest
+
+ Ending cvDave.parallel3 at  Tue Jan 15 15:12:46 2008 ; it took  4.574  
+
+karl01.12335+1.6696.log
+karl02.12335+1.20868.log
+karl03.12335+1.10295.log
+karl04.12335+1.30494.log
+karl05.12335+1.12743.log
+karl06.12335+1.21257.log
+karl07.12335+1.31922.log
+karl08.12335+1.14795.log
+karl30.12335+1.12341.log
+karl31.12335+1.1576.log
+
+
+    Running gc(): After cvDave.parallel3 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 342107 18.3     597831 32.0   597831 32.0
+Vcells 736164  5.7    2104385 16.1  2099924 16.1
+
+[1] "Please use mpi.close.Rslaves() to close slaves."
+[1] "Please use mpi.quit() to quit R"
+
+
+ Normal termination

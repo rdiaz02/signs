@@ -1,0 +1,219 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head>
+ <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
+ <SCRIPT type="text/javascript" SRC="../../aqtree3clickable.js"></SCRIPT> 
+ <LINK REL="stylesheet" HREF="../../aqtree3clickable.css"> 
+ <LINK REL="stylesheet" HREF="../../style1.css"> 
+ <title>SignS results </title></head><body>
+<h2> Results using boosting of component-wise Cox models (Hothorn et al., 2006b)</h2><br/ >
+<h2>1. Survival plots</h2>
+<h3>1.1. Survival plots using scores from final model <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h3> 
+<h4>Two groups</h4><IMG BORDER="0" SRC="kmplot-honest.png"><IMG BORDER="0" SRC="kmplot-overfitt.png"><p>Please, DO NOT use the overfitt one, except for pedagogic purposes to show consequencues of overfitting and not doing cross-validation.</p><h4>Three groups</h4>
+<IMG BORDER="0" SRC="kmplot3-honest.png"><IMG BORDER="0" SRC="kmplot3-overfitt.png"><h4>Four groups</h4><IMG BORDER="0" SRC="kmplot4-honest.png"><IMG BORDER="0" SRC="kmplot4-overfitt.png"><h2>2. Single gene for the chosen number of genes</h2>
+<ul class="aqtree3clickable">
+<li><a>Single-gene Cox model p-values and statistics</a><ul>
+<li><a href="p.v.sort.pv.a.html" target="pv_window">Sorted by p-value, ascending</a><li><a href="p.v.sort.pv.d.html" target="pv_window">Sorted by p-value, descending</a><li><a href="p.v.sort.coef.d.html" target="pv_window">Sorted by coefficient, descending</a><li><a href="p.v.sort.coef.a.html" target="pv_window">Sorted by coefficient, ascending</a><li><a href="p.v.sort.abscoef.a.html" target="pv_window">Sorted by absolute value of coefficient, ascending</a><li><a href="p.v.sort.abscoef.d.html" target="pv_window">Sorted by absolute value of coefficient, descending</a><li><a href="p.v.sort.name.d.html" target="pv_window">Sorted by name, descending</a><li><a href="p.v.sort.name.a.html" target="pv_window">Sorted by name, ascending</a></ul></ul></ul><br /><br /> <hr>
+ <hr><h2>3. Cross-validation runs</h2>
+
+<h3>3.1. <a href="scores.oob.html" target="scores_window">View</a> out-of-bag scores.</h3>
+
+
+ <h3>3.2 Number of selected genes in cross-validation runs</h3>
+          [,1]
+CV.run.1     4
+CV.run.2     3
+CV.run.3    20
+CV.run.4     3
+CV.run.5     3
+CV.run.6     2
+CV.run.7     4
+CV.run.8     4
+CV.run.9     2
+CV.run.10    2
+
+
+ <h3>3.3 Genes selected in each of the cross-validation runs</h3>
+
+
+ <h4>CV run  1 </h4>
+
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=200>Gene</th> </tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_003875&internal=0&org=Hs" target="icl_window" >NM_003875</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_033512&internal=0&org=Hs" target="icl_window" >NM_033512</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_006681&internal=0&org=Hs" target="icl_window" >NM_006681</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_001216&internal=0&org=Hs" target="icl_window" >NM_001216</a> </td></tr>
+ </TABLE>
+
+ <h4>CV run  2 </h4>
+
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=200>Gene</th> </tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_003748&internal=0&org=Hs" target="icl_window" >NM_003748</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_020974&internal=0&org=Hs" target="icl_window" >NM_020974</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_033512&internal=0&org=Hs" target="icl_window" >NM_033512</a> </td></tr>
+ </TABLE>
+
+ <h4>CV run  3 </h4>
+
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=200>Gene</th> </tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_019590&internal=0&org=Hs" target="icl_window" >NM_019590</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_001756&internal=0&org=Hs" target="icl_window" >NM_001756</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_001079&internal=0&org=Hs" target="icl_window" >NM_001079</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_003315&internal=0&org=Hs" target="icl_window" >NM_003315</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_012214&internal=0&org=Hs" target="icl_window" >NM_012214</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_024830&internal=0&org=Hs" target="icl_window" >NM_024830</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_003748&internal=0&org=Hs" target="icl_window" >NM_003748</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_004934&internal=0&org=Hs" target="icl_window" >NM_004934</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_033512&internal=0&org=Hs" target="icl_window" >NM_033512</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_005915&internal=0&org=Hs" target="icl_window" >NM_005915</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_006681&internal=0&org=Hs" target="icl_window" >NM_006681</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_016361&internal=0&org=Hs" target="icl_window" >NM_016361</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_000594&internal=0&org=Hs" target="icl_window" >NM_000594</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_016448&internal=0&org=Hs" target="icl_window" >NM_016448</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_018120&internal=0&org=Hs" target="icl_window" >NM_018120</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_001062&internal=0&org=Hs" target="icl_window" >NM_001062</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_000436&internal=0&org=Hs" target="icl_window" >NM_000436</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_017823&internal=0&org=Hs" target="icl_window" >NM_017823</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_001204&internal=0&org=Hs" target="icl_window" >NM_001204</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_001216&internal=0&org=Hs" target="icl_window" >NM_001216</a> </td></tr>
+ </TABLE>
+
+ <h4>CV run  4 </h4>
+
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=200>Gene</th> </tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_033512&internal=0&org=Hs" target="icl_window" >NM_033512</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_014417&internal=0&org=Hs" target="icl_window" >NM_014417</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_001216&internal=0&org=Hs" target="icl_window" >NM_001216</a> </td></tr>
+ </TABLE>
+
+ <h4>CV run  5 </h4>
+
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=200>Gene</th> </tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_020974&internal=0&org=Hs" target="icl_window" >NM_020974</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_033512&internal=0&org=Hs" target="icl_window" >NM_033512</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_006681&internal=0&org=Hs" target="icl_window" >NM_006681</a> </td></tr>
+ </TABLE>
+
+ <h4>CV run  6 </h4>
+
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=200>Gene</th> </tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_033512&internal=0&org=Hs" target="icl_window" >NM_033512</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_006681&internal=0&org=Hs" target="icl_window" >NM_006681</a> </td></tr>
+ </TABLE>
+
+ <h4>CV run  7 </h4>
+
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=200>Gene</th> </tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_001002&internal=0&org=Hs" target="icl_window" >NM_001002</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_020974&internal=0&org=Hs" target="icl_window" >NM_020974</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_033512&internal=0&org=Hs" target="icl_window" >NM_033512</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_001216&internal=0&org=Hs" target="icl_window" >NM_001216</a> </td></tr>
+ </TABLE>
+
+ <h4>CV run  8 </h4>
+
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=200>Gene</th> </tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_033512&internal=0&org=Hs" target="icl_window" >NM_033512</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_016448&internal=0&org=Hs" target="icl_window" >NM_016448</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_018354&internal=0&org=Hs" target="icl_window" >NM_018354</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_001216&internal=0&org=Hs" target="icl_window" >NM_001216</a> </td></tr>
+ </TABLE>
+
+ <h4>CV run  9 </h4>
+
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=200>Gene</th> </tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_020974&internal=0&org=Hs" target="icl_window" >NM_020974</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_033512&internal=0&org=Hs" target="icl_window" >NM_033512</a> </td></tr>
+ </TABLE>
+
+ <h4>CV run  10 </h4>
+
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=200>Gene</th> </tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_033512&internal=0&org=Hs" target="icl_window" >NM_033512</a> </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_016448&internal=0&org=Hs" target="icl_window" >NM_016448</a> </td></tr>
+ </TABLE>
+
+ <h2>4. Stability assessments</h2>
+
+
+ <h3>4.1 Number of shared genes</h3> 
+<pre>                   OriginalSample CV.run.1 CV.run.2 CV.run.3 CV.run.4 CV.run.5 CV.run.6 CV.run.7 CV.run.8 CV.run.9 CV.run.10
+OriginalSample (2)              2        2        1        2        2        1        1        2        2        1         1
+CV.run.1 (4)                    2        4        1        3        2        2        2        2        2        1         1
+CV.run.2 (3)                    1        1        3        2        1        2        1        2        1        2         1
+CV.run.3 (20)                   2        3        2       20        2        2        2        2        3        1         2
+CV.run.4 (3)                    2        2        1        2        3        1        1        2        2        1         1
+CV.run.5 (3)                    1        2        2        2        1        3        2        2        1        2         1
+CV.run.6 (2)                    1        2        1        2        1        2        2        1        1        1         1
+CV.run.7 (4)                    2        2        2        2        2        2        1        4        2        2         1
+CV.run.8 (4)                    2        2        1        3        2        1        1        2        4        1         2
+CV.run.9 (2)                    1        1        2        1        1        2        1        2        1        2         1
+CV.run.10 (2)                   1        1        1        2        1        1        1        1        2        1         2
+</pre>
+
+ <h3>4.2 Proportion of shared genes (relative to row total)</h3> 
+<pre>                   OriginalSample CV.run.1 CV.run.2 CV.run.3 CV.run.4 CV.run.5 CV.run.6 CV.run.7 CV.run.8 CV.run.9 CV.run.10
+OriginalSample (2)          1.000    1.000    0.500    1.000    1.000    0.500    0.500    1.000    1.000    0.500     0.500
+CV.run.1 (4)                0.500    1.000    0.250    0.750    0.500    0.500    0.500    0.500    0.500    0.250     0.250
+CV.run.2 (3)                0.333    0.333    1.000    0.667    0.333    0.667    0.333    0.667    0.333    0.667     0.333
+CV.run.3 (20)               0.100    0.150    0.100    1.000    0.100    0.100    0.100    0.100    0.150    0.050     0.100
+CV.run.4 (3)                0.667    0.667    0.333    0.667    1.000    0.333    0.333    0.667    0.667    0.333     0.333
+CV.run.5 (3)                0.333    0.667    0.667    0.667    0.333    1.000    0.667    0.667    0.333    0.667     0.333
+CV.run.6 (2)                0.500    1.000    0.500    1.000    0.500    1.000    1.000    0.500    0.500    0.500     0.500
+CV.run.7 (4)                0.500    0.500    0.500    0.500    0.500    0.500    0.250    1.000    0.500    0.500     0.250
+CV.run.8 (4)                0.500    0.500    0.250    0.750    0.500    0.250    0.250    0.500    1.000    0.250     0.500
+CV.run.9 (2)                0.500    0.500    1.000    0.500    0.500    1.000    0.500    1.000    0.500    1.000     0.500
+CV.run.10 (2)               0.500    0.500    0.500    1.000    0.500    0.500    0.500    0.500    1.000    0.500     1.000
+</pre>
+
+
+<h3>4.3 Gene freqs. in cross-validated runs of genes selected in model with all data</h3> 
+
+
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=200>Gene</th> <th width=50>Frequency</th></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_033512&internal=0&org=Hs" target="icl_window" >NM_033512</a> </td> <td> 10 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_001216&internal=0&org=Hs" target="icl_window" >NM_001216</a> </td> <td> 5 </td></tr>
+ </TABLE>
+
+
+<h3>4.4 Gene freqs. in cross-validated runs</h3> 
+
+
+ <TABLE  frame="box" rules="groups">
+<tr align=left><th width=200>Gene</th> <th width=50>Frequency</th></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_033512&internal=0&org=Hs" target="icl_window" >NM_033512</a> </td> <td> 10 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_001216&internal=0&org=Hs" target="icl_window" >NM_001216</a> </td> <td> 5 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_006681&internal=0&org=Hs" target="icl_window" >NM_006681</a> </td> <td> 4 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_020974&internal=0&org=Hs" target="icl_window" >NM_020974</a> </td> <td> 4 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_016448&internal=0&org=Hs" target="icl_window" >NM_016448</a> </td> <td> 3 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_003748&internal=0&org=Hs" target="icl_window" >NM_003748</a> </td> <td> 2 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_000436&internal=0&org=Hs" target="icl_window" >NM_000436</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_000594&internal=0&org=Hs" target="icl_window" >NM_000594</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_001002&internal=0&org=Hs" target="icl_window" >NM_001002</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_001062&internal=0&org=Hs" target="icl_window" >NM_001062</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_001079&internal=0&org=Hs" target="icl_window" >NM_001079</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_001204&internal=0&org=Hs" target="icl_window" >NM_001204</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_001756&internal=0&org=Hs" target="icl_window" >NM_001756</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_003315&internal=0&org=Hs" target="icl_window" >NM_003315</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_003875&internal=0&org=Hs" target="icl_window" >NM_003875</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_004934&internal=0&org=Hs" target="icl_window" >NM_004934</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_005915&internal=0&org=Hs" target="icl_window" >NM_005915</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_012214&internal=0&org=Hs" target="icl_window" >NM_012214</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_014417&internal=0&org=Hs" target="icl_window" >NM_014417</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_016361&internal=0&org=Hs" target="icl_window" >NM_016361</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_017823&internal=0&org=Hs" target="icl_window" >NM_017823</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_018120&internal=0&org=Hs" target="icl_window" >NM_018120</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_018354&internal=0&org=Hs" target="icl_window" >NM_018354</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_019590&internal=0&org=Hs" target="icl_window" >NM_019590</a> </td> <td> 1 </td></tr>
+<tr><td> <a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=rsrna&id=NM_024830&internal=0&org=Hs" target="icl_window" >NM_024830</a> </td> <td> 1 </td></tr>
+ </TABLE><hr> <a href="all.results.tar.gz">Download</a> all figures and text results.<br /> <hr> <h3> Send results to <a href = "http://pals.bioinfo.cnio.es"><IMG BORDER="0" SRC="../../palsfavicon40.png" align="middle"></a></h3><p> Send set of <a href="http://pals.bioinfo.cnio.es?org=Hs&idtype=rsrna&datafile=http://signs2.bioinfo.cnio.es/Examples/vantVeer-Boosting/Selected.genes.txt">Genes selected in run with all data to PaLS</a></p><p> Send set of <a href="http://pals.bioinfo.cnio.es?org=Hs&idtype=rsrna&datafile=http://signs2.bioinfo.cnio.es/Examples/vantVeer-Boosting/Selected.and.CV.selected.txt">Genes selected in run with all data and in CV runs to PaLS</a></p></body></html>

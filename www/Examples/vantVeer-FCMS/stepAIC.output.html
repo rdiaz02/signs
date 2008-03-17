@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15"> 
+<title> Steps from variable selection </title> 
+ <body>
+<h1> Steps from variable selection </h1>
+A "+" means that the variable was considered for addition and  a "-" means that the variable was considered for deletion.  The number shows the AIC after the addition/deletion of  each of the variables. Smaller AIC is better.
+ (There could be additional output, for debugging purposes; ignore it, please)
+
+<pre>
+
+ Starting fitDave.res1Given at  Tue Jan 15 15:12:27 2008  
+
+
+
+    Running gc():      Starting dStep2 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 314217 16.8     597831 32.0   467866 25.0
+Vcells 674099  5.2    1445757 11.1  1445757 11.1
+
+
+       Starting dStep2 at  Tue Jan 15 15:12:27 2008  
+
+
+
+    Running gc():      dStep2: start of pdok 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 314249 16.8     597831 32.0   467866 25.0
+Vcells 732934  5.6    1445757 11.1  1445757 11.1
+
+     pdok: columns =  350 ; rows =  78 
+
+
+    Running gc():      dStep2: pdok: after hclust 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 315519 16.9     597831 32.0   467866 25.0
+Vcells 734358  5.7    1445757 11.1  1445757 11.1
+
+
+
+    Running gc():      dStep2: end of pdok 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 317301 17.0     597831 32.0   467866 25.0
+Vcells 739534  5.7    1445757 11.1  1445757 11.1
+
+
+
+    Running gc():      dStep2: start of pnok 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 317301 17.0     597831 32.0   467866 25.0
+Vcells 739534  5.7    1445757 11.1  1445757 11.1
+
+     pnok: columns =  197 ; rows =  78 
+
+
+    Running gc():      dStep2: pnok: after hclust 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 317326 17.0     597831 32.0   467866 25.0
+Vcells 740243  5.7    1445757 11.1  1445757 11.1
+
+
+
+    Running gc():      dStep2: end of pnok 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 317558 17.0     597831 32.0   467866 25.0
+Vcells 740710  5.7    1445757 11.1  1445757 11.1
+
+
+
+    Running gc():      dStep2: start of plot 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 317560 17.0     597831 32.0   467866 25.0
+Vcells 740712  5.7    1445757 11.1  1445757 11.1
+
+
+
+    Running gc():      dStep2: end of plot 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 317676 17.0     597831 32.0   508825 27.2
+Vcells 740962  5.7    1927986 14.8  1906284 14.6
+
+
+ Finished dStep2 at  Tue Jan 15 15:12:40 2008 ; took  13.357  
+
+
+
+    Running gc():      Finished dStep2 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 317694 17.0     597831 32.0   508825 27.2
+Vcells 741168  5.7    1927986 14.8  1906284 14.6
+
+
+
+    Running gc():      fitDave.res1Given: after dStep2 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 317252 17.0     597831 32.0   508825 27.2
+Vcells 674956  5.2    1927986 14.8  1906284 14.6
+
+
+
+    Running gc():      Starting dStep3 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 318257 17.0     597831 32.0   508825 27.2
+Vcells 675172  5.2    1927986 14.8  1906284 14.6
+
+
+ ..... Starting dStep3 at  Tue Jan 15 15:12:40 2008  
+
+
+                  Number of models of size two:  1 
+
+              tried iter.max =  200
+                 Fitting bestTwoModel
+
+              tried with iter.max =  200
+                   Fitting finalModel
+Start:  AIC=270.77
+sobject ~ P.4 + P.8
+
+       Df    AIC
+- P.4   1 268.99
+<none>    270.77
+- P.8   1 272.20
+
+Step:  AIC=268.99
+sobject ~ P.8
+
+       Df    AIC
+<none>    268.99
++ P.4   1 270.77
+- P.8   1 279.21
+
+ ..... Finishing dStep3 at  Tue Jan 15 15:12:41 2008 ; took  0.079  
+
+
+
+    Running gc():      Ended dStep3 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 333510 17.9     597831 32.0   523359 28.0
+Vcells 679850  5.2    1927986 14.8  1906284 14.6
+
+
+
+    Running gc():      fitDave.res1Given: after dStep3 
+         used (Mb) gc trigger (Mb) max used (Mb)
+Ncells 333507 17.9     597831 32.0   523359 28.0
+Vcells 679850  5.2    1927986 14.8  1906284 14.6
+
+
+ Ended fitDave.res1Given at  Tue Jan 15 15:12:41 2008 ; took  13.944  seconds 
+
+
+
+ Final model selected (beware: p-values are biased down!!)
+Call:
+coxph(formula = sobject ~ P.8, control = coxph.control(iter.max = ..___MaxIterationsCox))
+
+
+    coef exp(coef) se(coef)    z       p
+P.8 2.67      14.5    0.799 3.34 0.00083
+
+Likelihood ratio test=12.2  on 1 df, p=0.000474  n= 78 
+</pre>
+</body></html>
