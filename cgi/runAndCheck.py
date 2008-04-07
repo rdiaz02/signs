@@ -497,6 +497,7 @@ def printOKRun():
 
             allResults = tarfile.open(tmpDir + '/all.results.tar.gz', 'w:gz')
 #            allResults.add(tmpDir + '/results.txt', 'results.txt')
+            os.chdir(tmpDir)
             os.system('html2text -width 200 -nobs -o Results.txt pre-results.html')
             allResults.add(tmpDir + '/results.txt', 'Results.txt')
 

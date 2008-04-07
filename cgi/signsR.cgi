@@ -30,6 +30,16 @@ acceptedMethodSurvs = ('FCMS', 'TGD', 'cforest', 'glmboost')
 acceptedIDTypes = ('None', 'cnio', 'affy', 'clone', 'acc', 'ensembl', 'entrez', 'ug', 'rsrna', 'rspeptide', 'hugo')
 acceptedOrganisms = ('None', 'Hs', 'Mm', 'Rn')
 
+# def check_tmpDir(tmpDir):
+#     """ Checks tmpDir is not something it should not be.
+#     For debugging."""
+#     if((tmpDir == "/http/signs/cgi/") or (tmpDir == "/http/signs/cgi")):
+#         commonOutput()
+#         print "<h1> Failed check_tmpDir </h1>"    
+#         print "</body></html>"
+#         sys.exit()
+
+
 def commonOutput():
     print "Content-type: text/html\n\n"
     print """
@@ -561,9 +571,17 @@ os.system('echo "' + str(run_and_check) + ' ' + socket.gethostname() +\
 ## Copy to tmpDir a results.html that redirects to checkdone.cgi
 ## If communication gets broken, there is always a results.html
 ## that will do the right thing.
+
+
 shutil.copy("/http/signs/cgi/results-pre.html", tmpDir)
-os.system("cd " + tmpDir + "; /bin/sed 's/sustituyeme/" +
-          newDir + "/g' results-pre.html > results.html; rm results-pre.html")
+os.system("/bin/sed 's/sustituyeme/" + newDir + "/g' " +
+          tmpDir + "/results-pre.html > " +
+          tmpDir + "/results.html; rm " +
+          tmpDir +"/results-pre.html")
+
+# os.system("cd " + tmpDir + "; /bin/sed 's/sustituyeme/" +
+#           newDir + "/g' results-pre.html > results.html; rm results-pre.html")
+
 
 ##############    Redirect to checkdone.cgi    ##################
 print "Location: "+ getQualifiedURL("/tmp/" + newDir + "/results.html"), "\n\n"
