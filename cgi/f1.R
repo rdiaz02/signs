@@ -8,6 +8,8 @@
 
 ## rm(list = ls())
 
+version
+system("hostname")
 
 cat("\nRunning\n", file = "Status.msg")
 
@@ -222,6 +224,10 @@ MPI_MIN_UNIVERSE_SIZE <- 10
 
 if (mpi.universe.size () < MPI_MIN_UNIVERSE_SIZE) {
     cat("\n\n mpi.universe.size () < MPI_MIN_UNIVERSE_SIZE \n\n")
+    ## Issue an Execution halted, because this signals a problem in the cluster
+    cat("\n\n mpi.universe.size () = ", mpi.universe.size(),
+        " < MPI_MIN_UNIVERSE_SIZE \n\nExecution halted\n",
+        file = "Status.msg", append = TRUE)
     quit(save = "no", status = 11, runLast = FALSE)
 }
 
