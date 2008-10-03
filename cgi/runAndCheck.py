@@ -1131,6 +1131,7 @@ while True:
         count_mpi_crash += 1
         if count_mpi_crash > MAX_MPI_CRASHES:
             printMPIerror(tmpDir, MAX_MPI_CRASHES)
+            cleanups(tmpDir, newDir, 'MPIerror.pid.txt', lamSuffix)
             break
         else:
             recover_from_lam_crash(tmpDir, NCPU, MAX_NUM_PROCS,

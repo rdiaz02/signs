@@ -2188,8 +2188,9 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
                               ncol = length(posGroups))
 
             for(i in 1:length(posGroups)) {
+              cat("\n i = ", i, "\n")
                 posMeanData[, i] <-
-                    apply(dataPositive[, groupsPositive == posGroups[i]],
+                    apply(dataPositive[, groupsPositive == posGroups[i], drop = FALSE],
                           1, mean)
             }
             colnames(posMeanData) <- posGroups
@@ -2231,7 +2232,7 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
 
             for(i in 1:length(negGroups)) {
                 negMeanData[, i] <-
-                    apply(dataNegative[, groupsNegative == negGroups[i]],
+                    apply(dataNegative[, groupsNegative == negGroups[i], drop = FALSE],
                           1, mean)
             }
             colnames(negMeanData) <- negGroups

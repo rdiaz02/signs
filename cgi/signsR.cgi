@@ -297,12 +297,13 @@ def radioUpload(fieldName, acceptedValues):
 
 ## Deleting tmp directories older than MAX_time
 ## NOT needed anymore; delete_old_dirs runs as cron job!
+## YES, needed: cronjobs are a pain
 currentTime = time.time()
-# currentTmp = dircache.listdir("/http/signs2/www/tmp")
-# for directory in currentTmp:
-#     tmpS = "/http/signs2/www/tmp/" + directory
-#     if (currentTime - os.path.getmtime(tmpS)) > MAX_time:
-#         shutil.rmtree(tmpS)
+currentTmp = dircache.listdir("/http/signs2/www/tmp")
+for directory in currentTmp:
+    tmpS = "/http/signs2/www/tmp/" + directory
+    if (currentTime - os.path.getmtime(tmpS)) > MAX_time:
+        shutil.rmtree(tmpS)
 
 
 ### Creating temporal directories
