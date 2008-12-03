@@ -3038,6 +3038,7 @@ summary.cvDave <- function(object, allDataObject.selected, subjectNames, genenam
         cat("\n\n <h3>5.2 Selected components, genes and coefficients in cross-validation runs</h3>\n")
         selectedInR <- list()
         for(cvr in 1:ks) {
+##            browser()
             cat("\n\n <h4>CV run ", cvr, "</h4>\n")
             selectedInR[[cvr]] <- selectedSignatures(object[[cvr]]$fmDaveObject,
                                                      genenames = genenames, print = TRUE,
@@ -3135,7 +3136,7 @@ selectedSignatures <- function(fmDave, genenames,
                                print = TRUE, out = TRUE,
                                html = TRUE) {
 
-    if(is.na(fmDave)) {
+    if(all(is.na(fmDave))) {
         out <- NA
         if(print) print(NA)
         return(NA)
@@ -3146,6 +3147,9 @@ selectedSignatures <- function(fmDave, genenames,
     signatures <- list()
     coeffs <- fmDave$model$coeff
 
+    signatures$Genes <- list() ## otherwise, could behave as vector if
+    ## first assignm. is a single element
+    
     if(!length(selectedSign)) {
         signatures$component[1] <- 1
         signatures$Name[1] <- "Null model (only an intercept fitted, no components selected)"
