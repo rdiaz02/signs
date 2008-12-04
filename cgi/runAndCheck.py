@@ -1052,8 +1052,8 @@ def my_queue(MAX_NUM_PROCS,
 
 def generate_lam_suffix(tmpDir):
     """As it says. Generate and write it out"""
-    lamSuffix = str(random.randint(1, 99)) + str(int(time.time())) + \
-                str(os.getpid()) + str(random.randint(10, 9999))
+    lamSuffix = str(int(time.time())) + \
+                str(os.getpid()) + str(random.randint(10, 999999))
     lamenvfile = open(tmpDir + '/lamSuffix', mode = 'w')
     lamenvfile.write(lamSuffix)
     lamenvfile.flush()
@@ -1092,6 +1092,9 @@ if check_room == 'Failed':
 issue_echo('before lamboot', tmpDir)
 lamboot(lamSuffix, NCPU)
 issue_echo('after lamboot', tmpDir)
+
+counterApplications.add_to_LAM_SUFFIX_LOG(lamSuffix, 'SignS2', tmpDir,
+                                          socket.gethostname())
 
 
 Rrun(tmpDir, lamSuffix)

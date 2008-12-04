@@ -251,6 +251,25 @@ trylam <- try(
                                  sep = "\t", strip.white = TRUE))
 
 
+
+
+#################################################################
+## enter info into lam suffix log table
+
+tmpDir <- getwd()
+sed.command <- paste("sed -i 's/RprocessPid\t",
+                     lamSESSION, "\t", hostn, "/",
+                     pid, "\t",
+                     lamSESSION, "\t", hostn, "/' ",
+                     "/http/mpi.log/LAM_SUFFIX_Log",
+                     sep = "")
+## debugging:
+sed.command
+
+system(sed.command)
+
+
+
 #########################################################
 
 ########   HTML and other utility functions
