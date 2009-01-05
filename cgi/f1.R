@@ -79,7 +79,7 @@ write.table(file = "pid.txt", pid,
 
 ## attach pid to name in R.running.procs
 hostn <- system("hostname", intern = TRUE)
-new.name1 <- unlist(strsplit(getwd(), "\/"))
+new.name1 <- unlist(strsplit(getwd(), "/"))
 new.name1 <- paste(new.name1[length(new.name1)], "@", hostn, sep = "")
 new.name <- paste("R.", new.name1, "%", pid, sep = "")
 new.name1 <- paste("R.", new.name1, sep = "")
