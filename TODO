@@ -1,0 +1,4 @@
+- Do not use log-rank test to compare curves!!! Not valid, 'cause of 
+  non-indep from cross-validation. Use permutation test,
+  or better assessments of separation (van Wieringen, Kun, Hampel, Boulesteix, 2008; 
+  also see Vaselli et al's procedure PNAS 2003, 100: 6958)
