@@ -1,6 +1,6 @@
 Package: SignS2
-Version: 0.9
-Date: 2007-11-29
+Version: 0.95
+Date: 2009-07-15
 Title: Molecular signatures for survival clinical data
 Author: Ramon Diaz-Uriarte <rdiaz@ligarto.org>. Imagemap code from Barry Rowlingson <B.Rowlingson@lancaster.ac.uk>
 Maintainer: Ramon Diaz-Uriarte <rdiaz@ligarto.org>
