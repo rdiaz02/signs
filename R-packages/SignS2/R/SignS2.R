@@ -5,11 +5,206 @@
 #### library(combinat)
 #### library(MASS)
 
-require(GDD)
+mydcat <- function(x) {
+  cat("\n", x, "\n")
+}
+
+
+mydcat2 <- function(x) {
+  cat("\n ")
+  print(deparse(substitute(x)))
+  cat("\n", x, "\n")
+}
+
+
+mydcat <- mydcat2 <- function(x) {}
+
+
+#require(GDD)
+#library(party)
+#library(mboost)
+
 #require(survival)
-#require(imagemap) ### FIXME: include the needed code below
-library(party)
-library(mboost)
+
+### This is a hack to get around the predict.coxph problem
+##  in at least version 2.35-4 (and -3 and -2).
+
+## I want to use survival 2.35 because party uses stuff from it.
+## So I just copy the predict.coxph from 2.34
+
+## I rename predict.coxph to this.predict.coxph
+
+## when things are fixed in survival, just delete this code
+
+
+
+#SCCS 02/15/99 @(#)predict.coxph.s	4.11
+#What do I need to do predictions --
+#
+#linear predictor:  exists
+#        +se     :  X matrix
+#        +newdata:  means of old X matrix, new X matrix, new offset
+#
+#risk -- same as lp
+#
+#expected --    cumulative hazard for subject= baseline haz + time + risk
+#        +se :  sqrt(expected)
+#      +new  :  baseline hazard function, new time, new x, means of old X,
+#                        new offset, new strata
+#
+#terms -- : X matrix and the means
+#    +se  :  ""  + I matrix
+#   +new  : new X matrix and the old means + I matrix
+this.predict.coxph <-
+function(object, newdata, type=c("lp", "risk", "expected", "terms"),
+		se.fit=FALSE,
+		terms=names(object$assign), collapse, safe=FALSE, ...)
+
+    {
+    type <-match.arg(type)
+    n <- object$n
+    Terms <- object$terms
+    strata <- attr(Terms, 'specials')$strata
+    dropx <- NULL
+    if (length(strata)) {
+	   temp <- untangle.specials(Terms, 'strata', 1)
+	   dropx <- temp$terms
+	   }
+    if (length(attr(Terms, 'specials')$cluster)) {
+	temp <- untangle.specials(Terms, 'cluster', 1)
+	dropx <- c(dropx, temp$terms)
+	}
+    if (length(dropx)) Terms2 <- Terms[-dropx]
+    else  Terms2 <- Terms
+
+    offset <- attr(Terms, "offset")
+    resp <- attr(Terms, "variables")[attr(Terms, "response")]
+
+    if (missing(newdata)) {
+	if (type=='terms' || (se.fit && (type=='lp' || type=='risk'))) {
+	    x <- object$x
+	    if (is.null(x)) {
+		x <- model.matrix(Terms2, model.frame(object))[,-1,drop=FALSE]
+		}
+	    x <- sweep(x, 2, object$means)
+	    }
+	else if (type=='expected') {
+	    y <- object$y
+	    if (is.null(y)) {
+		m <- model.frame(object)
+		y <- model.extract(m, 'response')
+		}
+	    }
+	}
+    else {
+	if (type=='expected'){
+	     m <- model.newframe(Terms, newdata, response=TRUE)
+             x <- model.matrix(Terms2, m)[,-1,drop=FALSE]
+         }
+	else {
+            m <- model.newframe(Terms2, newdata)
+            x <- model.matrix(delete.response(Terms2), m)[,-1,drop=FALSE]
+        }
+
+	x <- sweep(x, 2, object$means)
+	if (length(offset)) {
+	    if (type=='expected') offset <- as.numeric(m[[offset]])
+	    else {
+		offset <- attr(Terms2, 'offset')
+		offset <- as.numeric(m[[offset]])
+		}
+	    }
+	else offset <- 0
+	}
+
+    #
+    # Now, lay out the code one case at a time.
+    #  There is some repetition this way, but otherwise the code just gets
+    #    too complicated.
+    if (is.null(object$coefficients))
+        coef<-numeric(0)
+    else
+        coef <- ifelse(is.na(object$coefficients), 0, object$coefficients)
+    if (type=='lp' || type=='risk') {
+	if (missing(newdata)) {
+	    pred <- object$linear.predictors
+	    names(pred) <- names(object$residuals)
+	    }
+	else                  pred <- x %*% coef  + offset
+	if (se.fit) se <- sqrt(diag(x %*% object$var %*% t(x)))
+
+	if (type=='risk') {
+	    pred <- exp(pred)
+	    if (se.fit) se <- se * pred ## sqrt(pred): should be sqrt(pred^2)
+	    }
+	}
+
+    else if (type=='expected') {
+	if (missing(newdata)) pred <- y[,ncol(y)] - object$residuals
+	else  stop("Method not yet finished")
+	se   <- sqrt(pred)
+	}
+
+    else {  #terms is different for R <TSL>
+        asgn <- object$assign
+        nterms<-length(terms)
+        pred<-matrix(ncol=nterms,nrow=NROW(x))
+        if (is.character(terms))
+          termnames<-terms
+        else
+          termnames<-names(object$assign)[terms]
+        dimnames(pred)<-list(rownames(x),termnames)
+        if (se.fit){
+            se<-matrix(ncol=nterms,nrow=NROW(x))
+            dimnames(se)<-list(rownames(x),termnames)
+            R<-object$var
+            ip <- real(NROW(x))
+        }
+        for (i in 1:nterms){
+            ii<-asgn[[terms[i] ]]
+            pred[,i]<-x[,ii,drop=FALSE]%*%(coef[ii])
+            if (se.fit){
+                for(j in (1:NROW(x))){
+                    xi<-x[j,ii,drop=FALSE]
+                    vci<-R[ii,ii]
+                    se[j,i]<-sqrt(sum(xi%*% vci %*%t( xi)))
+                }
+            }
+        }
+    }
+
+    ##if (se.fit) se <- drop(se)
+    ##pred <- drop(pred)
+    ##Expand out the missing values in the result
+    # But only if operating on the original dataset
+    if (missing(newdata) && !is.null(object$na.action)) {
+	pred <- naresid(object$na.action, pred)
+        n<-NROW(pred)
+	if(se.fit) se <- naresid(object$na.action, se)
+	}
+
+    # Collapse over subjects, if requested
+    if (!missing(collapse)) {
+	if (length(collapse) != n) stop("Collapse vector is the wrong length")
+	pred <- rowsum(pred, collapse)
+	if (se.fit) se <- sqrt(rowsum(se^2, collapse))
+	}
+
+    if (se.fit) list(fit=pred, se.fit=se)
+    else pred
+    }
+
+
+############################################
+
+### end of hack for predict.coxph
+
+
+
+
+
+
+
 
 
 MAX_NCOL_FOR_CLUSTER <- 3000
@@ -63,10 +258,10 @@ my.glmboost <- function(x, time, event, newdata = NULL,
                                   rep(NA, lsgenes),
                                   rep(0, lsgenes),
                                   rep(NA, lsgenes))
-    overfit_predicted_surv_time <- predict(gb1, newdata = x, type = "lp")
+    overfit_predicted_surv_time <- this.predict.coxph(gb1, newdata = x, type = "lp")
     pmgc("my.glmboost, after overfit_predicted_surv_time")
     if(!(is.null(newdata))) {
-        pred.stime <- predict(gb1, newdata = newdata, type = "lp")
+        pred.stime <- this.predict.coxph(gb1, newdata = newdata, type = "lp")
     } else {
         pred.stime <- NULL
     }
@@ -2417,17 +2612,34 @@ pdnokf <- function(pn.groups,  pn.data, pn.accept, pn.clus,
     rainbow.col <- rainbow(length(pnGroups))
     cat("\n ... main is ", main, "\n")
     cat("\n ..... have to loop over ", length(pnGroups), "pnGroup\n")
-    for(i in 1:length(pnGroups)) {        
+    for(i in 1:length(pnGroups)) {
+      cat("\n A1 \n")
+      
         dfpt <- dfp[dfp$pn.gr == pnGroups[i], ]
-        miny <- min(dfpt$y) ## by not setting na.rm = TRUE we would bomb if wrong set
+      cat("\n A2 \n")
+
+      miny <- min(dfpt$y) ## by not setting na.rm = TRUE we would bomb if wrong set
+            cat("\n A3 \n")
+
         maxy <- max(dfpt$y)
+            cat("\n A4 \n")
+
         cat("\n ......... pnGroup ", i,"\n")
+
+      mydcat2(miny)
+      mydcat2(maxy)
+      mydcat2(rainbow.col[i])
+      
         axis(4, line = 5, at = c(miny, maxy), col = rainbow.col[i],
-             tick = TRUE, labels = FALSE, lw = 3)
+             tick = TRUE, labels = FALSE, lwd = 3)
+            cat("\n A5 \n")
+
         axis(4, line = 5, at = 0.5 * (miny + maxy),
              col.axis = rainbow.col[i],
-             tick = FALSE, labels = pnGroups[i], lw = 0,
+             tick = FALSE, labels = pnGroups[i], lwd = 0,
              cex.axis = 1.5)
+            cat("\n A6 \n")
+
         cat(" \n                 about to enter loop of text with coloring; will do ",
             nrow(dfpt), " iterations\n")
         for(j in 1:nrow(dfpt)) {
@@ -2526,22 +2738,22 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
                           coxph(sobject ~ md[, modelsSizeTwo[i, ]],
                                 control = coxph.control(iter.max = MaxIterationsCox))$loglik[2],
                           error = function(e) "Error")
-            cat("\n              tried iter.max = ", MaxIterationsCox)
+##            cat("\n              tried iter.max = ", MaxIterationsCox)
 
             if((length(trycox) == 1) & (trycox == "Error")) {
-                cat("\n              failed with iter.max = ", MaxIterationsCox)
+##                cat("\n              failed with iter.max = ", MaxIterationsCox)
 
                 trycox <- tryCatch2(logliks[i] <-
                               coxph(sobject ~ md[, modelsSizeTwo[i, ]],
                                     control = coxph.control(iter.max = 20))$loglik[2])
-                cat("\n              tried iter.max = ", 20)
+##                cat("\n              tried iter.max = ", 20)
 
             }
             if((length(trycox) == 1) & (trycox == "Error")) {
                 trycox <- tryCatch2(logliks[i] <-
                               coxph(sobject ~ md[, modelsSizeTwo[i, ]],
                                     control = coxph.control(iter.max = 10))$loglik[2])
-                cat("\n              tried iter.max = ", 10)
+##                cat("\n              tried iter.max = ", 10)
             }
             if((length(trycox) == 1) & (trycox == "Error"))
                 logliks[i] <- NA
@@ -2560,7 +2772,7 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
                                              sep = "", collapse = " + ")))),
                             control = coxph.control(iter.max = ..___MaxIterationsCox))
                       )
-        cat("\n              tried with iter.max = ", ..___MaxIterationsCox)
+##        cat("\n              tried with iter.max = ", ..___MaxIterationsCox)
 
         if((length(trycox) == 1) & (trycox == "Error")) {
             cat("\n              failed with iter.max = ", ..___MaxIterationsCox)
@@ -2571,7 +2783,7 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
                                                  sep = "", collapse = " + ")))),
                                 control = coxph.control(iter.max = 20))
                           )
-            cat("\n              tried iter.max = ", 20)
+##            cat("\n              tried iter.max = ", 20)
 
         }
         if((length(trycox) == 1) & (trycox == "Error")) {
@@ -2582,7 +2794,7 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
                                                  sep = "", collapse = " + ")))),
                                 control = coxph.control(iter.max = 10))
                           )
-            cat("\n              tried iter.max = ", 10)
+##            cat("\n              tried iter.max = ", 10)
         }
         if((length(trycox) == 1) & (trycox == "Error")) {
             trycox <- tryCatch2(
@@ -2592,7 +2804,7 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
                                                  sep = "", collapse = " + ")))),
                                 control = coxph.control(iter.max = 5))
                           )
-            cat("\n              tried iter.max = ", 5)
+##            cat("\n              tried iter.max = ", 5)
         }
         if((length(trycox) == 1) & (trycox == "Error")) {
             trycox <- tryCatch2(
@@ -2635,7 +2847,7 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
         
         ## Should we always be able to get something here? I don't
         ## think so.
-        predictsFinalModel <- predict(finalModel, type = "lp")
+        predictsFinalModel <- this.predict.coxph(finalModel, type = "lp")
         detach(mdf)
     } else { ## so we do not need to look over several models
         cat("\n                    Not looking over several models\n")
@@ -2673,7 +2885,7 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
         if((length(trycox) == 1) & (trycox == "Error"))
           predictsFinalModel <- rep(NA, length(time))
         else
-          predictsFinalModel <- predict(finalModel, type = "lp")
+          predictsFinalModel <- this.predict.coxph(finalModel, type = "lp")
     }
     
     out <- list(model = finalModel, scores = predictsFinalModel,
@@ -2691,15 +2903,24 @@ dPredictNew <- function(res3, newdata) { ## returns predictions (scores)y
     if(all(is.na(res3))) return(NA)
 
     model <- res3$model
-    
+
+
+    mydcat(" B1 ")
     if(! ("coefficients" %in% names(model))) 
 	return(rep(NA, dim(newdata)[1]))
 	## this is the Null
  	## model, only intercept
-	
-    z <- res3$clusterResults
+
+    mydcat(" B1-1 ")
     
+    z <- res3$clusterResults
+
+    mydcat(" B1-2 ")
+
     dataPositive <- newdata[, z$filteredPosPositions, drop = FALSE]
+
+    mydcat(" B1-3 ")
+
     if(ncol(dataPositive)) {
         posGroups <- unique(z$filteredGroupsPositive)
         posMeanData <- matrix(NA, nrow = dim(dataPositive)[1],
@@ -2714,6 +2935,9 @@ dPredictNew <- function(res3, newdata) { ## returns predictions (scores)y
         posMeanData <- NA
     }
 
+    mydcat(" B2 ")
+
+    
     dataNegative <- newdata[, z$filteredNegPositions, drop = FALSE]
     if(ncol(dataNegative)) {
         negGroups <- unique(z$filteredGroupsNegative)
@@ -2728,7 +2952,23 @@ dPredictNew <- function(res3, newdata) { ## returns predictions (scores)y
     } else {
         negMeanData <- NA
     }
-    return(predict(model,
+
+##     browser()
+    
+##     mydcat(" B3 ")
+
+##     mydcat2(summary(posMeanData))
+##     mydcat2(summary(negMeanData))
+##     mydcat2(summary(cbind(posMeanData, negMeanData)))
+
+##     newdat <- as.data.frame(cbind(posMeanData, negMeanData))
+##     predict(model, newdata = newdat,    type = "lp")
+
+##     predict(model,
+##             newdata = as.data.frame(cbind(posMeanData, negMeanData)),
+##             type = "lp")
+    
+    return(this.predict.coxph(model,
                    newdata = as.data.frame(cbind(posMeanData, negMeanData)),
                    type = "lp"))
 }
@@ -2926,22 +3166,30 @@ cvDave.parallel3 <- function(x, time, event,
 
 
     DaveCVPred.res1Given.InternalMPI2 <- function(fnum) {
-        ## to be used with papply
-        ## the following need to be passed with
-        ##    mpi.bcast.Robj2slave
-        ##    x, time, event, ,
-        ##    p, maxSize, 
-        ##    minSize, minCor, MaxIterationsCox,
-        ##    index.select
-        ##    for res1 supply the complete list
-        
-        res1 <- res1s[[fnum]]
-        
-        xtrain <- x[index.select != fnum, , drop = FALSE]
-        xtest <- x[index.select == fnum, , drop = FALSE]
-        timetrain <- time[index.select != fnum]
-        eventtrain <- event[index.select != fnum]
-        pmgc("     cvDave.parallel3: inside InternalMPI2. Before bestTrain")
+      ## to be used with papply
+      ## the following need to be passed with
+      ##    mpi.bcast.Robj2slave
+      ##    x, time, event, ,
+      ##    p, maxSize, 
+      ##    minSize, minCor, MaxIterationsCox,
+      ##    index.select
+      ##    for res1 supply the complete list
+      
+      res1 <- res1s[[fnum]]
+      
+ ##     mydcat2(summary(res1s[[fnum]]))
+              
+      xtrain <- x[index.select != fnum, , drop = FALSE]
+##      mydcat2(summary(xtrain))
+
+      xtest <- x[index.select == fnum, , drop = FALSE]
+##      mydcat2(summary(xtest))
+      
+      timetrain <- time[index.select != fnum]
+      eventtrain <- event[index.select != fnum]
+##      mydcat2(summary(timetrain))
+##      mydcat2(summary(eventtrain))
+      pmgc("     cvDave.parallel3: inside InternalMPI2. Before bestTrain")
 
         ## find best params by CV and predict on a new set.
         bestTrain <- fitDave.res1Given(xtrain, timetrain, eventtrain,
@@ -2954,7 +3202,8 @@ cvDave.parallel3 <- function(x, time, event,
         pmgc("     cvDave.parallel3: inside InternalMPI2. After bestTrain")
 
         testPred <- dPredictNew(res3 = bestTrain, newdata = xtest)
-
+      mydcat(" B44 ")
+      
         pmgc("     cvDave.parallel3: inside InternalMPI2. After testPred")
 
         
@@ -3063,8 +3312,22 @@ summary.cvDave <- function(object, allDataObject.selected, subjectNames, genenam
     
     tmp.genesSelected <- list()
     tmp.genesSelected[[1]] <- unlist(allDataObject.selected$Genes)
-    genesSelected.cv <- lapply(selectedInR, function(x)
-                               unlist(x$Genes))
+##    browser()
+
+    fu <- function(x) {
+      ## need to catch empty components
+      if(length(x) == 1) {
+        if(is.na(x)) {
+          return(NULL)
+        }
+      }
+      else {
+        return(unlist(x$Genes))
+      }
+    }
+      
+    genesSelected.cv <- lapply(selectedInR, fu)
+                               ##function(x) unlist(x$Genes))
     tmp.genesSelected <- c(tmp.genesSelected, genesSelected.cv)
 
     shared.genes <- matrix(NA, nrow = (ks + 1), ncol = (ks + 1))
