@@ -1,6 +1,7 @@
 0.95:
     - Using survival 2.35 and fixing sloppy usage of empty lists
       (which crashes with R-2.9)
+    - Other minor bug and warning fixes
 
 0.9:
     - Added cforest
