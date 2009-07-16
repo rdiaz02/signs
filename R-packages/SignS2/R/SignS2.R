@@ -340,10 +340,11 @@ my.glmboost <- function(x, time, event, newdata = NULL,
                                   rep(NA, lsgenes),
                                   rep(0, lsgenes),
                                   rep(NA, lsgenes))
-    overfit_predicted_surv_time <- this.predict.coxph(gb1, newdata = x, type = "lp")
+    ## the "predict" here is from glmboost, not survival
+    overfit_predicted_surv_time <- predict(gb1, newdata = x, type = "lp")
     pmgc("my.glmboost, after overfit_predicted_surv_time")
     if(!(is.null(newdata))) {
-        pred.stime <- this.predict.coxph(gb1, newdata = newdata, type = "lp")
+        pred.stime <- predict(gb1, newdata = newdata, type = "lp")
     } else {
         pred.stime <- NULL
     }
