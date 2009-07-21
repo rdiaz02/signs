@@ -459,7 +459,7 @@ my.cforest <- function(x, time, event, ngenes, newdata = NULL, return.fit = FALS
     ##   (in the future maybe variable importances, but time consuming and not used now)
     sobject <- Surv(time, event)
     selected.genes <- geneSelect(x, sobject, ngenes)
-    x1 <- data.frame(x[, selected.genes$rows.to.keep])
+    x1 <- data.frame(x[, selected.genes$rows.to.keep, drop = FALSE])
     x1$time <- time
     x1$event <- event
     cf1 <- cforest(Surv(time, event) ~ ., data = x1,
@@ -1012,7 +1012,7 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
     ## and later transmitted object as small as possible
     for(th in 1:thresGrid) {
         cvpllymtgd[th, ] <-
-            apply(tmp.cvpl[clusterParams[, 2] == thresS[th], ], 2, sum)
+            apply(tmp.cvpl[clusterParams[, 2] == thresS[th], , drop = FALSE], 2, sum)
     }        
 
     cvpl.mat <- cvpllymtgd/nfold
@@ -1021,7 +1021,7 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
 ##    browser()
     tmp <-
         which(cvpl.mat == min(cvpl.mat, na.rm = TRUE), arr.ind = TRUE)
-    tmp <- tmp[nrow(tmp), ]
+    tmp <- tmp[nrow(tmp), , drop = FALSE]
     thresBest <- thresS[tmp[1]]
     stepBest <- tmp[2]
 
@@ -2086,174 +2086,6 @@ dStep1.parallel.old <- function(x, time, event, p, MaxIterationsCox) {
 
 
 ##  2. Cluster; independently for those with pos and neg beta.
-dStep2.old <- function(x, res.mat, maxSize, minSize,
-                   minCor, plot,
-                   interactive,
-                   plotSizes = c(0.5, 1, 2)) {
-    cat("\n       Starting dStep2 at ", date(), " \n\n"); ptm <- proc.time()
-    
-    pdfheight <- 19
-    pdfwidth <- 12.7
-    height <- 1200
-    width <- 800
-    ps <- 12
-
-    res.mat[is.na(res.mat[, 4]), 4] <- 0
-
-    if(sum(res.mat[, 4] == 1) >= minSize) {
-        pos.data <- x[, res.mat[, 4] == 1]
-        pdok <- TRUE
-    } else {
-        pdok <- FALSE
-        warning(paste("Not enough positive coeff. genes that",
-                      "meet the p restrictions."))
-    }
-    if(sum(res.mat[, 4] == -1) >= minSize) {
-        neg.data <- x[, res.mat[, 4] == -1]
-        pnok <- TRUE
-    } else {
-        pnok <- FALSE
-        warning(paste("Not enough negative coeff. genes that",
-                      "meet the p restrictions."))
-    }
-
-    if((!pnok) & (!pdok)) {
-	if(interactive) caughtUserError("No gene was above the minimal p threshold")
-        else {
-            return(NA)
-        }
-    }
-
-    tn <- tp <- FALSE
-    if(pdok) {
-        pos.clus <- hclust(as.dist(1 -cor(pos.data)), method = "complete")
-        pos.groups <- paste("P.", cutree(pos.clus, h = 1- minCor), sep = "")
-        tpos <- table(pos.groups)
-        pos.accept <- names(which((tpos >= minSize) & (tpos <= maxSize)))
-        if(length(pos.accept)) {
-            groupsPositive <- pos.groups[pos.groups %in% pos.accept]
-            dataPositive <- pos.data[ , pos.groups %in% pos.accept]
-            posGroups <- unique(groupsPositive)
-            posMeanData <- matrix(NA, nrow = dim(dataPositive)[1],
-                              ncol = length(posGroups))
-
-            for(i in 1:length(posGroups)) {
-                posMeanData[, i] <-
-                    apply(dataPositive[, groupsPositive == posGroups[i]],
-                          1, mean)
-            }
-            colnames(posMeanData) <- posGroups
-            tp <- TRUE
-        } else {
-            tp <- FALSE
-            warning(paste("No groups of positive coeff genes that",
-                          "meet the p, minimum correlation and size restrictions."))
-        }
-    }
-
-    if(pnok) {
-        neg.clus <- hclust(as.dist(1 -cor(neg.data)), method = "complete")
-        neg.groups <- paste("N.", cutree(neg.clus, h = 1- minCor), sep = "")
-        npos <- table(neg.groups)
-        neg.accept <- names(which((npos >= minSize) & (npos <= maxSize)))
-        if(length(neg.accept)) {
-            groupsNegative <- neg.groups[neg.groups %in% neg.accept]
-            dataNegative <- neg.data[ , neg.groups %in% neg.accept]
-            negGroups <- unique(groupsNegative)
-            negMeanData <- matrix(NA, nrow = dim(dataNegative)[1],
-                                  ncol = length(negGroups))
-
-            for(i in 1:length(negGroups)) {
-                negMeanData[, i] <-
-                    apply(dataNegative[, groupsNegative == negGroups[i]],
-                          1, mean)
-            }
-            colnames(negMeanData) <- negGroups
-            tn <- TRUE
-        } else {
-            tn <- FALSE
-            warning(paste("No groups of negative coeff. genes that",
-                          "meet the p, minimum correlation and size restrictions."))
-        }
-    }
-
-    if(!tn & !tp) {
-        if(interactive) caughtUserError(paste("No groups that meet the p, minimum correlation",
-                                              "and size restrictions."))
-        else return(NA)
-    }
-    pdok <- tp & pdok
-    pnok <- tn & pnok
-    
-    if(plot) {
-       
-            
-        if (pdok) {
-            for (plsz in plotSizes) {
-                dendmappP(factor = plsz, alllabels = FALSE)
-            }
-             for (plsz in plotSizes) {
-                 dendmappP(factor = plsz, alllabels = TRUE)
-             }
-            
-        } else {
-            system("touch NoPositiveCluster")
-        }
-
-        if (pnok) {
-            for (plsz in plotSizes) {
-                dendmappN(factor = plsz, alllabels = FALSE)
-            }
-            for (plsz in plotSizes) {
-                dendmappN(factor = plsz, alllabels = TRUE)
-            }
-        } else {
-            system("touch NoNegativeCluster")
-        }
-        
-    } ##</ if plot>
-
-    ## For predictions and results, which vars. correspond
-    ## to which original genes
-
-    ## The following two are the indices of the columns in the original (non
-    ## divided data file)
-
-    if(pdok) {
-        posPositions <- which(res.mat[, 4] == 1)
-        filteredPosPositions <- posPositions[pos.groups %in% pos.accept]
-    }
-    if(pnok) {
-        negPositions <- which(res.mat[, 4] == -1)
-        filteredNegPositions <- negPositions[neg.groups %in% neg.accept]
-    }
-
-    if(pnok & pdok)
-        if(length(intersect(filteredPosPositions, filteredNegPositions)))
-            stop("Non zero intersection between filtered pos and neg positions")
-    if(!pnok) {
-        negMeanData <- NULL
-        groupsNegative <- NA
-        filteredGroupsNegative <- NA
-        filteredNegPositions <- NA
-        negPositions <- NA
-    }
-    if(!pdok) {
-        posMeanData <- NULL
-        groupsPositive <- NA
-        filteredGroupsPositive <- NA
-        filteredPosPositions <- NA
-        posPositions <- NA
-    }
-    cat("\n Finished dStep2 at ", date(), "; took ", (proc.time() - ptm)[3], " \n\n")    
-    return(list(md = cbind(posMeanData, negMeanData),
-                filteredGroupsPositive = groupsPositive,
-                filteredGroupsNegative = groupsNegative,
-                filteredPosPositions = filteredPosPositions,
-                filteredNegPositions = filteredNegPositions,
-                posPositions = posPositions,
-                negPositions = negPositions))
-}
 
 
 
@@ -2268,7 +2100,7 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
     res.mat[is.na(res.mat[, 4]), 4] <- 0
 
     if(sum(res.mat[, 4] == 1) >= minSize) {
-        pos.data <- x[, res.mat[, 4] == 1]
+        pos.data <- x[, res.mat[, 4] == 1, drop = FALSE]
         pdok <- TRUE
     } else {
         pdok <- FALSE
@@ -2276,7 +2108,7 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
                       "meet the p restrictions."))
     }
     if(sum(res.mat[, 4] == -1) >= minSize) {
-        neg.data <- x[, res.mat[, 4] == -1]
+        neg.data <- x[, res.mat[, 4] == -1, drop = FALSE]
         pnok <- TRUE
     } else {
         pnok <- FALSE

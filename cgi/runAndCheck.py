@@ -1041,7 +1041,7 @@ def my_queue(MAX_NUM_PROCS,
         if (time.time() - startTime) > MAX_DURATION_TRY:
             out_value = 'Failed'
             break
-        num_lamd = int(os.popen('pgrep -u www-data lamd | wc').readline().split()[0])
+        num_lamd = int(os.popen('pgrep -u www lamd | wc').readline().split()[0])
         num_sentinel = int(len(glob.glob(''.join([runningProcs, 'sentinel.lam.*']))))
         if (num_lamd < (MAX_NUM_PROCS + ADD_PROCS)) and (num_sentinel < MAX_NUM_PROCS):
             issue_echo('     OK; num_lamd = ' + str(num_lamd) + \

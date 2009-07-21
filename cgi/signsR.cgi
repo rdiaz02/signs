@@ -323,7 +323,7 @@ organism = radioUpload('organism', acceptedOrganisms)
 methodSurv = radioUpload('methodSurv', acceptedMethodSurvs)
 if methodSurv == 'FCMS':
     maxsize = valueNumUpload('MaxSize', 'int', 2)
-    minsize = valueNumUpload('MinSize', 'int', 1)
+    minsize = valueNumUpload('MinSize', 'int', 2)
     if minsize >= maxsize:
         shutil.rmtree(tmpDir)
         commonOutput()
