@@ -5,16 +5,16 @@
 #### library(combinat)
 #### library(MASS)
 
-mydcat <- function(x) {
-  cat("\n", x, "\n")
-}
+## mydcat <- function(x) {
+##   cat("\n", x, "\n")
+## }
 
 
-mydcat2 <- function(x) {
-  cat("\n ")
-  print(deparse(substitute(x)))
-  cat("\n", x, "\n")
-}
+## mydcat2 <- function(x) {
+##   cat("\n ")
+##   print(deparse(substitute(x)))
+##   cat("\n", x, "\n")
+## }
 
 
 mydcat <- mydcat2 <- function(x) {}
@@ -280,12 +280,6 @@ model.newframe <- function(object, newdata, safe=FALSE, response=FALSE, ...) {
 ############################################
 
 ### end of hack for predict.coxph
-
-
-
-
-
-
 
 
 
@@ -1499,8 +1493,7 @@ KM.visualize3 <- function(scores, surv, event, ngroups = 3,
 
 
 plot.cvpl <- function(cvpl.mat, epi, thres = c(1, 1), thresGrid = 1) {
-##plot.cvpl <- function(cvpl.mat, epi, thres = c(0, 1), thresGrid = 6) {
-   
+  
 ## Diagnostic plot for the output from tauBest
 
     ## Would be neat to add \tau in the legend, but I am not able to.
@@ -1591,11 +1584,6 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
                               timedatasn = time,
                               eventdatasn = event,
                               epidatasn = epi))
-##     bestBetas.m.pre <- clusterApply(TheCluster, variableArgs,
-##                                     tgdTrainSnow, x, time, event, epi)
-
-    
-    
     
     bestBetas.m <- bestBetas.m.pre
     bestBetas.m[[z$thres.loc]] <- z$betas
@@ -2199,74 +2187,6 @@ dStep2.old <- function(x, res.mat, maxSize, minSize,
     
     if(plot) {
        
-#####         pdokf <- function(alllabels = FALSE) {
-#####             pos.labels <- rep("                   ", ncol(pos.data))
-#####             index.labels <- which(pos.groups %in% pos.accept)
-#####             pos.labels[index.labels] <- colnames(pos.data)[index.labels]
-
-#####             pos.dend <- as.dendrogram(pos.clus, hang = 0.001)
-#####             par(mar = c(5, 2, 1, 8))
-#####             plot(pos.dend, horiz = TRUE, xlab = "1 - correlation", leaflab = "none",
-#####                  main = "Positive coefficients")
-#####             abline(v = 1 - minCor, lty = 2, col = "blue")
-
-#####             dfp <- data.frame(name = unlist(dendrapply(rev(pos.dend), nameLeave)),
-#####                               height = unlist(dendrapply(rev(pos.dend), heightLeave)))
-#####             dfp$pos.gr <- pos.groups[order.dendrogram(rev(pos.dend))]
-#####             dfp$chosen.clus <- dfp$pos.gr %in% pos.accept
-#####             dfp$y <- nrow(dfp) - as.numeric(rownames(dfp)) + 1
-#####             rainbow.col <- rainbow(length(posGroups))
-#####             for(i in 1:length(posGroups)) {
-#####                 dfpt <- dfp[dfp$pos.gr == posGroups[i], ]
-#####                 miny <- min(dfpt$y)
-#####                 maxy <- max(dfpt$y)
-#####                 axis(4, line = 5, at = c(miny, maxy), col = rainbow.col[i],
-#####                      tick = TRUE, labels = FALSE, lw = 3)
-#####                 axis(4, line = 5, at = 0.5 * (miny + maxy),
-#####                      col.axis = rainbow.col[i],
-#####                      tick = FALSE, labels = posGroups[i], lw = 0,
-#####                      cex.axis = 1.5)
-#####                 for(j in 1:nrow(dfpt))
-#####                     text(dfpt$name[j], x = dfpt$height[j],
-#####                          y = dfpt$y[j], col = rainbow.col[i],
-#####                          font = 2, pos = 4)
-#####             }
-#####             if (alllabels) {
-#####                 dfpt <- dfp[dfp$chosen.clus == FALSE,]
-##### 		if(nrow(dfpt)) {
-#####                 for(j in 1:nrow(dfpt))
-#####                     text(dfpt$name[j], x = dfpt$height[j],
-#####                          y = dfpt$y[j], col = "black", cex = 0.8, pos = 4)
-##### 			 }
-#####             }
-#####             return(dfp)
-#####         } ##</pdokf within plotting>
-
-
-
-
-
-        
-        
-#####         dendmappP <- function(factor = 1, alllabels = FALSE) {
-#####             psf <- ifelse(factor < 1, ps * factor, ps)
-#####             nameIm <- paste("dend.P.factor", factor, ".alllabels", alllabels, sep = "")
-#####             im1 <- imagemap3(nameIm, height = height * factor, width = width * factor,
-#####                              ps = psf)
-#####             dfp <- pdokf(alllabels = alllabels)
-            
-#####             for(np in 1:nrow(dfp)) {
-#####                 addRegion(im1) <- imRect(dfp[np, 2] + .030, dfp[np, 5] - 0.45,
-#####                                          dfp[np, 2] - .1, dfp[np, 5] + 0.45,
-#####                                          title = dfp[np, 1], alt = dfp[np, 1],
-#####                                          href= linkGene2(dfp[np, 1]))
-#####             }
-            
-#####             createIM(im1, file = paste("dend.P.factor", factor, ".alllabels",
-#####                           alllabels, ".html", sep = ""))
-#####             imClose(im1)
-#####         }
-        
             
         if (pdok) {
             for (plsz in plotSizes) {
@@ -2279,73 +2199,6 @@ dStep2.old <- function(x, res.mat, maxSize, minSize,
         } else {
             system("touch NoPositiveCluster")
         }
-
-
-
-
-        
-
-#####         pnokf <- function(alllabels = FALSE) {
-#####             neg.labels <- rep("                   ", ncol(neg.data))
-#####             index.labels <- which(neg.groups %in% neg.accept)
-#####             neg.labels[index.labels] <- colnames(neg.data)[index.labels]
-
-#####             neg.dend <- as.dendrogram(neg.clus, hang = 0.001)
-#####             par(mar = c(5, 2, 1, 8))
-#####             plot(neg.dend, horiz = TRUE, xlab = "1 - correlation", leaflab = "none",
-#####                  main = "Negative coefficients")
-#####             abline(v = 1 - minCor, lty = 2, col = "blue")
-
-#####             dfp <- data.frame(name = unlist(dendrapply(rev(neg.dend), nameLeave)),
-#####                               height = unlist(dendrapply(rev(neg.dend), heightLeave)))
-#####             dfp$neg.gr <- neg.groups[order.dendrogram(rev(neg.dend))]
-#####             dfp$chosen.clus <- dfp$neg.gr %in% neg.accept
-#####             dfp$y <- nrow(dfp) - as.numeric(rownames(dfp)) + 1
-#####             rainbow.col <- rainbow(length(negGroups))
-#####             for(i in 1:length(negGroups)) {
-#####                 dfpt <- dfp[dfp$neg.gr == negGroups[i], ]
-#####                 miny <- min(dfpt$y)
-#####                 maxy <- max(dfpt$y)
-#####                 axis(4, line = 5, at = c(miny, maxy), col = rainbow.col[i],
-#####                      tick = TRUE, labels = FALSE, lw = 3)
-#####                 axis(4, line = 5, at = 0.5 * (miny + maxy),
-#####                      col.axis = rainbow.col[i],
-#####                      tick = FALSE, labels = negGroups[i], lw = 0,
-#####                      cex.axis = 1.5)
-#####                 for(j in 1:nrow(dfpt))
-#####                     text(dfpt$name[j], x = dfpt$height[j],
-#####                          y = dfpt$y[j], col = rainbow.col[i],
-#####                          font = 2, pos = 4)
-#####             }
-#####             if (alllabels) {
-#####                 dfpt <- dfp[dfp$chosen.clus == FALSE,]
-##### 		if(nrow(dfpt)) {
-#####                 for(j in 1:nrow(dfpt))
-#####                     text(dfpt$name[j], x = dfpt$height[j],
-#####                          y = dfpt$y[j], col = "black", cex = 0.8, pos = 4)
-##### 			 }
-#####             }
-#####             return(dfp)
-#####         } ##</pnokf within plotting>
-
-#####         dendmappN <- function(factor = 1, alllabels = FALSE) {
-#####             psf <- ifelse(factor < 1, ps * factor, ps)
-#####             nameIm <- paste("dend.N.factor", factor, ".alllabels", alllabels, sep = "")
-#####             im1 <- imagemap3(nameIm, height = height * factor, width = width * factor,
-#####                              ps = psf)
-#####             dfp <- pnokf(alllabels = alllabels)
-            
-#####             for(np in 1:nrow(dfp)) {
-#####                 addRegion(im1) <- imRect(dfp[np, 2] + .030, dfp[np, 5] - 0.45,
-#####                                          dfp[np, 2] - .1, dfp[np, 5] + 0.45,
-#####                                          title = dfp[np, 1], alt = dfp[np, 1],
-#####                                          href= linkGene2(dfp[np, 1]))
-#####             }
-            
-#####             createIM(im1, file = paste("dend.N.factor", factor, ".alllabels",
-#####                           alllabels, ".html", sep = ""))
-#####             imClose(im1)
-#####         }
 
         if (pnok) {
             for (plsz in plotSizes) {
@@ -2947,26 +2800,6 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
             if((length(trycox) == 1) && (trycox == "Error")) break
             cat("\n                         failed with iter.max = ", mitercox)
         }
-##         if(class(trycox) == "try-error")
-##             trycox <-
-##             try(
-##                 finalModel <- coxph(sobject ~ ., data = mdf,
-##                                     control = coxph.control(iter.max = 20)))
-##         if(class(trycox) == "try-error")
-##           trycox <-
-##             try(
-##                 finalModel <- coxph(sobject ~ ., data = mdf,
-##                                     control = coxph.control(iter.max = 10)))
-##         if(class(trycox) == "try-error")
-##           trycox <-
-##             try(
-##                 finalModel <- coxph(sobject ~ ., data = mdf,
-##                                     control = coxph.control(iter.max = 5)))
-##         if(class(trycox) == "try-error")
-##           trycox <-
-##             try(
-##                 finalModel <- coxph(sobject ~ ., data = mdf,
-##                                     control = coxph.control(iter.max = 2)))
         
         if((length(trycox) == 1) && (trycox == "Error"))
           predictsFinalModel <- rep(NA, length(time))
@@ -2989,24 +2822,12 @@ dPredictNew <- function(res3, newdata) { ## returns predictions (scores)y
     if(all(is.na(res3))) return(NA)
 
     model <- res3$model
-
-
-    mydcat(" B1 ")
     if(! ("coefficients" %in% names(model))) 
 	return(rep(NA, dim(newdata)[1]))
 	## this is the Null
  	## model, only intercept
-
-    mydcat(" B1-1 ")
-    
     z <- res3$clusterResults
-
-    mydcat(" B1-2 ")
-
     dataPositive <- newdata[, z$filteredPosPositions, drop = FALSE]
-
-    mydcat(" B1-3 ")
-
     if(ncol(dataPositive)) {
         posGroups <- unique(z$filteredGroupsPositive)
         posMeanData <- matrix(NA, nrow = dim(dataPositive)[1],
@@ -3020,9 +2841,6 @@ dPredictNew <- function(res3, newdata) { ## returns predictions (scores)y
     } else {
         posMeanData <- NA
     }
-
-    mydcat(" B2 ")
-
     
     dataNegative <- newdata[, z$filteredNegPositions, drop = FALSE]
     if(ncol(dataNegative)) {
@@ -3039,21 +2857,6 @@ dPredictNew <- function(res3, newdata) { ## returns predictions (scores)y
         negMeanData <- NA
     }
 
-##     browser()
-    
-##     mydcat(" B3 ")
-
-##     mydcat2(summary(posMeanData))
-##     mydcat2(summary(negMeanData))
-##     mydcat2(summary(cbind(posMeanData, negMeanData)))
-
-##     newdat <- as.data.frame(cbind(posMeanData, negMeanData))
-##     predict(model, newdata = newdat,    type = "lp")
-
-##     predict(model,
-##             newdata = as.data.frame(cbind(posMeanData, negMeanData)),
-##             type = "lp")
-    
     return(this.predict.coxph(model,
                    newdata = as.data.frame(cbind(posMeanData, negMeanData)),
                    type = "lp"))
@@ -3153,7 +2956,6 @@ mpiMyCleanSetup <- function() {
     mpi.remote.exec(library(R2HTML))
     mpi.remote.exec(library(party))
     mpi.remote.exec(library(mboost))
-#    Mpi.remote.exec(library(imagemap))
 }
 
 mpiDelete <- function() {
@@ -3193,15 +2995,6 @@ cvDave.parallel3 <- function(x, time, event,
 
     
     cat("\n\n Computing gene-wise cox p-value\n")
-    ##    res1s <- list()
-    ##     for(i in 1:nfold) {
-    ##         cat("\n  ....  fold ", i)
-    ##         xtr <- x[index.select != i, , drop = FALSE]
-    ##         ttr <- time[index.select != i]
-    ##         etr <- event[index.select != i]
-    ##         res1s[[i]] <- dStep1.parallel(xtr, ttr, etr, p = p,
-    ##                                       MaxIterationsCox = MaxIterationsCox)
-    ##     }
     f00 <- function(i) {
         xtr <- x[index.select != i, , drop = FALSE]
         ttr <- time[index.select != i]
@@ -3221,33 +3014,8 @@ cvDave.parallel3 <- function(x, time, event,
                     MaxIterationsCox = MaxIterationsCox,
                     index.select = index.select))
     pmgc("     cvDave.parallel3: after res1s")
-        
     cat("\n\n Cleaning up MPI slaves\n\n")	
     mpiDelete()
-
-##     if(nfold > (mpi.comm.size() - 1))
-##         stop(paste("nfold > number of mpi Rslaves; mpi.comm.size = ",
-##                    mpi.comm.size() ))
-    
-##     cat("\n\n Sending objects to MPI space\n\n")
-
-##     mpi.bcast.Robj2slave(x)
-##     mpi.bcast.Robj2slave(time)
-##     mpi.bcast.Robj2slave(event)
-##     mpi.bcast.Robj2slave(p)
-##     mpi.bcast.Robj2slave(maxSize)
-##     mpi.bcast.Robj2slave(minSize)
-##     mpi.bcast.Robj2slave(minCor)
-##     mpi.bcast.Robj2slave(MaxIterationsCox)
-##     mpi.bcast.Robj2slave(res1s)
-##     ## debug:
-##     ##    global.res1s <<- res1s
-##     ##    global.index.select <<- index.select
-##     mpi.bcast.Robj2slave(index.select)
-##     ##    mpi.bcast.cmd(foldNumber <- mpi.comm.rank())
-##     ##    mpi.bcast.Robj2slave(DaveCVPred.res1Given.InternalMPI)
-
-##     ## We use papply again
     cat("\n\n Computing the rest\n")
 
 
@@ -3262,19 +3030,10 @@ cvDave.parallel3 <- function(x, time, event,
       ##    for res1 supply the complete list
       
       res1 <- res1s[[fnum]]
-      
- ##     mydcat2(summary(res1s[[fnum]]))
-              
       xtrain <- x[index.select != fnum, , drop = FALSE]
-##      mydcat2(summary(xtrain))
-
       xtest <- x[index.select == fnum, , drop = FALSE]
-##      mydcat2(summary(xtest))
-      
       timetrain <- time[index.select != fnum]
       eventtrain <- event[index.select != fnum]
-##      mydcat2(summary(timetrain))
-##      mydcat2(summary(eventtrain))
       pmgc("     cvDave.parallel3: inside InternalMPI2. Before bestTrain")
 
         ## find best params by CV and predict on a new set.
@@ -3287,14 +3046,8 @@ cvDave.parallel3 <- function(x, time, event,
                                        interactive =FALSE)
         pmgc("     cvDave.parallel3: inside InternalMPI2. After bestTrain")
 
-##      bestTrain.global <<- bestTrain
-##      xtest.global <- xtest
       testPred <- dPredictNew(res3 = bestTrain, newdata = xtest)
-      mydcat(" B44 ")
-      
         pmgc("     cvDave.parallel3: inside InternalMPI2. After testPred")
-
-        
         return(list(scoresTest = testPred,
                     fmDaveObject = bestTrain))
     }
@@ -3321,7 +3074,7 @@ cvDave.parallel3 <- function(x, time, event,
     class(out) <- "cvDave"
     cat("\n Ending cvDave.parallel3 at ", date(), "; it took ", (proc.time() - ptm)[3], " \n\n")
     ## For debugging, mainly of lam logs
-    system("tar -czvf lam.logs.tar.gz *.log")
+##    system("tar -czvf lam.logs.tar.gz *.log")
     return(out)
 }
 
@@ -3692,14 +3445,6 @@ nameLeave <- function(x) {
 
 
 
-
-
-
-
-
-
-
-
 #### Why are we using papply? See debug.R in upper directory to find out.
 #### Essentially, mpi by itslef will not deal well with errors even if we
 #### use try.
@@ -3707,576 +3452,3 @@ nameLeave <- function(x) {
 
 
 
-
-### This is no longer used.
-## old.cvDave.parallel3 <- function(x, time, event,
-##                              p, maxSize,
-##                              minSize, minCor,
-##                              MaxIterationsCox,
-##                              nfold, mpiHosts) {
-
-##     if (mpi.comm.size(comm = 1) == 0) {
-##         mpiSpawnAll()
-##     } else { ## so mpi is running
-##         if ((mpi.comm.size(comm = 1) - 1) < mpi.universe.size()) {
-##             ## but few salves
-##             mpi.close.Rslaves()
-##             mpiSpawnAll()
-##         } else {
-##             mpiMyCleanSetup()
-##         }
-##     }
-       
-##     ## we asume at least as many mpi Rslaves as nfold.
-##     ## mpiHosts used for the second spawning of slaves,
-##     ## only for the 10 fold runs.
-    
-    
-##     n <- length(time)
-##     index.select <- sample(rep(1:nfold, length = n), n, replace = FALSE)
-##     OOB.scores <- rep(NA, n)
-
-##     res1s <- list()
-
-##     ### Here we use papply, which is 
-##     argspapp <- list()
-##     cat("\n\n Computing gene-wise cox p-value\n")
-##     for(i in 1:nfold) {
-##         cat("\n  ....  fold ", i)
-##         xtr <- x[index.select != i, , drop = FALSE]
-##         ttr <- time[index.select != i]
-##         etr <- event[index.select != i]
-##         res1s[[i]] <- dStep1.parallel(xtr, ttr, etr, p = p,
-##                                       MaxIterationsCox = MaxIterationsCox)
-##     }
-
-##     cat("\n\n Cleaning up MPI space, and setting up a new one\n\n")
-##     ## Clean previous stuff
-##     mpi.close.Rslaves()
-##     mpiSpawnThis(hosts = mpiHosts)
-
-##     if(nfold > (mpi.comm.size() - 1))
-##         stop("nfold > number of mpi Rslaves")
-    
-##     cat("\n\n Sending objects to MPI space\n\n")
-
-##     mpi.bcast.Robj2slave(x)
-##     mpi.bcast.Robj2slave(time)
-##     mpi.bcast.Robj2slave(event)
-##     mpi.bcast.Robj2slave(p)
-##     mpi.bcast.Robj2slave(maxSize)
-##     mpi.bcast.Robj2slave(minSize)
-##     mpi.bcast.Robj2slave(minCor)
-##     mpi.bcast.Robj2slave(MaxIterationsCox)
-##     mpi.bcast.Robj2slave(res1s)
-##     ## debug:
-##     global.res1s <<- res1s
-##     global.index.select <<- index.select
-##     mpi.bcast.Robj2slave(index.select)
-##     mpi.bcast.cmd(foldNumber <- mpi.comm.rank())
-##     mpi.bcast.Robj2slave(DaveCVPred.res1Given.InternalMPI)
-
-##     cat("\n\n Computing the rest\n")
-##     tmp1 <- mpi.remote.exec(DaveCVPred.res1Given.InternalMPI())
-
-##     ## debung
-##     print("printing tmp1")
-##     print(tmp1)
-    
-##     cat("\n\n Cleaning up and closing MPI\n")
-##     ##try(mpi.remote.exec(rm(list = ls(env = .GlobalEnv), envir = .GlobalEnv)))
-##  ##    cat("mpi.universe.size() ", mpi.universe.size())
-## ##     cat("mpi.comm.size()", mpi.comm.size()) 
-##     try(mpi.close.Rslaves())
-    
-##     for(i in 1:nfold) {
-##         OOB.scores[index.select == i] <-
-##             tmp1[[i]]$scoresTest
-##         tmp1[[i]]$scoresTest <- NULL  ## don't need this anymore
-##     }
-    
-##     out <- list(cved.models = tmp1,
-##                 OOB.scores = OOB.scores)
-##     class(out) <- "cvDave"
-##     return(out)
-## }
-
-
-
-
-
-
-
-
-
-## summary.cvDave <- function(object, allDataObject.selected, subjectNames, genenames) {
-##     cat("\n Out-of-bag scores\n\n")
-
-##     cat("\n Out-of-bag scores\n\n")
-##     oobs <- matrix(object$OOB.scores, ncol = 1)
-##     rownames(oobs) <- subjectNames
-##     print(oobs)
-
-
-    
-##     object <- object[[1]] ## don't need scores anymore. Simpler subsetting.
-
-##     allWarnings <- lapply(object, function(x) x$Warn)
-    
-##     ks <- length(object)
-##     cv.names <- paste("CV.run.", 1:ks, sep = "")    
-
-
-    
-##     cat("\n\n Selected components, genes and coefficients in cross-validation runs\n")
-##     cat("========================================================================\n\n")
-##     selectedInR <- list()
-##     for(cvr in 1:ks) {
-##         cat("\n\n CV run ", cvr, "\n")
-##         cat("------------------------\n")
-##         selectedInR[[cvr]] <- selectedSignatures(object[[cvr]]$fmDaveObject,
-##                                                  genenames = genenames, print = TRUE,
-##                                                  out = TRUE)
-##         cat("\n--------------------------------------------------------------------------------\n\n")
-##     }
-    
-##     tmp.genesSelected <- list()
-##     tmp.genesSelected[[1]] <- unlist(allDataObject.selected$Genes)
-##     genesSelected.cv <- lapply(selectedInR, function(x)
-##                                unlist(x$Genes))
-##     tmp.genesSelected <- c(tmp.genesSelected, genesSelected.cv)
-
-##     shared.genes <- matrix(NA, nrow = (ks + 1), ncol = (ks + 1))
-##     for(i in 1:(ks + 1)) {
-##         for(j in 1:(ks + 1)) { ## sure, need not be symmetric, but this is fast
-##             shared.genes[i, j] <-
-##                 length(intersect(tmp.genesSelected[[i]],
-##                                  tmp.genesSelected[[j]]))
-##         }
-##     }
-
-##     ngenes <- sapply(tmp.genesSelected, length)
-##     prop.shared <- round(shared.genes/ngenes, 3)
-    
-##     ngenesS <- paste("(", ngenes, ")", sep = "")
-##     colnames(shared.genes) <- colnames(prop.shared) <- c("OriginalSample", cv.names)
-##     rownames(shared.genes) <- rownames(prop.shared) <- paste(c("OriginalSample", cv.names), ngenesS)
-    
-##     options(width = 200)
-##     cat("\n\n Number of shared genes \n")
-##     print(as.table(shared.genes))
-    
-##     cat("\n\n Proportion of shared genes (relative to row total) \n")
-##     print(as.table(prop.shared))
-    
-##     options(width = 80)
-##     unlisted.genes.selected <- unlist(genesSelected.cv)
-    
-##     in.all.data <-
-##         which(names(table(unlisted.genes.selected, dnn = NULL)) %in% tmp.genesSelected[[1]])
-##     cat("\n\n\n Gene freqs. in cross-validated runs of genes selected in model with all data \n\n")
-##     print(sort(table(unlisted.genes.selected, dnn = NULL)[in.all.data], decreasing = TRUE))
-##     cat("\n")
-    
-    
-##     cat("\n\n Gene frequencies in cross-validated runs \n\n")
-##     tmp.table <- sort(table(unlisted.genes.selected, dnn = NULL),
-##                       decreasing = TRUE)
-##     print(tmp.table)
-##     cat("\n")
-## }
-
-## ## why genenames? aren't these the columns of the data set??
-## ## Probably allows to pass a vector with the names I want
-
-
-
-
-
-
-
-
-## selectedSignatures <- function(fmDave, genenames,
-##                                print = TRUE, out = TRUE) {
-
-##     if(is.na(fmDave)) {
-##         out <- NA
-##         if(print) print(NA)
-##         return(NA)
-##     }
-        
-##     res2 <- fmDave$clusterResults
-##     selectedSign <- names(fmDave$model$coeff)
-##     signatures <- list()
-##     coeffs <- fmDave$model$coeff
-
-##     for(i in 1:length(selectedSign)) {
-##         signatures$component[i] <- i
-##         signatures$Name[i] <- selectedSign[i]
-##         signatures$Coeffs[i] <- coeffs[i]
-        
-##         ind1 <- which(res2$filteredGroupsNegative ==
-##                       selectedSign[i])
-##         if(length(ind1)) {
-##             signatures$Genes[[i]] <- genenames[res2$filteredNegPositions[ind1]]
-##             signatures$numGenes[i] <- length(signatures$Genes[[i]])
-##         } else {
-##             ind2 <- which(res2$filteredGroupsPositive ==
-##                           selectedSign[i])
-##             if(length(ind2)) {
-##                 signatures$Genes[[i]] <- genenames[res2$filteredPosPositions[ind2]]
-##                 signatures$numGenes[i] <- length(signatures$Genes[[i]])
-##             } else {
-##                 stop("No genes for this signature; weird!")
-##             }
-##         }
-##     }
-
-##     signatures$totalComponents <- length(selectedSign)
-##     signatures$totalGenes <- sum(signatures$numGenes)
-
-##     if(print) {
-##         total.length <- length(unlist(signatures$Genes)) +
-##             2* length(selectedSign) + 1
-##         ## OK, this is a horrible hack, but works for now
-##         c1 <- c2 <- c3 <- rep("", total.length)
-##         k <- 1
-##         c1[1] <- paste(rep("=", 14), sep = "", collapse = "")
-##         c3[1] <- paste(rep("=", 50), sep = "", collapse = "")
-##         c2[1] <- paste(rep("=", 11), sep = "", collapse = "")
-##         k <- 2
-##         for(i in 1:length(signatures$component)) {
-##             c1[k] <- signatures$Name[i]
-##             c2[k] <- round(signatures$Coeffs[i], 4)
-##             k <- k + 1
-##             for(j in 1:length(signatures$Genes[[i]])) {
-##                 c3[k] <- signatures$Genes[[i]][j]
-##                 k <- k + 1
-##             }
-##             c1[k] <- paste(rep("-", 14), sep = "", collapse = "")
-##             c3[k] <- paste(rep("-", 50), sep = "", collapse = "")
-##             c2[k] <- paste(rep("-", 11), sep = "", collapse = "")
-##             k <- k + 1
-##         }
-
-##         dffp <- data.frame(cbind("Component_Name" = c1,
-##                                  "Genes" = c3,
-##                                  "Coefficient" = c2))
-##         options(width = 120)
-##         cat(paste("\n\n Total of ", signatures$totalComponents,
-##                   "signature components selected and ", signatures$totalGenes,
-##                   "genes.\n"))
-##         cat("\n Selected signature components, genes and coefficients\n\n")
-##         print(dffp)
-##         options(width = 80)
-##     }
-##     if(out) return(signatures)
-## }
-
-
-## Make dencrograms vertical!! Oh well, depends on dendrogram, whose API might change...
-## Imagemaps and dendrograms: search in R
-## Provide two "families": with all names and only with cluster names
-
-## If all names in color, no need for boxes?
-## Or just box, no fill-up?
-
-
-##  2. Cluster; independently for those with pos and neg beta.
-
-##  2. Cluster; independently for those with pos and neg beta.
-## dStep2 <- function(x, res.mat, maxSize, minSize,
-##                    minCor, plot,
-##                    interactive) {
-##     res.mat[is.na(res.mat[, 4]), 4] <- 0
-
-##     if(sum(res.mat[, 4] == 1) >= minSize) {
-##         pos.data <- x[, res.mat[, 4] == 1]
-##         pdok <- TRUE
-##     } else {
-##         pdok <- FALSE
-##         warning(paste("Not enough positive coeff. genes that",
-##                       "meet the p restrictions."))
-##     }
-##     if(sum(res.mat[, 4] == -1) >= minSize) {
-##         neg.data <- x[, res.mat[, 4] == -1]
-##         pnok <- TRUE
-##     } else {
-##         pnok <- FALSE
-##         warning(paste("Not enough negative coeff. genes that",
-##                       "meet the p restrictions."))
-##     }
-
-##     if((!pnok) & (!pdok)) {
-## 	if(interactive) caughtUserError("No gene was above the minimal p threshold")
-##         else {
-##             return(NA)
-##         }
-##     }
-
-##     tn <- tp <- FALSE
-##     if(pdok) {
-##         pos.clus <- hclust(as.dist(1 -cor(pos.data)), method = "complete")
-##         pos.groups <- paste("P.", cutree(pos.clus, h = 1- minCor), sep = "")
-##         tpos <- table(pos.groups)
-##         pos.accept <- names(which((tpos >= minSize) & (tpos <= maxSize)))
-##         if(length(pos.accept)) {
-##             groupsPositive <- pos.groups[pos.groups %in% pos.accept]
-##             dataPositive <- pos.data[ , pos.groups %in% pos.accept]
-##             posGroups <- unique(groupsPositive)
-##             posMeanData <- matrix(NA, nrow = dim(dataPositive)[1],
-##                               ncol = length(posGroups))
-
-##             for(i in 1:length(posGroups)) {
-##                 posMeanData[, i] <-
-##                     apply(dataPositive[, groupsPositive == posGroups[i]],
-##                           1, mean)
-##             }
-##             colnames(posMeanData) <- posGroups
-##             tp <- TRUE
-##         } else {
-##             tp <- FALSE
-##             warning(paste("No groups of positive coeff genes that",
-##                           "meet the p, minimum correlation and size restrictions."))
-##         }
-##     }
-
-##     if(pnok) {
-##         neg.clus <- hclust(as.dist(1 -cor(neg.data)), method = "complete")
-##         neg.groups <- paste("N.", cutree(neg.clus, h = 1- minCor), sep = "")
-##         npos <- table(neg.groups)
-##         neg.accept <- names(which((npos >= minSize) & (npos <= maxSize)))
-##         if(length(neg.accept)) {
-##             groupsNegative <- neg.groups[neg.groups %in% neg.accept]
-##             dataNegative <- neg.data[ , neg.groups %in% neg.accept]
-##             negGroups <- unique(groupsNegative)
-##             negMeanData <- matrix(NA, nrow = dim(dataNegative)[1],
-##                                   ncol = length(negGroups))
-
-##             for(i in 1:length(negGroups)) {
-##                 negMeanData[, i] <-
-##                     apply(dataNegative[, groupsNegative == negGroups[i]],
-##                           1, mean)
-##             }
-##             colnames(negMeanData) <- negGroups
-##             tn <- TRUE
-##         } else {
-##             tn <- FALSE
-##             warning(paste("No groups of negative coeff. genes that",
-##                           "meet the p, minimum correlation and size restrictions."))
-##         }
-##     }
-
-##     if(!tn & !tp) {
-##         if(interactive) caughtUserError(paste("No groups that meet the p, minimum correlation",
-##                                               "and size restrictions."))
-##         else return(NA)
-##     }
-##     pdok <- tp & pdok
-##     pnok <- tn & pnok
-    
-##     if(plot) {
-## ####         if(dev.interactive()) {
-## ####             op <- par(ask = TRUE, las = 1, mar = c(1, 5, 4, 1))
-## ####         } else {
-## ####             op <- par(las = 1, mar = c(1, 5, 4, 1))
-## ####         }
-## ####         on.exit(par(op))
-
-## ###        par(las = 1, mar = c(3, 5, 4, 1))
-        
-##         ## works well with: pdf(file = "test1.pdf", height = 9, width = 19)
-
-        
-##         pdokf <- function() {
-##             pl.p.groups <-
-##                 as.numeric(sapply(pos.accept,
-##                                   function(x) strsplit(x, "P.")[[1]][2]))
-##             pos.labels <- rep("                   ", ncol(pos.data))
-##             index.labels <- which(pos.groups %in% pos.accept)
-##             pos.labels[index.labels] <- colnames(pos.data)[index.labels]
-            
-##             plot(pos.clus, hang = 0.001, sub = "", xlab = "",
-##                  labels = pos.labels, cex = 0.7, main = "Positive coefficients",
-##                  ylab = "1 - correlation")
-##             abline(h = 1 - minCor, lty = 2, col = "blue")
-##             rainbow.col <- rainbow(length(posGroups))
-##             for(i in 1:length(posGroups)) {
-##                 wthis.original <- which(pos.groups == posGroups[i])
-##                 wthis.plot.order <- which(pos.clus$order %in% wthis.original)
-##                 minx <- min(wthis.plot.order)
-##                 maxx <- max(wthis.plot.order)
-##                 polygon(x = c(minx, minx, maxx, maxx),
-##                         y =c(0, 1 - minCor, 1 - minCor, 0),
-##                         col = rainbow.col[i],
-##                         density = 10,
-##                         lty = 2)
-##                 axis(1, line = 0, at = c(minx, maxx), col = rainbow.col[i],
-##                      tick = TRUE, labels = FALSE, lw = 3)
-##                 axis(1, line = 0, at = 0.5 * (maxx + minx),
-##                      col.axis = rainbow.col[i],
-##                      tick = FALSE, labels = posGroups[i], lw = 0,
-##                      cex.axis = 1.5)
-## ##                 segments(x0 = minx, y0= -0.15, x1 = maxx, y1 = -0.15,
-## ##                          col = rainbow.col[i], lwd = 4, lty = 1)
-## ##                 text(x = 0.5* (maxx + minx), y = -0.20,
-## ##                      labels = posGroups[i])
-##             }
-##         } ##</pdok within plotting>
-
-##         if (pdok) {
-##             pdf(file = "ClusterPositiveCoeffs.pdf", height = 9, width = 19)
-##             pdokf()
-##             dev.off()
-##             webPNG(file = "ClusterPositiveCoeffs.png", height = 9,
-##                    width = 19, pointsize = png.pointsize,
-##                    family = png.family)
-##             par(cex.axis = 0.75); par(cex.lab = 1.4); par(cex.main = 1.5)
-##             pdokf()
-##             dev.off()
-##         } else {
-##             pdf(file = "ClusterPositiveCoeffs.pdf", height = 9, width = 9)
-##             plot(x = c(0, 1), y = c(0, 1),
-##                  type = "n", axes = FALSE, xlab = "", ylab = "")
-##             box()
-##             text(0.5, 0.7,
-##             "There are no genes with positive coefficients")
-##             text(0.5, 0.5, "that satisfy the p, minimum correlation")
-##             text(0.5, 0.3, "and size restrictions.")
-##             dev.off()
-
-            
-##             webPNG(file = "ClusterPositiveCoeffs.png", height = 9,
-##                    width = 9, pointsize = png.pointsize,
-##                    family = png.family)
-##             plot(x = c(0, 1), y = c(0, 1),
-##                  type = "n", axes = FALSE, xlab = "", ylab = "")
-##             box()
-##             text(0.5, 0.7,
-##             "There are no genes with positive coefficients")
-##             text(0.5, 0.5, "that satisfy the p, minimum correlation")
-##             text(0.5, 0.3, "and size restrictions.")
-##             dev.off()
-##         }
-
-##         pnokf <- function() {
-##             pl.n.groups <-
-##                 as.numeric(sapply(neg.accept,
-##                                   function(x) strsplit(x, "N.")[[1]][2]))
-##             neg.labels <- rep("                   ", ncol(neg.data))
-##             index.labels <- which(neg.groups %in% neg.accept)
-##             neg.labels[index.labels] <- colnames(neg.data)[index.labels]
-            
-##             ## need to remap from the original position to the position
-##             ## a variable takes in the plot (its order in the clustering
-##             ## object).
-            
-##             plot(neg.clus, hang = 0.001, sub = "", xlab = "",
-##                  labels = neg.labels, cex = 0.7, main = "Negative coefficients",
-##                  ylab = "1 - correlation")
-##             abline(h = 1 - minCor, lty = 2, col = "blue")
-            
-##             rainbow.col <- rainbow(length(negGroups))
-            
-##             for(i in 1:length(negGroups)) {
-##                 wthis.original <- which(neg.groups == negGroups[i])
-##                 wthis.plot.order <- which(neg.clus$order %in% wthis.original)
-##                 minx <- min(wthis.plot.order)
-##                 maxx <- max(wthis.plot.order)
-##                 polygon(x = c(minx, minx, maxx, maxx),
-##                         y =c(0, 1 - minCor, 1 - minCor, 0),
-##                         col = rainbow.col[i],
-##                         density = 10,
-##                         lty = 2)
-##                 axis(1, line = 0, at = c(minx, maxx), col = rainbow.col[i],
-##                      tick = TRUE, labels = FALSE, lw = 3)
-##                 axis(1, line = 0, at = 0.5 * (maxx + minx),
-##                      col.axis = rainbow.col[i],
-##                      tick = FALSE, labels = negGroups[i], lw = 0,
-##                      cex.axis = 1.5)
-## ##                 segments(x0 = minx, y0= -0.15, x1 = maxx, y1 = -0.15,
-## ##                          col = rainbow.col[i], lwd = 4, lty = 1)
-## ##                 text(x = 0.5* (maxx + minx), y = -0.2 ,
-## ##                      labels = negGroups[i])
-##             }
-##         } ## </ if(pnok) within plot
-
-##         if (pnok) {
-##             pdf(file = "ClusterNegativeCoeffs.pdf", height = 9, width = 19)
-##             pnokf()
-##             dev.off()
-##             webPNG(file = "ClusterNegativeCoeffs.png", height = 9,
-##                    width = 19, pointsize = png.pointsize,
-##                    family = png.family)
-##             par(cex.axis = 0.75); par(cex.lab = 1.4); par(cex.main = 1.5)
-##             pnokf()
-##             dev.off()
-##         } else {
-##             pdf(file = "ClusterNegativeCoeffs.pdf", height = 9, width = 9)
-##             plot(x = c(0, 1), y = c(0, 1),
-##                  type = "n", axes = FALSE, xlab = "", ylab = "")
-##             box()
-##             text(0.5, 0.7,
-##             "There are no genes with negative coefficients")
-##             text(0.5, 0.5, "that satisfy the p, minimum correlation")
-##             text(0.5, 0.3, "and size restrictions.")
-##             dev.off()
-
-            
-##             webPNG(file = "ClusterNegativeCoeffs.png", height = 9,
-##                    width = 9, pointsize = png.pointsize,
-##                    family = png.family)
-##             plot(x = c(0, 1), y = c(0, 1),
-##                  type = "n", axes = FALSE, xlab = "", ylab = "")
-##             box()
-##             text(0.5, 0.7,
-##             "There are no genes with negative coefficients")
-##             text(0.5, 0.5, "that satisfy the p, minimum correlation")
-##             text(0.5, 0.3, "and size restrictions.")
-##             dev.off()
-##         }
-
-        
-##     } ##</ if plot>
-
-##     ## For predictions and results, which vars. correspond
-##     ## to which original genes
-
-##     ## The following two are the indices of the columns in the original (non
-##     ## divided data file)
-
-##     if(pdok) {
-##         posPositions <- which(res.mat[, 4] == 1)
-##         filteredPosPositions <- posPositions[pos.groups %in% pos.accept]
-##     }
-##     if(pnok) {
-##         negPositions <- which(res.mat[, 4] == -1)
-##         filteredNegPositions <- negPositions[neg.groups %in% neg.accept]
-##     }
-
-##     if(pnok & pdok)
-##         if(length(intersect(filteredPosPositions, filteredNegPositions)))
-##             stop("Non zero intersection between filtered pos and neg positions")
-##     if(!pnok) {
-##         negMeanData <- NULL
-##         groupsNegative <- NA
-##         filteredGroupsNegative <- NA
-##         filteredNegPositions <- NA
-##         negPositions <- NA
-##     }
-##     if(!pdok) {
-##         posMeanData <- NULL
-##         groupsPositive <- NA
-##         filteredGroupsPositive <- NA
-##         filteredPosPositions <- NA
-##         posPositions <- NA
-##     }
-    
-##     return(list(md = cbind(posMeanData, negMeanData),
-##                 filteredGroupsPositive = groupsPositive,
-##                 filteredGroupsNegative = groupsNegative,
-##                 filteredPosPositions = filteredPosPositions,
-##                 filteredNegPositions = filteredNegPositions,
-##                 posPositions = posPositions,
-##                 negPositions = negPositions))
-## }
