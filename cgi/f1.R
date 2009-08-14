@@ -454,6 +454,12 @@ if(any(is.na(Event))) {
     caughtUserError("Your survival status file contains missing values. \n That is not allowed.\n")
 }
 
+if(identical(Time, Event)) {
+  caughtUserError("User Input ERROR: Your survival time and survival status are identical. This is most likely an error.\n")
+}
+
+
+
 
 
 if(useValidation == "yes") {
@@ -564,6 +570,11 @@ if(useValidation == "yes") {
     if(!(identical(colnames(xdata), colnames(validationxdata)))) {
         caughtUserError("Gene names for the validation and training data MUST be the same. ")
     }
+
+    if(identical(validationEvent, validationTime)) {
+      caughtUserError("User Input ERROR: Your validation survival time and validation survival status are identical. Most likely, that is a mistake.\n")
+    }
+    
 }
 
 doCheckpoint(1)
