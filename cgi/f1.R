@@ -445,7 +445,7 @@ if(!(is.numeric(Time))) {
     caughtUserError("Your survival time file contains non-numeric data. \n That is not allowed.\n")
 }
 if(any(is.na(Time))) {
-    caughtUserError("Your survival status file contains missing values. \n That is not allowed.\n")
+    caughtUserError("Your survival time file contains missing values. \n That is not allowed.\n")
 }
 if(!(is.numeric(Event))) {
     caughtUserError("Your survival status file contains non-numeric data. \n That is not allowed.\n")
