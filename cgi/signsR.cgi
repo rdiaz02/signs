@@ -17,14 +17,10 @@ import cgitb
 cgitb.enable() 
 sys.stderr = sys.stdout
 
-MAX_signs = 155 ## MAX_genesrf + 1 = Maximum number of R processes running at same time.
-MAX_time = 3600 * 24 * 5 ## 5 is days until deletion of a tmp directory
-R_MAX_time = 3600 * 8 ## 8 hours is max duration allowed for any process
-MAX_covariate_size = 363948523L ## a 500 * 40000 array of floats
-MAX_time_size = 61897L
-##  f5 <- rep(paste(paste(letters, collapse = ""),
-##                  paste(LETTERS, collapse="")), 1000)
-## so each of 1000 labels has 48 chars.
+APP_NAME = "signs2"
+sys.path.append("/asterias-web-apps/web-apps-common")
+from web_apps_config import *
+from web_apps_common_funcs import *
 
 acceptedMethodSurvs = ('FCMS', 'TGD', 'cforest', 'glmboost')
 acceptedIDTypes = ('None', 'cnio', 'affy', 'clone', 'acc', 'ensembl', 'entrez', 'ug', 'rsrna', 'rspeptide', 'hugo')
@@ -33,99 +29,99 @@ acceptedOrganisms = ('None', 'Hs', 'Mm', 'Rn')
 # def check_tmpDir(tmpDir):
 #     """ Checks tmpDir is not something it should not be.
 #     For debugging."""
-#     if((tmpDir == "/http/signs/cgi/") or (tmpDir == "/http/signs/cgi")):
+#     if((tmpDir == "/asterias-web-apps/signs/cgi/") or (tmpDir == "/asterias-web-apps/signs/cgi")):
 #         commonOutput()
 #         print "<h1> Failed check_tmpDir </h1>"    
 #         print "</body></html>"
 #         sys.exit()
 
 
-def commonOutput():
-    print "Content-type: text/html\n\n"
-    print """
-    <html>
-    <head>
-    <title>SignS</title>
-    </head>
-    <body>
-    """
+# def commonOutput():
+#     print "Content-type: text/html\n\n"
+#     print """
+#     <html>
+#     <head>
+#     <title>SignS</title>
+#     </head>
+#     <body>
+#     """
 
-## For redirections, from Python Cookbook
-def getQualifiedURL(uri = None):
-    """ Return a full URL starting with schema, servername and port.
-        *uri* -- append this server-rooted uri (must start with a slash)
-    """
-    schema, stdport = ('http', '80')
-    host = os.environ.get('HTTP_HOST')
-    if not host:
-        host = os.environ.get('SERVER_NAME')
-        port = os.environ.get('SERVER_PORT', '80')
-        if port != stdport: host = host + ":" + port
-    result = "%s://%s" % (schema, host)
-    if uri: result = result + uri
-    return result
+# ## For redirections, from Python Cookbook
+# def getQualifiedURL(uri = None):
+#     """ Return a full URL starting with schema, servername and port.
+#         *uri* -- append this server-rooted uri (must start with a slash)
+#     """
+#     schema, stdport = ('http', '80')
+#     host = os.environ.get('HTTP_HOST')
+#     if not host:
+#         host = os.environ.get('SERVER_NAME')
+#         port = os.environ.get('SERVER_PORT', '80')
+#         if port != stdport: host = host + ":" + port
+#     result = "%s://%s" % (schema, host)
+#     if uri: result = result + uri
+#     return result
 
-def getScriptname():
-    """ Return te scriptname part of the URL."""
-    return os.environ.get('SCRIPT_NAME', '')
+# def getScriptname():
+#     """ Return te scriptname part of the URL."""
+#     return os.environ.get('SCRIPT_NAME', '')
 
-def getBaseURL():
-    """ Return a fully qualified URL to this script. """
-    return getQualifiedURL(getScriptname())
+# def getBaseURL():
+#     """ Return a fully qualified URL to this script. """
+#     return getQualifiedURL(getScriptname())
 
-def fileUpload(fieldName):
-    """Upload and get the files and do some checking. We assume there is an existing call
-    to fs = cgi.FieldStorage()"""
-## we don't deal with OS specific "\n"
-## because R does not have a problem (at least with Windows files)
-## no problem in R either with empty carriage returns at end of file
+# def fileUpload(fieldName):
+#     """Upload and get the files and do some checking. We assume there is an existing call
+#     to fs = cgi.FieldStorage()"""
+# ## we don't deal with OS specific "\n"
+# ## because R does not have a problem (at least with Windows files)
+# ## no problem in R either with empty carriage returns at end of file
     
-    if fs.has_key(fieldName):
-        fileClient = fs[fieldName].file
-        if not fileClient:
-            shutil.rmtree(tmpDir)
-            commonOutput()
-            print "<h1> SignS INPUT ERROR </h1>"    
-            print "<p> The ", fieldName, "file you entered is not a file </p>"
-            print "<p> Please fill up the required fields and try again</p>"
-            print "</body></html>"
-            sys.exit()
-    else:
-        shutil.rmtree(tmpDir)
-        commonOutput()
-        print "<h1> SignS INPUT ERROR </h1>"    
-        print "<p> ", fieldName, "file required </p>"
-        print "<p> Please fill up the required fields and try again</p>"
-        print "</body></html>"
-        sys.exit()
+#     if fs.has_key(fieldName):
+#         fileClient = fs[fieldName].file
+#         if not fileClient:
+#             shutil.rmtree(tmpDir)
+#             commonOutput()
+#             print "<h1> SignS INPUT ERROR </h1>"    
+#             print "<p> The ", fieldName, "file you entered is not a file </p>"
+#             print "<p> Please fill up the required fields and try again</p>"
+#             print "</body></html>"
+#             sys.exit()
+#     else:
+#         shutil.rmtree(tmpDir)
+#         commonOutput()
+#         print "<h1> SignS INPUT ERROR </h1>"    
+#         print "<p> ", fieldName, "file required </p>"
+#         print "<p> Please fill up the required fields and try again</p>"
+#         print "</body></html>"
+#         sys.exit()
             
-    # transferring files to final destination;
+#     # transferring files to final destination;
 
-    fileInServer = tmpDir + "/" + fieldName
-    srvfile = open(fileInServer, mode = 'w')
-    fileString = fs[fieldName].value
-    srvfile.write(fileString)
-    srvfile.close()
+#     fileInServer = tmpDir + "/" + fieldName
+#     srvfile = open(fileInServer, mode = 'w')
+#     fileString = fs[fieldName].value
+#     srvfile.write(fileString)
+#     srvfile.close()
 
-    ## this is slower than reading all to memory and copying from
-    ## there, but this is less taxing on memory.
-    ## but with the current files, probably not worth it
-    #     while 1:
-    #         line = fileClient.readline()
-    #         if not line: break
-    #         srvfile.write(line)
-    #     srvfile.close()
+#     ## this is slower than reading all to memory and copying from
+#     ## there, but this is less taxing on memory.
+#     ## but with the current files, probably not worth it
+#     #     while 1:
+#     #         line = fileClient.readline()
+#     #         if not line: break
+#     #         srvfile.write(line)
+#     #     srvfile.close()
     
-    os.chmod(fileInServer, 0666)
+#     os.chmod(fileInServer, 0666)
         
-    if os.path.getsize(fileInServer) == 0:
-        shutil.rmtree(tmpDir)
-        commonOutput()
-        print "<h1> SignS INPUT ERROR </h1>"
-        print "<p>", fieldName, " file has size 0 </p>"
-        print "<p> Please enter a file with something in it.</p>"
-        print "</body></html>"
-        sys.exit()
+#     if os.path.getsize(fileInServer) == 0:
+#         shutil.rmtree(tmpDir)
+#         commonOutput()
+#         print "<h1> SignS INPUT ERROR </h1>"
+#         print "<p>", fieldName, " file has size 0 </p>"
+#         print "<p> Please enter a file with something in it.</p>"
+#         print "</body></html>"
+#         sys.exit()
 
 
 def valueNumUpload(fieldName, testNumber = 'float', minValue = 0):
@@ -205,55 +201,55 @@ def valueNumUpload(fieldName, testNumber = 'float', minValue = 0):
 
 
 
-def radioUpload(fieldName, acceptedValues):
-    """Upload and get the values and do some checking. For radio selections
-    with text data; check those are in acceptedValues.
-    We assume there is an existing call to fs = cgi.FieldStorage()"""
+# def radioUpload(fieldName, acceptedValues):
+#     """Upload and get the values and do some checking. For radio selections
+#     with text data; check those are in acceptedValues.
+#     We assume there is an existing call to fs = cgi.FieldStorage()"""
 
-    if not fs.has_key(fieldName):
-        shutil.rmtree(tmpDir)
-        commonOutput()
-        print "<h1> SignS INPUT ERROR </h1>"    
-        print "<p>", fieldName, "required </p>"
-        print "<p> Please fill up the required fields and try again</p>"
-        print "</body></html>"
-        sys.exit()
-    if fs[fieldName].filename:
-        shutil.rmtree(tmpDir)
-        commonOutput()
-        print "<h1> SignS INPUT ERROR </h1>"    
-        print "<p> ", fieldName, "should not be a file. </p>"
-        print "<p> Please fill up the required fields and try again</p>"
-        print "</body></html>"
-        sys.exit()
-    if type(fs[fieldName]) == type([]):
-        shutil.rmtree(tmpDir)
-        commonOutput()
-        print "<h1> SignS INPUT ERROR </h1>"    
-        print "<p>", fieldName, "should be a single value.</p>"
-        print "<p> Please fill up the required fields and try again</p>"
-        print "</body></html>"
-        sys.exit()
-    else:
-        tmp = fs[fieldName].value
+#     if not fs.has_key(fieldName):
+#         shutil.rmtree(tmpDir)
+#         commonOutput()
+#         print "<h1> SignS INPUT ERROR </h1>"    
+#         print "<p>", fieldName, "required </p>"
+#         print "<p> Please fill up the required fields and try again</p>"
+#         print "</body></html>"
+#         sys.exit()
+#     if fs[fieldName].filename:
+#         shutil.rmtree(tmpDir)
+#         commonOutput()
+#         print "<h1> SignS INPUT ERROR </h1>"    
+#         print "<p> ", fieldName, "should not be a file. </p>"
+#         print "<p> Please fill up the required fields and try again</p>"
+#         print "</body></html>"
+#         sys.exit()
+#     if type(fs[fieldName]) == type([]):
+#         shutil.rmtree(tmpDir)
+#         commonOutput()
+#         print "<h1> SignS INPUT ERROR </h1>"    
+#         print "<p>", fieldName, "should be a single value.</p>"
+#         print "<p> Please fill up the required fields and try again</p>"
+#         print "</body></html>"
+#         sys.exit()
+#     else:
+#         tmp = fs[fieldName].value
             
-    if tmp not in acceptedValues:
-        shutil.rmtree(tmpDir)
-        commonOutput()
-        print "<h1> SignS INPUT ERROR </h1>"    
-        print "<p> The", fieldName, "choosen is not valid.</p>"
-        print "<p> Please fill up the required fields and try again.</p>"
-        print "</body></html>"
-        sys.exit()
+#     if tmp not in acceptedValues:
+#         shutil.rmtree(tmpDir)
+#         commonOutput()
+#         print "<h1> SignS INPUT ERROR </h1>"    
+#         print "<p> The", fieldName, "choosen is not valid.</p>"
+#         print "<p> Please fill up the required fields and try again.</p>"
+#         print "</body></html>"
+#         sys.exit()
 
-    fileInServer = tmpDir + "/" + fieldName
-    srvfile = open(fileInServer, mode = 'w')
-    fileString = tmp
-    srvfile.write(fileString)
-    srvfile.close()
-    os.chmod(fileInServer, 0666)
+#     fileInServer = tmpDir + "/" + fieldName
+#     srvfile = open(fileInServer, mode = 'w')
+#     fileString = tmp
+#     srvfile.write(fileString)
+#     srvfile.close()
+#     os.chmod(fileInServer, 0666)
 
-    return tmp
+#     return tmp
 
 
 
@@ -266,7 +262,7 @@ def radioUpload(fieldName, acceptedValues):
 #         time.sleep(tsleep)
 #         in_log = int(os.popen('grep "' + \
 #                               tmpDir + \
-#                               '" /http/mpi.log/ApplicationCounter | wc').readline().split()[0])
+#                               '" /asterias-web-apps/mpi.log/ApplicationCounter | wc').readline().split()[0])
 #         if in_log == 0:
 #             leave_track = os.system('/bin/touch ' + tmpDir + \
 #                                     '/had_to_restart_' + str(i + 1))
@@ -278,7 +274,7 @@ def radioUpload(fieldName, acceptedValues):
 #                 print "</body></html>"
 #                 sys.exit()
 #             else:
-#                 tryrrun = os.system('/http/mpi.log/tryRrun5.py ' + tmpDir + ' SignS &')
+#                 tryrrun = os.system('/asterias-web-apps/mpi.log/tryRrun5.py ' + tmpDir + ' SignS &')
                 
 #         else:
 #             break
@@ -299,9 +295,9 @@ def radioUpload(fieldName, acceptedValues):
 ## NOT needed anymore; delete_old_dirs runs as cron job!
 ## YES, needed: cronjobs are a pain
 currentTime = time.time()
-currentTmp = dircache.listdir("/http/signs2/www/tmp")
+currentTmp = dircache.listdir("/asterias-web-apps/signs2/www/tmp")
 for directory in currentTmp:
-    tmpS = "/http/signs2/www/tmp/" + directory
+    tmpS = "/asterias-web-apps/signs2/www/tmp/" + directory
     if (currentTime - os.path.getmtime(tmpS)) > MAX_time:
         shutil.rmtree(tmpS)
 
@@ -309,7 +305,7 @@ for directory in currentTmp:
 ### Creating temporal directories
 newDir = str(random.randint(1, 10000)) + str(os.getpid()) + str(random.randint(1, 100000)) + str(int(currentTime)) + str(random.randint(1, 10000))
 redirectLoc = "/tmp/" + newDir
-tmpDir = "/http/signs/www/tmp/" + newDir
+tmpDir = "/asterias-web-apps/signs/www/tmp/" + newDir
 os.mkdir(tmpDir)
 os.chmod(tmpDir, 0700)
 
@@ -382,7 +378,7 @@ if(fs.getfirst("covariate2")!= None):
         ## an ugly hack, as prep not in this filesystem
     os.system('wget http://prep.bioinfo.cnio.es/tmp/' + prep_tmpdir +
               '/outdata.txt -O ' + tmpDir + '/covariate')
-    ## shutil.copy("/http/prep/www/tmp/" + prep_tmpdir +"/outdata.txt",tmpDir + "/covariate")
+    ## shutil.copy("/asterias-web-apps/prep/www/tmp/" + prep_tmpdir +"/outdata.txt",tmpDir + "/covariate")
 else:
 ## Uploading files and checking not abusively large
     fileUpload('covariate')
@@ -468,14 +464,14 @@ fileNamesBrowser.close()
 
 
 ## First, delete any R file left (e.g., from killing procs, etc).
-RrunningFiles = dircache.listdir("/http/signs/www/R.running.procs")
+RrunningFiles = dircache.listdir("/asterias-web-apps/signs/www/R.running.procs")
 for Rtouchfile in RrunningFiles:
-    tmpS = "/http/signs/www/R.running.procs/" + Rtouchfile
+    tmpS = "/asterias-web-apps/signs/www/R.running.procs/" + Rtouchfile
     if (currentTime - os.path.getmtime(tmpS)) > R_MAX_time:
         os.remove(tmpS)
 
 ## Now, verify any processes left
-numRsigns = len(glob.glob("/http/signs/www/R.running.procs/R.*@*%*"))
+numRsigns = len(glob.glob("/asterias-web-apps/signs/www/R.running.procs/R.*@*%*"))
 if numRsigns > MAX_signs:
     shutil.rmtree(tmpDir)
     commonOutput()
@@ -552,15 +548,15 @@ if fs.has_key('validation'):
 
 ## touch Rout, o.w. checkdone can try to open a non-existing file
 touchRout = os.system("/bin/touch " + tmpDir + "/f1.Rout") 
-touchRrunning = os.system("/bin/touch /http/signs/www/R.running.procs/R." + newDir +
+touchRrunning = os.system("/bin/touch /asterias-web-apps/signs/www/R.running.procs/R." + newDir +
                           "@" + socket.gethostname())
-shutil.copy("/http/signs/cgi/f1.R", tmpDir)
+shutil.copy("/asterias-web-apps/signs/cgi/f1.R", tmpDir)
 checkpoint = os.system("echo 0 > " + tmpDir + "/checkpoint.num")
 createResultsFile = os.system("/bin/touch " + tmpDir + "/results.txt")
 
 
 ## Launch the lam checking program 
-run_and_check = os.spawnv(os.P_NOWAIT, '/http/signs/cgi/runAndCheck.py',
+run_and_check = os.spawnv(os.P_NOWAIT, '/asterias-web-apps/signs/cgi/runAndCheck.py',
                       ['', tmpDir])
 
 os.system('echo "' + str(run_and_check) + ' ' + socket.gethostname() +\
@@ -574,7 +570,7 @@ os.system('echo "' + str(run_and_check) + ' ' + socket.gethostname() +\
 ## that will do the right thing.
 
 
-shutil.copy("/http/signs/cgi/results-pre.html", tmpDir)
+shutil.copy("/asterias-web-apps/signs/cgi/results-pre.html", tmpDir)
 os.system("/bin/sed 's/sustituyeme/" + newDir + "/g' " +
           tmpDir + "/results-pre.html > " +
           tmpDir + "/results.html; rm " +
