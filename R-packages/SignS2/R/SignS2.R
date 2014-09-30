@@ -292,7 +292,8 @@ MAX_NCOL_FOR_CLUSTER <- 3000
 ###############################################
 
 
-my.glmboost <- function(x, time, event, newdata = NULL, mstop = 500, return.fit = FALSE){
+my.glmboost <- function(x, time, event, newdata = NULL, mstop = 500,
+                        return.fit = FALSE){
 
 
     if(!is.matrix(x))
@@ -302,7 +303,7 @@ my.glmboost <- function(x, time, event, newdata = NULL, mstop = 500, return.fit 
         x, Surv(time, event), family = CoxPH(),
         control = boost_control(mstop = mstop,center = TRUE)
     )
-
+    
     pmgc("my.glmboost, after gb1 fit")
     ## for 10-fold CV for risk; from help for cvrisk
     ## might not be 10-fold if fewer than 10
@@ -363,7 +364,32 @@ my.glmboost.cv <- function(x, time, event, mstop = 500, nfold = 10, return.fit =
     index.select <- sample(rep(1:nfold, length = n), n, replace = FALSE)
     OOB.scores <- rep(NA, n)
 
-    my.glmboost.internal.MPI <- function(fnum) {
+    ## my.glmboost.internal.MPI <- function(fnum) {
+    ##     ## to be used with papply
+    ##     cat("\n *** glmboost.internal.MPI: Doing fnum ", fnum, "\n") ## FIXME: debug
+    ##     xtrain <- x[index.select != fnum, , drop = FALSE]
+    ##     xtest <- x[index.select == fnum, , drop = FALSE]
+    ##     timetrain <- time[index.select != fnum]
+    ##     eventtrain <- event[index.select != fnum]
+    ##     cat("\n *** glmboost.internal.MPI: before call to my.glmboost\n") ## FIXME: debug
+    ##     retval <- my.glmboost(xtrain, timetrain, eventtrain, xtest,
+    ##                           mstop = mstop,
+    ##                           return.fit = return.fit)
+    ##     pmgc("glmboost.internal.MPI, after retval")
+    ##     return(retval)
+    ## }
+
+    ## tmp1 <- papply(as.list(1:nfold),
+    ##                my.glmboost.internal.MPI,
+    ##                papply_commondata = list(x = x,
+    ##                time = time, event = event, 
+    ##                index.select = index.select,
+    ##                mstop = mstop,
+    ##                return.fit = return.fit))
+
+     my.glmboost.internal.MPI <- function(fnum, x, time, event,
+                                          index.select, mstop,
+                                          return.fit) {
         ## to be used with papply
         cat("\n *** glmboost.internal.MPI: Doing fnum ", fnum, "\n") ## FIXME: debug
         xtrain <- x[index.select != fnum, , drop = FALSE]
@@ -377,25 +403,26 @@ my.glmboost.cv <- function(x, time, event, mstop = 500, nfold = 10, return.fit =
         pmgc("glmboost.internal.MPI, after retval")
         return(retval)
     }
-
-    tmp1 <- papply(as.list(1:nfold),
-                   my.glmboost.internal.MPI,
-                   papply_commondata = list(x = x,
-                   time = time, event = event, 
-                   index.select = index.select,
-                   mstop = mstop,
-                   return.fit = return.fit))
     
-    pmgc("glmboost.cv, after papply")
-    for(i in 1:nfold) {
-        OOB.scores[index.select == i] <-
-            tmp1[[i]]$predicted_surv_time
-        tmp1[[i]]$predicted_surv_time <- NULL  ## don't need this anymore
-    }
-
-    out <- list(cved.models = tmp1,
-                OOB.scores = OOB.scores)
-    return(out)
+    tmp1 <- mclapply(as.list(1:nfold),
+                         my.glmboost.internal.MPI,
+                         x = x,
+                         time = time, event = event, 
+                         index.select = index.select,
+                         mstop = mstop,
+                         return.fit = return.fit)
+        
+        
+        pmgc("glmboost.cv, after mclapply")
+        for(i in 1:nfold) {
+            OOB.scores[index.select == i] <-
+                tmp1[[i]]$predicted_surv_time
+            tmp1[[i]]$predicted_surv_time <- NULL  ## don't need this anymore
+        }
+        
+        out <- list(cved.models = tmp1,
+                    OOB.scores = OOB.scores)
+        return(out)
 }
 
     
@@ -415,8 +442,7 @@ geneSelect <- function(x, sobject, numgenes) {
     res.mat <- matrix(NA, nrow = numgenes, ncol = 6)
     funpap3 <- function (x) {
         out1 <-
-            coxph.fit.pomelo0(x, sobject,
-                              control = coxph.control(iter.max =  MaxIterationsCox))
+            coxph.fit.simple(x, sobject, MaxIterationsCox)
         if(out1$warnStatus > 1) {
             return(c(0, NA, out1$warnStatus))
         } else {
@@ -512,7 +538,35 @@ my.cforest.cv <- function(x, time, event, ngenes, nfold = 10,
     index.select <- sample(rep(1:nfold, length = n), n, replace = FALSE)
     OOB.scores <- rep(NA, n)
 
-    my.cforest.internal.MPI <- function(fnum) {
+    ## my.cforest.internal.MPI <- function(fnum) {
+    ##     ## to be used with papply
+    ##     ## the following need to be passed with
+    ##     ##    mpi.bcast.Robj2slave
+    ##     ##    x, time, event, ,
+    ##     ##    MaxIterationsCox,
+    ##     ##    index.select
+    ##     cat("\n Doing fnum ", fnum, "\n") ## FIXME: debug
+    ##     xtrain <- x[index.select != fnum, , drop = FALSE]
+    ##     xtest <- x[index.select == fnum, , drop = FALSE]
+    ##     timetrain <- time[index.select != fnum]
+    ##     eventtrain <- event[index.select != fnum]
+    ##     retval <- my.cforest(xtrain, timetrain, eventtrain, ngenes,
+    ##                          xtest, return.fit)
+    ##     pmgc("cforest.internal.MPI, after retval")
+    ##     return(retval)
+    ## }
+
+    ## tmp1 <- papply(as.list(1:nfold),
+    ##                my.cforest.internal.MPI,
+    ##                papply_commondata = list(x = x,
+    ##                time = time, event = event, 
+    ##                ngenes = ngenes, index.select = index.select,
+    ##                return.fit = return.fit))
+
+
+        my.cforest.internal.MPI <- function(fnum, x, time,
+                                            event, ngenes, index.select,
+                                            return.fit) {
         ## to be used with papply
         ## the following need to be passed with
         ##    mpi.bcast.Robj2slave
@@ -530,12 +584,12 @@ my.cforest.cv <- function(x, time, event, ngenes, nfold = 10,
         return(retval)
     }
 
-    tmp1 <- papply(as.list(1:nfold),
+    tmp1 <- mclapply(as.list(1:nfold),
                    my.cforest.internal.MPI,
-                   papply_commondata = list(x = x,
+                   x = x,
                    time = time, event = event, 
                    ngenes = ngenes, index.select = index.select,
-                   return.fit = return.fit))
+                   return.fit = return.fit)
     
     for(i in 1:nfold) {
         OOB.scores[index.select == i] <-
@@ -990,16 +1044,15 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
     t.r1 <-
         unix.time(
                   clusterOutput <-
-                  papply(as.list(1:totalProcs),
-                         nodeRun,
-                         papply_commondata = list(
-                         clusterParams = clusterParams,
-                         x = x,
-                         time = time,
-                         event = event,
-                         epi = epi,
-                         steps = maxiter,
-                         cvindex = cvindex)))
+                  mclapply(as.list(1:totalProcs),
+                           nodeRun,
+                           clusterParams = clusterParams,
+                           x = x,
+                           time = time,
+                           event = event,
+                           epi = epi,
+                           steps = maxiter,
+                           cvindex = cvindex))
 
     tmp.cvpl <- matrix(unlist(clusterOutput),
                       ncol = maxiter, byrow = TRUE)
@@ -1070,7 +1123,8 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
 ##        "cviTheCluster", "clusterParams", "i"), envir = .GlobalEnv)
 ## }
 
-nodeRun <- function(index) {
+nodeRun <- function(index, clusterParams, x, time, event, epi,
+                    maxiter, cvindex) {
     i <- clusterParams[index, 1]
     thres <- clusterParams[index, 2]
     x.train <- as.matrix(x[cvindex != i, , drop = FALSE])
@@ -1567,20 +1621,20 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
     ##bestBetas.m[[z$thres.loc]] <- z$betas
     thres.do <- (1:thresGrid)[-z$thres.loc]
 
-    tgdTrainPap <- function(varArgs)
+    tgdTrainPap <- function(varArgs, xdatasn, timedatasn,
+                            eventdatasn, epidatasn)
         return(tgdTrain(xdatasn, timedatasn, eventdatasn,
                         varArgs[1], epidatasn, varArgs[2])[[2]])
     
     variableArgs <- list()
     for(tt in thres.do) variableArgs[[tt]] <- c(thresS[tt], mins.at[tt])
 
-    bestBetas.m.pre <- papply(variableArgs,
+    bestBetas.m.pre <- mclapply(variableArgs,
                               tgdTrainPap,
-                              papply_commondata = list(
                               xdatasn = x,
                               timedatasn = time,
                               eventdatasn = event,
-                              epidatasn = epi))
+                              epidatasn = epi)
     
     bestBetas.m <- bestBetas.m.pre
     bestBetas.m[[z$thres.loc]] <- z$betas
@@ -1854,97 +1908,132 @@ summary.cvTGD <- function(object, allDataObject, subjectNames, html = TRUE,
 ############################################################
 ############################################################
 
-
-coxph.fit.pomelo0 <- function (x, y, init = NULL,
-                               control, method = "efron",  rownames = NULL) {
-    warnStatus <- 0
-    naindex <- which(is.na(x))
-    if(length(naindex)) {
-        x <- x[-naindex]
-        y <- y[naindex, ]
-    }
-    x <- as.matrix(x) ## this ain't very efficient
-    n <- nrow(y)
-    if (is.matrix(x)) 
-        nvar <- ncol(x)
-    else if (length(x) == 0) 
-        nvar <- 0
-    else nvar <- 1
-    time <- y[, 1]
-    status <- y[, 2]
-    sorted <- order(time)
-    newstrat <- as.integer(rep(0, n))
+coxph.fit.simple <- function(x, y, MaxIterationsCox) {
+    ## copied from f1-pomelo.Rç
+    ## replaces coxph.fit.pomelo0
+    x <- as.matrix(x)
+    out1 <- try(coxph.fit(x, y,
+                          strata = NULL,
+                          ## weights and offset and init are missing, OK
+                          ## as provision for that in the coxph.fit code
+                          ##
+                          method = "efron",
+                          rownames = NULL,
+                          control = coxph.control(iter.max = MaxIterationsCox)),
+                silent = silent)
     
-    offset <- rep(0, n)
-    weights <- rep(1, n)
-
-    stime <- as.double(time[sorted])
-    sstat <- as.integer(status[sorted])
-    if (nvar == 0) {
-        x <- as.matrix(rep(1, n))
-        nullmodel <- TRUE
-        nvar <- 1
-        init <- 0
-        maxiter <- 0
-    }
-    else {
-        nullmodel <- FALSE
-        maxiter <- control$iter.max
-        if (!missing(init) && !is.null(init)) {
-            if (length(init) != nvar) 
-                stop("Wrong length for inital values")
+    if(inherits(out1, "try-error")) {
+        if(length(grep("Ran out of iterations", out1, fixed = TRUE))) {
+            warnStatus <- 2
+        } else if(length(grep("Loglik converged before", out1,
+                              fixed = TRUE))) {
+            warnStatus <- 1
+        } else {
+            warnStatus <- 3
         }
-        else init <- rep(0, nvar)
+    } else {
+        warnStatus <- 0
     }
-    coxfit <- .C("coxfit2", iter = as.integer(maxiter), as.integer(n), 
-        as.integer(nvar), stime, sstat, x = x[sorted, ], as.double(offset[sorted] - 
-            mean(offset)), as.double(weights), newstrat, means = double(nvar), 
-        coef = as.double(init), u = double(nvar), imat = double(nvar * 
-            nvar), loglik = double(2), flag = integer(1), double(2 * 
-                                       n + 2 * nvar * nvar + 3 * nvar), as.double(control$eps), 
-        as.double(control$toler.chol), sctest = as.double(method == 
-            "efron"), PACKAGE = "survival")
-    if (nullmodel) {
-        score <- exp(offset[sorted])
-        coxres <- .C("coxmart", as.integer(n), as.integer(method == 
-                                                          "efron"), stime, sstat, newstrat, as.double(score), 
-                     as.double(weights), resid = double(n), PACKAGE = "survival")
-        resid <- double(n)
-        resid[sorted] <- coxres$resid
-        names(resid) <- rownames
-        list(loglik = coxfit$loglik[1], linear.predictors = offset, 
-             residuals = resid, method = c("coxph.null", "coxph"))
-    }
-    else {
-        var <- matrix(coxfit$imat, nvar, nvar)
-        coef <- coxfit$coef
-        if (coxfit$flag < nvar) 
-            which.sing <- diag(var) == 0
-        else which.sing <- rep(FALSE, nvar)
-        infs <- abs(coxfit$u %*% var)
-        if (maxiter > 1) {
-            if (coxfit$flag == 1000) { 
-                warning("Ran out of iterations and did not converge")
-                warnStatus <- 2
-            }
-            else {
-                infs <- ((infs > control$eps) & infs > control$toler.inf * 
-                         abs(coef))
-                if (any(infs)) {
-                    warning(paste("Loglik converged before variable ", 
-                                  paste((1:nvar)[infs], collapse = ","), "; beta may be infinite. "))
-                    warnStatus <- 1
-                }
-            }
-        }
-        names(coef) <- dimnames(x)[[2]]
-        lp <- c(x %*% coef) + offset - sum(coef * coxfit$means)
-        score <- exp(lp[sorted])
-        coef[which.sing] <- NA
-        list(coefficients = coef, var = var, warnStatus = warnStatus,
-             loglik = coxfit$loglik)
+    
+    if(warnStatus >= 1) {
+        return(c(NA, NA, warnStatus))
+    } else {
+        sts <- out1$coef/sqrt(out1$var)
+        return(c(out1$coef,
+                 1- pchisq((sts^2), df = 1), 
+                 warnStatus))
     }
 }
+## coxph.fit.pomelo0 <- function (x, y, init = NULL,
+##                                control, method = "efron",  rownames = NULL) {
+##     warnStatus <- 0
+##     naindex <- which(is.na(x))
+##     if(length(naindex)) {
+##         x <- x[-naindex]
+##         y <- y[naindex, ]
+##     }
+##     x <- as.matrix(x) ## this ain't very efficient
+##     n <- nrow(y)
+##     if (is.matrix(x)) 
+##         nvar <- ncol(x)
+##     else if (length(x) == 0) 
+##         nvar <- 0
+##     else nvar <- 1
+##     time <- y[, 1]
+##     status <- y[, 2]
+##     sorted <- order(time)
+##     newstrat <- as.integer(rep(0, n))
+    
+##     offset <- rep(0, n)
+##     weights <- rep(1, n)
+
+##     stime <- as.double(time[sorted])
+##     sstat <- as.integer(status[sorted])
+##     if (nvar == 0) {
+##         x <- as.matrix(rep(1, n))
+##         nullmodel <- TRUE
+##         nvar <- 1
+##         init <- 0
+##         maxiter <- 0
+##     }
+##     else {
+##         nullmodel <- FALSE
+##         maxiter <- control$iter.max
+##         if (!missing(init) && !is.null(init)) {
+##             if (length(init) != nvar) 
+##                 stop("Wrong length for inital values")
+##         }
+##         else init <- rep(0, nvar)
+##     }
+##     coxfit <- .C("coxfit2", iter = as.integer(maxiter), as.integer(n), 
+##         as.integer(nvar), stime, sstat, x = x[sorted, ], as.double(offset[sorted] - 
+##             mean(offset)), as.double(weights), newstrat, means = double(nvar), 
+##         coef = as.double(init), u = double(nvar), imat = double(nvar * 
+##             nvar), loglik = double(2), flag = integer(1), double(2 * 
+##                                        n + 2 * nvar * nvar + 3 * nvar), as.double(control$eps), 
+##         as.double(control$toler.chol), sctest = as.double(method == 
+##             "efron"), PACKAGE = "survival")
+##     if (nullmodel) {
+##         score <- exp(offset[sorted])
+##         coxres <- .C("coxmart", as.integer(n), as.integer(method == 
+##                                                           "efron"), stime, sstat, newstrat, as.double(score), 
+##                      as.double(weights), resid = double(n), PACKAGE = "survival")
+##         resid <- double(n)
+##         resid[sorted] <- coxres$resid
+##         names(resid) <- rownames
+##         list(loglik = coxfit$loglik[1], linear.predictors = offset, 
+##              residuals = resid, method = c("coxph.null", "coxph"))
+##     }
+##     else {
+##         var <- matrix(coxfit$imat, nvar, nvar)
+##         coef <- coxfit$coef
+##         if (coxfit$flag < nvar) 
+##             which.sing <- diag(var) == 0
+##         else which.sing <- rep(FALSE, nvar)
+##         infs <- abs(coxfit$u %*% var)
+##         if (maxiter > 1) {
+##             if (coxfit$flag == 1000) { 
+##                 warning("Ran out of iterations and did not converge")
+##                 warnStatus <- 2
+##             }
+##             else {
+##                 infs <- ((infs > control$eps) & infs > control$toler.inf * 
+##                          abs(coef))
+##                 if (any(infs)) {
+##                     warning(paste("Loglik converged before variable ", 
+##                                   paste((1:nvar)[infs], collapse = ","), "; beta may be infinite. "))
+##                     warnStatus <- 1
+##                 }
+##             }
+##         }
+##         names(coef) <- dimnames(x)[[2]]
+##         lp <- c(x %*% coef) + offset - sum(coef * coxfit$means)
+##         score <- exp(lp[sorted])
+##         coef[which.sing] <- NA
+##         list(coefficients = coef, var = var, warnStatus = warnStatus,
+##              loglik = coxfit$loglik)
+##     }
+## }
 
 
 
@@ -1969,8 +2058,8 @@ dStep1.serial <- function(x, time, event, p, MaxIterationsCox) {
     ## cat("\n Starting dStep1.serial at ", date(), " \n\n"); ptm <- proc.time()
     funpap3 <- function (x) {
         out1 <-
-            coxph.fit.pomelo0(x, sobject,
-                              control = coxph.control(iter.max =  MaxIterationsCox))
+            coxph.fit.simple(x, sobject,
+                               MaxIterationsCox)
         if(out1$warnStatus > 1) {
             return(c(0, NA, out1$warnStatus))
         } else {
@@ -1998,10 +2087,10 @@ dStep1.parallel <- function(x, time, event, p, MaxIterationsCox) {
     res.mat <- matrix(NA, nrow = ncol(x), ncol = 6)
     sobject <- Surv(time, event)
     cat("\n Starting dStep1.parallel at ", date(), " \n\n"); ptm <- proc.time()
-    funpap3 <- function (x) {
+    funpap3 <- function (x, sobject, MaxIterationsCox) {
         out1 <-
-            coxph.fit.pomelo0(x, sobject,
-                              control = coxph.control(iter.max = MaxIterationsCox))
+            coxph.fit.simple(x, sobject,
+                              MaxIterationsCox)
         if(out1$warnStatus > 1) {
             return(c(0, NA,  out1$warnStatus))
         } else {
@@ -2011,7 +2100,10 @@ dStep1.parallel <- function(x, time, event, p, MaxIterationsCox) {
                      out1$warnStatus))
         }
     }
-    funpap4 <- function(xmat) apply(xmat, 2, funpap3)
+    funpap4 <- function(xmat, sobject, MaxIterationsCox)
+        apply(xmat, 2, funpap3,
+              sobject = sobject,
+              MaxIterationsCox = MaxIterationsCox)
     
     ## split data into the right number of groups for parallelization
     nparalGroups <- (mpi.comm.size(comm = 1) - 1)
@@ -2027,10 +2119,10 @@ dStep1.parallel <- function(x, time, event, p, MaxIterationsCox) {
     for(ng in 1:nparalGroups)
         datalist[[ng]] <- x[, ng == paralGroups]
     
-    tmp <- matrix(unlist(papply(datalist,
+    tmp <- matrix(unlist(mclapply(datalist,
                                 funpap4,
-                                papply_commondata =list(sobject = sobject,
-                                MaxIterationsCox = MaxIterationsCox))),
+                                sobject = sobject,
+                                MaxIterationsCox = MaxIterationsCox)),
                   ncol = 3, byrow = TRUE)
 
 
@@ -2052,8 +2144,8 @@ dStep1.parallel.old <- function(x, time, event, p, MaxIterationsCox) {
     res.mat <- matrix(NA, nrow = ncol(x), ncol = 6)
     sobject <- Surv(time,event)
     cat("\n Starting dStep1.parallel at ", date(), " \n\n"); ptm <- proc.time()
-    funpap3 <- function (x) {
-        out1 <- coxph.fit.pomelo0(x, sobject, control = coxph.control(iter.max = 500))
+    funpap3 <- function (x, sobject, MaxIterationsCox) {
+        out1 <- coxph.fit.simple(x, sobject, iter.max = 500)
         if(out1$warnStatus > 1) {
             return(c(0, NA,  out1$warnStatus))
         } else {
@@ -2064,10 +2156,10 @@ dStep1.parallel.old <- function(x, time, event, p, MaxIterationsCox) {
         }
     }
 
-    tmp <- matrix(unlist(papply(as.data.frame(x),
-                             funpap3,
-                             papply_commondata =list(sobject = sobject,
-                             MaxIterationsCox = MaxIterationsCox))),
+    tmp <- matrix(unlist(mclapply(as.data.frame(x),
+                                  funpap3,
+                                  sobject = sobject,
+                                  MaxIterationsCox = MaxIterationsCox)),
                              ncol = 3, byrow = TRUE)
     res.mat[, 1:2] <- tmp[, 1:2]
     res.mat[, 3] <- ifelse(res.mat[, 2] < p, 1, 0)
@@ -2237,7 +2329,7 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
                 datalist[[jj]]$theName <- "dend.P.factor"
                 datalist[[jj]]$minCor <- minCor
             }
-            tmp <- papply(datalist, function(z) wrapDendmapp(z))
+            tmp <- mclapply(datalist, function(z) wrapDendmapp(z))
 
         } else if ((! pdok) & pnok) {
             system("touch NoPositiveCluster")
@@ -2260,7 +2352,7 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
                 datalist[[jj]]$theName <- "dend.N.factor"
                 datalist[[jj]]$minCor <- minCor
             }
-            tmp <- papply(datalist, function(z) wrapDendmapp(z))
+            tmp <- mclapply(datalist, function(z) wrapDendmapp(z))
 
             
         } else if (pdok & pnok) {
@@ -2301,7 +2393,7 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
                 datalist[[jj]]$minCor <- minCor
            }
 
-            tmp <- papply(datalist, function(z) wrapDendmapp(z))
+            tmp <- mclapply(datalist, function(z) wrapDendmapp(z))
            
         } else {
             stop("We should never get here!!! Plot error ")
@@ -2823,7 +2915,7 @@ cvDave.parallel3 <- function(x, time, event,
 
     
     cat("\n\n Computing gene-wise cox p-value\n")
-    f00 <- function(i) {
+    f00 <- function(i, x, time, event, p, MaxIterationsCox, index.select) {
         xtr <- x[index.select != i, , drop = FALSE]
         ttr <- time[index.select != i]
         etr <- event[index.select != i]
@@ -2832,22 +2924,24 @@ cvDave.parallel3 <- function(x, time, event,
     }
     pmgc("     cvDave.parallel3: before res1s")
 
-    res1s <- papply(as.list(1:nfold),
-                    f00,
-                    papply_commondata = list(
-                    x = x,
-                    time = time,
-                    event = event,
-                    p = p,
-                    MaxIterationsCox = MaxIterationsCox,
-                    index.select = index.select))
+    res1s <- mclapply(as.list(1:nfold),
+                      f00,
+                      x = x,
+                      time = time,
+                      event = event,
+                      p = p,
+                      MaxIterationsCox = MaxIterationsCox,
+                      index.select = index.select)
     pmgc("     cvDave.parallel3: after res1s")
     cat("\n\n Cleaning up MPI slaves\n\n")	
     mpiDelete()
     cat("\n\n Computing the rest\n")
 
 
-    DaveCVPred.res1Given.InternalMPI2 <- function(fnum) {
+    DaveCVPred.res1Given.InternalMPI2 <- function(fnum, x, time,
+                                                  event, p, maxSize, index.select,
+                                                  minSize, minCor,
+                                                  maxiterationscox, res1s) {
       ## to be used with papply
       ## the following need to be passed with
       ##    mpi.bcast.Robj2slave
@@ -2880,14 +2974,14 @@ cvDave.parallel3 <- function(x, time, event,
                     fmDaveObject = bestTrain))
     }
 
-    tmp1 <- papply(as.list(1:nfold),
+    tmp1 <- mclapply(as.list(1:nfold),
                    DaveCVPred.res1Given.InternalMPI2,
-                   papply_commondata = list(x = x,
-                   time = time, event = event, p = p,
-                   maxSize = maxSize, index.select = index.select,
-                   minSize = minSize, minCor = minCor,
-                   MaxIterationsCox = MaxIterationsCox,
-                   res1s = res1s))
+                     x = x,
+                     time = time, event = event, p = p,
+                     maxSize = maxSize, index.select = index.select,
+                     minSize = minSize, minCor = minCor,
+                     MaxIterationsCox = MaxIterationsCox,
+                     res1s = res1s)
     ##    cat("\n\n Cleaning up and closing MPI\n")
     ##    try(mpi.close.Rslaves())
     
