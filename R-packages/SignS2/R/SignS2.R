@@ -55,13 +55,12 @@ mydcat <- mydcat2 <- function(x) {}
 #terms -- : X matrix and the means
 #    +se  :  ""  + I matrix
 #   +new  : new X matrix and the old means + I matrix
-this.predict.coxph <-
-function(object, newdata, type=c("lp", "risk", "expected", "terms"),
-		se.fit=FALSE,
-		terms=names(object$assign), collapse, safe=FALSE, ...)
 
-    {
-    type <-match.arg(type)
+this.predict.coxph <- function(
+	object, newdata, type=c("lp", "risk", "expected", "terms"),
+	se.fit=FALSE, terms=names(object$assign), collapse, safe=FALSE, ...
+){
+    #type <-match.arg(type)
     n <- object$n
     Terms <- object$terms
     strata <- attr(Terms, 'specials')$strata
@@ -293,13 +292,17 @@ MAX_NCOL_FOR_CLUSTER <- 3000
 ###############################################
 
 
-my.glmboost <- function(x, time, event, newdata = NULL,
-                        mstop = 500, return.fit = FALSE) {
+my.glmboost <- function(x, time, event, newdata = NULL, mstop = 500, return.fit = FALSE){
 
-    if(!is.matrix(x)) x <- as.matrix(x)
-    gb1 <- glmboost(x, Surv(time, event), family = CoxPH(),
-                    control = boost_control(mstop = mstop,
-                    center = TRUE))
+
+    if(!is.matrix(x))
+        x <- as.matrix(x)
+
+    gb1 <- glmboost(
+        x, Surv(time, event), family = CoxPH(),
+        control = boost_control(mstop = mstop,center = TRUE)
+    )
+
     pmgc("my.glmboost, after gb1 fit")
     ## for 10-fold CV for risk; from help for cvrisk
     ## might not be 10-fold if fewer than 10
@@ -314,17 +317,16 @@ my.glmboost <- function(x, time, event, newdata = NULL,
     cat("\n *** inside my.glmboost:  cv10f is \n")
     print(cv10f)
     cat("\n")
-
     gridf <- c(5, 10, 25, seq(from = 50, to = mstop, length = 10))
     cat("\n *** inside my.glmboost:  gridf is ", gridf , "\n")    
-
     cvm <- cvrisk(gb1, folds = cv10f, grid = gridf)
     pmgc("my.glmboost, after cvrisk")
-
     best.mstop <- mstop(cvm)
+
     cat("\n Best mstop is ", best.mstop, "\n")
     gb1 <- gb1[mstop(cvm)]
     pmgc("my.glmboost, after mstop")
+
     selected.genes.rows <- which(abs(coef(gb1)) > 0)
     lsgenes <- length(selected.genes.rows)
     selected.genes.names <- names(selected.genes.rows)
@@ -334,14 +336,19 @@ my.glmboost <- function(x, time, event, newdata = NULL,
                                   rep(NA, lsgenes),
                                   rep(0, lsgenes),
                                   rep(NA, lsgenes))
+cat("Chegou Aqui 10")
     ## the "predict" here is from glmboost, not survival
-    overfit_predicted_surv_time <- predict(gb1, newdata = x, type = "lp")
+    overfit_predicted_surv_time <- predict(gb1, newdata = x, type = "link")
+cat("Chegou Aqui 11")
+
     pmgc("my.glmboost, after overfit_predicted_surv_time")
+cat("Chegou Aqui 12")
     if(!(is.null(newdata))) {
-        pred.stime <- predict(gb1, newdata = newdata, type = "lp")
+        pred.stime <- predict(gb1, newdata = newdata, type = "link")
     } else {
         pred.stime <- NULL
     }
+cat("Chegou Aqui 13")
     return(list(selected.genes.stats = selected.genes.stats,
                 selected.genes.rows = selected.genes.rows,
                 selected.genes.names = selected.genes.names,
@@ -555,8 +562,7 @@ pmgc <- function(message) {
 }
 
 
-print.selected.genes <- function(object,
-                                 idtype, organism) {
+print.selected.genes <- function(object,idtype, organism) {
     ## writes to a file, and python generates a bunch of HTML tables;
     ##    these are then linked from the main HTML; code is in runAndCheck.py
     
@@ -578,7 +584,7 @@ print.selected.genes <- function(object,
                 col.names = TRUE,
                 quote = FALSE,
                 sep = "\t")
-    system(paste("/http/signs/cgi/order.html.py", idtype, organism)) ## call python to generate pre-sorted HTML tables
+    system(paste("./order.html.py", idtype, organism)) ## call python to generate pre-sorted HTML tables
 }
 
 
@@ -810,15 +816,13 @@ kmplots <- function(cv.scores, overfitt.scores, Time, Event) {
     KM.visualize(overfitt.scores,  Time,                         
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2
     dev.off()
-    GDD(file = "kmplot-honest.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
-        type = "png")
+    CairoPNG(file = "kmplot-honest.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize)
     KM.visualize(cv.scores,  Time,
                  Event,  addmain = NULL) ## Good              #### Fig 1
     dev.off()
-    GDD(file = "kmplot-overfitt.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
-        type = "png")
+    CairoPNG(file = "kmplot-overfitt.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize)
     KM.visualize(overfitt.scores,  Time,                         
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2
     dev.off()
@@ -832,15 +836,13 @@ kmplots <- function(cv.scores, overfitt.scores, Time, Event) {
     KM.visualize4(overfitt.scores,  Time,                         
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.4
     dev.off()
-    GDD(file = "kmplot4-honest.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
-        type = "png")
+    CairoPNG(file = "kmplot4-honest.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize)
     KM.visualize4(cv.scores,  Time,
                  Event,  addmain = NULL) ## Good              #### Fig 1.4
     dev.off()
-    GDD(file = "kmplot4-overfitt.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
-        type = "png")
+    CairoPNG(file = "kmplot4-overfitt.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize)
     KM.visualize4(overfitt.scores,  Time,                         
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.4
     dev.off()
@@ -856,15 +858,13 @@ kmplots <- function(cv.scores, overfitt.scores, Time, Event) {
     KM.visualize3(overfitt.scores,  Time,                         
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
     dev.off()
-    GDD(file = "kmplot3-honest.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
-        type = "png")
+    CairoPNG(file = "kmplot3-honest.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize)
     KM.visualize3(cv.scores,  Time,
                  Event,  addmain = NULL) ## Good              #### Fig 1.3
     dev.off()
-    GDD(file = "kmplot3-overfitt.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
-        type = "png")
+    CairoPNG(file = "kmplot3-overfitt.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize)
     KM.visualize3(overfitt.scores,  Time,                         
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
     dev.off()
@@ -880,9 +880,8 @@ kmplots.validation <- function(scores, validationTime, validationEvent) {
     KM.visualize(valpred, validationTime,
                  validationEvent, addmain = NULL)
     dev.off()
-    GDD(file = "kmplot-validation.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
-        type = "png")
+    CairoPNG(file = "kmplot-validation.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize)
     KM.visualize(valpred, validationTime,                         
                  validationEvent, addmain = NULL)
     dev.off()
@@ -892,9 +891,8 @@ kmplots.validation <- function(scores, validationTime, validationEvent) {
     KM.visualize4(valpred, validationTime,
                   validationEvent, addmain = NULL)
     dev.off()
-    GDD(file = "kmplot4-validation.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
-        type = "png")
+    CairoPNG(file = "kmplot4-validation.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize)
     KM.visualize4(valpred, validationTime,                         
                   validationEvent, addmain = NULL)
     dev.off()
@@ -905,9 +903,8 @@ kmplots.validation <- function(scores, validationTime, validationEvent) {
     KM.visualize3(valpred, validationTime,
                   validationEvent, addmain = NULL)
     dev.off()
-    GDD(file = "kmplot3-validation.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
-        type = "png")
+    CairoPNG(file = "kmplot3-validation.png", w=gdd.width,
+        h = gdd.height, ps = png.pointsize)
     KM.visualize3(valpred, validationTime,                         
                   validationEvent,  addmain = NULL)
     dev.off()
@@ -1628,10 +1625,9 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
     }
     if(plot) {
 
-        GDD(file = "fstdgrun.png", w = png.width,
+        CairoPNG(file = "fstdgrun.png", w = png.width,
             h = png.height,
-            ps = png.pointsize,
-            type = "png")
+            ps = png.pointsize)
         par(cex.axis = 0.75); par(cex.lab = 1.4); par(cex.main = 1.5)
 
         for(ip in 1:thresGrid) {
@@ -2784,7 +2780,7 @@ mpiMyCleanSetup <- function() {
     mpi.remote.exec(library(combinat))
     mpi.remote.exec(library(SignS2))
     mpi.remote.exec(library(MASS))
-    mpi.remote.exec(library(GDD))
+    mpi.remote.exec(library(Cairo))
     mpi.remote.exec(library(R2HTML))
     mpi.remote.exec(library(party))
     mpi.remote.exec(library(mboost))
@@ -3246,8 +3242,7 @@ linkGene2 <- function(id) {
 imagemap3 <- function(filename,width=480,height=480,
                       title='Imagemap from R', ps = 12){
 
-    GDD(file = paste(filename,".png",sep=''),w=width, h=height,
-        type = "png", ps = ps)	  
+    CairoPNG(file = paste(filename,".png",sep=''),w=width, h=height, ps = ps)	  
 	  
     im <- list()
     im$Device <- dev.cur()

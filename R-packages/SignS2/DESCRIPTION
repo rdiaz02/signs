@@ -4,7 +4,7 @@ Date: 2009-07-15
 Title: Molecular signatures for survival clinical data
 Author: Ramon Diaz-Uriarte <rdiaz@ligarto.org>. Imagemap code from Barry Rowlingson <B.Rowlingson@lancaster.ac.uk>
 Maintainer: Ramon Diaz-Uriarte <rdiaz@ligarto.org>
-Depends: R (>= 2.0.0), party, survival, GDD, combinat, MASS, R2HTML, mboost, papply
+Depends: R (>= 2.0.0), survival, combinat, MASS, R2HTML, mboost, papply, party
 Suggests: Rmpi
 Description: whatever
 	     Main applications in high-dimensional data
