@@ -571,21 +571,27 @@ os.system('echo "' + str(run_and_check) + ' ' + socket.gethostname() +\
 
 
 shutil.copy("/asterias-web-apps/signs2/cgi/results-pre.html", tmpDir)
+os.system('echo copied_results-pre >> ' + tmpDir + '/checkdone2')
+
 os.system("/bin/sed 's/sustituyeme/" + newDir + "/g' " +
           tmpDir + "/results-pre.html > " +
           tmpDir + "/results.html; rm " +
           tmpDir +"/results-pre.html")
+os.system('echo sed_results-pre >> ' + tmpDir + '/checkdone2')
 
-# os.system("cd " + tmpDir + "; /bin/sed 's/sustituyeme/" +
-#           newDir + "/g' results-pre.html > results.html; rm results-pre.html")
 
 
 ##############    Redirect to checkdone.cgi    ##################
-print "Location: "+ getQualifiedURL("/tmp/" + newDir + "/results.html"), "\n\n"
-## print "Location: "+ getQualifiedURL("/cgi-bin/checkdone.cgi") + "?newDir=" + newDir, "\n\n"
+print "Location: "+ getQualifiedURL("/tmp/" + newDir + "/results.html")
+print
+
+## os.system('echo after_print >> ' + tmpDir + '/checkdone2')
 
 
-
-
-
+## a check to see if we return html quickly
+# print "Content-Type: text/html"     # HTML is following
+# print                               # blank line, end of headers
+# print "<TITLE>CGI script output</TITLE>"
+# print "<H1>This is a test</H1>"
+# print "Hello, world!"
 

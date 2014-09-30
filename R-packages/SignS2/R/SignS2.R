@@ -337,19 +337,19 @@ my.glmboost <- function(x, time, event, newdata = NULL, mstop = 500,
                                   rep(NA, lsgenes),
                                   rep(0, lsgenes),
                                   rep(NA, lsgenes))
-cat("Chegou Aqui 10")
+
     ## the "predict" here is from glmboost, not survival
     overfit_predicted_surv_time <- predict(gb1, newdata = x, type = "link")
-cat("Chegou Aqui 11")
+
 
     pmgc("my.glmboost, after overfit_predicted_surv_time")
-cat("Chegou Aqui 12")
+
     if(!(is.null(newdata))) {
         pred.stime <- predict(gb1, newdata = newdata, type = "link")
     } else {
         pred.stime <- NULL
     }
-cat("Chegou Aqui 13")
+
     return(list(selected.genes.stats = selected.genes.stats,
                 selected.genes.rows = selected.genes.rows,
                 selected.genes.names = selected.genes.names,
@@ -442,14 +442,13 @@ geneSelect <- function(x, sobject, numgenes) {
     MaxIterationsCox <- 200
     res.mat <- matrix(NA, nrow = numgenes, ncol = 6)
     funpap3 <- function (x) {
-        out1 <-
-            coxph.fit.simple(x, sobject, MaxIterationsCox)
-        if(out1$warnStatus > 1) {
-            return(c(0, NA, out1$warnStatus))
-        } else {
-            sts <- out1$coef/sqrt(out1$var)
-            return(c(out1$coef, 1- pchisq((sts^2), df = 1), out1$warnStatus))
-        }
+        return(coxph.fit.simple(x, sobject, MaxIterationsCox))
+            ## if(out1$warnStatus > 1) {
+        ##     return(c(0, NA, out1$warnStatus))
+        ## } else {
+        ##     sts <- out1$coef/sqrt(out1$var)
+        ##     return(c(out1$coef, 1- pchisq((sts^2), df = 1), out1$warnStatus))
+        ## }
     }
     tmp0 <- t(apply(x, 2, funpap3))
     to.keep <- order(tmp0[, 2])[1:numgenes]
@@ -1127,7 +1126,7 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
 ## }
 
 nodeRun <- function(index, clusterParams, x, time, event, epi,
-                    maxiter, cvindex) {
+                    steps, cvindex) {
     i <- clusterParams[index, 1]
     thres <- clusterParams[index, 2]
     x.train <- as.matrix(x[cvindex != i, , drop = FALSE])

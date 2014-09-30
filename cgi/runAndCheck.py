@@ -442,9 +442,9 @@ def printOKRun():
                 allResults.add(flname)
             allResults.close()
             outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')  
-            outf.write(printPalsURL(newDir, tmpDir, 
-                                    s1 = "Genes selected in run with all data",
-                                    s2 = "Genes selected in run with all data and in CV runs"))
+            # outf.write(printPalsURL(newDir, tmpDir, 
+            #                         s1 = "Genes selected in run with all data",
+            #                         s2 = "Genes selected in run with all data and in CV runs"))
             outf.write("</body></html>")
             outf.close()
             Rresults.close()
@@ -519,9 +519,9 @@ def printOKRun():
 
             allResults.close()
             outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')  
-            outf.write(printPalsURL(newDir, tmpDir, 
-                                    s1 = "Genes selected in run with all data",
-                                    s2 = "Genes selected in run with all data and in CV runs"))
+            # outf.write(printPalsURL(newDir, tmpDir, 
+            #                         s1 = "Genes selected in run with all data",
+            #                         s2 = "Genes selected in run with all data and in CV runs"))
             outf.write("</body></html>")
             outf.close()
             Rresults.close()
@@ -629,13 +629,13 @@ def printOKRun():
 
             allResults.close()
             outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')  
-            extract_for_PaLS_from_Signs('Results.txt',
-                                        'Selected.genes.txt',
-                                        all_runs = False)
-            extract_for_PaLS_from_Signs('Results.txt',
-                                        'Selected.and.CV.selected.txt',
-                                        all_runs = True)
-            outf.write(printPalsURL(newDir, tmpDir))
+            # extract_for_PaLS_from_Signs('Results.txt',
+            #                             'Selected.genes.txt',
+            #                             all_runs = False)
+            # extract_for_PaLS_from_Signs('Results.txt',
+            #                             'Selected.and.CV.selected.txt',
+            #                             all_runs = True)
+            # outf.write(printPalsURL(newDir, tmpDir))
             outf.write("</body></html>")
             outf.close()
             shutil.copyfile(tmpDir + "/pre-results.html", tmpDir + "/results.html")
