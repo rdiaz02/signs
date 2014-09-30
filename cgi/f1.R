@@ -19,8 +19,8 @@ checkpoint.num <- scan("checkpoint.num", what = double(0), n = 1)
 
 ## I used to use GDD in many places. Just create a function
 ## that will call CairoPNG
-GDD <- function(name, width = 600, height = 500, ps = 10, type = "png") {
-    CairoPNG(name, width = width, height = height, ps =  ps)
+GDD <- function(file, width = 600, height = 500, ps = 10, type = "png") {
+    CairoPNG(filename = file, width = width, height = height, ps =  ps)
 }
 
 
@@ -838,7 +838,7 @@ if(checkpoint.num < 4) {
                 col.names = TRUE,
                 quote = FALSE,
                 sep = "\t")
-    system(paste("/http/signs/cgi/order.html.py", idtype, organism)) ## call python to generate pre-sorted HTML tables
+    system(paste("/asterias-web-apps/signs2/cgi/order.html.py", idtype, organism)) ## call python to generate pre-sorted HTML tables
     
 
 

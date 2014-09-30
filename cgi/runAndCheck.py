@@ -949,22 +949,21 @@ def did_run_out_of_time(tmpDir, R_MAX_time):
                            
 
 def cleanups(tmpDir, newDir, newnamepid,
-             lamSuffix,
              runningProcs = runningProcs,
              appl = 'signs2'):
     """ Clean up actions; kill lam, delete running.procs files, clean process table."""
-    lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
+##    lamenv = open(tmpDir + "/lamSuffix", mode = "r").readline()
     rinfo = open(tmpDir + '/current_R_proc_info', mode = 'r').readline().split()
 
     try:
         kill_pid_machine(rinfo[1], rinfo[0])
     except:
         None
-    try:
-        os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv +
-                  '; lamhalt -H; lamwipe -H')
-    except:
-        None
+    # try:
+    #     os.system('export LAM_MPI_SESSION_SUFFIX=' + lamenv +
+    #               '; lamhalt -H; lamwipe -H')
+    # except:
+    #     None
     try:
         os.system('rm /asterias-web-apps/' + appl + '/www/R.running.procs/R.' + newDir + '*')
     except:
@@ -973,10 +972,10 @@ def cleanups(tmpDir, newDir, newnamepid,
         os.rename(tmpDir + '/pid.txt', tmpDir + '/' + newnamepid)
     except:
         None
-    try:
-        os.remove(''.join([runningProcs, 'sentinel.lam.', newDir, '.', lamSuffix]))
-    except:
-        None
+    # try:
+    #     os.remove(''.join([runningProcs, 'sentinel.lam.', newDir, '.', lamSuffix]))
+    # except:
+    #     None
 
 
 def finished_ok(tmpDir):
@@ -1173,34 +1172,34 @@ count_mpi_crash = 0
 while True:
     if did_run_out_of_time(tmpDir, R_MAX_time):
         issue_echo('run out of time', tmpDir)
-        cleanups(tmpDir, newDir, 'killed.pid.txt', lamSuffix)
+        cleanups(tmpDir, newDir, 'killed.pid.txt')
         printRKilled()
         break
     elif finished_ok(tmpDir):
         issue_echo('finished OK', tmpDir)
-        cleanups(tmpDir, newDir, 'natural.death.pid.txt', lamSuffix)
+        cleanups(tmpDir, newDir, 'natural.death.pid.txt')
         printOKRun()
         break
     elif halted(tmpDir):
         issue_echo('halted', tmpDir)
-        cleanups(tmpDir, newDir, 'natural.death.pid.txt', lamSuffix)
+        cleanups(tmpDir, newDir, 'natural.death.pid.txt')
         printErrorRun(tmpDir + '/Status.msg')
         break
     # elif did_R_crash_in_slaves(tmpDir, machine_root = 'karl')[0]:
     #     issue_echo('R crash in slaves', tmpDir)
-    #     cleanups(tmpDir, newDir, 'natural.death.pid.txt', lamSuffix)
+    #     cleanups(tmpDir, newDir, 'natural.death.pid.txt')
     #     printErrorRun(did_R_crash_in_slaves(tmpDir, machine_root = 'karl')[1])
     #     break
     elif master_out_of_time(time_start):
         issue_echo('master out of time', tmpDir)
-        cleanups(tmpDir, newDir, 'killed.pid.txt', lamSuffix)
+        cleanups(tmpDir, newDir, 'killed.pid.txt')
         printRKilled()
         break
     # elif did_mpi_crash(tmpDir, machine_root = 'karl'):
     #     count_mpi_crash += 1
     #     if count_mpi_crash > MAX_MPI_CRASHES:
     #         printMPIerror(tmpDir, MAX_MPI_CRASHES)
-    #         cleanups(tmpDir, newDir, 'MPIerror.pid.txt', lamSuffix)
+    #         cleanups(tmpDir, newDir, 'MPIerror.pid.txt')
     #         break
     #     else:
     #         recover_from_lam_crash(tmpDir, NCPU, MAX_NUM_PROCS,

@@ -2992,7 +2992,7 @@ cvDave.parallel3 <- function(x, time, event,
                      time = time, event = event, p = p,
                      maxSize = maxSize, index.select = index.select,
                      minSize = minSize, minCor = minCor,
-                     MaxIterationsCox = MaxIterationsCox,
+                     maxiterationscox = MaxIterationsCox,
                      res1s = res1s,
                      mc.cores = detectCores())
     ##    cat("\n\n Cleaning up and closing MPI\n")
