@@ -73,7 +73,7 @@ def linkGene(geneName, idtype, organism):
     if idtype == 'None' or organism == 'None':
         return geneName
     else:
-        return ''.join(['<a href="http://idclight.bioinfo.cnio.es/IDClight.prog?idtype=',
+        return ''.join(['<a href="http://idclight.iib.uam.es/IDClight.prog?idtype=',
                         idtype, '&id=', geneName, '&internal=0&org=',
                         organism,'" target="icl_window">',geneName,'</a>'])
 

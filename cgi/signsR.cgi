@@ -305,7 +305,7 @@ for directory in currentTmp:
 ### Creating temporal directories
 newDir = str(random.randint(1, 10000)) + str(os.getpid()) + str(random.randint(1, 100000)) + str(int(currentTime)) + str(random.randint(1, 10000))
 redirectLoc = "/tmp/" + newDir
-tmpDir = "/asterias-web-apps/signs/www/tmp/" + newDir
+tmpDir = "/asterias-web-apps/signs2www/tmp/" + newDir
 os.mkdir(tmpDir)
 os.chmod(tmpDir, 0700)
 
@@ -313,8 +313,8 @@ os.chmod(tmpDir, 0700)
 ### File and parameter upload
 fs = cgi.FieldStorage()
 
-idtype = radioUpload('idtype', acceptedIDTypes)
-organism = radioUpload('organism', acceptedOrganisms)
+idtype = dummyUpload('idtype', 'None')
+organism = dummyUpload('organism', 'None')
 
 methodSurv = radioUpload('methodSurv', acceptedMethodSurvs)
 if methodSurv == 'FCMS':
@@ -376,7 +376,7 @@ if methodSurv == 'cforest':
 if(fs.getfirst("covariate2")!= None):
     prep_tmpdir = fs.getfirst("covariate2")
         ## an ugly hack, as prep not in this filesystem
-    os.system('wget http://prep.bioinfo.cnio.es/tmp/' + prep_tmpdir +
+    os.system('wget http://prep.iib.uam.es/tmp/' + prep_tmpdir +
               '/outdata.txt -O ' + tmpDir + '/covariate')
     ## shutil.copy("/asterias-web-apps/prep/www/tmp/" + prep_tmpdir +"/outdata.txt",tmpDir + "/covariate")
 else:
@@ -464,14 +464,14 @@ fileNamesBrowser.close()
 
 
 ## First, delete any R file left (e.g., from killing procs, etc).
-RrunningFiles = dircache.listdir("/asterias-web-apps/signs/www/R.running.procs")
+RrunningFiles = dircache.listdir("/asterias-web-apps/signs2www/R.running.procs")
 for Rtouchfile in RrunningFiles:
-    tmpS = "/asterias-web-apps/signs/www/R.running.procs/" + Rtouchfile
+    tmpS = "/asterias-web-apps/signs2www/R.running.procs/" + Rtouchfile
     if (currentTime - os.path.getmtime(tmpS)) > R_MAX_time:
         os.remove(tmpS)
 
 ## Now, verify any processes left
-numRsigns = len(glob.glob("/asterias-web-apps/signs/www/R.running.procs/R.*@*%*"))
+numRsigns = len(glob.glob("/asterias-web-apps/signs2www/R.running.procs/R.*@*%*"))
 if numRsigns > MAX_signs:
     shutil.rmtree(tmpDir)
     commonOutput()
@@ -548,15 +548,15 @@ if fs.has_key('validation'):
 
 ## touch Rout, o.w. checkdone can try to open a non-existing file
 touchRout = os.system("/bin/touch " + tmpDir + "/f1.Rout") 
-touchRrunning = os.system("/bin/touch /asterias-web-apps/signs/www/R.running.procs/R." + newDir +
+touchRrunning = os.system("/bin/touch /asterias-web-apps/signs2www/R.running.procs/R." + newDir +
                           "@" + socket.gethostname())
-shutil.copy("/asterias-web-apps/signs/cgi/f1.R", tmpDir)
+shutil.copy("/asterias-web-apps/signs2cgi/f1.R", tmpDir)
 checkpoint = os.system("echo 0 > " + tmpDir + "/checkpoint.num")
 createResultsFile = os.system("/bin/touch " + tmpDir + "/results.txt")
 
 
 ## Launch the lam checking program 
-run_and_check = os.spawnv(os.P_NOWAIT, '/asterias-web-apps/signs/cgi/runAndCheck.py',
+run_and_check = os.spawnv(os.P_NOWAIT, '/asterias-web-apps/signs2cgi/runAndCheck.py',
                       ['', tmpDir])
 
 os.system('echo "' + str(run_and_check) + ' ' + socket.gethostname() +\
@@ -570,7 +570,7 @@ os.system('echo "' + str(run_and_check) + ' ' + socket.gethostname() +\
 ## that will do the right thing.
 
 
-shutil.copy("/asterias-web-apps/signs/cgi/results-pre.html", tmpDir)
+shutil.copy("/asterias-web-apps/signs2cgi/results-pre.html", tmpDir)
 os.system("/bin/sed 's/sustituyeme/" + newDir + "/g' " +
           tmpDir + "/results-pre.html > " +
           tmpDir + "/results.html; rm " +

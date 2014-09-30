@@ -1,9 +1,5 @@
 #!/usr/bin/python
 
-## All this code is copyright Ramon Diaz-Uriarte. For security reasons, this is for
-## now confidential. No license is granted to copy, distribute, or modify it.
-## Once everything is OK, it will be distributed under the GPL.
-
 
 import sys
 import os
@@ -160,7 +156,7 @@ def extract_for_PaLS_from_Signs(file_in, file_out, all_runs = True):
 
 def printPalsURL(newDir,
                  tmpDir,
-                 application_url = "http://signs2.bioinfo.cnio.es",
+                 application_url = "http://signs2.iib.uam.es",
                  f1 = "Selected.genes.txt",
                  f2 = "Selected.and.CV.selected.txt",
                  s1 = "genes selected in all components in main run",
@@ -184,13 +180,13 @@ def printPalsURL(newDir,
     clean_for_PaLS(tmpDir + '/' + f2, tmpDir + '/' + f2)
     
     outstr0 = '<br /> <hr> ' + \
-              '<h3> Send results to <a href = "http://pals.bioinfo.cnio.es">' + \
+              '<h3> Send results to <a href = "http://pals.iib.uam.es">' + \
               '<IMG BORDER="0" SRC="../../palsfavicon40.png" align="middle"></a></h3>'
     outstr = outstr0 + \
-             '<p> Send set of <a href="http://pals.bioinfo.cnio.es?' + \
+             '<p> Send set of <a href="http://pals.iib.uam.es?' + \
              url_org_id + 'datafile=' + gl1 + \
              '">' + s1 + ' to PaLS</a></p>' + \
-             '<p> Send set of <a href="http://pals.bioinfo.cnio.es?' + \
+             '<p> Send set of <a href="http://pals.iib.uam.es?' + \
              url_org_id + 'datafile=' + gl2 + \
              '">' + s2 + ' to PaLS</a></p>' 
     return(outstr)
@@ -255,7 +251,7 @@ def relaunchCGI():
     print '</head> <body>'
     print '<p> This is an autorefreshing page; your results will eventually be displayed here.\n'
     print 'If your browser does not autorefresh, the results will be kept for five days at</p>'
-    print '<p><a href="' + getBaseURL() + '?newDir=' + newDir + '">', 'http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html</a>.' 
+    print '<p><a href="' + getBaseURL() + '?newDir=' + newDir + '">', 'http://signs2.iib.uam.es/tmp/'+ newDir + '/results.html</a>.' 
     print '</p> </body> </html>'
     issue_echo('end of relaunchCGI', tmpDir)
     
@@ -308,7 +304,7 @@ def printOKRun():
         outf.write('<IMG BORDER="0" SRC="ErrorFigure.png">')
         outf.write("<br /><br /> <hr>")
         outf.write("<pre>")
-        outf.write('<br /><br /><h2> Results <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outputText">(help)</a></h2> \n')
+        outf.write('<br /><br /><h2> Results <a href="http://signs2.iib.uam.es/help/signs-help.html#outputText">(help)</a></h2> \n')
         outf.write("<br /><br /> <hr>")
         outf.write(cgi.escape(resultsFile))
         outf.write("</pre>")
@@ -323,7 +319,7 @@ def printOKRun():
         if (methodUsed == 'TGD') or (methodUsed == 'TGD\n'):
             outf.write("<h2> Results using the Threshold Gradient Descent method of Li and Gui</h2><br/ >\n")
             outf.write('<h2>1. Survival plots \n')
-            outf.write('<h3>1.1. Survival plots using scores from final model <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h3> \n')
+            outf.write('<h3>1.1. Survival plots using scores from final model <a href="http://signs2.iib.uam.es/help/signs-help.html#outKM">(help)</a></h3> \n')
             outf.write('<h4>Two groups</h4>')
             outf.write('<IMG BORDER="0" SRC="kmplot-honest.png">')
             outf.write('<IMG BORDER="0" SRC="kmplot-overfitt.png">')
@@ -337,7 +333,7 @@ def printOKRun():
             outf.write('<IMG BORDER="0" SRC="kmplot4-overfitt.png">')
 
             if os.path.exists(tmpDir + "/usevalidation"):
-                outf.write('<h3>1.2. Survival curves for validation data <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h3> \n')
+                outf.write('<h3>1.2. Survival curves for validation data <a href="http://signs2.iib.uam.es/help/signs-help.html#outKM">(help)</a></h3> \n')
                 outf.write('<h4>Two groups</h4>')
                 outf.write('<IMG BORDER="0" SRC="kmplot-validation.png">')
                 outf.write('<h4>Three groups</h4>')
@@ -346,17 +342,17 @@ def printOKRun():
                 outf.write('<IMG BORDER="0" SRC="kmplot4-validation.png">')
 
             outf.write('<br /> <br /><h2>2. Cross-validated partial likelihood')
-            outf.write('<a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#out.tgd">(help)</a></h2> \n')
+            outf.write('<a href="http://signs2.iib.uam.es/help/signs-help.html#out.tgd">(help)</a></h2> \n')
             outf.write('<IMG BORDER="0" SRC="cvpl.png">')
             outf.write('<p>(Use this plot to asses if the chosen values of maximum iterations and &#8710;&#951; worked appropriately.)</p>')
 
             outf.write('<br /> <br /><h2>3. Coefficients of genes (at best cross-validated partial likelihood) ')
-            outf.write('<a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#out.tgd">(help)</a></h2> \n')
+            outf.write('<a href="http://signs2.iib.uam.es/help/signs-help.html#out.tgd">(help)</a></h2> \n')
             outf.write('<IMG BORDER="0" SRC="fstdgrun.png">')
 
             outf.write("<br /><br /> <hr>")
             outf.write("<pre>")
-#             outf.write('<br /><br /><h2> Results <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outputText">(help)</a></h2> \n')
+#             outf.write('<br /><br /><h2> Results <a href="http://signs2.iib.uam.es/help/signs-help.html#outputText">(help)</a></h2> \n')
 ##            outf.write(cgi.escape(resultsFile))
             outf.write(resultsFile)
             outf.write("</pre>")
@@ -563,7 +559,7 @@ if re.search(r'[^0-9]', str(newDir)):
     sys.exit()
     
 redirectLoc = "/tmp/" + newDir
-tmpDir = "/http/signs2/www/tmp/" + newDir
+tmpDir = "/asterias-web-apps/signs2/www/tmp/" + newDir
 
 if not os.path.isdir(tmpDir):
     commonOutput()
@@ -584,7 +580,7 @@ lam_check_pid = lam_check[0]
 ## No need to reopen files or check anything else. Return url with results
 ## and bail out.
 if os.path.exists(tmpDir + "/natural.death.pid.txt") or os.path.exists(tmpDir + "/killed.pid.txt"):
-    print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
+    print 'Location: http://signs2.iib.uam.es/tmp/'+ newDir + '/results.html \n\n'
     try:
         kill_lamcheck(lam_check_pid, lam_check_machine)
     except:
@@ -625,10 +621,10 @@ if (not finishedOK) and (not errorRun) and (os.path.exists(tmpDir + "/pid.txt"))
         os.rename(tmpDir + '/pid.txt', tmpDir + '/killed.pid.txt')
 ##        os.remove(tmpDir + '/f1.R')
         try:
-            os.system("rm /http/signs2/www/R.running.procs/R." + newDir + "*")
+            os.system("rm /asterias-web-apps/signs2/www/R.running.procs/R." + newDir + "*")
         except:
             None
-        print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
+        print 'Location: http://signs2.iib.uam.es/tmp/'+ newDir + '/results.html \n\n'
         sys.exit()
 
 if errorRun > 0:
@@ -645,10 +641,10 @@ if errorRun > 0:
     except:
         None
     try:
-        os.system("rm /http/signs2/www/R.running.procs/R." + newDir + "*")
+        os.system("rm /asterias-web-apps/signs2/www/R.running.procs/R." + newDir + "*")
     except:
         None
-    print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
+    print 'Location: http://signs2.iib.uam.es/tmp/'+ newDir + '/results.html \n\n'
 
 
 elif finishedOK > 0:
@@ -667,10 +663,10 @@ elif finishedOK > 0:
     try: os.rename(tmpDir + '/pid.txt', tmpDir + '/natural.death.pid.txt')
     except: None
     try:
-        os.system("rm /http/signs2/www/R.running.procs/R." + newDir + "*")
+        os.system("rm /asterias-web-apps/signs2/www/R.running.procs/R." + newDir + "*")
     except:
         None
-    print 'Location: http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html \n\n'
+    print 'Location: http://signs2.iib.uam.es/tmp/'+ newDir + '/results.html \n\n'
 
     
 else:

@@ -19,7 +19,7 @@ import socket
 import tarfile
 
 
-sys.path = sys.path + ['/http/mpi.log']
+sys.path = sys.path + ['/asterias-web-apps/mpi.log']
 import counterApplications
 
 
@@ -29,7 +29,7 @@ MAX_MPI_CRASHES = 20
 
 
 tmpDir = sys.argv[1]
-ROOT_TMP_DIR = "/http/signs/www/tmp/"
+ROOT_TMP_DIR = "/asterias-web-apps/signs/www/tmp/"
 newDir = tmpDir.replace(ROOT_TMP_DIR, "")
 runningProcs = tmpDir.split('/tmp/')[0] + '/R.running.procs/'
 
@@ -232,7 +232,7 @@ def extract_for_PaLS_from_Signs(file_in, file_out, all_runs = True):
 
 def printPalsURL(newDir,
                  tmpDir,
-                 application_url = "http://signs2.bioinfo.cnio.es",
+                 application_url = "http://signs2.iib.uam.es",
                  f1 = "Selected.genes.txt",
                  f2 = "Selected.and.CV.selected.txt",
                  s1 = "genes selected in all components in main run",
@@ -256,13 +256,13 @@ def printPalsURL(newDir,
     clean_for_PaLS(tmpDir + '/' + f2, tmpDir + '/' + f2)
     
     outstr0 = '<br /> <hr> ' + \
-              '<h3> Send results to <a href = "http://pals.bioinfo.cnio.es">' + \
+              '<h3> Send results to <a href = "http://pals.iib.uam.es">' + \
               '<IMG BORDER="0" SRC="../../palsfavicon40.png" align="middle"></a></h3>'
     outstr = outstr0 + \
-             '<p> Send set of <a href="http://pals.bioinfo.cnio.es?' + \
+             '<p> Send set of <a href="http://pals.iib.uam.es?' + \
              url_org_id + 'datafile=' + gl1 + \
              '">' + s1 + ' to PaLS</a></p>' + \
-             '<p> Send set of <a href="http://pals.bioinfo.cnio.es?' + \
+             '<p> Send set of <a href="http://pals.iib.uam.es?' + \
              url_org_id + 'datafile=' + gl2 + \
              '">' + s2 + ' to PaLS</a></p>' 
     return(outstr)
@@ -322,7 +322,7 @@ def relaunchCGI():
     print '</head> <body>'
     print '<p> This is an autorefreshing page; your results will eventually be displayed here.\n'
     print 'If your browser does not autorefresh, the results will be kept for five days at</p>'
-    print '<p><a href="' + getBaseURL() + '?newDir=' + newDir + '">', 'http://signs2.bioinfo.cnio.es/tmp/'+ newDir + '/results.html</a>.' 
+    print '<p><a href="' + getBaseURL() + '?newDir=' + newDir + '">', 'http://signs2.iib.uam.es/tmp/'+ newDir + '/results.html</a>.' 
     print '</p> </body> </html>'
     issue_echo('end of relaunchCGI', tmpDir)
     
@@ -381,7 +381,7 @@ def printOKRun():
         outf.write('<IMG BORDER="0" SRC="ErrorFigure.png">')
         outf.write("<br /><br /> <hr>")
         outf.write("<pre>")
-        outf.write('<br /><br /><h2> Results <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outputText">(help)</a></h2> \n')
+        outf.write('<br /><br /><h2> Results <a href="http://signs2.iib.uam.es/help/signs-help.html#outputText">(help)</a></h2> \n')
         outf.write("<br /><br /> <hr>")
         outf.write(cgi.escape(resultsFile))
         outf.write("</pre>")
@@ -400,7 +400,7 @@ def printOKRun():
             if (methodUsed == 'glmboost') or (methodUsed == 'glmboost\n'):
                 outf.write("<h2> Results using boosting of component-wise Cox models (Hothorn et al., 2006b)</h2><br/ >\n")
             outf.write('<h2>1. Survival plots</h2>\n')
-            outf.write('<h3>1.1. Survival plots using scores from final model <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h3> \n')
+            outf.write('<h3>1.1. Survival plots using scores from final model <a href="http://signs2.iib.uam.es/help/signs-help.html#outKM">(help)</a></h3> \n')
             outf.write('<h4>Two groups</h4>')
             outf.write('<IMG BORDER="0" SRC="kmplot-honest.png">')
             outf.write('<IMG BORDER="0" SRC="kmplot-overfitt.png">')
@@ -414,7 +414,7 @@ def printOKRun():
             outf.write('<IMG BORDER="0" SRC="kmplot4-overfitt.png">')
 
             if os.path.exists(tmpDir + "/usevalidation"):
-                outf.write('<h3>1.2. Survival curves for validation data <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h3> \n')
+                outf.write('<h3>1.2. Survival curves for validation data <a href="http://signs2.iib.uam.es/help/signs-help.html#outKM">(help)</a></h3> \n')
                 outf.write('<h4>Two groups</h4>')
                 outf.write('<IMG BORDER="0" SRC="kmplot-validation.png">')
                 outf.write('<h4>Three groups</h4>')
@@ -457,7 +457,7 @@ def printOKRun():
         if (methodUsed == 'TGD') or (methodUsed == 'TGD\n'):
             outf.write("<h2> Results using the Threshold Gradient Descent method of Li and Gui</h2><br/ >\n")
             outf.write('<h2>1. Survival plots</h2>\n')
-            outf.write('<h3>1.1. Survival plots using scores from final model <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h3> \n')
+            outf.write('<h3>1.1. Survival plots using scores from final model <a href="http://signs2.iib.uam.es/help/signs-help.html#outKM">(help)</a></h3> \n')
             outf.write('<h4>Two groups</h4>')
             outf.write('<IMG BORDER="0" SRC="kmplot-honest.png">')
             outf.write('<IMG BORDER="0" SRC="kmplot-overfitt.png">')
@@ -471,7 +471,7 @@ def printOKRun():
             outf.write('<IMG BORDER="0" SRC="kmplot4-overfitt.png">')
 
             if os.path.exists(tmpDir + "/usevalidation"):
-                outf.write('<h3>1.2. Survival curves for validation data <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outKM">(help)</a></h3> \n')
+                outf.write('<h3>1.2. Survival curves for validation data <a href="http://signs2.iib.uam.es/help/signs-help.html#outKM">(help)</a></h3> \n')
                 outf.write('<h4>Two groups</h4>')
                 outf.write('<IMG BORDER="0" SRC="kmplot-validation.png">')
                 outf.write('<h4>Three groups</h4>')
@@ -480,17 +480,17 @@ def printOKRun():
                 outf.write('<IMG BORDER="0" SRC="kmplot4-validation.png">')
 
             outf.write('<br /> <br /><h2>2. Cross-validated partial likelihood')
-            outf.write('<a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#out.tgd">(help)</a></h2> \n')
+            outf.write('<a href="http://signs2.iib.uam.es/help/signs-help.html#out.tgd">(help)</a></h2> \n')
             outf.write('<IMG BORDER="0" SRC="cvpl.png">')
             outf.write('<p>(Use this plot to asses if the chosen values of maximum iterations and &#8710;&#951; worked appropriately.)</p>')
 
             outf.write('<br /> <br /><h2>3. Coefficients of genes (at best cross-validated partial likelihood) ')
-            outf.write('<a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#out.tgd">(help)</a></h2> \n')
+            outf.write('<a href="http://signs2.iib.uam.es/help/signs-help.html#out.tgd">(help)</a></h2> \n')
             outf.write('<IMG BORDER="0" SRC="fstdgrun.png">')
 
             outf.write("<br /><br /> <hr>")
             outf.write("<pre>")
-#             outf.write('<br /><br /><h2> Results <a href="http://signs2.bioinfo.cnio.es/help/signs-help.html#outputText">(help)</a></h2> \n')
+#             outf.write('<br /><br /><h2> Results <a href="http://signs2.iib.uam.es/help/signs-help.html#outputText">(help)</a></h2> \n')
 ##            outf.write(cgi.escape(resultsFile))
             outf.write(resultsFile)
             outf.write("</pre>")
@@ -667,9 +667,9 @@ def printRKilled():
 
 
 def printMPIerror(tmpDir, numtries, application = 'SignS'):
-    if not os.path.exists('/http/mpi.log/' + application + 'ErrorLog'):
-        os.system('touch /http/mpi.log/' + application + 'ErrorLog')
-    outlog = open('/http/mpi.log/' + application + 'ErrorLog', mode = 'a')
+    if not os.path.exists('/asterias-web-apps/mpi.log/' + application + 'ErrorLog'):
+        os.system('touch /asterias-web-apps/mpi.log/' + application + 'ErrorLog')
+    outlog = open('/asterias-web-apps/mpi.log/' + application + 'ErrorLog', mode = 'a')
     outlog.write('MPI fails on ' + time.ctime(time.time()) +
                  ' Directory: ' + tmpDir + '\n')
     outlog.close()
@@ -693,9 +693,9 @@ def printMPIerror(tmpDir, numtries, application = 'SignS'):
 
 
 def printMPITooBusy(tmpDir, MAX_DURATION_TRY, application = 'SignS'):
-    if not os.path.exists('/http/mpi.log/' + application + 'ErrorLog'):
-        os.system('touch /http/mpi.log/' + application + 'ErrorLog')
-    outlog = open('/http/mpi.log/' + application + 'ErrorLog', mode = 'a')
+    if not os.path.exists('/asterias-web-apps/mpi.log/' + application + 'ErrorLog'):
+        os.system('touch /asterias-web-apps/mpi.log/' + application + 'ErrorLog')
+    outlog = open('/asterias-web-apps/mpi.log/' + application + 'ErrorLog', mode = 'a')
     outlog.write('Something fails on ' + time.ctime(time.time()) +
                  ' Directory: ' + tmpDir + '\n')
     outlog.close()
@@ -731,7 +731,7 @@ def lamboot(lamSuffix, ncpu, runningProcs = runningProcs):
                        os.O_RDWR | os.O_CREAT | os.O_NDELAY)
     issue_echo('before fullCommand inside lamboot', tmpDir)
     fullCommand = 'export LAM_MPI_SESSION_SUFFIX="' + lamSuffix + \
-                  '"; /http/mpi.log/tryBootLAM2.py ' + lamSuffix + \
+                  '"; /asterias-web-apps/mpi.log/tryBootLAM2.py ' + lamSuffix + \
                   ' ' + str(ncpu)
     issue_echo('before os.system inside lamboot', tmpDir)
     lboot = os.system(fullCommand)
@@ -816,8 +816,8 @@ def Rrun(tmpDir, lamSuffix):
     Rcommand = 'export LAM_MPI_SESSION_SUFFIX="' + lamSuffix + \
                '"; cd ' + tmpDir + \
                '; sleep 1; /var/www/bin/R-local-7-LAM-MPI/bin/R --no-readline --no-save --slave <f1.R >>f1.Rout 2>> Status.msg &'
-#               '; sleep 1; /http/R-patched3/bin/R --no-readline --no-save --slave <f1.R >>f1.Rout 2>> Status.msg &'
-#               '; sleep 1; /http/R-www/bin/R --no-readline --no-save --slave <f1.R >>f1.Rout 2>> Status.msg &'
+#               '; sleep 1; /asterias-web-apps/R-patched3/bin/R --no-readline --no-save --slave <f1.R >>f1.Rout 2>> Status.msg &'
+#               '; sleep 1; /asterias-web-apps/R-www/bin/R --no-readline --no-save --slave <f1.R >>f1.Rout 2>> Status.msg &'
 
     Rtorun = os.system(Rcommand)
     
@@ -940,7 +940,7 @@ def cleanups(tmpDir, newDir, newnamepid,
     except:
         None
     try:
-        os.system('rm /http/' + appl + '/www/R.running.procs/R.' + newDir + '*')
+        os.system('rm /asterias-web-apps/' + appl + '/www/R.running.procs/R.' + newDir + '*')
     except:
         None
     try:
@@ -1036,7 +1036,7 @@ def my_queue(MAX_NUM_PROCS,
     out_value = 'OK'
     startTime = time.time()
     while True:
-        killedlamandr = os.system('/http/mpi.log/killOldLamAllMachines.py')
+        killedlamandr = os.system('/asterias-web-apps/mpi.log/killOldLamAllMachines.py')
         issue_echo('     inside my_queue ', tmpDir)
         if (time.time() - startTime) > MAX_DURATION_TRY:
             out_value = 'Failed'

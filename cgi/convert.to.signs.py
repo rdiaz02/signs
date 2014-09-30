@@ -25,5 +25,5 @@ if direction=='signs':
     os.system("sed 's/\/http\/signs2\//\/http\/signs\//g' signsR.cgi > tmp; mv tmp signsR.cgi")
     os.system("sed 's/\/http\/signs2\//\/http\/signs\//g' ../www/signs.html > tmp; mv tmp ../www/signs.html")
 
-os.system('chmod u+x /http/signs2/cgi/*.cgi')    
-os.system('chown -R www-data /http/signs2')
+os.system('chmod u+x /asterias-web-apps/signs2/cgi/*.cgi')    
+os.system('chown -R www-data /asterias-web-apps/signs2')
