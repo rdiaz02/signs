@@ -305,7 +305,7 @@ for directory in currentTmp:
 ### Creating temporal directories
 newDir = str(random.randint(1, 10000)) + str(os.getpid()) + str(random.randint(1, 100000)) + str(int(currentTime)) + str(random.randint(1, 10000))
 redirectLoc = "/tmp/" + newDir
-tmpDir = "/asterias-web-apps/signs2www/tmp/" + newDir
+tmpDir = "/asterias-web-apps/signs2/www/tmp/" + newDir
 os.mkdir(tmpDir)
 os.chmod(tmpDir, 0700)
 
@@ -313,10 +313,10 @@ os.chmod(tmpDir, 0700)
 ### File and parameter upload
 fs = cgi.FieldStorage()
 
-idtype = dummyUpload('idtype', 'None')
-organism = dummyUpload('organism', 'None')
+idtype = dummyUpload('idtype', 'None', tmpDir)
+organism = dummyUpload('organism', 'None', tmpDir)
 
-methodSurv = radioUpload('methodSurv', acceptedMethodSurvs)
+methodSurv = radioUpload('methodSurv', acceptedMethodSurvs, fs, tmpDir)
 if methodSurv == 'FCMS':
     maxsize = valueNumUpload('MaxSize', 'int', 2)
     minsize = valueNumUpload('MinSize', 'int', 2)
@@ -381,7 +381,7 @@ if(fs.getfirst("covariate2")!= None):
     ## shutil.copy("/asterias-web-apps/prep/www/tmp/" + prep_tmpdir +"/outdata.txt",tmpDir + "/covariate")
 else:
 ## Uploading files and checking not abusively large
-    fileUpload('covariate')
+    fileUpload('covariate', fs, tmpDir)
     if os.stat(tmpDir + '/covariate')[ST_SIZE] > MAX_covariate_size:
         shutil.rmtree(tmpDir)
         commonOutput()
@@ -391,7 +391,7 @@ else:
         print "</body></html>"
         sys.exit()
 
-fileUpload('time')
+fileUpload('time', fs, tmpDir)
 if os.stat(tmpDir + '/time')[ST_SIZE] > MAX_time_size:
     shutil.rmtree(tmpDir)
     commonOutput()
@@ -401,7 +401,7 @@ if os.stat(tmpDir + '/time')[ST_SIZE] > MAX_time_size:
     print "</body></html>"
     sys.exit()
 
-fileUpload('event')
+fileUpload('event', fs, tmpDir)
 if os.stat(tmpDir + '/event')[ST_SIZE] > MAX_time_size:
     shutil.rmtree(tmpDir)
     commonOutput()
@@ -413,7 +413,7 @@ if os.stat(tmpDir + '/event')[ST_SIZE] > MAX_time_size:
 
 if fs.has_key('validation'):
     open(tmpDir + '/usevalidation', mode = 'w').write('yes\n')
-    fileUpload('validationcovariate')
+    fileUpload('validationcovariate', fs, tmpDir)
     if os.stat(tmpDir + '/validationcovariate')[ST_SIZE] > MAX_covariate_size:
         shutil.rmtree(tmpDir)
         commonOutput()
@@ -422,7 +422,7 @@ if fs.has_key('validation'):
         print "<p> Covariate files this size not allowed.</p>"
         print "</body></html>"
         sys.exit()
-    fileUpload('validationtime')
+    fileUpload('validationtime', fs, tmpDir)
     if os.stat(tmpDir + '/validationtime')[ST_SIZE] > MAX_time_size:
         shutil.rmtree(tmpDir)
         commonOutput()
@@ -432,7 +432,7 @@ if fs.has_key('validation'):
         print "</body></html>"
         sys.exit()
 
-    fileUpload('validationevent')
+    fileUpload('validationevent', fs, tmpDir)
     if os.stat(tmpDir + '/validationevent')[ST_SIZE] > MAX_time_size:
         shutil.rmtree(tmpDir)
         commonOutput()
@@ -464,14 +464,14 @@ fileNamesBrowser.close()
 
 
 ## First, delete any R file left (e.g., from killing procs, etc).
-RrunningFiles = dircache.listdir("/asterias-web-apps/signs2www/R.running.procs")
+RrunningFiles = dircache.listdir("/asterias-web-apps/signs2/www/R.running.procs")
 for Rtouchfile in RrunningFiles:
-    tmpS = "/asterias-web-apps/signs2www/R.running.procs/" + Rtouchfile
+    tmpS = "/asterias-web-apps/signs2/www/R.running.procs/" + Rtouchfile
     if (currentTime - os.path.getmtime(tmpS)) > R_MAX_time:
         os.remove(tmpS)
 
 ## Now, verify any processes left
-numRsigns = len(glob.glob("/asterias-web-apps/signs2www/R.running.procs/R.*@*%*"))
+numRsigns = len(glob.glob("/asterias-web-apps/signs2/www/R.running.procs/R.*@*%*"))
 if numRsigns > MAX_signs:
     shutil.rmtree(tmpDir)
     commonOutput()
@@ -548,15 +548,15 @@ if fs.has_key('validation'):
 
 ## touch Rout, o.w. checkdone can try to open a non-existing file
 touchRout = os.system("/bin/touch " + tmpDir + "/f1.Rout") 
-touchRrunning = os.system("/bin/touch /asterias-web-apps/signs2www/R.running.procs/R." + newDir +
+touchRrunning = os.system("/bin/touch /asterias-web-apps/signs2/www/R.running.procs/R." + newDir +
                           "@" + socket.gethostname())
-shutil.copy("/asterias-web-apps/signs2cgi/f1.R", tmpDir)
+shutil.copy("/asterias-web-apps/signs2/cgi/f1.R", tmpDir)
 checkpoint = os.system("echo 0 > " + tmpDir + "/checkpoint.num")
 createResultsFile = os.system("/bin/touch " + tmpDir + "/results.txt")
 
 
 ## Launch the lam checking program 
-run_and_check = os.spawnv(os.P_NOWAIT, '/asterias-web-apps/signs2cgi/runAndCheck.py',
+run_and_check = os.spawnv(os.P_NOWAIT, '/asterias-web-apps/signs2/cgi/runAndCheck.py',
                       ['', tmpDir])
 
 os.system('echo "' + str(run_and_check) + ' ' + socket.gethostname() +\
@@ -570,7 +570,7 @@ os.system('echo "' + str(run_and_check) + ' ' + socket.gethostname() +\
 ## that will do the right thing.
 
 
-shutil.copy("/asterias-web-apps/signs2cgi/results-pre.html", tmpDir)
+shutil.copy("/asterias-web-apps/signs2/cgi/results-pre.html", tmpDir)
 os.system("/bin/sed 's/sustituyeme/" + newDir + "/g' " +
           tmpDir + "/results-pre.html > " +
           tmpDir + "/results.html; rm " +

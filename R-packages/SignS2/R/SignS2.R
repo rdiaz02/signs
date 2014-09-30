@@ -410,7 +410,8 @@ my.glmboost.cv <- function(x, time, event, mstop = 500, nfold = 10, return.fit =
                          time = time, event = event, 
                          index.select = index.select,
                          mstop = mstop,
-                         return.fit = return.fit)
+                         return.fit = return.fit,
+                     mc.cores = detectCores())
         
         
         pmgc("glmboost.cv, after mclapply")
@@ -589,7 +590,8 @@ my.cforest.cv <- function(x, time, event, ngenes, nfold = 10,
                    x = x,
                    time = time, event = event, 
                    ngenes = ngenes, index.select = index.select,
-                   return.fit = return.fit)
+                   return.fit = return.fit,
+                     mc.cores = detectCores())
     
     for(i in 1:nfold) {
         OOB.scores[index.select == i] <-
@@ -1052,7 +1054,8 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
                            event = event,
                            epi = epi,
                            steps = maxiter,
-                           cvindex = cvindex))
+                           cvindex = cvindex,
+                           mc.cores = detectCores()))
 
     tmp.cvpl <- matrix(unlist(clusterOutput),
                       ncol = maxiter, byrow = TRUE)
@@ -1634,7 +1637,7 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
                               xdatasn = x,
                               timedatasn = time,
                               eventdatasn = event,
-                              epidatasn = epi)
+                              epidatasn = epi, mc.cores = detectCores())
     
     bestBetas.m <- bestBetas.m.pre
     bestBetas.m[[z$thres.loc]] <- z$betas
@@ -2122,7 +2125,8 @@ dStep1.parallel <- function(x, time, event, p, MaxIterationsCox) {
     tmp <- matrix(unlist(mclapply(datalist,
                                 funpap4,
                                 sobject = sobject,
-                                MaxIterationsCox = MaxIterationsCox)),
+                                MaxIterationsCox = MaxIterationsCox,
+                                  mc.cores = detectCores())),
                   ncol = 3, byrow = TRUE)
 
 
@@ -2159,7 +2163,8 @@ dStep1.parallel.old <- function(x, time, event, p, MaxIterationsCox) {
     tmp <- matrix(unlist(mclapply(as.data.frame(x),
                                   funpap3,
                                   sobject = sobject,
-                                  MaxIterationsCox = MaxIterationsCox)),
+                                  MaxIterationsCox = MaxIterationsCox,
+                                  mc.cores = detectCores())),
                              ncol = 3, byrow = TRUE)
     res.mat[, 1:2] <- tmp[, 1:2]
     res.mat[, 3] <- ifelse(res.mat[, 2] < p, 1, 0)
@@ -2329,7 +2334,8 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
                 datalist[[jj]]$theName <- "dend.P.factor"
                 datalist[[jj]]$minCor <- minCor
             }
-            tmp <- mclapply(datalist, function(z) wrapDendmapp(z))
+            tmp <- mclapply(datalist, function(z) wrapDendmapp(z),
+                            mc.cores = detectCores())
 
         } else if ((! pdok) & pnok) {
             system("touch NoPositiveCluster")
@@ -2352,7 +2358,8 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
                 datalist[[jj]]$theName <- "dend.N.factor"
                 datalist[[jj]]$minCor <- minCor
             }
-            tmp <- mclapply(datalist, function(z) wrapDendmapp(z))
+            tmp <- mclapply(datalist, function(z) wrapDendmapp(z),
+                            mc.cores = detectCores())
 
             
         } else if (pdok & pnok) {
@@ -2393,7 +2400,8 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
                 datalist[[jj]]$minCor <- minCor
            }
 
-            tmp <- mclapply(datalist, function(z) wrapDendmapp(z))
+            tmp <- mclapply(datalist, function(z) wrapDendmapp(z),
+                            mc.cores = detectCores())
            
         } else {
             stop("We should never get here!!! Plot error ")
@@ -2931,7 +2939,8 @@ cvDave.parallel3 <- function(x, time, event,
                       event = event,
                       p = p,
                       MaxIterationsCox = MaxIterationsCox,
-                      index.select = index.select)
+                      index.select = index.select,
+                      mc.cores = detectCores())
     pmgc("     cvDave.parallel3: after res1s")
     cat("\n\n Cleaning up MPI slaves\n\n")	
     mpiDelete()
@@ -2981,7 +2990,8 @@ cvDave.parallel3 <- function(x, time, event,
                      maxSize = maxSize, index.select = index.select,
                      minSize = minSize, minCor = minCor,
                      MaxIterationsCox = MaxIterationsCox,
-                     res1s = res1s)
+                     res1s = res1s,
+                     mc.cores = detectCores())
     ##    cat("\n\n Cleaning up and closing MPI\n")
     ##    try(mpi.close.Rslaves())
     

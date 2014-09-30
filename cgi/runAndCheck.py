@@ -17,19 +17,15 @@ import socket
 ##import fcntl
 
 import tarfile
+import cgitb; cgitb.enable()
+sys.stderr = sys.stdout
 
-
-sys.path = sys.path + ['/asterias-web-apps/mpi.log']
+sys.path = sys.path + ['/asterias-web-apps/web-apps-common']
 import counterApplications
-
-
-R_MAX_time = 12 * 3600 ## 12 hours is max duration allowd for any process
-TIME_BETWEEN_CHECKS = 13
-MAX_MPI_CRASHES = 20
-
+from web_apps_config import *
 
 tmpDir = sys.argv[1]
-ROOT_TMP_DIR = "/asterias-web-apps/signs/www/tmp/"
+ROOT_TMP_DIR = "/asterias-web-apps/signs2/www/tmp/"
 newDir = tmpDir.replace(ROOT_TMP_DIR, "")
 runningProcs = tmpDir.split('/tmp/')[0] + '/R.running.procs/'
 
@@ -49,38 +45,38 @@ runningProcs = tmpDir.split('/tmp/')[0] + '/R.running.procs/'
 #     fo.write('0')
 #     fo.close()
 
-def set_defaults_lam(tmpDir):
-    """ Set defaults for lamboot and Rslaves and number procs
-    based on the size of the data file. This is all heuristic,
-    but works for us with 6 GB RAM per node. The key idea is to
-    prevent swapping. ncpu are the Rslaves spawned by lamd, or the cpu=ncpu
-    in the lamb-host file. max_num_procs is the maximum number of simultaneous
-    adacgh processes running at any time.
-    We return the tuple ncpu, max_num_procs"""
-    return(1, 5)
-## In contrast to ADaCGH, we do not see swapping here, so no need to do
-## size-dependent lam boots. FIXME: cforest and glmboost can use a lot of RAM ...
-## Maybe enable again? Use (1, something); the 1, to launch each node
-## only one process (though different runs could use the same node).
+# def set_defaults_lam(tmpDir):
+#     """ Set defaults for lamboot and Rslaves and number procs
+#     based on the size of the data file. This is all heuristic,
+#     but works for us with 6 GB RAM per node. The key idea is to
+#     prevent swapping. ncpu are the Rslaves spawned by lamd, or the cpu=ncpu
+#     in the lamb-host file. max_num_procs is the maximum number of simultaneous
+#     adacgh processes running at any time.
+#     We return the tuple ncpu, max_num_procs"""
+#     return(1, 5)
+# ## In contrast to ADaCGH, we do not see swapping here, so no need to do
+# ## size-dependent lam boots. FIXME: cforest and glmboost can use a lot of RAM ...
+# ## Maybe enable again? Use (1, something); the 1, to launch each node
+# ## only one process (though different runs could use the same node).
 
-## All methods, except, TGD, use only 10 spawned procs. Maybe use this to
-## optimize how to allocate procs. to nodes, etc?
+# ## All methods, except, TGD, use only 10 spawned procs. Maybe use this to
+# ## optimize how to allocate procs. to nodes, etc?
 
-#     datsize1 = 0
-#     datsize2 = 0
-#     if os.path.exists(tmpDir + '/acghData'):
-#         datsize1 = int(os.popen('ls ' + tmpDir + '/acghData -sk').read().split()[0])
-#     if os.path.exists(tmpDir + '/acghAndPosition'):
-#         datsize2 = int(os.popen('ls ' + tmpDir + '/acghAndPosition -sk').read().split()[0])
-#     datsize = max(datsize2, datsize1)
-#     if datsize < 2000:
-#         return (2, 3)
-#     elif datsize < 6000:
-#         return (2, 2)
-#     elif datsize < 14000:
-#         return (2, 1)
-#     else:
-#         return (1, 1)
+# #     datsize1 = 0
+# #     datsize2 = 0
+# #     if os.path.exists(tmpDir + '/acghData'):
+# #         datsize1 = int(os.popen('ls ' + tmpDir + '/acghData -sk').read().split()[0])
+# #     if os.path.exists(tmpDir + '/acghAndPosition'):
+# #         datsize2 = int(os.popen('ls ' + tmpDir + '/acghAndPosition -sk').read().split()[0])
+# #     datsize = max(datsize2, datsize1)
+# #     if datsize < 2000:
+# #         return (2, 3)
+# #     elif datsize < 6000:
+# #         return (2, 2)
+# #     elif datsize < 14000:
+# #         return (2, 1)
+# #     else:
+# #         return (1, 1)
 
 
 def collectZombies(k = 10):
@@ -112,160 +108,160 @@ def kill_pid_machine(pid, machine):
 
 
 
-def clean_for_PaLS(file_in, file_out):
-    """ Make sure no file has two consecutive lines that start with '#',
-    so there are no lists without genes."""
-    f1 = open(file_in, mode = 'r').readlines()
-    f2 = open(file_out, mode = 'w')
-    maxi = len(f1) - 1
-    i = 0
-    tmp1 = f1[i]
-    while True:
-        if i == maxi:
-            break
-        tmp2 = f1[i + 1]
-        if not tmp1.startswith('#'):
-            f2.write(tmp1)
-        elif not tmp2.startswith('#'):
-            f2.write(tmp1)
-        tmp1 = tmp2
-        i += 1
+# def clean_for_PaLS(file_in, file_out):
+#     """ Make sure no file has two consecutive lines that start with '#',
+#     so there are no lists without genes."""
+#     f1 = open(file_in, mode = 'r').readlines()
+#     f2 = open(file_out, mode = 'w')
+#     maxi = len(f1) - 1
+#     i = 0
+#     tmp1 = f1[i]
+#     while True:
+#         if i == maxi:
+#             break
+#         tmp2 = f1[i + 1]
+#         if not tmp1.startswith('#'):
+#             f2.write(tmp1)
+#         elif not tmp2.startswith('#'):
+#             f2.write(tmp1)
+#         tmp1 = tmp2
+#         i += 1
 
-    ### make sure last one is written if not a "#"
-    if not tmp2.startswith('#'):
-        f2.write(tmp2)
-    f2.close()
-
-
-def extract_for_PaLS_from_Signs(file_in, file_out, all_runs = True):
-    """ We should be able to get the output from R directly but:
-    a) its much more of a mess, and we need to hack deep inside
-    functions; we do a lot with the fitted objects (the function to
-    look at is selectedSignatures, also when it is called from
-    summary.cvDave);
-    b) because of the above, a simple, clean, call to a function
-    outside is unlikely to be simple to write;
-    c) we need to mess around with the library, etc, which is a pain;
-    d) it is a lot harder to debug;
-    e) doing it this way, with pattern matchin, etc, is a lot more fun and
-    we are just picking up the final, digested, results. Should work.
-
-    That said, this function works on an object (Results.txt) which is the
-    output from a call of html2txt, based on results.html. So there are a
-    lof ot places where this can bomb if things change in the code.
+#     ### make sure last one is written if not a "#"
+#     if not tmp2.startswith('#'):
+#         f2.write(tmp2)
+#     f2.close()
 
 
-    The logic is to keep processing lines of outut and:
-    - look for where a set of results starts;
-    - keep adding the gene names until either that is done, or a new
-    component is added (mark the later when it happens).
-    - if the set is done, look again for where a set of results starts.
+# def extract_for_PaLS_from_Signs(file_in, file_out, all_runs = True):
+#     """ We should be able to get the output from R directly but:
+#     a) its much more of a mess, and we need to hack deep inside
+#     functions; we do a lot with the fitted objects (the function to
+#     look at is selectedSignatures, also when it is called from
+#     summary.cvDave);
+#     b) because of the above, a simple, clean, call to a function
+#     outside is unlikely to be simple to write;
+#     c) we need to mess around with the library, etc, which is a pain;
+#     d) it is a lot harder to debug;
+#     e) doing it this way, with pattern matchin, etc, is a lot more fun and
+#     we are just picking up the final, digested, results. Should work.
+
+#     That said, this function works on an object (Results.txt) which is the
+#     output from a call of html2txt, based on results.html. So there are a
+#     lof ot places where this can bomb if things change in the code.
+
+
+#     The logic is to keep processing lines of outut and:
+#     - look for where a set of results starts;
+#     - keep adding the gene names until either that is done, or a new
+#     component is added (mark the later when it happens).
+#     - if the set is done, look again for where a set of results starts.
     
-    """
+#     """
     
-    f1 = open(file_in, mode = 'r').readlines()
-    f2 = open(file_out, mode = 'w')
+#     f1 = open(file_in, mode = 'r').readlines()
+#     f2 = open(file_out, mode = 'w')
 
-    def can_make_float(x):
-        try:
-            float(x)
-        except:
-            return False
-        else:
-            return True
+#     def can_make_float(x):
+#         try:
+#             float(x)
+#         except:
+#             return False
+#         else:
+#             return True
 
-    def is_start_run(x):
-        tmp = x.split()
-        if (len(tmp) == 4) and \
-           (tmp[0] == 'Component') and \
-           (tmp[1] == 'name') and \
-           (tmp[2] == 'Genes') and \
-           (tmp[3] == 'Coefficient'):
-            return True
-        else:
-            return False
+#     def is_start_run(x):
+#         tmp = x.split()
+#         if (len(tmp) == 4) and \
+#            (tmp[0] == 'Component') and \
+#            (tmp[1] == 'name') and \
+#            (tmp[2] == 'Genes') and \
+#            (tmp[3] == 'Coefficient'):
+#             return True
+#         else:
+#             return False
 
-    def another_component(x):
-        tmp = x.split()
-        if (len(tmp) == 2) and \
-           ((tmp[0][0] == 'N') or (tmp[0][0] == 'P')) and \
-           can_make_float(tmp[1]):
-            return True
-        else:
-            return False
+#     def another_component(x):
+#         tmp = x.split()
+#         if (len(tmp) == 2) and \
+#            ((tmp[0][0] == 'N') or (tmp[0][0] == 'P')) and \
+#            can_make_float(tmp[1]):
+#             return True
+#         else:
+#             return False
 
-    def end_run(x):
-        tmp = x.split()
-        if (len(tmp) == 1 and tmp[0].startswith("==================")):
-            return True
-        else:
-            return False
-
-
-    i = 0
-    maxi = len(f1) - 1
-
-    j = 1
-    k = 1
-    while True:
-        if is_start_run(f1[i]):
-            k = 1
-            f2.write("#Run." + str(j) + ".component." + str(k) + "\n")
-            i = i + 2
-            ltmp = f1[i]
-            while not end_run(ltmp):
-                if not another_component(ltmp):
-                    f2.write(ltmp.lstrip())
-                elif another_component(ltmp):
-                    k += 1
-                    f2.write("#Run." + str(j) + ".component." + str(k) + "\n")
-                i += 1
-                ltmp = f1[i]
-            if not all_runs: break
-            j += 1
-
-        i += 1
-        if i >= maxi:
-            f2.close()
-            break
+#     def end_run(x):
+#         tmp = x.split()
+#         if (len(tmp) == 1 and tmp[0].startswith("==================")):
+#             return True
+#         else:
+#             return False
 
 
-def printPalsURL(newDir,
-                 tmpDir,
-                 application_url = "http://signs2.iib.uam.es",
-                 f1 = "Selected.genes.txt",
-                 f2 = "Selected.and.CV.selected.txt",
-                 s1 = "genes selected in all components in main run",
-                 s2 = "genes selected in main run and in CV runs (all components in every run)"):
-    """ Based on Pomelo II's Send_to_Pals.cgi."""
-    f=open(tmpDir + "/idtype")
-    idtype = f.read().strip()
-    f.close()
-    f=open(tmpDir + "/organism")
-    organism = f.read().strip()
-    f.close()
-    if (idtype != "None" and organism != "None"):
-        url_org_id = "org=" + organism + "&idtype=" + idtype + "&"
-    else:
-        url_org_id = ""
-    gl_base = application_url + '/tmp/' + newDir + '/'
-    gl1 = gl_base + f1
-    gl2 = gl_base + f2
+#     i = 0
+#     maxi = len(f1) - 1
 
-    clean_for_PaLS(tmpDir + '/' + f1, tmpDir + '/' + f1)
-    clean_for_PaLS(tmpDir + '/' + f2, tmpDir + '/' + f2)
+#     j = 1
+#     k = 1
+#     while True:
+#         if is_start_run(f1[i]):
+#             k = 1
+#             f2.write("#Run." + str(j) + ".component." + str(k) + "\n")
+#             i = i + 2
+#             ltmp = f1[i]
+#             while not end_run(ltmp):
+#                 if not another_component(ltmp):
+#                     f2.write(ltmp.lstrip())
+#                 elif another_component(ltmp):
+#                     k += 1
+#                     f2.write("#Run." + str(j) + ".component." + str(k) + "\n")
+#                 i += 1
+#                 ltmp = f1[i]
+#             if not all_runs: break
+#             j += 1
+
+#         i += 1
+#         if i >= maxi:
+#             f2.close()
+#             break
+
+
+# def printPalsURL(newDir,
+#                  tmpDir,
+#                  application_url = "http://signs2.iib.uam.es",
+#                  f1 = "Selected.genes.txt",
+#                  f2 = "Selected.and.CV.selected.txt",
+#                  s1 = "genes selected in all components in main run",
+#                  s2 = "genes selected in main run and in CV runs (all components in every run)"):
+#     """ Based on Pomelo II's Send_to_Pals.cgi."""
+#     f=open(tmpDir + "/idtype")
+#     idtype = f.read().strip()
+#     f.close()
+#     f=open(tmpDir + "/organism")
+#     organism = f.read().strip()
+#     f.close()
+#     if (idtype != "None" and organism != "None"):
+#         url_org_id = "org=" + organism + "&idtype=" + idtype + "&"
+#     else:
+#         url_org_id = ""
+#     gl_base = application_url + '/tmp/' + newDir + '/'
+#     gl1 = gl_base + f1
+#     gl2 = gl_base + f2
+
+#     clean_for_PaLS(tmpDir + '/' + f1, tmpDir + '/' + f1)
+#     clean_for_PaLS(tmpDir + '/' + f2, tmpDir + '/' + f2)
     
-    outstr0 = '<br /> <hr> ' + \
-              '<h3> Send results to <a href = "http://pals.iib.uam.es">' + \
-              '<IMG BORDER="0" SRC="../../palsfavicon40.png" align="middle"></a></h3>'
-    outstr = outstr0 + \
-             '<p> Send set of <a href="http://pals.iib.uam.es?' + \
-             url_org_id + 'datafile=' + gl1 + \
-             '">' + s1 + ' to PaLS</a></p>' + \
-             '<p> Send set of <a href="http://pals.iib.uam.es?' + \
-             url_org_id + 'datafile=' + gl2 + \
-             '">' + s2 + ' to PaLS</a></p>' 
-    return(outstr)
+#     outstr0 = '<br /> <hr> ' + \
+#               '<h3> Send results to <a href = "http://pals.iib.uam.es">' + \
+#               '<IMG BORDER="0" SRC="../../palsfavicon40.png" align="middle"></a></h3>'
+#     outstr = outstr0 + \
+#              '<p> Send set of <a href="http://pals.iib.uam.es?' + \
+#              url_org_id + 'datafile=' + gl1 + \
+#              '">' + s1 + ' to PaLS</a></p>' + \
+#              '<p> Send set of <a href="http://pals.iib.uam.es?' + \
+#              url_org_id + 'datafile=' + gl2 + \
+#              '">' + s2 + ' to PaLS</a></p>' 
+#     return(outstr)
 
 
 
@@ -666,36 +662,62 @@ def printRKilled():
     shutil.copyfile(tmpDir + "/pre-results.html", tmpDir + "/results.html")
 
 
-def printMPIerror(tmpDir, numtries, application = 'SignS'):
-    if not os.path.exists('/asterias-web-apps/mpi.log/' + application + 'ErrorLog'):
-        os.system('touch /asterias-web-apps/mpi.log/' + application + 'ErrorLog')
-    outlog = open('/asterias-web-apps/mpi.log/' + application + 'ErrorLog', mode = 'a')
-    outlog.write('MPI fails on ' + time.ctime(time.time()) +
-                 ' Directory: ' + tmpDir + '\n')
-    outlog.close()
-    out1 = open(tmpDir + "/natural.death.pid.txt", mode = "w")
-    out2 = open(tmpDir + "/kill.pid.txt", mode = "w")
-    out1.write('MPI initialization error!!')
-    out2.write('MPI initialization error!!')
-    out1.close()
-    out2.close()
-    outf = open(tmpDir + "/pre-results.html", mode = "w")
-    outf.write("<html><head><title> MPI initialization problem.</title></head><body>\n")
-    outf.write("<h1> MPI initialization problem.</h1>")
-    outf.write("<p> After " + str(numtries) + " attempts we have been unable to ")
-    outf.write(" initialize MPI.</p>")
-    outf.write("<p> We will be notified of this error, but we would also ")
-    outf.write("appreciate if you can let us know of any circumstances or problems ")
-    outf.write("so we can diagnose the error.</p>")
-    outf.write("</body></html>")
-    outf.close()
-    shutil.copyfile(tmpDir + "/pre-results.html", tmpDir + "/results.html")
+# def printMPIerror(tmpDir, numtries, application = 'SignS'):
+#     if not os.path.exists('/asterias-web-apps/mpi.log/' + application + 'ErrorLog'):
+#         os.system('touch /asterias-web-apps/mpi.log/' + application + 'ErrorLog')
+#     outlog = open('/asterias-web-apps/mpi.log/' + application + 'ErrorLog', mode = 'a')
+#     outlog.write('MPI fails on ' + time.ctime(time.time()) +
+#                  ' Directory: ' + tmpDir + '\n')
+#     outlog.close()
+#     out1 = open(tmpDir + "/natural.death.pid.txt", mode = "w")
+#     out2 = open(tmpDir + "/kill.pid.txt", mode = "w")
+#     out1.write('MPI initialization error!!')
+#     out2.write('MPI initialization error!!')
+#     out1.close()
+#     out2.close()
+#     outf = open(tmpDir + "/pre-results.html", mode = "w")
+#     outf.write("<html><head><title> MPI initialization problem.</title></head><body>\n")
+#     outf.write("<h1> MPI initialization problem.</h1>")
+#     outf.write("<p> After " + str(numtries) + " attempts we have been unable to ")
+#     outf.write(" initialize MPI.</p>")
+#     outf.write("<p> We will be notified of this error, but we would also ")
+#     outf.write("appreciate if you can let us know of any circumstances or problems ")
+#     outf.write("so we can diagnose the error.</p>")
+#     outf.write("</body></html>")
+#     outf.close()
+#     shutil.copyfile(tmpDir + "/pre-results.html", tmpDir + "/results.html")
 
 
-def printMPITooBusy(tmpDir, MAX_DURATION_TRY, application = 'SignS'):
-    if not os.path.exists('/asterias-web-apps/mpi.log/' + application + 'ErrorLog'):
-        os.system('touch /asterias-web-apps/mpi.log/' + application + 'ErrorLog')
-    outlog = open('/asterias-web-apps/mpi.log/' + application + 'ErrorLog', mode = 'a')
+# def printMPITooBusy(tmpDir, MAX_DURATION_TRY, application = 'SignS'):
+#     if not os.path.exists('/asterias-web-apps/mpi.log/' + application + 'ErrorLog'):
+#         os.system('touch /asterias-web-apps/mpi.log/' + application + 'ErrorLog')
+#     outlog = open('/asterias-web-apps/mpi.log/' + application + 'ErrorLog', mode = 'a')
+#     outlog.write('Something fails on ' + time.ctime(time.time()) +
+#                  ' Directory: ' + tmpDir + '\n')
+#     outlog.close()
+#     out1 = open(tmpDir + "/natural.death.pid.txt", mode = "w")
+#     out2 = open(tmpDir + "/kill.pid.txt", mode = "w")
+#     out1.write('Cannot start!!')
+#     out2.write('Cannot start!!')
+#     out1.close()
+#     out2.close()
+#     outf = open(tmpDir + "/pre-results.html", mode = "w")
+#     outf.write("<html><head><title> Cannot start application.</title></head><body>\n")
+#     outf.write("<h1> Cannot start application.</h1>")
+#     outf.write("<p> After " + str(MAX_DURATION_TRY) + " seconds we have been unable to ")
+#     outf.write(" start the application.</p>")
+#     outf.write("<p> Most likely this means the servers are too busy and many ")
+#     outf.write("are running ahead of yours. ")
+#     outf.write("Please try again later. You can also get in touch with us ")
+#     outf.write("if you think this is our error.</p>")
+#     outf.write("</body></html>")
+#     outf.close()
+#     shutil.copyfile(tmpDir + "/pre-results.html", tmpDir + "/results.html")
+
+def printTooBusy(tmpDir, MAX_DURATION_TRY, application = 'SignS'):
+    if not os.path.exists('/asterias-web-apps/log/' + application + 'ErrorLog'):
+        os.system('touch /asterias-web-apps/log/' + application + 'ErrorLog')
+    outlog = open('/asterias-web-apps/log/' + application + 'ErrorLog', mode = 'a')
     outlog.write('Something fails on ' + time.ctime(time.time()) +
                  ' Directory: ' + tmpDir + '\n')
     outlog.close()
@@ -720,105 +742,109 @@ def printMPITooBusy(tmpDir, MAX_DURATION_TRY, application = 'SignS'):
 
 
 
+# def lamboot(lamSuffix, ncpu, runningProcs = runningProcs):
+#     'Boot a lam universe and leave a sentinel file behind'
+#     issue_echo('before sentinel inside lamboot', tmpDir)
+#     issue_echo('newDir is ' + newDir, tmpDir)
+#     issue_echo('lamSuffix ' + lamSuffix, tmpDir)
+#     issue_echo('runningProcs ' + runningProcs, tmpDir)
+#     sentinel = os.open(''.join([runningProcs, 'sentinel.lam.', newDir, '.', lamSuffix]),
+#                        os.O_RDWR | os.O_CREAT | os.O_NDELAY)
+#     issue_echo('before fullCommand inside lamboot', tmpDir)
+#     fullCommand = 'export LAM_MPI_SESSION_SUFFIX="' + lamSuffix + \
+#                   '"; /asterias-web-apps/mpi.log/tryBootLAM2.py ' + lamSuffix + \
+#                   ' ' + str(ncpu)
+#     issue_echo('before os.system inside lamboot', tmpDir)
+#     lboot = os.system(fullCommand)
+#     issue_echo('after lboot ---os.system--- inside lamboot. Exiting lamboot', tmpDir)
 
-def lamboot(lamSuffix, ncpu, runningProcs = runningProcs):
-    'Boot a lam universe and leave a sentinel file behind'
-    issue_echo('before sentinel inside lamboot', tmpDir)
-    issue_echo('newDir is ' + newDir, tmpDir)
-    issue_echo('lamSuffix ' + lamSuffix, tmpDir)
-    issue_echo('runningProcs ' + runningProcs, tmpDir)
-    sentinel = os.open(''.join([runningProcs, 'sentinel.lam.', newDir, '.', lamSuffix]),
-                       os.O_RDWR | os.O_CREAT | os.O_NDELAY)
-    issue_echo('before fullCommand inside lamboot', tmpDir)
-    fullCommand = 'export LAM_MPI_SESSION_SUFFIX="' + lamSuffix + \
-                  '"; /asterias-web-apps/mpi.log/tryBootLAM2.py ' + lamSuffix + \
-                  ' ' + str(ncpu)
-    issue_echo('before os.system inside lamboot', tmpDir)
-    lboot = os.system(fullCommand)
-    issue_echo('after lboot ---os.system--- inside lamboot. Exiting lamboot', tmpDir)
 
-
-def check_tping(lamSuffix, tmpDir, tsleep = 15, nc = 2):
-    """ Use tping to verify LAM universe OK.
-    tsleep is how long we wait before checking output of tping.
-    Verify also using 'lamexec C hostname' """
+# def check_tping(lamSuffix, tmpDir, tsleep = 15, nc = 2):
+#     """ Use tping to verify LAM universe OK.
+#     tsleep is how long we wait before checking output of tping.
+#     Verify also using 'lamexec C hostname' """
     
-    tmp2 = os.system('export LAM_MPI_SESSION_SUFFIX="' +\
-                     lamSuffix + '"; cd ' + tmpDir + \
-                     '; tping C N -c' + str(nc) + \
-                     ' > tping.out & ')
-    time.sleep(tsleep)
-    tmp = int(os.popen('cd ' + tmpDir + \
-                       '; wc tping.out').readline().split()[0])
-    os.system('rm ' + tmpDir + '/tping.out')
-    timeHuman = '##########   ' + \
-                str(time.strftime('%d %b %Y %H:%M:%S')) 
-    os.system('echo "' + timeHuman + \
-              '" >> ' + tmpDir + '/checkTping.out')
-    if tmp == 0:
-        os.system('echo "tping fails" >> ' + \
-                  tmpDir + '/checkTping.out')
-        return 0
-    elif tmp > 0:
-        os.system('echo "tping OK" >> ' + \
-                  tmpDir + '/checkTping.out')
-        lamexec = os.system('export LAM_MPI_SESSION_SUFFIX="' +\
-                            lamSuffix + '"; lamexec C hostname')
-        if lamexec == 0:
-            os.system('echo "lamexec OK" >> ' + \
-                      tmpDir + '/checkTping.out')
-            return 1
-        else:
-            os.system('echo "lamexec fails" >> ' + \
-                      tmpDir + '/checkTping.out')
-            return 0
-    else:
-        os.system('echo "tping weird ' + str(tmp) + '" >> ' + \
-                  tmpDir + '/checkTping.out')
-        return 0
+#     tmp2 = os.system('export LAM_MPI_SESSION_SUFFIX="' +\
+#                      lamSuffix + '"; cd ' + tmpDir + \
+#                      '; tping C N -c' + str(nc) + \
+#                      ' > tping.out & ')
+#     time.sleep(tsleep)
+#     tmp = int(os.popen('cd ' + tmpDir + \
+#                        '; wc tping.out').readline().split()[0])
+#     os.system('rm ' + tmpDir + '/tping.out')
+#     timeHuman = '##########   ' + \
+#                 str(time.strftime('%d %b %Y %H:%M:%S')) 
+#     os.system('echo "' + timeHuman + \
+#               '" >> ' + tmpDir + '/checkTping.out')
+#     if tmp == 0:
+#         os.system('echo "tping fails" >> ' + \
+#                   tmpDir + '/checkTping.out')
+#         return 0
+#     elif tmp > 0:
+#         os.system('echo "tping OK" >> ' + \
+#                   tmpDir + '/checkTping.out')
+#         lamexec = os.system('export LAM_MPI_SESSION_SUFFIX="' +\
+#                             lamSuffix + '"; lamexec C hostname')
+#         if lamexec == 0:
+#             os.system('echo "lamexec OK" >> ' + \
+#                       tmpDir + '/checkTping.out')
+#             return 1
+#         else:
+#             os.system('echo "lamexec fails" >> ' + \
+#                       tmpDir + '/checkTping.out')
+#             return 0
+#     else:
+#         os.system('echo "tping weird ' + str(tmp) + '" >> ' + \
+#                   tmpDir + '/checkTping.out')
+#         return 0
 
 
 
-def lam_crash_log(tmpDir, value):
+# def lam_crash_log(tmpDir, value):
+#     """ Write to the lam crash log, 'recoverFromLAMCrash.out' """
+#     timeHuman = str(time.strftime('%d %b %Y %H:%M:%S')) 
+#     os.system('echo "' + value + '  at ' + timeHuman + \
+#               '" >> ' + tmpDir + '/recoverFromLAMCrash.out')
+
+def generic_crash_log(tmpDir, value):
     """ Write to the lam crash log, 'recoverFromLAMCrash.out' """
     timeHuman = str(time.strftime('%d %b %Y %H:%M:%S')) 
     os.system('echo "' + value + '  at ' + timeHuman + \
               '" >> ' + tmpDir + '/recoverFromLAMCrash.out')
     
-def recover_from_lam_crash(tmpDir, NCPU, MAX_NUM_PROCS, lamSuffix,
-                           runningProcs = runningProcs,
-                           machine_root = 'karl'):
-    """Check if lam crashed during R run. If it did, restart R
-    after possibly rebooting the lam universe.
-    Leave a trace of what happened."""
+# def recover_from_lam_crash(tmpDir, NCPU, MAX_NUM_PROCS, lamSuffix,
+#                            runningProcs = runningProcs,
+#                            machine_root = 'karl'):
+#     """Check if lam crashed during R run. If it did, restart R
+#     after possibly rebooting the lam universe.
+#     Leave a trace of what happened."""
     
-    os.remove(''.join([runningProcs, 'sentinel.lam.', newDir, '.', lamSuffix]))
-    del_mpi_logs(tmpDir, machine_root)
-    lam_crash_log(tmpDir, 'Crashed')
-    try:
-        os.system('mv ' + tmpDir + '/mpiOK ' + tmpDir + '/previous_mpiOK')
-    except:
-        None
+#     os.remove(''.join([runningProcs, 'sentinel.lam.', newDir, '.', lamSuffix]))
+#     del_mpi_logs(tmpDir, machine_root)
+#     lam_crash_log(tmpDir, 'Crashed')
+#     try:
+#         os.system('mv ' + tmpDir + '/mpiOK ' + tmpDir + '/previous_mpiOK')
+#     except:
+#         None
 
-    check_room = my_queue(MAX_NUM_PROCS)
-    if check_room == 'Failed':
-        printMPITooBusy(tmpDir, MAX_DURATION_TRY = 5 * 3600)
+#     check_room = my_queue(MAX_NUM_PROCS)
+#     if check_room == 'Failed':
+#         printMPITooBusy(tmpDir, MAX_DURATION_TRY = 5 * 3600)
 
-    lam_ok = check_tping(lamSuffix, tmpDir)
-    if lam_ok == 0:
-        lboot = lamboot(lamSuffix, NCPU)
-    Rrun(tmpDir, lamSuffix)
-    lam_crash_log(tmpDir, '..... recovering')
+#     lam_ok = check_tping(lamSuffix, tmpDir)
+#     if lam_ok == 0:
+#         lboot = lamboot(lamSuffix, NCPU)
+#     Rrun(tmpDir, lamSuffix)
+#     lam_crash_log(tmpDir, '..... recovering')
 
 
-def Rrun(tmpDir, lamSuffix):
+def Rrun(tmpDir, R_bin):
     """ Launch R, after setting the lam stuff."""
-    Rcommand = 'export LAM_MPI_SESSION_SUFFIX="' + lamSuffix + \
-               '"; cd ' + tmpDir + \
-               '; sleep 1; /var/www/bin/R-local-7-LAM-MPI/bin/R --no-readline --no-save --slave <f1.R >>f1.Rout 2>> Status.msg &'
-#               '; sleep 1; /asterias-web-apps/R-patched3/bin/R --no-readline --no-save --slave <f1.R >>f1.Rout 2>> Status.msg &'
-#               '; sleep 1; /asterias-web-apps/R-www/bin/R --no-readline --no-save --slave <f1.R >>f1.Rout 2>> Status.msg &'
-
+    issue_echo(' inside Rrun ', tmpDir)
+    Rcommand = 'cd ' + tmpDir + \
+               '; sleep 1; ' + \
+               R_bin + ' --no-readline --no-save --slave <f1.R >>f1.Rout 2>> Status.msg &'
+    issue_echo('the Rcommand is ' + Rcommand, tmpDir)
     Rtorun = os.system(Rcommand)
     
 
@@ -1022,46 +1048,76 @@ def del_from_proc_table(del_procs = 1):
     return 'OK'
 
 
+# def my_queue(MAX_NUM_PROCS,
+#              runningProcs = runningProcs,
+#              ADD_PROCS = 1,
+#              CHECK_QUEUE = 23,
+#              MAX_DURATION_TRY = 25 * 3600):
+#     """ Wait here until the number of processes is smaller than
+#     MAX_NUM_PROCS and number of slaves smaller than MAX_NUM_PROCS + ADD_PROCS
+#     (so we allow for other apps. launching lamd).
+#     But only wait for MAX_DURATION. Check
+#     every CHECK_QUEUE seconds. If able to find an opening, return
+#     OK, otherwise return Failed"""
+#     out_value = 'OK'
+#     startTime = time.time()
+#     while True:
+#         killedlamandr = os.system('/asterias-web-apps/mpi.log/killOldLamAllMachines.py')
+#         issue_echo('     inside my_queue ', tmpDir)
+#         if (time.time() - startTime) > MAX_DURATION_TRY:
+#             out_value = 'Failed'
+#             break
+#         num_lamd = int(os.popen('pgrep -u www lamd | wc').readline().split()[0])
+#         num_sentinel = int(len(glob.glob(''.join([runningProcs, 'sentinel.lam.*']))))
+#         if (num_lamd < (MAX_NUM_PROCS + ADD_PROCS)) and (num_sentinel < MAX_NUM_PROCS):
+#             issue_echo('     OK; num_lamd = ' + str(num_lamd) + \
+#                        '; num_sentinel = ' + str(num_sentinel), tmpDir)
+#             break
+#         else:
+# 	    issue_echo('     wait:  num_lamd = ' + str(num_lamd) + \
+#                        '; num_sentinel = ' + str(num_sentinel), tmpDir)
+#             time.sleep(CHECK_QUEUE + random.uniform(0.1, 5))
+#     return out_value
+
 def my_queue(MAX_NUM_PROCS,
              runningProcs = runningProcs,
              ADD_PROCS = 1,
              CHECK_QUEUE = 23,
-             MAX_DURATION_TRY = 25 * 3600):
+             MAX_DURATION_TRY = MAX_DURATION_TRY_Signs):
     """ Wait here until the number of processes is smaller than
-    MAX_NUM_PROCS and number of slaves smaller than MAX_NUM_PROCS + ADD_PROCS
-    (so we allow for other apps. launching lamd).
+    MAX_NUM_PROCS 
     But only wait for MAX_DURATION. Check
     every CHECK_QUEUE seconds. If able to find an opening, return
     OK, otherwise return Failed"""
     out_value = 'OK'
     startTime = time.time()
     while True:
-        killedlamandr = os.system('/asterias-web-apps/mpi.log/killOldLamAllMachines.py')
+#        killedlamandr = os.system('/asterias-web-apps/mpi.log/killOldLamAllMachines.py')
         issue_echo('     inside my_queue ', tmpDir)
         if (time.time() - startTime) > MAX_DURATION_TRY:
             out_value = 'Failed'
             break
-        num_lamd = int(os.popen('pgrep -u www lamd | wc').readline().split()[0])
+ #       num_lamd = int(os.popen('pgrep -u www lamd | wc').readline().split()[0])
         num_sentinel = int(len(glob.glob(''.join([runningProcs, 'sentinel.lam.*']))))
-        if (num_lamd < (MAX_NUM_PROCS + ADD_PROCS)) and (num_sentinel < MAX_NUM_PROCS):
-            issue_echo('     OK; num_lamd = ' + str(num_lamd) + \
-                       '; num_sentinel = ' + str(num_sentinel), tmpDir)
+        if (num_sentinel < MAX_NUM_PROCS):
+            issue_echo(' num_sentinel = ' + str(num_sentinel), tmpDir)
             break
         else:
-	    issue_echo('     wait:  num_lamd = ' + str(num_lamd) + \
+	    issue_echo('     wait:  ' + \
                        '; num_sentinel = ' + str(num_sentinel), tmpDir)
             time.sleep(CHECK_QUEUE + random.uniform(0.1, 5))
     return out_value
 
-def generate_lam_suffix(tmpDir):
-    """As it says. Generate and write it out"""
-    lamSuffix = str(int(time.time())) + \
-                str(os.getpid()) + str(random.randint(10, 999999))
-    lamenvfile = open(tmpDir + '/lamSuffix', mode = 'w')
-    lamenvfile.write(lamSuffix)
-    lamenvfile.flush()
-    lamenvfile.close()
-    return lamSuffix
+    
+# def generate_lam_suffix(tmpDir):
+#     """As it says. Generate and write it out"""
+#     lamSuffix = str(int(time.time())) + \
+#                 str(os.getpid()) + str(random.randint(10, 999999))
+#     lamenvfile = open(tmpDir + '/lamSuffix', mode = 'w')
+#     lamenvfile.write(lamSuffix)
+#     lamenvfile.flush()
+#     lamenvfile.close()
+#     return lamSuffix
 
 
 
@@ -1070,38 +1126,45 @@ def generate_lam_suffix(tmpDir):
 issue_echo('starting', tmpDir)
 
         
-NCPU, MAX_NUM_PROCS = set_defaults_lam(tmpDir)
+## NCPU, MAX_NUM_PROCS = set_defaults_lam(tmpDir)
 
 try:
-    counterApplications.add_to_log('Signs2', tmpDir, socket.gethostname())
+    counterApplications.add_to_counter_log('Signs2', tmpDir, socket.gethostname())
 except:
     None
 
 issue_echo('at 2', tmpDir)
 
-lamSuffix = generate_lam_suffix(tmpDir)
+## lamSuffix = generate_lam_suffix(tmpDir)
 
 issue_echo('at 3', tmpDir)
 
-time.sleep(random.uniform(0.1, 15)) ## Break ties if starting at identical times
+time.sleep(random.uniform(0.01, 1 )) ## Break ties if starting at identical times
 
-check_room = my_queue(MAX_NUM_PROCS)
+check_room = my_queue(MAX_signs,
+                      MAX_DURATION_TRY = MAX_DURATION_TRY_Signs)
+
 issue_echo('after check_room', tmpDir)
 
 if check_room == 'Failed':
-    printMPITooBusy(tmpDir, MAX_DURATION_TRY = 5 * 3600)
+    printTooBusy(tmpDir, MAX_DURATION_TRY_Signs)
     sys.exit()
 
 issue_echo('before lamboot', tmpDir)
-lamboot(lamSuffix, NCPU)
-issue_echo('after lamboot', tmpDir)
-
-counterApplications.add_to_LAM_SUFFIX_LOG(lamSuffix, 'SignS2', tmpDir,
-                                          socket.gethostname())
 
 
-Rrun(tmpDir, lamSuffix)
-        
+# lamboot(lamSuffix, NCPU)
+# issue_echo('after lamboot', tmpDir)
+
+# counterApplications.add_to_LAM_SUFFIX_LOG(lamSuffix, 'SignS2', tmpDir,
+#                                           socket.gethostname())
+
+issue_echo('before  Rrun', tmpDir)
+
+Rrun(tmpDir, R_bin)
+
+issue_echo('after Rrun', tmpDir)
+
 time_start = time.time()
 time.sleep(TIME_BETWEEN_CHECKS + random.uniform(0.1, 3))
 
@@ -1123,28 +1186,28 @@ while True:
         cleanups(tmpDir, newDir, 'natural.death.pid.txt', lamSuffix)
         printErrorRun(tmpDir + '/Status.msg')
         break
-    elif did_R_crash_in_slaves(tmpDir, machine_root = 'karl')[0]:
-        issue_echo('R crash in slaves', tmpDir)
-        cleanups(tmpDir, newDir, 'natural.death.pid.txt', lamSuffix)
-        printErrorRun(did_R_crash_in_slaves(tmpDir, machine_root = 'karl')[1])
-        break
+    # elif did_R_crash_in_slaves(tmpDir, machine_root = 'karl')[0]:
+    #     issue_echo('R crash in slaves', tmpDir)
+    #     cleanups(tmpDir, newDir, 'natural.death.pid.txt', lamSuffix)
+    #     printErrorRun(did_R_crash_in_slaves(tmpDir, machine_root = 'karl')[1])
+    #     break
     elif master_out_of_time(time_start):
         issue_echo('master out of time', tmpDir)
         cleanups(tmpDir, newDir, 'killed.pid.txt', lamSuffix)
         printRKilled()
         break
-    elif did_mpi_crash(tmpDir, machine_root = 'karl'):
-        count_mpi_crash += 1
-        if count_mpi_crash > MAX_MPI_CRASHES:
-            printMPIerror(tmpDir, MAX_MPI_CRASHES)
-            cleanups(tmpDir, newDir, 'MPIerror.pid.txt', lamSuffix)
-            break
-        else:
-            recover_from_lam_crash(tmpDir, NCPU, MAX_NUM_PROCS,
-                                   lamSuffix,
-                                   machine_root = 'karl')
+    # elif did_mpi_crash(tmpDir, machine_root = 'karl'):
+    #     count_mpi_crash += 1
+    #     if count_mpi_crash > MAX_MPI_CRASHES:
+    #         printMPIerror(tmpDir, MAX_MPI_CRASHES)
+    #         cleanups(tmpDir, newDir, 'MPIerror.pid.txt', lamSuffix)
+    #         break
+    #     else:
+    #         recover_from_lam_crash(tmpDir, NCPU, MAX_NUM_PROCS,
+    #                                lamSuffix,
+    #                                machine_root = 'karl')
     else:
-        lam_crash_log(tmpDir, 'NoCrash') ## if we get here, this much we know
+        generic_crash_log(tmpDir, 'NoCrash') ## if we get here, this much we know
     time.sleep(TIME_BETWEEN_CHECKS)
 
 
