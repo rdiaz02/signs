@@ -2109,7 +2109,9 @@ dStep1.parallel <- function(x, time, event, p, MaxIterationsCox) {
               MaxIterationsCox = MaxIterationsCox)
     
     ## split data into the right number of groups for parallelization
-    nparalGroups <- (mpi.comm.size(comm = 1) - 1)
+    ## nparalGroups <- (mpi.comm.size(comm = 1) - 1)
+    ## this is an overkill. Oh well.
+    nparalGroups <- min(ncol(x), detectCores())
     if(nparalGroups > 1) {
         paralGroups <- as.numeric(factor(cut(1:ncol(x),
                                              nparalGroups, labels = FALSE)))
@@ -2863,32 +2865,32 @@ DaveCVPred.res1Given.InternalMPI <- function() {
                 fmDaveObject = bestTrain))
 }
 
-mpiSpawnAll <- function(numslaves = NULL) {
-    if (is.null(numslaves)) numslaves <- mpi.universe.size()
-    mpi.spawn.Rslaves(nslaves = numslaves)
-    mpiMyCleanSetup()
-}
+## mpiSpawnAll <- function(numslaves = NULL) {
+##     if (is.null(numslaves)) numslaves <- mpi.universe.size()
+##     mpi.spawn.Rslaves(nslaves = numslaves)
+##     mpiMyCleanSetup()
+## }
 
-mpiSpawnThis <- function(hosts) {
-    mpi.spawn.Rslaves(nslaves = mpi.universe.size(), hosts = hosts)
-    mpiMyCleanSetup()
-}
+## mpiSpawnThis <- function(hosts) {
+##     mpi.spawn.Rslaves(nslaves = mpi.universe.size(), hosts = hosts)
+##     mpiMyCleanSetup()
+## }
 
-mpiMyCleanSetup <- function() {
-    mpi.remote.exec(rm(list = ls(env = .GlobalEnv), envir =.GlobalEnv))
-    mpi.remote.exec(library(survival))
-    mpi.remote.exec(library(combinat))
-    mpi.remote.exec(library(SignS2))
-    mpi.remote.exec(library(MASS))
-    mpi.remote.exec(library(Cairo))
-    mpi.remote.exec(library(R2HTML))
-    mpi.remote.exec(library(party))
-    mpi.remote.exec(library(mboost))
-}
+## mpiMyCleanSetup <- function() {
+##     mpi.remote.exec(rm(list = ls(env = .GlobalEnv), envir =.GlobalEnv))
+##     mpi.remote.exec(library(survival))
+##     mpi.remote.exec(library(combinat))
+##     mpi.remote.exec(library(SignS2))
+##     mpi.remote.exec(library(MASS))
+##     mpi.remote.exec(library(Cairo))
+##     mpi.remote.exec(library(R2HTML))
+##     mpi.remote.exec(library(party))
+##     mpi.remote.exec(library(mboost))
+## }
 
-mpiDelete <- function() {
-    mpi.remote.exec(rm(list = ls(env = .GlobalEnv), envir =.GlobalEnv))
-}
+## mpiDelete <- function() {
+##     mpi.remote.exec(rm(list = ls(env = .GlobalEnv), envir =.GlobalEnv))
+## }
 
 
 
@@ -2902,20 +2904,20 @@ cvDave.parallel3 <- function(x, time, event,
     pmgc("Beginning of cvDave.parallel3")
     cat("\n Starting cvDave.parallel3 at ", date(), " \n\n"); ptm <- proc.time()
     
-    if (mpi.comm.size(comm = 1) == 0) {
-        mpiSpawnAll(universeSize)
-        cat("\n      cvDave.parallel3:  cond 1 \n")
-    } else { ## so mpi is running
-        if ((mpi.comm.size(comm = 1) - 1) < universeSize) {
-            ## but few salves
-            mpi.close.Rslaves()
-            mpiSpawnAll(universeSize)
-            cat("\n     cvDave.parallel3:  cond 2 \n")
-        } else {
-            mpiDelete()
-            cat("\n     cvDave.parallel3:  cond 3 \n")
-        }
-    }
+    ## if (mpi.comm.size(comm = 1) == 0) {
+    ##     mpiSpawnAll(universeSize)
+    ##     cat("\n      cvDave.parallel3:  cond 1 \n")
+    ## } else { ## so mpi is running
+    ##     if ((mpi.comm.size(comm = 1) - 1) < universeSize) {
+    ##         ## but few salves
+    ##         mpi.close.Rslaves()
+    ##         mpiSpawnAll(universeSize)
+    ##         cat("\n     cvDave.parallel3:  cond 2 \n")
+    ##     } else {
+    ##         mpiDelete()
+    ##         cat("\n     cvDave.parallel3:  cond 3 \n")
+    ##     }
+    ## }
        
     n <- length(time)
     index.select <- sample(rep(1:nfold, length = n), n, replace = FALSE)

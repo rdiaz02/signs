@@ -17,6 +17,13 @@ checkpoint.num <- scan("checkpoint.num", what = double(0), n = 1)
 
 
 
+## I used to use GDD in many places. Just create a function
+## that will call CairoPNG
+GDD <- function(name, width = 600, height = 500, ps = 10, type = "png") {
+    CairoPNG(name, width = width, height = height, ps =  ps)
+}
+
+
 
 ## From: http://ace.acadiau.ca/math/ACMMaC/Rmpi/sample.html
 # In case R exits unexpectedly, have it automatically clean up 
@@ -35,28 +42,28 @@ checkpoint.num <- scan("checkpoint.num", what = double(0), n = 1)
     flush(RterminatedOK)
     close(RterminatedOK)
     save.image()
-    if (is.loaded("mpi_initialize")){ 
-        if (mpi.comm.size(1) > 0){ 
-        try(print("Please use mpi.close.Rslaves() to close slaves."), silent = TRUE)
-        try(mpi.close.Rslaves() , silent = TRUE)
-        } 
-        try(print("Please use mpi.quit() to quit R"), silent = TRUE)
-        cat("\n\n Normal termination\n")
-        try(stopCluster(TheCluster), silent = TRUE)
-        ##        .Call("mpi_finalize")
-        try(system(paste("/http/mpi.log/killLAM.py", lamSESSION, "&")))
-        cat(paste("\n Did the call to killLAM.py 1 ", date(), " \n"),
-        file = "tmp.checks", append = TRUE)
-        try(mpi.quit(save = "no"), silent = TRUE)
-    }
-    try(stopCluster(TheCluster), silent = TRUE)
+    ## if (is.loaded("mpi_initialize")){ 
+    ##     if (mpi.comm.size(1) > 0){ 
+    ##     try(print("Please use mpi.close.Rslaves() to close slaves."), silent = TRUE)
+    ##     try(mpi.close.Rslaves() , silent = TRUE)
+    ##     } 
+    ##     try(print("Please use mpi.quit() to quit R"), silent = TRUE)
+    ##     cat("\n\n Normal termination\n")
+    ##     try(stopCluster(TheCluster), silent = TRUE)
+    ##     ##        .Call("mpi_finalize")
+    ##     try(system(paste("/http/mpi.log/killLAM.py", lamSESSION, "&")))
+    ##     cat(paste("\n Did the call to killLAM.py 1 ", date(), " \n"),
+    ##     file = "tmp.checks", append = TRUE)
+    ##     try(mpi.quit(save = "no"), silent = TRUE)
+    ## }
+    ## try(stopCluster(TheCluster), silent = TRUE)
     cat("\n\n Normal termination\n")
     ## In case the CGI is not called (user kills browser)
     ## have a way to stop lam
-    try(system(paste("/http/mpi.log/killLAM.py", lamSESSION, "&")))
-    cat(paste("\n Did the call to killLAM.py 2 ", date(), " \n"),
-        file = "tmp.checks", append = TRUE)
-    try(mpi.quit(save = "no"), silent = TRUE)
+##     try(system(paste("/http/mpi.log/killLAM.py", lamSESSION, "&")))
+    ## cat(paste("\n Did the call to killLAM.py 2 ", date(), " \n"),
+    ##     file = "tmp.checks", append = TRUE)
+    ## try(mpi.quit(save = "no"), silent = TRUE)
 }
 
 doCheckpoint <- function(num) {
@@ -105,15 +112,15 @@ sink()
 
 
 #library(CGIwithR)
-library(Rmpi)
-library(survival)
-library(combinat)
-library(MASS)
+## library(Rmpi)
+## library(survival) ## this and next three already in Signs Depends
+## library(combinat)
+## library(MASS)
+## library(R2HTML)
 library(SignS2)
-library(papply)
+## library(papply)
 #library(snow)
-library(R2HTML)
-library(GDD)
+library(Cairo)
 #library(imagemap) ## FIXME: remove
 
 
@@ -220,21 +227,21 @@ if( methodSurv == "TGD") {
 
 #########################################################
 
-MPI_MIN_UNIVERSE_SIZE <- 10
+## MPI_MIN_UNIVERSE_SIZE <- 10
 
-if (mpi.universe.size () < MPI_MIN_UNIVERSE_SIZE) {
-    cat("\n\n mpi.universe.size () < MPI_MIN_UNIVERSE_SIZE \n\n")
-    ## Issue an Execution halted, because this signals a problem in the cluster
-    cat("\n\n mpi.universe.size () = ", mpi.universe.size(),
-        " < MPI_MIN_UNIVERSE_SIZE \n\nExecution halted\n",
-        file = "Status.msg", append = TRUE)
-    quit(save = "no", status = 11, runLast = FALSE)
-}
+## if (mpi.universe.size () < MPI_MIN_UNIVERSE_SIZE) {
+##     cat("\n\n mpi.universe.size () < MPI_MIN_UNIVERSE_SIZE \n\n")
+##     ## Issue an Execution halted, because this signals a problem in the cluster
+##     cat("\n\n mpi.universe.size () = ", mpi.universe.size(),
+##         " < MPI_MIN_UNIVERSE_SIZE \n\nExecution halted\n",
+##         file = "Status.msg", append = TRUE)
+##     quit(save = "no", status = 11, runLast = FALSE)
+## }
 
-if(methodSurv == "TGD") mpiSpawnAll()
-if(methodSurv == "FCMS") mpiSpawnAll(10)
-if(methodSurv == "cforest") mpiSpawnAll(10)
-if(methodSurv == "glmboost") mpiSpawnAll(10)
+## if(methodSurv == "TGD") mpiSpawnAll()
+## if(methodSurv == "FCMS") mpiSpawnAll(10)
+## if(methodSurv == "cforest") mpiSpawnAll(10)
+## if(methodSurv == "glmboost") mpiSpawnAll(10)
 
 ## if(methodSurv == "TGD") {
 ##     TheCluster <- makeCluster(mpi.universe.size(), "MPI")
@@ -246,9 +253,10 @@ sink(file = "mpiOK")
 cat("MPI started OK\n")
 sink()
 
-trylam <- try(
-              lamSESSION <- scan("lamSuffix", what = "character",
-                                 sep = "\t", strip.white = TRUE))
+
+## trylam <- try(
+##               lamSESSION <- scan("lamSuffix", what = "character",
+##                                  sep = "\t", strip.white = TRUE))
 
 
 
@@ -257,16 +265,16 @@ trylam <- try(
 ## enter info into lam suffix log table
 
 tmpDir <- getwd()
-sed.command <- paste("sed -i 's/RprocessPid\t",
-                     lamSESSION, "\t", hostn, "/",
-                     pid, "\t",
-                     lamSESSION, "\t", hostn, "/' ",
-                     "/http/mpi.log/LAM_SUFFIX_Log",
-                     sep = "")
-## debugging:
-sed.command
+## sed.command <- paste("sed -i 's/RprocessPid\t",
+##                      lamSESSION, "\t", hostn, "/",
+##                      pid, "\t",
+##                      lamSESSION, "\t", hostn, "/' ",
+##                      "/http/mpi.log/LAM_SUFFIX_Log",
+##                      sep = "")
+## ## debugging:
+## sed.command
 
-system(sed.command)
+## system(sed.command)
 
 
 
@@ -680,15 +688,13 @@ if(checkpoint.num < 4) {
     KM.visualize3(allDataRun$tgd.alldata$scores, Time,                         
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
     dev.off()
-    GDD(file = "kmplot3-honest.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
-        type = "png")
+    GDD(file = "kmplot3-honest.png", width=gdd.width,
+        height = gdd.height, ps = png.pointsize)
     KM.visualize3(cvTGDResults$OOB.scores, Time,
                  Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1.3
     dev.off()
-    GDD(file = "kmplot3-overfitt.png", w=png.width,
-        h = gdd.height, ps = png.pointsize,
-        type = "png")
+    GDD(file = "kmplot3-overfitt.png", width=png.width,
+        height = gdd.height, ps = png.pointsize)
     KM.visualize3(allDataRun$tgd.alldata$scores, Time,                         
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
     dev.off()
@@ -776,9 +782,8 @@ if(checkpoint.num < 4) {
         KM.visualize3(valpred, validationTime,
                       validationEvent, ngroups = 2, addmain = NULL)
         dev.off()
-        GDD(file = "kmplot3-validation.png", w=gdd.width,
-            h = gdd.height, ps = png.pointsize,
-            type = "png")
+        GDD(file = "kmplot3-validation.png", width=gdd.width,
+            height = gdd.height, ps = png.pointsize)
         KM.visualize3(valpred, validationTime,                         
                       validationEvent, ngroups = 2, addmain = NULL)
         dev.off()    
@@ -798,8 +803,8 @@ if(checkpoint.num < 4) {
 
     if(checkpoint.num < 2) {
 
-        mpi.bcast.Robj2slave(idtype)
-        mpi.bcast.Robj2slave(organism)
+        ## mpi.bcast.Robj2slave(idtype)
+        ## mpi.bcast.Robj2slave(organism)
         
     
     MaxIterationsCox <- 200
@@ -809,7 +814,7 @@ if(checkpoint.num < 4) {
                                                Minp, MaxIterationsCox)
                    )
     if(class(trycode) == "try-error")
-        caughtOurError(paste("Function dStep1.parallel bombed unexpectedly with error",
+        caughtOurError(paste("Function dStep1.serial bombed unexpectedly with error",
                              trycode, ". \n Please let us know so we can fix the code."))
 
 #################    p-value tables      #################            
@@ -1027,14 +1032,14 @@ doCheckpoint(5)
     KM.visualize(all.res3$scores, Time,                         
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2
     dev.off()
-    GDD(file = "kmplot-honest.png", w=gdd.width,
-           h = gdd.height, ps = png.pointsize,
+    GDD(file = "kmplot-honest.png", width = gdd.width,
+           height = gdd.height, ps = png.pointsize,
            type = "png")
     KM.visualize(cvDaveRun$OOB.scores, Time,
                  Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1
     dev.off()
-    GDD(file = "kmplot-overfitt.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
+    GDD(file = "kmplot-overfitt.png", width = gdd.width,
+        height = gdd.height, ps = png.pointsize,
         type = "png")
     KM.visualize(all.res3$scores, Time,                         
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2
@@ -1049,14 +1054,14 @@ doCheckpoint(5)
     KM.visualize4(all.res3$scores, Time,                         
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.4
     dev.off()
-    GDD(file = "kmplot4-honest.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
+    GDD(file = "kmplot4-honest.png", width = gdd.width,
+        height = gdd.height, ps = png.pointsize,
         type = "png")
     KM.visualize4(cvDaveRun$OOB.scores, Time,
                  Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1.4
     dev.off()
-    GDD(file = "kmplot4-overfitt.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
+    GDD(file = "kmplot4-overfitt.png", width = gdd.width,
+        height = gdd.height, ps = png.pointsize,
         type = "png")
     KM.visualize4(all.res3$scores, Time,                         
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.4
@@ -1073,14 +1078,14 @@ doCheckpoint(5)
     KM.visualize3(all.res3$scores, Time,                         
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
     dev.off()
-    GDD(file = "kmplot3-honest.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
+    GDD(file = "kmplot3-honest.png", width = gdd.width,
+        height = gdd.height, ps = png.pointsize,
         type = "png")
     KM.visualize3(cvDaveRun$OOB.scores, Time,
                  Event, ngroups = 2, addmain = NULL) ## Good              #### Fig 1.3
     dev.off()
-    GDD(file = "kmplot3-overfitt.png", w=gdd.width,
-        h = gdd.height, ps = png.pointsize,
+    GDD(file = "kmplot3-overfitt.png", width = gdd.width,
+        height = gdd.height, ps = png.pointsize,
         type = "png")
     KM.visualize3(all.res3$scores, Time,                         
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
@@ -1104,8 +1109,8 @@ doCheckpoint(5)
         KM.visualize(valpred, validationTime,
                      validationEvent, ngroups = 2, addmain = NULL)
         dev.off()
-        GDD(file = "kmplot-validation.png", w=gdd.width,
-               h = gdd.height, ps = png.pointsize,
+        GDD(file = "kmplot-validation.png", width = gdd.width,
+               height = gdd.height, ps = png.pointsize,
                type = "png")
         KM.visualize(valpred, validationTime,                         
                      validationEvent, ngroups = 2, addmain = NULL)
@@ -1116,8 +1121,8 @@ doCheckpoint(5)
         KM.visualize4(valpred, validationTime,
                      validationEvent, ngroups = 2, addmain = NULL)
         dev.off()
-        GDD(file = "kmplot4-validation.png", w=gdd.width,
-               h = gdd.height, ps = png.pointsize,
+        GDD(file = "kmplot4-validation.png", width = gdd.width,
+               height = gdd.height, ps = png.pointsize,
                type = "png")
         KM.visualize4(valpred, validationTime,                         
                      validationEvent, ngroups = 2, addmain = NULL)
@@ -1129,8 +1134,8 @@ doCheckpoint(5)
         KM.visualize3(valpred, validationTime,
                      validationEvent, ngroups = 2, addmain = NULL)
         dev.off()
-        GDD(file = "kmplot3-validation.png", w=gdd.width,
-               h = gdd.height, ps = png.pointsize,
+        GDD(file = "kmplot3-validation.png", width = gdd.width,
+               height = gdd.height, ps = png.pointsize,
                type = "png")
         KM.visualize3(valpred, validationTime,                         
                      validationEvent, ngroups = 2, addmain = NULL)
@@ -1144,8 +1149,8 @@ doCheckpoint(5)
 ##    mpi.quit(save = "no")
 } else if(methodSurv == "cforest") {
     if(checkpoint.num < 2) { ## Model for all data
-        mpi.bcast.Robj2slave(idtype)
-        mpi.bcast.Robj2slave(organism)
+        ## mpi.bcast.Robj2slave(idtype)
+        ## mpi.bcast.Robj2slave(organism)
         MaxIterationsCox <- 200
         if(useValidation == "yes") {
             trycode <- try(
@@ -1194,8 +1199,8 @@ doCheckpoint(5)
     save.image()
 } else if(methodSurv == "glmboost") {
     if(checkpoint.num < 2) { ## Model for all data
-        mpi.bcast.Robj2slave(idtype)
-        mpi.bcast.Robj2slave(organism)
+        ## mpi.bcast.Robj2slave(idtype)
+        ## mpi.bcast.Robj2slave(organism)
         if(useValidation == "yes") {
             trycode <- try(
                             glmb.all <- my.glmboost(xdata, Time, Event, validationxdata)
