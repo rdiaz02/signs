@@ -2060,15 +2060,16 @@ dStep1.serial <- function(x, time, event, p, MaxIterationsCox) {
     sobject <- Surv(time, event)
     ## cat("\n Starting dStep1.serial at ", date(), " \n\n"); ptm <- proc.time()
     funpap3 <- function (x) {
-        out1 <-
+        out <-
             coxph.fit.simple(x, sobject,
                                MaxIterationsCox)
-        if(out1$warnStatus > 1) {
-            return(c(0, NA, out1$warnStatus))
-        } else {
-            sts <- out1$coef/sqrt(out1$var)
-            return(c(out1$coef, 1- pchisq((sts^2), df = 1), out1$warnStatus))
-        }
+        ## if(out1$warnStatus > 1) {
+        ##     return(c(0, NA, out1$warnStatus))
+        ## } else {
+        ##     sts <- out1$coef/sqrt(out1$var)
+        ##     return(c(out1$coef, 1- pchisq((sts^2), df = 1), out1$warnStatus))
+        ## }
+        return(out)
     }
     tmp <- t(apply(x, 2, funpap3))
     res.mat[, 1:2] <- tmp[, 1:2]
@@ -2945,7 +2946,7 @@ cvDave.parallel3 <- function(x, time, event,
                       mc.cores = detectCores())
     pmgc("     cvDave.parallel3: after res1s")
     cat("\n\n Cleaning up MPI slaves\n\n")	
-    mpiDelete()
+    ## mpiDelete()
     cat("\n\n Computing the rest\n")
 
 
