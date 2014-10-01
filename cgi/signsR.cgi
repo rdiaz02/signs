@@ -5,15 +5,11 @@ import socket
 import sys
 import os
 import cgi 
-##import types
 import time
 import shutil
 import dircache
-##import string
 import random
-##import re
 from stat import ST_SIZE
-import subprocess
 import cgitb
 cgitb.enable() 
 # sys.stderr = sys.stdout
@@ -553,18 +549,12 @@ touchRout = os.system("/bin/touch " + tmpDir + "/f1.Rout")
 touchRrunning = os.system("/bin/touch /asterias-web-apps/signs2/www/R.running.procs/R." + newDir +
                           "@" + socket.gethostname())
 shutil.copy("/asterias-web-apps/signs2/cgi/f1.R", tmpDir)
-checkpoint = os.system("echo 0 > " + tmpDir + "/checkpoint.num")
 createResultsFile = os.system("/bin/touch " + tmpDir + "/results.txt")
-
+# checkpoint = os.system("echo 0 > " + tmpDir + "/checkpoint.num")
 
 ## Launch the lam checking program
-# For some reason, the results.html redirection take a loooooong time.
 run_and_check = os.spawnv(os.P_NOWAIT, '/asterias-web-apps/signs2/cgi/runAndCheck.py',
                          ['', tmpDir])
-# run_and_check = subprocess.Popen(["/asterias-web-apps/signs2/cgi/runAndCheck.py", tmpDir])
-
-## run_and_check = os.system("/asterias-web-apps/signs2/cgi/runAndCheck.py " + tmpDir + " &")
-
 os.system('echo "' + str(run_and_check) + ' ' + socket.gethostname() +\
               '"> ' + tmpDir + '/run_and_checkPID')
 
