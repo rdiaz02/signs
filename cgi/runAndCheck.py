@@ -17,8 +17,8 @@ import socket
 ##import fcntl
 
 import tarfile
-import cgitb; cgitb.enable()
-sys.stderr = sys.stdout
+# import cgitb; cgitb.enable()
+# sys.stderr = sys.stdout
 
 sys.path = sys.path + ['/asterias-web-apps/web-apps-common']
 import counterApplications

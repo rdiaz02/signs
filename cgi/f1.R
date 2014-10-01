@@ -13,7 +13,9 @@ system("hostname")
 
 cat("\nRunning\n", file = "Status.msg")
 
-checkpoint.num <- scan("checkpoint.num", what = double(0), n = 1)
+checkpoint.num <- try(scan("checkpoint.num", what = double(0), n = 1))
+if(class(checkpoint.num) == "try-error")
+    checkpoint.num <- 0
 
 
 
