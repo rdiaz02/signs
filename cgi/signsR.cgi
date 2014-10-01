@@ -9,6 +9,7 @@ import time
 import shutil
 import dircache
 import random
+import subprocess
 from stat import ST_SIZE
 
 # import cgitb
@@ -378,65 +379,16 @@ os.system("/bin/sed 's/sustituyeme/" + newDir + "/g' " +
 # os.system('echo sed_results-pre >> ' + tmpDir + '/checkdone2')
 
 
-##############    Redirect to checkdone.cgi    ##################
+## Launch the running and monitoring program
+subprocess.Popen(['/asterias-web-apps/signs2/cgi/runAndCheck.py', tmpDir],
+                 stdout = subprocess.PIPE, stdin = subprocess.PIPE, \
+                 stderr = subprocess.PIPE)
+
+
+##############    Return autorefresing results.hmtl    ##################
 print "Location:"+ getQualifiedURL("/tmp/" + newDir + "/results.html")
 print ""
 
-sys.stdout.flush() ## does nothing
-
-
-
-## Launch the running and monitoring program
-## All of these make apache wait for the spawned process!
-## I have no idea how to avoid it.
-# run_and_check = os.spawnv(os.P_NOWAIT, '/asterias-web-apps/signs2/cgi/runAndCheck.py',
-#                           ['', tmpDir])
-# os.spawnv(os.P_NOWAIT, '/asterias-web-apps/signs2/cgi/runAndCheck.py',
-#           ['', tmpDir])
-import subprocess
-subprocess.Popen(['/asterias-web-apps/signs2/cgi/runAndCheck.py', tmpDir],
-                 stdout = subprocess.PIPE, stdin = subprocess.PIPE,
-                 stderr = subprocess.PIPE)
-                 
-
-
-
-# the_other_python = 'nohup /asterias-web-apps/signs2/cgi/runAndCheck.py ' + tmpDir + ' &'
-# os.system(the_other_python)
-
-
-# the_intermediate_python = 'nohup /asterias-web-apps/signs2/cgi/intermediate.py ' + tmpDir + ' &'
-# os.system('echo "' + the_intermediate_python + ' '  +\
-#                  '"> ' + tmpDir + '/the_intermediate_python_job')
-# os.system(the_intermediate_python)
-
-## using at from? Nope, www-data cannot use at.
-# http://programmers.stackexchange.com/questions/47436/best-practices-when-managing-long-running-asynchronous-jobs/47718#47718
-
-# the_job_for_at = '/asterias-web-apps/signs2/cgi/runAndCheck.py ' + tmpDir + ' &'
-# os.system('echo "' + the_job_for_at + '"> ' +
-#           tmpDir + '/the_job_for_at')
-# os.system('at now -f ' + tmpDir + '/the_job_for_at')
-
-
-# os.system('echo "' + str(run_and_check) + ' ' + socket.gethostname() +\
-#               '"> ' + tmpDir + '/run_and_checkPID')
-
-
-
-
-## os.system('echo after_print >> ' + tmpDir + '/checkdone2')
-
-
-
-
-
-## a check to see if we return html quickly
-# print "Content-Type: text/html"     # HTML is following
-# print                               # blank line, end of headers
-# print "<TITLE>CGI script output</TITLE>"
-# print "<H1>This is a test</H1>"
-# print "Hello, world!"
 
 
 
