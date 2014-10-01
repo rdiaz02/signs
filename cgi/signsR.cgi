@@ -317,6 +317,7 @@ fs = cgi.FieldStorage()
 idtype = dummyUpload('idtype', 'None', tmpDir)
 organism = dummyUpload('organism', 'None', tmpDir)
 
+
 methodSurv = radioUpload('methodSurv', acceptedMethodSurvs, fs, tmpDir, APP_NAME)
 if methodSurv == 'FCMS':
     maxsize = valueNumUpload('MaxSize', 'int', 2)
@@ -587,12 +588,13 @@ os.system('echo sed_results-pre >> ' + tmpDir + '/checkdone2')
 
 
 ##############    Redirect to checkdone.cgi    ##################
+#print "Status: 303 See other"
 print "Location:"+ getQualifiedURL("/tmp/" + newDir + "/results.html")
-print
+print ""
 
 # sys.stdout.flush() ## does nothing
 
-os.system('echo after_print >> ' + tmpDir + '/checkdone2')
+## os.system('echo after_print >> ' + tmpDir + '/checkdone2')
 
 
 
