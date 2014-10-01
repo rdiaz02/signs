@@ -13,9 +13,10 @@ import dircache
 import random
 ##import re
 from stat import ST_SIZE
+import subprocess
 import cgitb
 cgitb.enable() 
-sys.stderr = sys.stdout
+# sys.stderr = sys.stdout
 
 APP_NAME = "signs2"
 sys.path.append("/asterias-web-apps/web-apps-common")
@@ -124,14 +125,14 @@ acceptedOrganisms = ('None', 'Hs', 'Mm', 'Rn')
 #         sys.exit()
 
 
-def valueNumUpload(fieldName, testNumber = 'float', minValue = 0):
+def valueNumUpload(fieldName, testNumber = 'float', minValue = 0, APP_NAME = APP_NAME):
     """Upload and get the values and do some checking. For text and radio selections
     with positive numeric data.
     We assume there is an existing call to fs = cgi.FieldStorage()"""
 
     if not fs.has_key(fieldName):
         shutil.rmtree(tmpDir)
-        commonOutput()
+        commonOutput(APP_NAME)
         print "<h1> SignS INPUT ERROR </h1>"    
         print "<p> ", fieldName, "value required </p>"
         print "<p> Please fill up the required fields and try again</p>"
@@ -139,7 +140,7 @@ def valueNumUpload(fieldName, testNumber = 'float', minValue = 0):
         sys.exit()
     if fs[fieldName].filename:
         shutil.rmtree(tmpDir)
-        commonOutput()
+        commonOutput(APP_NAME)
         print "<h1> SignS INPUT ERROR </h1>"    
         print "<p> ", fieldName, "should not be a file. </p>"
         print "<p> Please fill up the required fields and try again</p>"
@@ -147,7 +148,7 @@ def valueNumUpload(fieldName, testNumber = 'float', minValue = 0):
         sys.exit()
     if type(fs[fieldName]) == type([]):
         shutil.rmtree(tmpDir)
-        commonOutput()
+        commonOutput(APP_NAME)
         print "<h1> SignS INPUT ERROR </h1>"    
         print "<p> ", fieldName, "should be a single value.</p>"
         print "<p> Please fill up the required fields and try again</p>"
@@ -161,7 +162,7 @@ def valueNumUpload(fieldName, testNumber = 'float', minValue = 0):
         try:
             tmpn = float(tmp)
         except:
-            commonOutput()
+            commonOutput(APP_NAME)
             print "<h1> SignS INPUT ERROR </h1>"    
             print "<p> ", fieldName, "is not a valid numeric value.</p>"
             print "<p> Please fill up the required fields and try again</p>"
@@ -171,7 +172,7 @@ def valueNumUpload(fieldName, testNumber = 'float', minValue = 0):
         try:
             tmpn = int(tmp)
         except:
-            commonOutput()
+            commonOutput(APP_NAME)
             print "<h1> SignS INPUT ERROR </h1>"    
             print "<p> ", fieldName, "is not a valid numeric value.</p>"
             print "<p> Please fill up the required fields and try again</p>"
@@ -180,7 +181,7 @@ def valueNumUpload(fieldName, testNumber = 'float', minValue = 0):
 
     if tmpn < minValue:
         shutil.rmtree(tmpDir)
-        commonOutput()
+        commonOutput(APP_NAME)
         print "<h1> SignS INPUT ERROR </h1>"    
         print "<p> ", fieldName, "smaller than smallest accepted value (", minValue, "). </p>"
         print "<p> Please fill up the required fields and try again</p>"
@@ -316,13 +317,13 @@ fs = cgi.FieldStorage()
 idtype = dummyUpload('idtype', 'None', tmpDir)
 organism = dummyUpload('organism', 'None', tmpDir)
 
-methodSurv = radioUpload('methodSurv', acceptedMethodSurvs, fs, tmpDir)
+methodSurv = radioUpload('methodSurv', acceptedMethodSurvs, fs, tmpDir, APP_NAME)
 if methodSurv == 'FCMS':
     maxsize = valueNumUpload('MaxSize', 'int', 2)
     minsize = valueNumUpload('MinSize', 'int', 2)
     if minsize >= maxsize:
         shutil.rmtree(tmpDir)
-        commonOutput()
+        commonOutput(APP_NAME)
         print "<h1> SignS INPUT ERROR </h1>"    
         print "<p> Max number of genes surely must be larger "
         print "than Min number of genes.</p>"
@@ -333,7 +334,7 @@ if methodSurv == 'FCMS':
     mincor = valueNumUpload('MinCor', 'float', 0)
     if mincor > 1:
         shutil.rmtree(tmpDir)
-        commonOutput()
+        commonOutput(APP_NAME)
         print "<h1> SignS INPUT ERROR </h1>"    
         print "<p> Min. correlation should of course be between 0 and 1."
         print "<p> Please fill up the required fields and try again.</p>"
@@ -343,7 +344,7 @@ if methodSurv == 'FCMS':
     Minp = valueNumUpload('Minp', 'float', 0)
     if Minp > 1:
         shutil.rmtree(tmpDir)
-        commonOutput()
+        commonOutput(APP_NAME)
         print "<h1> SignS INPUT ERROR </h1>"    
         print "<p> Minimal p for gene-wise Cox should of course be between 0 and 1."
         print "<p> Please fill up the required fields and try again.</p>"
@@ -355,7 +356,7 @@ if methodSurv == 'TGD':
     tau = valueNumUpload('tau', 'float', 0)
     if tau > 1:
         shutil.rmtree(tmpDir)
-        commonOutput()
+        commonOutput(APP_NAME)
         print "<h1> SignS INPUT ERROR </h1>"    
         print "<p> Tau should be between 0 and 1."
         print "<p> Please fill up the required fields and try again.</p>"
@@ -381,30 +382,30 @@ if(fs.getfirst("covariate2")!= None):
     ## shutil.copy("/asterias-web-apps/prep/www/tmp/" + prep_tmpdir +"/outdata.txt",tmpDir + "/covariate")
 else:
 ## Uploading files and checking not abusively large
-    fileUpload('covariate', fs, tmpDir)
+    fileUpload('covariate', fs, tmpDir, APP_NAME)
     if os.stat(tmpDir + '/covariate')[ST_SIZE] > MAX_covariate_size:
         shutil.rmtree(tmpDir)
-        commonOutput()
+        commonOutput(APP_NAME)
         print "<h1> SignS INPUT ERROR </h1>"
         print "<p> Covariate file way too large </p>"
         print "<p> Covariate files this size not allowed.</p>"
         print "</body></html>"
         sys.exit()
 
-fileUpload('time', fs, tmpDir)
+fileUpload('time', fs, tmpDir, APP_NAME)
 if os.stat(tmpDir + '/time')[ST_SIZE] > MAX_time_size:
     shutil.rmtree(tmpDir)
-    commonOutput()
+    commonOutput(APP_NAME)
     print "<h1> SignS INPUT ERROR </h1>"
     print "<p> Survival time file way too large </p>"
     print "<p> This size is not allowed.</p>"
     print "</body></html>"
     sys.exit()
 
-fileUpload('event', fs, tmpDir)
+fileUpload('event', fs, tmpDir, APP_NAME)
 if os.stat(tmpDir + '/event')[ST_SIZE] > MAX_time_size:
     shutil.rmtree(tmpDir)
-    commonOutput()
+    commonOutput(APP_NAME)
     print "<h1> SignS INPUT ERROR </h1>"
     print "<p> Survival status file way too large </p>"
     print "<p> This size is not allowed.</p>"
@@ -413,29 +414,29 @@ if os.stat(tmpDir + '/event')[ST_SIZE] > MAX_time_size:
 
 if fs.has_key('validation'):
     open(tmpDir + '/usevalidation', mode = 'w').write('yes\n')
-    fileUpload('validationcovariate', fs, tmpDir)
+    fileUpload('validationcovariate', fs, tmpDir, APP_NAME)
     if os.stat(tmpDir + '/validationcovariate')[ST_SIZE] > MAX_covariate_size:
         shutil.rmtree(tmpDir)
-        commonOutput()
+        commonOutput(APP_NAME)
         print "<h1> SignS INPUT ERROR </h1>"
         print "<p> Validation Covariate file way too large </p>"
         print "<p> Covariate files this size not allowed.</p>"
         print "</body></html>"
         sys.exit()
-    fileUpload('validationtime', fs, tmpDir)
+    fileUpload('validationtime', fs, tmpDir, APP_NAME)
     if os.stat(tmpDir + '/validationtime')[ST_SIZE] > MAX_time_size:
         shutil.rmtree(tmpDir)
-        commonOutput()
+        commonOutput(APP_NAME)
         print "<h1> SignS INPUT ERROR </h1>"
         print "<p> Validation Survival time file way too large </p>"
         print "<p> This size is not allowed.</p>"
         print "</body></html>"
         sys.exit()
 
-    fileUpload('validationevent', fs, tmpDir)
+    fileUpload('validationevent', fs, tmpDir, APP_NAME)
     if os.stat(tmpDir + '/validationevent')[ST_SIZE] > MAX_time_size:
         shutil.rmtree(tmpDir)
-        commonOutput()
+        commonOutput(APP_NAME)
         print "<h1> SignS INPUT ERROR </h1>"
         print "<p> Validation Survival status file way too large </p>"
         print "<p> This size is not allowed.</p>"
@@ -474,7 +475,7 @@ for Rtouchfile in RrunningFiles:
 numRsigns = len(glob.glob("/asterias-web-apps/signs2/www/R.running.procs/R.*@*%*"))
 if numRsigns > MAX_signs:
     shutil.rmtree(tmpDir)
-    commonOutput()
+    commonOutput(APP_NAME)
     print "<h1> SignS problem: The servers are too busy </h1>"
     print "<p> Because of the popularity of the application "
     print " the maximum number of simultaneous runs of SignS has been reached.</p>"
@@ -501,7 +502,7 @@ while 1:
            or (line.find('"#name"') == 0) or (line.find('"#NAME"') == 0) or (line.find('"#Name"') == 0):
         num_name_lines = num_name_lines + 1
         if num_name_lines > 1:
-            commonOutput()
+            commonOutput(APP_NAME)
             print """ You have more than one line with #Name (or #NAME or #name), in the data matrix \
                    but only one is allowed."""
             sys.exit()
@@ -528,7 +529,7 @@ if fs.has_key('validation'):
                or (line.find('"#name"') == 0) or (line.find('"#NAME"') == 0) or (line.find('"#Name"') == 0):
             num_name_lines = num_name_lines + 1
             if num_name_lines > 1:
-                commonOutput()
+                commonOutput(APP_NAME)
                 print """ You have more than one line with #Name (or #NAME or #name), in the data matrix \
                 but only one is allowed."""
                 sys.exit()
@@ -555,12 +556,16 @@ checkpoint = os.system("echo 0 > " + tmpDir + "/checkpoint.num")
 createResultsFile = os.system("/bin/touch " + tmpDir + "/results.txt")
 
 
-## Launch the lam checking program 
+## Launch the lam checking program
+# For some reason, the results.html redirection take a loooooong time.
 run_and_check = os.spawnv(os.P_NOWAIT, '/asterias-web-apps/signs2/cgi/runAndCheck.py',
-                      ['', tmpDir])
+                         ['', tmpDir])
+# run_and_check = subprocess.Popen(["/asterias-web-apps/signs2/cgi/runAndCheck.py", tmpDir])
+
+## run_and_check = os.system("/asterias-web-apps/signs2/cgi/runAndCheck.py " + tmpDir + " &")
 
 os.system('echo "' + str(run_and_check) + ' ' + socket.gethostname() +\
-           '"> ' + tmpDir + '/run_and_checkPID')
+              '"> ' + tmpDir + '/run_and_checkPID')
 
 
 ###########   Creating a results.hmtl   ###############
@@ -582,10 +587,15 @@ os.system('echo sed_results-pre >> ' + tmpDir + '/checkdone2')
 
 
 ##############    Redirect to checkdone.cgi    ##################
-print "Location: "+ getQualifiedURL("/tmp/" + newDir + "/results.html")
+print "Location:"+ getQualifiedURL("/tmp/" + newDir + "/results.html")
 print
 
-## os.system('echo after_print >> ' + tmpDir + '/checkdone2')
+# sys.stdout.flush() ## does nothing
+
+os.system('echo after_print >> ' + tmpDir + '/checkdone2')
+
+
+
 
 
 ## a check to see if we return html quickly
@@ -594,4 +604,6 @@ print
 # print "<TITLE>CGI script output</TITLE>"
 # print "<H1>This is a test</H1>"
 # print "Hello, world!"
+
+
 
