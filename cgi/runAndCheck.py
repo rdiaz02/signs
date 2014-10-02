@@ -101,9 +101,9 @@ def issue_echo(fecho, tmpDir):
     os.system('echo "    " >> ' + tmpDir + '/checkdone.echo')
 
 
-def kill_pid_machine(pid, machine):
+def kill_pid_machine(pid):
     'as it says: to kill somehting somewhere'
-    os.system('ssh ' + machine + ' "kill -s 9 ' + pid + '"')
+    os.system("kill -s 9 " + pid )
 
 
 
@@ -956,7 +956,7 @@ def cleanups(tmpDir, newDir, newnamepid,
     rinfo = open(tmpDir + '/current_R_proc_info', mode = 'r').readline().split()
 
     try:
-        kill_pid_machine(rinfo[1], rinfo[0])
+        kill_pid_machine(rinfo[1])
     except:
         None
     # try:
