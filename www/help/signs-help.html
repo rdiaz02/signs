@@ -378,6 +378,62 @@ iterations as chosen via cross-validation.</p>
       used to split the subjects are "resubstitution" scores.</p>
 
 
+<p><FONT COLOR="red">Be very careful when using the above plots!!</FONT>
+  In fact, that way of measuring or assessing predictive ability is
+  extremely limited, which is a soft way of saying that it is <b>wrong</b>, and
+  those p-values mean nothing, and a small p-value does not mean you
+  really can predict survival well, etc, etc, etc. I do not have time to
+  write about this in any detail right now, but do yourself a favor and
+  look, for instance, at rules 36 to 38 of the paper "Critical Review of
+  Published Microarray Studies for Cancer Outcome and Guidelines on
+  Statistical Analysis and Reporting" by Alain Dupuy, Richard M. Simon
+  published at the JNCI (January 17, 2007). </p>
+
+
+<p>How should we measure predictive ability then? There are a range of
+  approaches. I like (and have used in published papers ---see, e.g.,
+  Montes et al., 2011, "miRNA expression in diffuse large B-cell lymphoma
+  treated with chemoimmunotherapy.", Blood, 118: 1034-40, and go to the
+  supplementary material) what are basically extensions to the survival
+  data case of things such as Brier's score and the concordance index (of
+  course, from cross-validated/bootstrapped runs). These
+  indices can <b>really</b> address the question of the predictive quality
+  of your model. The above plots don't.</p>
+
+
+<p>Why aren't Brier's and the concordance index in SignS/will they ever be
+  in SignS? They aren't because I started working in SignS when I was a
+  lot younger and, thus, a lot un-wiser. They might make their way to
+  SignS when/if I get the time to work on SignS again.</p>
+
+
+<p>Why don't you remove these plots then? Ah, great question. I think they
+  give you a (bad) hint of what is going on. And taking them out would
+  require me to rewrite a lot of the help and change the examples, etc,
+  and I just don't have the time now. However, I've warned you not to use
+  them for anything serious. Oh, and I use this in class as an example of
+  how <b>NOT</b> to do things.</b><!--  (i.e., I say "do you seem anything in -->
+  <!-- this, otherwise so nice, application that violates any of these rules we -->
+  <!-- have discussed?") -->
+
+
+<p><FONT COLOR="red">Be very careful when looking at the legend!!</FONT>
+  So this I just noticed (April 2015) when a friend of mine at CNIO
+  (Gonzalo Gomez) asked me an innocent question. What does this "high/low"
+  score in the legend really means? Get ready, because this is a confusing
+  mess I should some day fix. If you are using something like the FCMS
+  (which I recommend you don't use, but whatever) or the TGD method, or
+  boosting with component-wise Cox models we get the linear scores from
+  the model (remember, the higher the linear score, the higher the hazard)
+  and we split them into two groups; the blue ones are those from the
+  individuals with low linear scores (yes, low), and thus those from
+  individuals that should die later (those that have smaller hazards). In
+  contrast, if you use something like random forest, the scores are from
+  the predicted survival time, so the individuals in the blue group are
+  those in the group of smaller predicted survival times. Sorry, I am
+  aware this is very confusing.</p>
+
+
 <p>Stability is assessed showing the parameters chosen in each
       crossvalidation run (for TGD) and the signatures, their
       coefficients, and the composing genes (for FCMS), or the selected
