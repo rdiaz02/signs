@@ -303,23 +303,23 @@ my.glmboost <- function(x, time, event, newdata = NULL, mstop = 500,
         x, Surv(time, event), family = CoxPH(),
         control = boost_control(mstop = mstop,center = TRUE)
     )
-    
+
     pmgc("my.glmboost, after gb1 fit")
     ## for 10-fold CV for risk; from help for cvrisk
     ## might not be 10-fold if fewer than 10
     n <- nrow(x)
-    cat("\n *** inside my.glmboost:  n is ", n , "\n")    
+    cat("\n *** inside my.glmboost:  n is ", n , "\n")
     k <- min(10, n)
     ntest <- floor(n / k)
-    cat("\n *** inside my.glmboost:  ntest is ", ntest , "\n")    
+    cat("\n *** inside my.glmboost:  ntest is ", ntest , "\n")
 
-    cv10f <- matrix(c(rep(c(rep(0, ntest), rep(1, n)), k - 1), 
+    cv10f <- matrix(c(rep(c(rep(0, ntest), rep(1, n)), k - 1),
                       rep(0, n * k - (k - 1) * (n + ntest))), nrow = n)
     cat("\n *** inside my.glmboost:  cv10f is \n")
     print(cv10f)
     cat("\n")
     gridf <- c(5, 10, 25, seq(from = 50, to = mstop, length = 10))
-    cat("\n *** inside my.glmboost:  gridf is ", gridf , "\n")    
+    cat("\n *** inside my.glmboost:  gridf is ", gridf , "\n")
     cvm <- cvrisk(gb1, folds = cv10f, grid = gridf)
     pmgc("my.glmboost, after cvrisk")
     best.mstop <- mstop(cvm)
@@ -359,7 +359,8 @@ my.glmboost <- function(x, time, event, newdata = NULL, mstop = 500,
                 overfit_predicted_surv_time = overfit_predicted_surv_time))
 }
 
-my.glmboost.cv <- function(x, time, event, mstop = 500, nfold = 10, return.fit = FALSE) {
+my.glmboost.cv <- function(x, time, event, mstop = 500, nfold = 10, return.fit = FALSE,
+                           numCores = 10) {
     n <- length(time)
     index.select <- sample(rep(1:nfold, length = n), n, replace = FALSE)
     OOB.scores <- rep(NA, n)
@@ -382,7 +383,7 @@ my.glmboost.cv <- function(x, time, event, mstop = 500, nfold = 10, return.fit =
     ## tmp1 <- papply(as.list(1:nfold),
     ##                my.glmboost.internal.MPI,
     ##                papply_commondata = list(x = x,
-    ##                time = time, event = event, 
+    ##                time = time, event = event,
     ##                index.select = index.select,
     ##                mstop = mstop,
     ##                return.fit = return.fit))
@@ -403,30 +404,30 @@ my.glmboost.cv <- function(x, time, event, mstop = 500, nfold = 10, return.fit =
         pmgc("glmboost.internal.MPI, after retval")
         return(retval)
     }
-    
+
     tmp1 <- mclapply(as.list(1:nfold),
                          my.glmboost.internal.MPI,
                          x = x,
-                         time = time, event = event, 
+                         time = time, event = event,
                          index.select = index.select,
                          mstop = mstop,
                          return.fit = return.fit,
-                     mc.cores = detectCores())
-        
-        
+                     mc.cores = numCores)
+
+
         pmgc("glmboost.cv, after mclapply")
         for(i in 1:nfold) {
             OOB.scores[index.select == i] <-
                 tmp1[[i]]$predicted_surv_time
             tmp1[[i]]$predicted_surv_time <- NULL  ## don't need this anymore
         }
-        
+
         out <- list(cved.models = tmp1,
                     OOB.scores = OOB.scores)
         return(out)
 }
 
-    
+
 
 ###############################################
 ##########                    #################
@@ -438,7 +439,7 @@ my.glmboost.cv <- function(x, time, event, mstop = 500, nfold = 10, return.fit =
 geneSelect <- function(x, sobject, numgenes) {
     ### Select the "best" (according to p-value from Cox) numgenes
     ## a modification of dStep1.serial
-    
+
     MaxIterationsCox <- 200
     res.mat <- matrix(NA, nrow = numgenes, ncol = 6)
     funpap3 <- function (x) {
@@ -482,7 +483,7 @@ cf.mean.survtime <- function(object, newdata) {
     }
     return(sapply(tmp, function(x) f1(x$time, x$surv)))
 }
-         
+
 
 my.cforest <- function(x, time, event, ngenes, newdata = NULL, return.fit = FALSE) {
     ## Does "everything":
@@ -518,7 +519,8 @@ my.cforest <- function(x, time, event, ngenes, newdata = NULL, return.fit = FALS
 
 
 my.cforest.cv <- function(x, time, event, ngenes, nfold = 10,
-                          universeSize = 10, return.fit = FALSE) {
+                          universeSize = 10, return.fit = FALSE,
+                          numCores = 10) {
 ### Take care of MPI stuff
 ###     if (mpi.comm.size(comm = 1) == 0) {
 ###         mpiSpawnAll(universeSize)
@@ -559,7 +561,7 @@ my.cforest.cv <- function(x, time, event, ngenes, nfold = 10,
     ## tmp1 <- papply(as.list(1:nfold),
     ##                my.cforest.internal.MPI,
     ##                papply_commondata = list(x = x,
-    ##                time = time, event = event, 
+    ##                time = time, event = event,
     ##                ngenes = ngenes, index.select = index.select,
     ##                return.fit = return.fit))
 
@@ -587,11 +589,11 @@ my.cforest.cv <- function(x, time, event, ngenes, nfold = 10,
     tmp1 <- mclapply(as.list(1:nfold),
                    my.cforest.internal.MPI,
                    x = x,
-                   time = time, event = event, 
+                   time = time, event = event,
                    ngenes = ngenes, index.select = index.select,
                    return.fit = return.fit,
-                     mc.cores = detectCores())
-    
+                   mc.cores = numCores)
+
     for(i in 1:nfold) {
         OOB.scores[index.select == i] <-
             tmp1[[i]]$predicted_surv_time
@@ -620,10 +622,10 @@ pmgc <- function(message) {
 print.selected.genes <- function(object,idtype, organism) {
     ## writes to a file, and python generates a bunch of HTML tables;
     ##    these are then linked from the main HTML; code is in runAndCheck.py
-    
+
     p.values.original <- data.frame(Names = object$selected.genes.names,
                                     p.value = object$selected.genes.stats[, 2],
-                                    coeff = object$selected.genes.stats[, 1], 
+                                    coeff = object$selected.genes.stats[, 1],
                                     abs.coeff = abs(object$selected.genes.stats[, 1]),
                                     fdr = NA,
                                     Warning = object$selected.genes.stats[, 5])
@@ -635,7 +637,7 @@ print.selected.genes <- function(object,idtype, organism) {
 ###     }
 
     write.table(file = "p.values.coeffs.txt",
-                p.values.original, row.names = FALSE, 
+                p.values.original, row.names = FALSE,
                 col.names = TRUE,
                 quote = FALSE,
                 sep = "\t")
@@ -667,29 +669,29 @@ print.cv.results <- function(cvobject, allDataObject, subjectNames, html.level =
         wout <- paste(wout, "</TABLE>")
         write(wout, file = "scores.oob.html", append = TRUE)
         cleanHTMLtail(file = "scores.oob.html")
-        
+
     } else {
-        
+
         cat("\n Out-of-bag scores\n\n")
         oobs <- matrix(cvobject$OOB.scores, ncol = 1)
         rownames(oobs) <- subjectNames
         print(oobs)
     }
-    
+
     cvobject <- cvobject[[1]] ## don't need scores anymore. Simpler subsetting.
-    
+
     ks <- length(cvobject)
-    
+
     ngenes <- unlist(lapply(cvobject, function(x) x$selected.genes.number))
-    cv.names <- paste("CV.run.", 1:ks, sep = "")    
+    cv.names <- paste("CV.run.", 1:ks, sep = "")
     ngenes <- matrix(ngenes, ncol = 1)
     rownames(ngenes) <- cv.names
-    
+
     if(html) {
         cat("\n\n <h3>", html.level,
             ".2 Number of selected genes in cross-validation runs</h3>\n", sep = "")
         print(ngenes)
-        
+
         cat("\n\n <h3>", html.level,
             ".3 Genes selected in each of the cross-validation runs</h3>\n", sep = "")
         for(i in 1:ks) {
@@ -706,18 +708,18 @@ print.cv.results <- function(cvobject, allDataObject, subjectNames, html.level =
         cat("\n\n Number of selected genes and parameters in cross-validation runs\n")
         cat("-------------------------------------------------------------------\n\n")
         print(ngenes)
-        
+
         cat("\n\n Stability assessments \n")
         cat(    " ---------------------\n")
         cat("\n Genes selected in each of the cross-validation runs \n")
-        
+
         for(i in 1:ks) {
             cat(paste("CV run  ", i, " (", ngenes[i], " genes selected):   ", sep = ""), "\n")
             print(cvobject[[i]]$selected.genes.names)
             cat("\n---\n")
         }
     }
-    
+
     tmp.genesSelected <- list()
     tmp.genesSelected[[1]] <- allDataObject$selected.genes.names
     genesSelected.cv <- lapply(cvobject, function(x) x$selected.genes.names)
@@ -734,13 +736,13 @@ print.cv.results <- function(cvobject, allDataObject, subjectNames, html.level =
 
     ngenes <- c(allDataObject$selected.genes.number, ngenes)
     prop.shared <- round(shared.genes/ngenes, 3)
-    
+
     ngenesS <- paste("(", ngenes, ")", sep = "")
     colnames(shared.genes) <- colnames(prop.shared) <- c("OriginalSample", cv.names)
     rownames(shared.genes) <- rownames(prop.shared) <- paste(c("OriginalSample", cv.names), ngenesS)
-    
+
     options(width = 200)
-    
+
     html.level <- html.level + 1
     if(html) {
         cat("\n\n <h2>", html.level, ". Stability assessments</h2>\n", sep = "")
@@ -752,7 +754,7 @@ print.cv.results <- function(cvobject, allDataObject, subjectNames, html.level =
     }
     print(as.table(shared.genes))
     if(html) cat("</pre>")
-    
+
     if(html) {
         cat("\n\n <h3>", html.level, ".2 Proportion of shared genes (relative to row total)</h3> \n", sep = "")
         cat("<pre>")
@@ -763,7 +765,7 @@ print.cv.results <- function(cvobject, allDataObject, subjectNames, html.level =
     if(html) cat("</pre>")
     options(width = 80)
     unlisted.genes.selected <- unlist(genesSelected.cv)
-    
+
     in.all.data <-
         which(names(table(unlisted.genes.selected, dnn = NULL)) %in% tmp.genesSelected[[1]])
 
@@ -771,7 +773,7 @@ print.cv.results <- function(cvobject, allDataObject, subjectNames, html.level =
         tmptmp <- sort(table(unlisted.genes.selected, dnn = NULL)[in.all.data], decreasing = TRUE)
         rntmptmp <- rownames(tmptmp)
         cat("\n\n\n<h3>", html.level, ".3 Gene freqs. in cross-validated runs of genes selected in model with all data</h3> \n\n", sep = "")
-        
+
         cat("\n <TABLE  frame=\"box\" rules=\"groups\">\n")
         cat("<tr align=left><th width=200>Gene</th> <th width=50>Frequency</th></tr>")
             for(ii in 1:length(tmptmp)) {
@@ -788,7 +790,7 @@ print.cv.results <- function(cvobject, allDataObject, subjectNames, html.level =
         tmptmp <- sort(table(unlisted.genes.selected, dnn = NULL), decreasing = TRUE)
         rntmptmp <- rownames(tmptmp)
         cat("\n\n\n<h3>", html.level, ".4 Gene freqs. in cross-validated runs</h3> \n\n", sep = "")
-        
+
         cat("\n <TABLE  frame=\"box\" rules=\"groups\">\n")
         cat("<tr align=left><th width=200>Gene</th> <th width=50>Frequency</th></tr>")
             for(ii in 1:length(tmptmp)) {
@@ -814,7 +816,7 @@ writeForPaLS <- function(genesSelected, pals_main, pals_all) {
     ## Works for lists without additional structure, such as
     ##    returned by TGD, cforest, etc. Not for Dave et al.
     ##    approach which has signatures.
-    
+
     for(nr in (1:length(genesSelected))) {
         if(nr == 1) {
             cat("#Run_on_all_data\n", file = pals_main)
@@ -868,7 +870,7 @@ kmplots <- function(cv.scores, overfitt.scores, Time, Event) {
     dev.off()
     pdf(file = "kmplot-overfitt.pdf", width = png.width,
         height = png.height)
-    KM.visualize(overfitt.scores,  Time,                         
+    KM.visualize(overfitt.scores,  Time,
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2
     dev.off()
     CairoPNG(file = "kmplot-honest.png", w=gdd.width,
@@ -878,7 +880,7 @@ kmplots <- function(cv.scores, overfitt.scores, Time, Event) {
     dev.off()
     CairoPNG(file = "kmplot-overfitt.png", w=gdd.width,
         h = gdd.height, ps = png.pointsize)
-    KM.visualize(overfitt.scores,  Time,                         
+    KM.visualize(overfitt.scores,  Time,
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2
     dev.off()
     pdf(file = "kmplot4-honest.pdf", width = png.width,
@@ -888,7 +890,7 @@ kmplots <- function(cv.scores, overfitt.scores, Time, Event) {
     dev.off()
     pdf(file = "kmplot4-overfitt.pdf", width = png.width,
         height = png.height)
-    KM.visualize4(overfitt.scores,  Time,                         
+    KM.visualize4(overfitt.scores,  Time,
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.4
     dev.off()
     CairoPNG(file = "kmplot4-honest.png", w=gdd.width,
@@ -898,7 +900,7 @@ kmplots <- function(cv.scores, overfitt.scores, Time, Event) {
     dev.off()
     CairoPNG(file = "kmplot4-overfitt.png", w=gdd.width,
         h = gdd.height, ps = png.pointsize)
-    KM.visualize4(overfitt.scores,  Time,                         
+    KM.visualize4(overfitt.scores,  Time,
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.4
     dev.off()
 
@@ -910,7 +912,7 @@ kmplots <- function(cv.scores, overfitt.scores, Time, Event) {
     dev.off()
     pdf(file = "kmplot3-overfitt.pdf", width = png.width,
         height = png.height)
-    KM.visualize3(overfitt.scores,  Time,                         
+    KM.visualize3(overfitt.scores,  Time,
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
     dev.off()
     CairoPNG(file = "kmplot3-honest.png", w=gdd.width,
@@ -920,7 +922,7 @@ kmplots <- function(cv.scores, overfitt.scores, Time, Event) {
     dev.off()
     CairoPNG(file = "kmplot3-overfitt.png", w=gdd.width,
         h = gdd.height, ps = png.pointsize)
-    KM.visualize3(overfitt.scores,  Time,                         
+    KM.visualize3(overfitt.scores,  Time,
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
     dev.off()
 
@@ -937,10 +939,10 @@ kmplots.validation <- function(scores, validationTime, validationEvent) {
     dev.off()
     CairoPNG(file = "kmplot-validation.png", w=gdd.width,
         h = gdd.height, ps = png.pointsize)
-    KM.visualize(valpred, validationTime,                         
+    KM.visualize(valpred, validationTime,
                  validationEvent, addmain = NULL)
     dev.off()
-    
+
     pdf(file = "kmplot4-validation.pdf", width = png.width,
         height = png.height)
     KM.visualize4(valpred, validationTime,
@@ -948,11 +950,11 @@ kmplots.validation <- function(scores, validationTime, validationEvent) {
     dev.off()
     CairoPNG(file = "kmplot4-validation.png", w=gdd.width,
         h = gdd.height, ps = png.pointsize)
-    KM.visualize4(valpred, validationTime,                         
+    KM.visualize4(valpred, validationTime,
                   validationEvent, addmain = NULL)
     dev.off()
-    
-    
+
+
     pdf(file = "kmplot3-validation.pdf", width = png.width,
         height = png.height)
     KM.visualize3(valpred, validationTime,
@@ -960,7 +962,7 @@ kmplots.validation <- function(scores, validationTime, validationEvent) {
     dev.off()
     CairoPNG(file = "kmplot3-validation.png", w=gdd.width,
         h = gdd.height, ps = png.pointsize)
-    KM.visualize3(valpred, validationTime,                         
+    KM.visualize3(valpred, validationTime,
                   validationEvent,  addmain = NULL)
     dev.off()
 }
@@ -1001,10 +1003,11 @@ tgdSingle <- function(x, time, event, unique.thres = 1, epi = 5e-06,
 
 
 tauBestP <- function(x, time, event, thres = c(0, 1),
-                     epi = 5e-06, thresGrid = 6, 
-                     maxiter = 5000, 
+                     epi = 5e-06, thresGrid = 6,
+                     maxiter = 5000,
                      nfold = 10,
-                     fitWithBest = TRUE) {
+                     fitWithBest = TRUE,
+                     numCores = 10) {
     ## checkEvery is not used as such
 ##     checkEvery <- maxiter
     if((!is.vector(time)) | (!is.vector(event)))
@@ -1025,7 +1028,7 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
 ##     ceTheCluster <<- checkEvery
 ##     cviTheCluster <<- cvindex
 ##     clusterParams <<- clusterParams
-    
+
 ##     time.initial.export <-
 ##         unix.time(clusterExport(TheCluster,
 ##                                 c("xTheCluster",
@@ -1040,11 +1043,11 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
 ##         " seconds\n")
 ##     ts1 <- unix.time(clusterApply(TheCluster, 1:60, tgdSnowSetUp))
 ##     cat("\n \n      Slaves setup took ", ts1[3], " seconds\n")
-    
+
     clusterOutput <- list()
     t.r1 <-
-        unix.time(
-                  clusterOutput <-
+        system.time(
+            clusterOutput <-
                   mclapply(as.list(1:totalProcs),
                            nodeRun,
                            clusterParams = clusterParams,
@@ -1054,7 +1057,7 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
                            epi = epi,
                            steps = maxiter,
                            cvindex = cvindex,
-                           mc.cores = detectCores()))
+                           mc.cores = numCores))
 
     tmp.cvpl <- matrix(unlist(clusterOutput),
                       ncol = maxiter, byrow = TRUE)
@@ -1065,7 +1068,7 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
     for(th in 1:thresGrid) {
         cvpllymtgd[th, ] <-
             apply(tmp.cvpl[clusterParams[, 2] == thresS[th], , drop = FALSE], 2, sum)
-    }        
+    }
 
     cvpl.mat <- cvpllymtgd/nfold
 
@@ -1086,12 +1089,12 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
                                 steps = stepBest)
     } else tgd.alldata <- NA
 
-    
+
 ## To incorporate ROC, do it here:
     ## train best models for each, and then find ROC, with CV.
 
     betas <- tgd.alldata$beta
-    return(list(betas = betas, nonZeroBetas = sum(betas != 0), 
+    return(list(betas = betas, nonZeroBetas = sum(betas != 0),
                 threshold = thresBest, epi = epi,
                 step = stepBest, cvpl.mat = cvpl.mat,
                 tgd.alldata = tgd.alldata,
@@ -1100,7 +1103,7 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
 
 
 
-      
+
 ## tgdSnowSetUp <- function(index) {
 ##     assign("cvindex", cviTheCluster, env = .GlobalEnv)
 ##     assign("epi",  epTheCluster, env = .GlobalEnv)
@@ -1114,12 +1117,12 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
 ##            env = .GlobalEnv)
 ##     assign("time.train", tTheCluster[cvindex != i], env = .GlobalEnv)
 ##     assign("event.train",  eTheCluster[cvindex != i], env = .GlobalEnv)
-    
+
 ##     assign("x.test",
 ##            as.matrix(xTheCluster[cvindex == i, , drop = FALSE]), env = .GlobalEnv)
 ##     assign("time.test",  tTheCluster[cvindex == i], env = .GlobalEnv)
 ##     assign("event.test",  eTheCluster[cvindex == i], env = .GlobalEnv)
-    
+
 ##     rm(list = c("xTheCluster", "tTheCluster", "eTheCluster",
 ##        "epTheCluster","mitTheCluster", "ceTheCluster",
 ##        "cviTheCluster", "clusterParams", "i"), envir = .GlobalEnv)
@@ -1155,12 +1158,12 @@ tgd1InternalSnow <- function(x.train, time.train, event.train,
 ## thres and epi: oh well, thres and epi.
 ## steps: the maximum number of steps to do in this run.
 ## maxiter: total number of possibe iterations (sum(steps) <= maxiter)
-    
+
     ## like tgd, but sets size of vectors to maxiter
     ## and allows returning a list with the complete state.
     pt1 <- proc.time()[3]
 
-    
+
     nm <- dim(x.train)
     n <- nm[1]
     m <- nm[2]
@@ -1173,7 +1176,7 @@ tgd1InternalSnow <- function(x.train, time.train, event.train,
     beta <- beta1 <- rep(0, m)
     beta <- as.matrix(beta)
     cvpl <- rep(0, steps)
-    
+
 ##    cat(paste("I am using: threshold", thres))
 
     for(iteration in 1:steps) {
@@ -1184,11 +1187,11 @@ tgd1InternalSnow <- function(x.train, time.train, event.train,
         else scores <- x.test %*% beta
 
         ita <- x.train%*% beta
-     
+
         epita <- exp(ita)
         d <- rep(0, n)
         dono <- rep(0, n)
-    
+
         for(i in 1:n) {
             d[i] <- sum(event.train[r == r[i]])
             dono[i] <- sum(epita[r >= r[i]])
@@ -1198,19 +1201,19 @@ tgd1InternalSnow <- function(x.train, time.train, event.train,
         for(i in 1:n) {
             culrisk[i] <- sum(unique(risk[r <= r[i]]))
         }
-        
+
         gradient <- event.train - epita * culrisk
         gra1 <- crossprod(x.train, gradient)
         gra1[abs(gra1) < thres * max(abs(gra1))] <- 0
         beta1 <- beta + epi * gra1
-        
+
         ## cvpl is a somewhat separate thing here.
         lik1.train <- sum((ita - log(dono)) * event.train)
         cvpl[iteration] <- (lik1.train -
                             lik1(c(ita, scores),
                                  c(time.train,  time.test),
                                  c(event.train, event.test)))/length(time.test)
-        
+
     }
     ## what are these for?
     ##     rm("beta1GlobalEnv", envir = .GlobalEnv)
@@ -1233,7 +1236,7 @@ tgd1InternalSnow <- function(x.train, time.train, event.train,
 ##         cvpl <- rep(0, steps)
 ##         scores <- rep(0, n1)
 ##         gradient <- rep(0, n)
-        
+
 ##         beta1 <- beta1GlobalEnv
 ## ##         warning(paste("I am using: threshold", thres,
 ## ##                       " runIt ", runIt))
@@ -1242,9 +1245,9 @@ tgd1InternalSnow <- function(x.train, time.train, event.train,
 ##             beta <- beta1
 ##             if(n1 == 1) scores <- sum(x.test * beta)
 ##             else scores <- x.test %*% beta
-            
+
 ##             ita <- x.train %*% beta
-            
+
 ##             epita <- exp(ita)
 ##             d <- rep(0, n)
 ##             dono <- rep(0, n)
@@ -1261,8 +1264,8 @@ tgd1InternalSnow <- function(x.train, time.train, event.train,
 ##             gra1 <- crossprod(x.train, gradient)
 ##             gra1[abs(gra1) < thres * max(abs(gra1))] <- 0
 ##             beta1 <- beta + epi * gra1
-            
-            
+
+
 ##             lik1.train <- sum((ita - log(dono)) * event.train)
 ##             cvpl[iteration] <- (lik1.train -
 ##                                 lik1(c(ita, scores),
@@ -1279,8 +1282,8 @@ tgd1InternalSnow <- function(x.train, time.train, event.train,
 
 lik1 <- function(score, time, event)
 {
-### return the partial likelihood for Cox model 	
-### like the original, but with sapply; slightly faster than with for.    
+### return the partial likelihood for Cox model
+### like the original, but with sapply; slightly faster than with for.
     n <- length(score)
     r <- rank(time)
     epita <- exp(score)
@@ -1291,27 +1294,27 @@ lik1 <- function(score, time, event)
 }
 
 cvTGDP <- function(x, time, event, thres = c(0, 1),
-                 epi = 5e-06, thresGrid = 6, 
-                 maxiter = 5000, 
+                 epi = 5e-06, thresGrid = 6,
+                 maxiter = 5000,
                  nfold = 10) {
 
     ##     if(is.null(nfold)) {
     ##         nfold <- length(y)
     ##     } ## I've never tested this. Should work for leave-one-out but ....
-    
+
     ## we asume at least as many mpi Rslaves as nfold.
     ## eh? why?
 ##    if(nfold > (mpi.comm.size() - 1))
 ##        stop("nfold > number of mpi Rslaves")
-    
-    
+
+
     ## nfold is the number of folds for cross-validation, and this are
     ## also the number of folds for the internal cv. We could have two
     ## different parameters but ...its a pain.
-    
+
     ## all other parameters are also both for the internal and external
     ## runs.
-   
+
     n <- length(time)
     index.select <- sample(rep(1:nfold, length = n), n, replace = FALSE)
     OOB.scores <- rep(NA, n)
@@ -1330,7 +1333,7 @@ cvTGDP <- function(x, time, event, thres = c(0, 1),
             clusterResults[[i]]$scoresTest
         clusterResults[[i]]$scoresTest <- NULL
     }
-    
+
     out <- list(clusterResults = clusterResults,
                 OOB.scores = OOB.scores)
     class(out) <- "cvTGD"
@@ -1340,10 +1343,10 @@ cvTGDP <- function(x, time, event, thres = c(0, 1),
 tgdTrain <- function(x, time, event, thres, epi, steps){
 ### R.D.-U.: from tgd but I eliminate all testing data related
 ###    stuff and I return gradient, scores (for plotting later)
-###    and betas.    
+###    and betas.
 
-    
-    
+
+
 ### x: n*m predictor matrix, with m predictors.
 ### time: survival time for n observations.
 ### event: censoring event for n observations.
@@ -1399,7 +1402,7 @@ KM.visualize <- function(scores, surv, event, ngroups = 2,
                          addmain = "(Overfitt)") {
 ### Plots like in Dave et al., 2004, p. 2164
 ### will make it more general, to > 2 groups, later; zz
-    
+
     cutting <- quantile(scores,
                         probs = seq(from = 0, to = 1, length.out = ngroups + 1),
                         type = 8,
@@ -1411,9 +1414,9 @@ KM.visualize <- function(scores, surv, event, ngroups = 2,
     group <- factor(group)
 
     if(length(unique(na.omit(group))) < 2) {
-        plot(x = c(0, 1), y = c(0, 1), 
+        plot(x = c(0, 1), y = c(0, 1),
          type = "n", axes = FALSE, xlab = "", ylab = "")
-    	 box()     
+    	 box()
     	 text(0.5, 0.7, "There is only one group (and/or")
     	 text(0.5, 0.5,
     	 "only a null model was fitted).")
@@ -1422,7 +1425,7 @@ KM.visualize <- function(scores, surv, event, ngroups = 2,
     } else {
         test <- survdiff(Surv(surv, event) ~ group)
         pv <- (1 - pchisq(test$chisq, df = 1))
-        
+
         plot(survfit(Surv(surv, event) ~ group),
              main = paste(addmain, "Survival curves: low vs. high model scores"),
              log = FALSE,
@@ -1434,7 +1437,7 @@ KM.visualize <- function(scores, surv, event, ngroups = 2,
         else if (pv > 1e-5) pv <- round(pv, 5)
         else if (pv > 1e-7) pv <- round(pv, 7)
         else pv <- "< 1e-7"
-        
+
         title(sub = paste("Log-rank test p-value ", pv))
     }
 }
@@ -1453,7 +1456,7 @@ KM.visualize4 <- function(scores, surv, event, ngroups = 4,
                         na.rm = TRUE)
 
     group <- rep(NA, length(scores))
-  
+
     group[scores < cutting[2]] <- "Q1"
     group[(scores >= cutting[2]) & (scores < cutting[3])] <- "Q2"
     group[(scores >= cutting[3]) & (scores < cutting[4])] <- "Q3"
@@ -1461,23 +1464,23 @@ KM.visualize4 <- function(scores, surv, event, ngroups = 4,
     group <- factor(group)
 
    if(length(unique(na.omit(group))) < 2) {
-        plot(x = c(0, 1), y = c(0, 1), 
+        plot(x = c(0, 1), y = c(0, 1),
          type = "n", axes = FALSE, xlab = "", ylab = "")
-    	 box()     
+    	 box()
     	 text(0.5, 0.7, "There is only one group (and/or")
     	 text(0.5, 0.5,
     	 "only a null model was fitted).")
          text(0.5, 0.3, "Nothing to plot, therefore.")
 	 return(NULL)
-    } else { 
-        
+    } else {
+
         test <- survdiff(Surv(surv, event) ~ group)
         pv <- (1 - pchisq(test$chisq, df = 3))
-        
+
         plot(survfit(Surv(surv, event) ~ group),
          main = paste(addmain, "Survival curves: comparing four quartiles"),
              log = FALSE,
-             lty = c(2, 1, 2, 1), 
+             lty = c(2, 1, 2, 1),
          col = c("Blue", "Brown", "Red", "Cyan"),
              legend.text = c("Q1", "Q2", "Q3", "Q4"),
              legend.pos = c(0.7 * max(surv), 0.9), legend.bty = "o",
@@ -1486,7 +1489,7 @@ KM.visualize4 <- function(scores, surv, event, ngroups = 4,
         else if (pv > 1e-5) pv <- round(pv, 5)
         else if (pv > 1e-7) pv <- round(pv, 7)
         else pv <- "< 1e-7"
-        
+
         title(sub = paste("Log-rank test p-value ", pv))
     }
 }
@@ -1507,29 +1510,29 @@ KM.visualize3 <- function(scores, surv, event, ngroups = 3,
                         na.rm = TRUE)
 
     group <- rep(NA, length(scores))
-    
+
     group[scores < cutting[2]] <- "Q1"
     group[(scores >= cutting[2]) & (scores < cutting[3])] <- "Q2"
     group[scores >= cutting[3]] <- "Q3"
     group <- factor(group)
 
    if(length(unique(na.omit(group))) < 2) {
-        plot(x = c(0, 1), y = c(0, 1), 
+        plot(x = c(0, 1), y = c(0, 1),
          type = "n", axes = FALSE, xlab = "", ylab = "")
-    	 box()     
+    	 box()
     	 text(0.5, 0.7, "There is only one group (and/or")
     	 text(0.5, 0.5,
     	 "only a null model was fitted).")
          text(0.5, 0.3, "Nothing to plot, therefore.")
 	 return(NULL)
-    } else { 
+    } else {
         test <- survdiff(Surv(surv, event) ~ group)
         pv <- (1 - pchisq(test$chisq, df = 2))
-        
+
         plot(survfit(Surv(surv, event) ~ group),
              main = paste(addmain, "Survival curves: comparing three terciles"),
              log = FALSE,
-             lty = c(2, 1, 2), 
+             lty = c(2, 1, 2),
              col = c("Blue", "Brown", "Red"),
              legend.text = c("Q1", "Q2", "Q3"),
              legend.pos = c(0.7 * max(surv), 0.9), legend.bty = "o",
@@ -1538,7 +1541,7 @@ KM.visualize3 <- function(scores, surv, event, ngroups = 3,
         else if (pv > 1e-5) pv <- round(pv, 5)
         else if (pv > 1e-7) pv <- round(pv, 7)
         else pv <- "< 1e-7"
-        
+
         title(sub = paste("Log-rank test p-value ", pv))
     }
 }
@@ -1546,15 +1549,15 @@ KM.visualize3 <- function(scores, surv, event, ngroups = 3,
 
 
 plot.cvpl <- function(cvpl.mat, epi, thres = c(1, 1), thresGrid = 1) {
-  
+
 ## Diagnostic plot for the output from tauBest
 
     ## Would be neat to add \tau in the legend, but I am not able to.
 
-    
+
     thresS <- seq(from = thres[1], to = thres[2],
                   length.out = thresGrid)
-    
+
     m.step <- max(apply(cvpl.mat, 1, function(x) sum(!is.na(x))))
     nus <- epi * (1:m.step)
     maxy <- max(cvpl.mat, na.rm = TRUE)
@@ -1572,7 +1575,7 @@ plot.cvpl <- function(cvpl.mat, epi, thres = c(1, 1), thresGrid = 1) {
                 tau, " and ", nu)))
     legend(x = 0.1 * (8* max(nus) + 2* min(nus)),
            y = 0.1 * (9 * maxy + 1 * miny),
-           legend = as.character(thresS), 
+           legend = as.character(thresS),
            col = plotcolors,
            lty = 1:thresGrid, title = expression(tau),
            cex = 1.1)
@@ -1582,7 +1585,7 @@ plot.cvpl <- function(cvpl.mat, epi, thres = c(1, 1), thresGrid = 1) {
 plot.cvpl.single  <- function(cvpl.mat, epi, thres) {
    ## for a single threshold
 ## Diagnostic plot for the output from tauBest
-   
+
     m.step <- max(apply(cvpl.mat, 1, function(x) sum(!is.na(x))))
     nus <- epi * (1:m.step)
     maxy <- max(cvpl.mat, na.rm = TRUE)
@@ -1601,21 +1604,21 @@ plot.cvpl.single  <- function(cvpl.mat, epi, thres) {
 summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
                           thresGrid = 6, plot = TRUE,
                           genesOut = TRUE, outfile = "genes.all.out",
-                          html = TRUE)  {
+                          html = TRUE, numCores = 10)  {
     ## spit out the selected betas (i.e., for chose threshold)
     ## but also provide a table such as Table 1 in Gui & Li, Pac.Symp...
     ## with CVPL added.
 
     ## Note that, except for the absolute best, we need to call tgdTrain
     ## again.  zz: this could be parallelized
-    
+
     thresS <- seq(from = thres[1], to = thres[2],
                   length.out = thresGrid)
-    
+
     mins.at <- apply(z$cvpl.mat, 1, function(x) which.min(x))
     mins <- apply(z$cvpl.mat, 1, function(x) min(x, na.rm = TRUE ))
     cvpls <- z$cvpl.mat[matrix(c(1:thresGrid, mins.at), ncol = 2)]
-    
+
     ## why is bestBetas.m a list and not an array?
     ## I think because initially I'd return only non-zero
     ## betas.
@@ -1627,7 +1630,7 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
                             eventdatasn, epidatasn)
         return(tgdTrain(xdatasn, timedatasn, eventdatasn,
                         varArgs[1], epidatasn, varArgs[2])[[2]])
-    
+
     variableArgs <- list()
     for(tt in thres.do) variableArgs[[tt]] <- c(thresS[tt], mins.at[tt])
 
@@ -1636,8 +1639,8 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
                               xdatasn = x,
                               timedatasn = time,
                               eventdatasn = event,
-                              epidatasn = epi, mc.cores = detectCores())
-    
+                              epidatasn = epi, mc.cores = numCores)
+
     bestBetas.m <- bestBetas.m.pre
     bestBetas.m[[z$thres.loc]] <- z$betas
 
@@ -1664,14 +1667,14 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
                 "</td></tr>")
         }
         cat("\n </TABLE>\n")
-     
+
 ##         cat("\n\n\n Cross-validated partial likelihood and number of selected\n")
 ##         cat(" genes for different thresholds (tau), with delta nu (epi) =", epi, ".\n")
 ##         cat("\n ===============================================================\n\n")
 ##         print(outm)
 
-        
-    } else {       
+
+    } else {
         cat("\n\n Selected genes (ordered by decreasing value of their coefficient)\n")
         print(bb)
 ##         cat("\n\n\n Cross-validated partial likelihood and number of selected\n")
@@ -1713,9 +1716,9 @@ summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
     }
     return(outm)
 }
-   
+
 tgdCVPred <- function(x, time, event,
-                      xtest, 
+                      xtest,
                       thres, epi, thresGrid,
                       maxiter,
                       nfold) {
@@ -1723,10 +1726,10 @@ tgdCVPred <- function(x, time, event,
     bestTrain <- tauBestP(x, time, event,
                           thres, epi, thresGrid,
                           maxiter, nfold)
-    
+
     return(list(scoresTest = xtest %*% bestTrain$betas,
                 betas = bestTrain$betas,
-                nonZeroBetas = bestTrain$nonZeroBetas, 
+                nonZeroBetas = bestTrain$nonZeroBetas,
                 threshold = bestTrain$threshold,
                 step = bestTrain$step))
 }
@@ -1755,17 +1758,17 @@ summary.cvTGD <- function(object, allDataObject, subjectNames, html = TRUE,
         cleanHTMLtail(file = "scores.oob.html")
 
     } else {
-        
+
         cat("\n Out-of-bag scores\n\n")
         oobs <- matrix(object$OOB.scores, ncol = 1)
         rownames(oobs) <- subjectNames
         print(oobs)
     }
-    
+
     object <- object[[1]] ## don't need scores anymore. Simpler subsetting.
 
     ks <- length(object)
-    
+
     ngenes <- unlist(lapply(object, function(x) x$nonZeroBetas))
     thresholds <- unlist(lapply(object, function(x) x$threshold))
     steps <- unlist(lapply(object, function(x) x$step))
@@ -1776,14 +1779,14 @@ summary.cvTGD <- function(object, allDataObject, subjectNames, html = TRUE,
                           Optimal.Steps = steps)
 
 
-    cv.names <- paste("CV.run.", 1:ks, sep = "")    
+    cv.names <- paste("CV.run.", 1:ks, sep = "")
     rownames(tmp.mat) <- cv.names
 
 
     if(html) {
         cat("\n\n <h3>4.2 Number of selected genes and parameters in cross-validation runs</h3>\n")
         print(tmp.mat)
-        
+
         cat("\n\n <h3>4.3 Genes selected in each of the cross-validation runs</h3>\n")
         for(i in 1:ks) {
             cat("\n\n <h4>CV run ", i, "</h4>\n")
@@ -1799,11 +1802,11 @@ summary.cvTGD <- function(object, allDataObject, subjectNames, html = TRUE,
         cat("\n\n Number of selected genes and parameters in cross-validation runs\n")
         cat("-------------------------------------------------------------------\n\n")
         print(tmp.mat)
-        
+
         cat("\n\n Stability assessments \n")
         cat(    " ---------------------\n")
         cat("\n Genes selected in each of the cross-validation runs \n")
-        
+
         for(i in 1:ks) {
             cat(paste("CV run  ", i, " (", ngenes[i], " genes selected):   ", sep = ""), "\n")
             print(rownames(object[[i]]$betas)[object[[i]]$betas != 0])
@@ -1812,7 +1815,7 @@ summary.cvTGD <- function(object, allDataObject, subjectNames, html = TRUE,
     }
 
 
-    
+
     tmp.genesSelected <- list()
     tmp.genesSelected[[1]] <- rownames(allDataObject$betas)[allDataObject$betas != 0]
     genesSelected.cv <- lapply(object, function(x)
@@ -1830,11 +1833,11 @@ summary.cvTGD <- function(object, allDataObject, subjectNames, html = TRUE,
 
     ngenes <- c(allDataObject$nonZeroBetas, ngenes)
     prop.shared <- round(shared.genes/ngenes, 3)
-    
+
     ngenesS <- paste("(", ngenes, ")", sep = "")
     colnames(shared.genes) <- colnames(prop.shared) <- c("OriginalSample", cv.names)
     rownames(shared.genes) <- rownames(prop.shared) <- paste(c("OriginalSample", cv.names), ngenesS)
-    
+
     options(width = 200)
 
 
@@ -1853,10 +1856,10 @@ summary.cvTGD <- function(object, allDataObject, subjectNames, html = TRUE,
         cat("\n\n Proportion of shared genes (relative to row total) \n")
     }
     print(as.table(prop.shared))
-    
+
     options(width = 80)
     unlisted.genes.selected <- unlist(genesSelected.cv)
-    
+
     in.all.data <-
         which(names(table(unlisted.genes.selected, dnn = NULL)) %in% tmp.genesSelected[[1]])
 
@@ -1864,7 +1867,7 @@ summary.cvTGD <- function(object, allDataObject, subjectNames, html = TRUE,
         tmptmp <- sort(table(unlisted.genes.selected, dnn = NULL)[in.all.data], decreasing = TRUE)
         rntmptmp <- rownames(tmptmp)
         cat("\n\n\n<h3> 5.3 Gene freqs. in cross-validated runs of genes selected in model with all data</h3> \n\n")
-        
+
         cat("\n <TABLE  frame=\"box\" rules=\"groups\">\n")
         cat("<tr align=left><th width=200>Gene</th> <th width=50>Frequency</th></tr>")
             for(ii in 1:length(tmptmp)) {
@@ -1881,7 +1884,7 @@ summary.cvTGD <- function(object, allDataObject, subjectNames, html = TRUE,
         tmptmp <- sort(table(unlisted.genes.selected, dnn = NULL), decreasing = TRUE)
         rntmptmp <- rownames(tmptmp)
         cat("\n\n\n<h3> 5.4 Gene freqs. in cross-validated runs</h3> \n\n")
-        
+
         cat("\n <TABLE  frame=\"box\" rules=\"groups\">\n")
         cat("<tr align=left><th width=200>Gene</th> <th width=50>Frequency</th></tr>")
             for(ii in 1:length(tmptmp)) {
@@ -1898,7 +1901,7 @@ summary.cvTGD <- function(object, allDataObject, subjectNames, html = TRUE,
 }
 
 
-    
+
 
 ############################################################
 ############################################################
@@ -1923,7 +1926,7 @@ coxph.fit.simple <- function(x, y, MaxIterationsCox) {
                           rownames = NULL,
                           control = coxph.control(iter.max = MaxIterationsCox)),
                 silent = silent)
-    
+
     if(inherits(out1, "try-error")) {
         if(length(grep("Ran out of iterations", out1, fixed = TRUE))) {
             warnStatus <- 2
@@ -1936,13 +1939,13 @@ coxph.fit.simple <- function(x, y, MaxIterationsCox) {
     } else {
         warnStatus <- 0
     }
-    
+
     if(warnStatus >= 1) {
         return(c(NA, NA, warnStatus))
     } else {
         sts <- out1$coef/sqrt(out1$var)
         return(c(out1$coef,
-                 1- pchisq((sts^2), df = 1), 
+                 1- pchisq((sts^2), df = 1),
                  warnStatus))
     }
 }
@@ -1956,16 +1959,16 @@ coxph.fit.simple <- function(x, y, MaxIterationsCox) {
 ##     }
 ##     x <- as.matrix(x) ## this ain't very efficient
 ##     n <- nrow(y)
-##     if (is.matrix(x)) 
+##     if (is.matrix(x))
 ##         nvar <- ncol(x)
-##     else if (length(x) == 0) 
+##     else if (length(x) == 0)
 ##         nvar <- 0
 ##     else nvar <- 1
 ##     time <- y[, 1]
 ##     status <- y[, 2]
 ##     sorted <- order(time)
 ##     newstrat <- as.integer(rep(0, n))
-    
+
 ##     offset <- rep(0, n)
 ##     weights <- rep(1, n)
 
@@ -1982,47 +1985,47 @@ coxph.fit.simple <- function(x, y, MaxIterationsCox) {
 ##         nullmodel <- FALSE
 ##         maxiter <- control$iter.max
 ##         if (!missing(init) && !is.null(init)) {
-##             if (length(init) != nvar) 
+##             if (length(init) != nvar)
 ##                 stop("Wrong length for inital values")
 ##         }
 ##         else init <- rep(0, nvar)
 ##     }
-##     coxfit <- .C("coxfit2", iter = as.integer(maxiter), as.integer(n), 
-##         as.integer(nvar), stime, sstat, x = x[sorted, ], as.double(offset[sorted] - 
-##             mean(offset)), as.double(weights), newstrat, means = double(nvar), 
-##         coef = as.double(init), u = double(nvar), imat = double(nvar * 
-##             nvar), loglik = double(2), flag = integer(1), double(2 * 
-##                                        n + 2 * nvar * nvar + 3 * nvar), as.double(control$eps), 
-##         as.double(control$toler.chol), sctest = as.double(method == 
+##     coxfit <- .C("coxfit2", iter = as.integer(maxiter), as.integer(n),
+##         as.integer(nvar), stime, sstat, x = x[sorted, ], as.double(offset[sorted] -
+##             mean(offset)), as.double(weights), newstrat, means = double(nvar),
+##         coef = as.double(init), u = double(nvar), imat = double(nvar *
+##             nvar), loglik = double(2), flag = integer(1), double(2 *
+##                                        n + 2 * nvar * nvar + 3 * nvar), as.double(control$eps),
+##         as.double(control$toler.chol), sctest = as.double(method ==
 ##             "efron"), PACKAGE = "survival")
 ##     if (nullmodel) {
 ##         score <- exp(offset[sorted])
-##         coxres <- .C("coxmart", as.integer(n), as.integer(method == 
-##                                                           "efron"), stime, sstat, newstrat, as.double(score), 
+##         coxres <- .C("coxmart", as.integer(n), as.integer(method ==
+##                                                           "efron"), stime, sstat, newstrat, as.double(score),
 ##                      as.double(weights), resid = double(n), PACKAGE = "survival")
 ##         resid <- double(n)
 ##         resid[sorted] <- coxres$resid
 ##         names(resid) <- rownames
-##         list(loglik = coxfit$loglik[1], linear.predictors = offset, 
+##         list(loglik = coxfit$loglik[1], linear.predictors = offset,
 ##              residuals = resid, method = c("coxph.null", "coxph"))
 ##     }
 ##     else {
 ##         var <- matrix(coxfit$imat, nvar, nvar)
 ##         coef <- coxfit$coef
-##         if (coxfit$flag < nvar) 
+##         if (coxfit$flag < nvar)
 ##             which.sing <- diag(var) == 0
 ##         else which.sing <- rep(FALSE, nvar)
 ##         infs <- abs(coxfit$u %*% var)
 ##         if (maxiter > 1) {
-##             if (coxfit$flag == 1000) { 
+##             if (coxfit$flag == 1000) {
 ##                 warning("Ran out of iterations and did not converge")
 ##                 warnStatus <- 2
 ##             }
 ##             else {
-##                 infs <- ((infs > control$eps) & infs > control$toler.inf * 
+##                 infs <- ((infs > control$eps) & infs > control$toler.inf *
 ##                          abs(coef))
 ##                 if (any(infs)) {
-##                     warning(paste("Loglik converged before variable ", 
+##                     warning(paste("Loglik converged before variable ",
 ##                                   paste((1:nvar)[infs], collapse = ","), "; beta may be infinite. "))
 ##                     warnStatus <- 1
 ##                 }
@@ -2049,9 +2052,9 @@ coxph.fit.simple <- function(x, y, MaxIterationsCox) {
 ## aml  4x           19.182           18.909             24.604
 ## breast             3.351                               3.236
 ## breast 4x         13.106                              12.896
-## dlbcl              6.388            6.347             10.233 
+## dlbcl              6.388            6.347             10.233
 ## dlbcl 4x          25.208           24.452             40.619
-## dlbcl 8x          50.327           49.303             78.267 
+## dlbcl 8x          50.327           49.303             78.267
 
 
 dStep1.serial <- function(x, time, event, p, MaxIterationsCox) {
@@ -2086,7 +2089,7 @@ dStep1.serial <- function(x, time, event, p, MaxIterationsCox) {
 
 
 
-dStep1.parallel <- function(x, time, event, p, MaxIterationsCox) { 
+dStep1.parallel <- function(x, time, event, p, MaxIterationsCox, numCores = 10) {
     res.mat <- matrix(NA, nrow = ncol(x), ncol = 6)
     sobject <- Surv(time, event)
     cat("\n Starting dStep1.parallel at ", date(), " \n\n"); ptm <- proc.time()
@@ -2099,7 +2102,7 @@ dStep1.parallel <- function(x, time, event, p, MaxIterationsCox) {
         } else {
             sts <- out1$coef/sqrt(out1$var)
             return(c(out1$coef,
-                     1- pchisq((sts^2), df = 1), 
+                     1- pchisq((sts^2), df = 1),
                      out1$warnStatus))
         }
     }
@@ -2107,11 +2110,11 @@ dStep1.parallel <- function(x, time, event, p, MaxIterationsCox) {
         apply(xmat, 2, funpap3,
               sobject = sobject,
               MaxIterationsCox = MaxIterationsCox)
-    
+
     ## split data into the right number of groups for parallelization
     ## nparalGroups <- (mpi.comm.size(comm = 1) - 1)
     ## this is an overkill. Oh well.
-    nparalGroups <- min(ncol(x), detectCores())
+    nparalGroups <- min(ncol(x), numCores)
     if(nparalGroups > 1) {
         paralGroups <- as.numeric(factor(cut(1:ncol(x),
                                              nparalGroups, labels = FALSE)))
@@ -2123,16 +2126,16 @@ dStep1.parallel <- function(x, time, event, p, MaxIterationsCox) {
     datalist <- list()
     for(ng in 1:nparalGroups)
         datalist[[ng]] <- x[, ng == paralGroups]
-    
+
     tmp <- matrix(unlist(mclapply(datalist,
                                 funpap4,
                                 sobject = sobject,
                                 MaxIterationsCox = MaxIterationsCox,
-                                  mc.cores = detectCores())),
+                                mc.cores = numCores)),
                   ncol = 3, byrow = TRUE)
 
 
-    
+
     res.mat[, 1:2] <- tmp[, 1:2]
     res.mat[, 3] <- ifelse(res.mat[, 2] < p, 1, 0)
     res.mat[, 4] <- sign(res.mat[, 1]) * res.mat[, 3]
@@ -2146,7 +2149,7 @@ dStep1.parallel <- function(x, time, event, p, MaxIterationsCox) {
 
 
 
-dStep1.parallel.old <- function(x, time, event, p, MaxIterationsCox) { 
+dStep1.parallel.old <- function(x, time, event, p, MaxIterationsCox, numCores = 10) {
     res.mat <- matrix(NA, nrow = ncol(x), ncol = 6)
     sobject <- Surv(time,event)
     cat("\n Starting dStep1.parallel at ", date(), " \n\n"); ptm <- proc.time()
@@ -2157,7 +2160,7 @@ dStep1.parallel.old <- function(x, time, event, p, MaxIterationsCox) {
         } else {
             sts <- out1$coef/sqrt(out1$var)
             return(c(out1$coef,
-                     1- pchisq((sts^2), df = 1), 
+                     1- pchisq((sts^2), df = 1),
                      out1$warnStatus))
         }
     }
@@ -2166,8 +2169,8 @@ dStep1.parallel.old <- function(x, time, event, p, MaxIterationsCox) {
                                   funpap3,
                                   sobject = sobject,
                                   MaxIterationsCox = MaxIterationsCox,
-                                  mc.cores = detectCores())),
-                             ncol = 3, byrow = TRUE)
+                                  mc.cores = numCores)),
+                  ncol = 3, byrow = TRUE)
     res.mat[, 1:2] <- tmp[, 1:2]
     res.mat[, 3] <- ifelse(res.mat[, 2] < p, 1, 0)
     res.mat[, 4] <- sign(res.mat[, 1]) * res.mat[, 3]
@@ -2187,11 +2190,11 @@ dStep1.parallel.old <- function(x, time, event, p, MaxIterationsCox) {
 dStep2 <- function(x, res.mat, maxSize, minSize,
                    minCor, plot,
                    interactive,
-                   plotSizes = c(0.5, 1, 2)) {
+                   plotSizes = c(0.5, 1, 2), numCores = 10) {
     pmgc("     Starting dStep2")
 
     cat("\n       Starting dStep2 at ", date(), " \n\n"); ptm <- proc.time()
-    
+
     res.mat[is.na(res.mat[, 4]), 4] <- 0
 
     if(sum(res.mat[, 4] == 1) >= minSize) {
@@ -2311,7 +2314,7 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
     }
     pdok <- tp & pdok
     pnok <- tn & pnok
-    
+
     if(plot) {
         pmgc("     dStep2: start of plot")
 
@@ -2337,7 +2340,7 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
                 datalist[[jj]]$minCor <- minCor
             }
             tmp <- mclapply(datalist, function(z) wrapDendmapp(z),
-                            mc.cores = detectCores())
+                            mc.cores = numCores)
 
         } else if ((! pdok) & pnok) {
             system("touch NoPositiveCluster")
@@ -2361,9 +2364,9 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
                 datalist[[jj]]$minCor <- minCor
             }
             tmp <- mclapply(datalist, function(z) wrapDendmapp(z),
-                            mc.cores = detectCores())
+                            mc.cores = numCores)
 
-            
+
         } else if (pdok & pnok) {
             datalist <- list()
             plotSizes2 <- c(plotSizes, plotSizes)
@@ -2403,8 +2406,8 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
            }
 
             tmp <- mclapply(datalist, function(z) wrapDendmapp(z),
-                            mc.cores = detectCores())
-           
+                            mc.cores = numCores)
+
         } else {
             stop("We should never get here!!! Plot error ")
         }
@@ -2445,7 +2448,7 @@ dStep2 <- function(x, res.mat, maxSize, minSize,
         filteredPosPositions <- NA
         posPositions <- NA
     }
-    cat("\n Finished dStep2 at ", date(), "; took ", (proc.time() - ptm)[3], " \n\n")    
+    cat("\n Finished dStep2 at ", date(), "; took ", (proc.time() - ptm)[3], " \n\n")
     pmgc("     Finished dStep2")
 
     return(list(md = cbind(posMeanData, negMeanData),
@@ -2480,7 +2483,7 @@ pdnokf <- function(pn.groups,  pn.data, pn.accept, pn.clus,
     cat("\n ..... have to loop over ", length(pnGroups), "pnGroup\n")
     for(i in 1:length(pnGroups)) {
       cat("\n A1 \n")
-      
+
         dfpt <- dfp[dfp$pn.gr == pnGroups[i], ]
       cat("\n A2 \n")
 
@@ -2495,7 +2498,7 @@ pdnokf <- function(pn.groups,  pn.data, pn.accept, pn.clus,
       mydcat2(miny)
       mydcat2(maxy)
       mydcat2(rainbow.col[i])
-      
+
         axis(4, line = 5, at = c(miny, maxy), col = rainbow.col[i],
              tick = TRUE, labels = FALSE, lwd = 3)
             cat("\n A5 \n")
@@ -2530,7 +2533,7 @@ pdnokf <- function(pn.groups,  pn.data, pn.accept, pn.clus,
 } ##</pdokf within plotting>
 
 
-dendmapp <- function(factor, alllabels, 
+dendmapp <- function(factor, alllabels,
                      pn.groups,  pn.data, pn.accept, pn.clus,
                      main, pnGroups, minCor, theName = "dend.P.factor") {
     ps <- 12
@@ -2548,14 +2551,14 @@ dendmapp <- function(factor, alllabels,
                   pnGroups = pnGroups,
                   minCor   = minCor,
                   alllabels = alllabels)
-    
+
     for(np in 1:nrow(dfp)) {
         addRegion(im1) <- imRect(dfp[np, 2] + .030, dfp[np, 5] - 0.45,
                                  dfp[np, 2] - .1, dfp[np, 5] + 0.45,
                                  title = dfp[np, 1], alt = dfp[np, 1],
                                  href= linkGene2(dfp[np, 1]))
     }
-    
+
     createIM(im1, file = paste(theName, factor, ".alllabels",
                   alllabels, ".html", sep = ""))
     cat("\n before imClose inside dendmapp\n")
@@ -2582,14 +2585,14 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
 
     ## this is a terrible hack, but I am getting scoping problems in stepAIC
     assign("..___MaxIterationsCox", MaxIterationsCox, env = .GlobalEnv)
-    
+
     cat("\n ..... Starting dStep3 at ", date(), " \n\n"); ptm <- proc.time()
     if(all(is.na(res2))) return(NA)
     md <- res2$md
     sobject <- Surv(time, event)
-    
+
     if(ncol(md) >= 2) {
-        
+
         ## Select best two-genes model
         ncolmd <- ncol(md)
         modelsSizeTwo <- t(combn(1:ncolmd, 2))
@@ -2607,7 +2610,7 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
 ##            cat("\n              tried iter.max = ", MaxIterationsCox)
 
 
-            
+
 
             if((length(trycox) == 1) && (trycox == "Error")) {
 ##                cat("\n              failed with iter.max = ", MaxIterationsCox)
@@ -2634,7 +2637,7 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
         attach(mdf) ## stepAIC not working otherwise
         thisenv <- environment()
         cat("\n                 Fitting bestTwoModel\n")
-        trycox <- tryCatch2(                      
+        trycox <- tryCatch2(
                       bestTwoModel <-
                       coxph(eval(parse(text = paste("sobject ~",
                                        paste(colnames(mdf)[bestTwoGenes],
@@ -2712,8 +2715,8 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
                 break
             }
         }
-        
-        
+
+
         ## Should we always be able to get something here? I don't
         ## think so.
         predictsFinalModel <- this.predict.coxph(finalModel, type = "lp")
@@ -2730,13 +2733,13 @@ dStep3 <- function(res2, time, event, MaxIterationsCox) {
             if((length(trycox) == 1) && (trycox == "Error")) break
             cat("\n                         failed with iter.max = ", mitercox)
         }
-        
+
         if((length(trycox) == 1) && (trycox == "Error"))
           predictsFinalModel <- rep(NA, length(time))
         else
           predictsFinalModel <- this.predict.coxph(finalModel, type = "lp")
     }
-    
+
     out <- list(model = finalModel, scores = predictsFinalModel,
                 clusterResults = res2)
     class(out) <- "fmDave"
@@ -2752,7 +2755,7 @@ dPredictNew <- function(res3, newdata) { ## returns predictions (scores)y
     if(all(is.na(res3))) return(NA)
 
     model <- res3$model
-    if(! ("coefficients" %in% names(model))) 
+    if(! ("coefficients" %in% names(model)))
 	return(rep(NA, dim(newdata)[1]))
 	## this is the Null
  	## model, only intercept
@@ -2771,7 +2774,7 @@ dPredictNew <- function(res3, newdata) { ## returns predictions (scores)y
     } else {
         posMeanData <- NA
     }
-    
+
     dataNegative <- newdata[, z$filteredNegPositions, drop = FALSE]
     if(ncol(dataNegative)) {
         negGroups <- unique(z$filteredGroupsNegative)
@@ -2791,9 +2794,9 @@ dPredictNew <- function(res3, newdata) { ## returns predictions (scores)y
                    newdata = as.data.frame(cbind(posMeanData, negMeanData)),
                    type = "lp"))
 }
-    
+
 fitDave.res1Given <- function(x, time, event, res1,
-                              p, maxSize, 
+                              p, maxSize,
                               minSize, minCor, MaxIterationsCox, plot,
                               interactive) {
     cat("\n Starting fitDave.res1Given at ", date(), " \n\n"); ptm <- proc.time()
@@ -2803,16 +2806,16 @@ fitDave.res1Given <- function(x, time, event, res1,
     pmgc("     fitDave.res1Given: after dStep3")
     cat("\n Ended fitDave.res1Given at ", date(), "; took ", (proc.time() - ptm)[3], " seconds \n\n")
     return(res3) ## i.e., an fmDave object returned
-}    
+}
 
 DaveCVPred.res1Given <- function(x, time, event, res1,
                                  train.index, test.index,
-                                 p, maxSize, 
+                                 p, maxSize,
                                  minSize, minCor, MaxIterationsCox,
                                  plot = FALSE,
                                  interactive = FALSE) {#OUT:scoresTest +
                                                        #fmDaveObject; to
-    
+
     xtrain <- x[train.index, , drop = FALSE]
     xtest <- x[test.index, , drop = FALSE]
     timetrain <- time[train.index]
@@ -2829,7 +2832,7 @@ DaveCVPred.res1Given <- function(x, time, event, res1,
                                    interactive =FALSE)
 
     testPred <- dPredictNew(res3 = bestTrain, newdata = xtest)
-                
+
     return(list(scoresTest = testPred,
                 fmDaveObject = bestTrain))
 }
@@ -2838,13 +2841,13 @@ DaveCVPred.res1Given.InternalMPI <- function() {
 ## the following need to be passed with
 ##    mpi.bcast.Robj2slave
 ##    x, time, event, ,
-##    p, maxSize, 
+##    p, maxSize,
 ##    minSize, minCor, MaxIterationsCox,
 ##    index.select
 ##    for res1 supply the complete list
 
     res1 <- res1s[[foldNumber]]
-    
+
     xtrain <- x[index.select != foldNumber, , drop = FALSE]
     xtest <- x[index.select == foldNumber, , drop = FALSE]
     timetrain <- time[index.select != foldNumber]
@@ -2860,7 +2863,7 @@ DaveCVPred.res1Given.InternalMPI <- function() {
                                    interactive =FALSE)
 
     testPred <- dPredictNew(res3 = bestTrain, newdata = xtest)
-                
+
     return(list(scoresTest = testPred,
                 fmDaveObject = bestTrain))
 }
@@ -2900,10 +2903,11 @@ cvDave.parallel3 <- function(x, time, event,
                              minSize, minCor,
                              MaxIterationsCox,
                              nfold,
-                             universeSize = 10) {
+                             ## universeSize = 10,
+                             numCores = 10) {
     pmgc("Beginning of cvDave.parallel3")
     cat("\n Starting cvDave.parallel3 at ", date(), " \n\n"); ptm <- proc.time()
-    
+
     ## if (mpi.comm.size(comm = 1) == 0) {
     ##     mpiSpawnAll(universeSize)
     ##     cat("\n      cvDave.parallel3:  cond 1 \n")
@@ -2918,12 +2922,12 @@ cvDave.parallel3 <- function(x, time, event,
     ##         cat("\n     cvDave.parallel3:  cond 3 \n")
     ##     }
     ## }
-       
+
     n <- length(time)
     index.select <- sample(rep(1:nfold, length = n), n, replace = FALSE)
     OOB.scores <- rep(NA, n)
 
-    
+
     cat("\n\n Computing gene-wise cox p-value\n")
     f00 <- function(i, x, time, event, p, MaxIterationsCox, index.select) {
         xtr <- x[index.select != i, , drop = FALSE]
@@ -2942,9 +2946,9 @@ cvDave.parallel3 <- function(x, time, event,
                       p = p,
                       MaxIterationsCox = MaxIterationsCox,
                       index.select = index.select,
-                      mc.cores = detectCores())
+                      mc.cores = numCores)
     pmgc("     cvDave.parallel3: after res1s")
-    cat("\n\n Cleaning up MPI slaves\n\n")	
+    cat("\n\n Cleaning up MPI slaves\n\n")
     ## mpiDelete()
     cat("\n\n Computing the rest\n")
 
@@ -2957,11 +2961,11 @@ cvDave.parallel3 <- function(x, time, event,
       ## the following need to be passed with
       ##    mpi.bcast.Robj2slave
       ##    x, time, event, ,
-      ##    p, maxSize, 
+      ##    p, maxSize,
       ##    minSize, minCor, MaxIterationsCox,
       ##    index.select
       ##    for res1 supply the complete list
-      
+
       res1 <- res1s[[fnum]]
       xtrain <- x[index.select != fnum, , drop = FALSE]
       xtest <- x[index.select == fnum, , drop = FALSE]
@@ -2993,16 +2997,16 @@ cvDave.parallel3 <- function(x, time, event,
                      minSize = minSize, minCor = minCor,
                      maxiterationscox = MaxIterationsCox,
                      res1s = res1s,
-                     mc.cores = detectCores())
+                   mc.cores = numCores)
     ##    cat("\n\n Cleaning up and closing MPI\n")
     ##    try(mpi.close.Rslaves())
-    
+
     for(i in 1:nfold) {
         OOB.scores[index.select == i] <-
             tmp1[[i]]$scoresTest
         tmp1[[i]]$scoresTest <- NULL  ## don't need this anymore
     }
-    
+
     out <- list(cved.models = tmp1,
                 OOB.scores = OOB.scores)
     class(out) <- "cvDave"
@@ -3016,7 +3020,7 @@ cvDave.parallel3 <- function(x, time, event,
 
 
 summary.cvDave <- function(object, allDataObject.selected, subjectNames, genenames, html = TRUE) {
-    
+
     oobs <- matrix(object$OOB.scores, ncol = 1)
     rownames(oobs) <- subjectNames
     if (!html){
@@ -3048,14 +3052,14 @@ summary.cvDave <- function(object, allDataObject.selected, subjectNames, genenam
 ##         }
 ##         cat("</TABLE>")
     }
-        
-    
+
+
     object <- object[[1]] ## don't need scores anymore. Simpler subsetting.
 
     allWarnings <- lapply(object, function(x) x$Warn)
-    
+
     ks <- length(object)
-    cv.names <- paste("CV.run.", 1:ks, sep = "")    
+    cv.names <- paste("CV.run.", 1:ks, sep = "")
 
 
     if(html) {
@@ -3084,7 +3088,7 @@ summary.cvDave <- function(object, allDataObject.selected, subjectNames, genenam
     }
 
 
-    
+
     tmp.genesSelected <- list()
     tmp.genesSelected[[1]] <- unlist(allDataObject.selected$Genes)
 ##    browser()
@@ -3100,7 +3104,7 @@ summary.cvDave <- function(object, allDataObject.selected, subjectNames, genenam
         return(unlist(x$Genes))
       }
     }
-      
+
     genesSelected.cv <- lapply(selectedInR, fu)
                                ##function(x) unlist(x$Genes))
     tmp.genesSelected <- c(tmp.genesSelected, genesSelected.cv)
@@ -3116,7 +3120,7 @@ summary.cvDave <- function(object, allDataObject.selected, subjectNames, genenam
 
     ngenes <- sapply(tmp.genesSelected, length)
     prop.shared <- round(shared.genes/ngenes, 3)
-    
+
     ngenesS <- paste("(", ngenes, ")", sep = "")
     colnames(shared.genes) <- colnames(prop.shared) <- c("OriginalSample", cv.names)
     rownames(shared.genes) <- rownames(prop.shared) <- paste(c("OriginalSample", cv.names), ngenesS)
@@ -3126,13 +3130,13 @@ summary.cvDave <- function(object, allDataObject.selected, subjectNames, genenam
     options(width = 200)
     cat("\n\n Number of shared genes \n")
     print(as.table(shared.genes))
-    
+
     cat("\n\n Proportion of shared genes (relative to row total) \n")
     print(as.table(prop.shared))
     if(html) cat("</pre>")
     options(width = 80)
     unlisted.genes.selected <- unlist(genesSelected.cv)
-    
+
     in.all.data <-
         which(names(table(unlisted.genes.selected, dnn = NULL)) %in% tmp.genesSelected[[1]])
     tmp1 <- sort(table(unlisted.genes.selected, dnn = NULL)[in.all.data], decreasing = TRUE)
@@ -3149,7 +3153,7 @@ summary.cvDave <- function(object, allDataObject.selected, subjectNames, genenam
             cat("\n <tr align=right>")
             cat("<td>", linkGene(names(tmp1)[i]), "</td><td>", tmp1[i], "</td></tr>\n")
         }
-        cat("</TABLE>")    
+        cat("</TABLE>")
     }
     tmp2 <- sort(table(unlisted.genes.selected, dnn = NULL),
                  decreasing = TRUE)
@@ -3179,7 +3183,7 @@ selectedSignatures <- function(fmDave, genenames,
         if(print) print(NA)
         return(NA)
     }
-        
+
     res2 <- fmDave$clusterResults
     selectedSign <- names(fmDave$model$coeff)
     signatures <- list()
@@ -3187,7 +3191,7 @@ selectedSignatures <- function(fmDave, genenames,
 
     signatures$Genes <- list() ## otherwise, could behave as vector if
     ## first assignm. is a single element
-    
+
     if(!length(selectedSign)) {
         signatures$component[1] <- 1
         signatures$Name[1] <- "Null model (only an intercept fitted, no components selected)"
@@ -3200,7 +3204,7 @@ selectedSignatures <- function(fmDave, genenames,
         signatures$component[i] <- i
         signatures$Name[i] <- selectedSign[i]
         signatures$Coeffs[i] <- coeffs[i]
-        
+
         ind1 <- which(res2$filteredGroupsNegative ==
                       selectedSign[i])
         if(length(ind1)) {
@@ -3288,7 +3292,7 @@ selectedSignatures <- function(fmDave, genenames,
                 cat("\n<tr><td></td><td>",
                     linkGene(signatures$Genes[[i]][j]),
                     "</td><td></td></tr>")
-                
+
             }
             cat("\n</tbody>\n")
 ##             c1[k] <- paste(rep("-", 14), sep = "", collapse = "")
@@ -3297,8 +3301,8 @@ selectedSignatures <- function(fmDave, genenames,
             k <- k + 1
         }
         cat("\n</TABLE>\n")
-        
-##         dffp <- data.frame(cbind("Component_Name" = c1,
+
+        ##         dffp <- data.frame(cbind("Component_Name" = c1,
 ##                                  "Genes" = c3,
 ##                                  "Coefficient" = c2))
 ##         options(width = 120)
@@ -3331,7 +3335,7 @@ linkGene <- function(id) {
               organism,"\" target=\"icl_window\" >",id,"</a>", sep = "")
 ## target=\"icl_window\"\
 }
-     
+
 
 
 linkGene2 <- function(id) {
@@ -3339,7 +3343,7 @@ linkGene2 <- function(id) {
     ## to IDClight.
     if ((idtype == "None") | (organism == "None"))
         return(id)
-    else 
+    else
         paste("http://idclight.bioinfo.cnio.es/IDClight.prog",
               "?idtype=", idtype, "&id=", id, "&internal=0&org=",
               organism, sep = "")
@@ -3348,8 +3352,8 @@ linkGene2 <- function(id) {
 imagemap3 <- function(filename,width=480,height=480,
                       title='Imagemap from R', ps = 12){
 
-    CairoPNG(file = paste(filename,".png",sep=''),w=width, h=height, ps = ps)	  
-	  
+    CairoPNG(file = paste(filename,".png",sep=''),w=width, h=height, ps = ps)
+
     im <- list()
     im$Device <- dev.cur()
     im$Filename=filename
@@ -3358,7 +3362,7 @@ imagemap3 <- function(filename,width=480,height=480,
     im$Objects <- list()
     im$HTML <- list()
     im$title <- title
-    
+
     class(im) <- "imagemap"
     im
 }
@@ -3383,5 +3387,5 @@ nameLeave <- function(x) {
 #### use try.
 
 
-
-
+library(codetools)
+checkUsageEnv(env = .GlobalEnv)

@@ -8,7 +8,7 @@
 
 import sys
 import os
-import cgi 
+import cgi
 import time
 import shutil
 import glob
@@ -20,12 +20,12 @@ import tarfile
 # import cgitb; cgitb.enable()
 # sys.stderr = sys.stdout
 
-sys.path = sys.path + ['/asterias-web-apps/web-apps-common']
+sys.path = sys.path + ['/home2/ramon/web-apps/web-apps-common']
 import counterApplications
 from web_apps_config import *
 
 tmpDir = sys.argv[1]
-ROOT_TMP_DIR = "/asterias-web-apps/signs2/www/tmp/"
+ROOT_TMP_DIR = "/home2/ramon/web-apps/signs2/www/tmp/"
 newDir = tmpDir.replace(ROOT_TMP_DIR, "")
 runningProcs = tmpDir.split('/tmp/')[0] + '/R.running.procs/'
 
@@ -93,7 +93,7 @@ def collectZombies(k = 10):
 def issue_echo(fecho, tmpDir):
     """Silly function to output small tracking files"""
     timeHuman = '##########   ' + \
-                str(time.strftime('%d %b %Y %H:%M:%S')) 
+                str(time.strftime('%d %b %Y %H:%M:%S'))
     os.system('echo "' + timeHuman + \
               '" >> ' + tmpDir + '/checkdone.echo')
     os.system('echo "' + fecho + \
@@ -156,9 +156,9 @@ def kill_pid_machine(pid):
 #     - keep adding the gene names until either that is done, or a new
 #     component is added (mark the later when it happens).
 #     - if the set is done, look again for where a set of results starts.
-    
+
 #     """
-    
+
 #     f1 = open(file_in, mode = 'r').readlines()
 #     f2 = open(file_out, mode = 'w')
 
@@ -250,7 +250,7 @@ def kill_pid_machine(pid):
 
 #     clean_for_PaLS(tmpDir + '/' + f1, tmpDir + '/' + f1)
 #     clean_for_PaLS(tmpDir + '/' + f2, tmpDir + '/' + f2)
-    
+
 #     outstr0 = '<br /> <hr> ' + \
 #               '<h3> Send results to <a href = "http://pals.iib.uam.es">' + \
 #               '<IMG BORDER="0" SRC="../../palsfavicon40.png" align="middle"></a></h3>'
@@ -260,7 +260,7 @@ def kill_pid_machine(pid):
 #              '">' + s1 + ' to PaLS</a></p>' + \
 #              '<p> Send set of <a href="http://pals.iib.uam.es?' + \
 #              url_org_id + 'datafile=' + gl2 + \
-#              '">' + s2 + ' to PaLS</a></p>' 
+#              '">' + s2 + ' to PaLS</a></p>'
 #     return(outstr)
 
 
@@ -268,7 +268,7 @@ def kill_pid_machine(pid):
 
 def getQualifiedURL(uri = None):
     """ Return a full URL starting with schema, servername and port.
-    
+
     *uri* -- append this server-rooted uri (must start with a slash)
     """
     schema, stdport = ('http', '80')
@@ -302,7 +302,7 @@ def commonOutput():
 def getScriptname():
     """ Return te scriptname part of the URL."""
     return os.environ.get('SCRIPT_NAME', '')
-    
+
 
 def relaunchCGI():
     issue_echo('inside relaunchCGI', tmpDir)
@@ -318,13 +318,13 @@ def relaunchCGI():
     print '</head> <body>'
     print '<p> This is an autorefreshing page; your results will eventually be displayed here.\n'
     print 'If your browser does not autorefresh, the results will be kept for five days at</p>'
-    print '<p><a href="' + getBaseURL() + '?newDir=' + newDir + '">', 'http://signs2.iib.uam.es/tmp/'+ newDir + '/results.html</a>.' 
+    print '<p><a href="' + getBaseURL() + '?newDir=' + newDir + '">', 'http://signs2.iib.uam.es/tmp/'+ newDir + '/results.html</a>.'
     print '</p> </body> </html>'
     issue_echo('end of relaunchCGI', tmpDir)
-    
 
 
-    
+
+
 
 ## Output-generating functions
 
@@ -370,9 +370,9 @@ def printOKRun():
     outf.write('\n <SCRIPT type="text/javascript" SRC="../../aqtree3clickable.js"></SCRIPT> ')
     outf.write('\n <LINK REL="stylesheet" HREF="../../aqtree3clickable.css"> ')
     outf.write('\n <LINK REL="stylesheet" HREF="../../style1.css"> ')
-        
+
     outf.write("\n <title>SignS results </title></head><body>\n")
-     
+
     if os.path.exists(tmpDir + "/ErrorFigure.png"):
         outf.write('<IMG BORDER="0" SRC="ErrorFigure.png">')
         outf.write("<br /><br /> <hr>")
@@ -441,8 +441,8 @@ def printOKRun():
             for flname in lll:
                 allResults.add(flname)
             allResults.close()
-            outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')  
-            # outf.write(printPalsURL(newDir, tmpDir, 
+            outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')
+            # outf.write(printPalsURL(newDir, tmpDir,
             #                         s1 = "Genes selected in run with all data",
             #                         s2 = "Genes selected in run with all data and in CV runs"))
             outf.write("</body></html>")
@@ -518,8 +518,8 @@ def printOKRun():
             if os.path.exists(tmpDir + "/kmplot4-validation.pdf"): allResults.add(tmpDir + '/kmplot4-validation.pdf', 'SurvivalPlot4-validation.pdf')
 
             allResults.close()
-            outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')  
-            # outf.write(printPalsURL(newDir, tmpDir, 
+            outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')
+            # outf.write(printPalsURL(newDir, tmpDir,
             #                         s1 = "Genes selected in run with all data",
             #                         s2 = "Genes selected in run with all data and in CV runs"))
             outf.write("</body></html>")
@@ -529,7 +529,7 @@ def printOKRun():
 
         if (methodUsed == 'FCMS') or (methodUsed == 'FCMS\n'):
             outf.write("<h2> Results using FCMS (filter, cluster, and model selection, as in Dave et al.)</h2> <br /><hr><hr>\n")
-	    
+
 	    outf.write('<h2>1. Single gene statistics and p-values</h2>\n')
             outf.write('<ul class="aqtree3clickable">\n')
 	    outf.write('<li><a>Single-gene Cox model p-values and statistics</a><ul>\n')
@@ -541,7 +541,7 @@ def printOKRun():
 	    outf.write('<li><a href="p.v.sort.abscoef.d.html" target="pv_window">Sorted by absolute value of coefficient, descending</a>')
 	    outf.write('<li><a href="p.v.sort.name.d.html" target="pv_window">Sorted by name, descending</a>')
 	    outf.write('<li><a href="p.v.sort.name.a.html" target="pv_window">Sorted by name, ascending</a></ul></ul></ul>')
-	    
+
             outf.write('<hr><h2>2. Survival plots</h2>')
             outf.write('<h3>2.1. Survival plots using scores from final model</h3>\n')
             outf.write('<h4>Two groups</h4>\n')
@@ -567,13 +567,13 @@ def printOKRun():
 
 	    outf.write('<br /> <br /> <hr>')
 	    outf.write('<h2>3. Dendrograms of gene clusters</h2>')
-            outf.write('<p>(If needed, click on the "+" to expand the list. Then, clik on the figure you want to open. Once a dendrogram is opened, ' + 
+            outf.write('<p>(If needed, click on the "+" to expand the list. Then, clik on the figure you want to open. Once a dendrogram is opened, ' +
 	    'click on the node name, or close to where the name would be placed, ' +
 	    'to see additional information for each gene.)</p>')
 	    outf.write('<ul class="aqtree3clickable">\n')
 	    outf.write('<li><a>Dendrograms for genes with positive coefficients</a><ul>\n')
 	    if os.path.exists(tmpDir + '/NoPositiveCluster'):
-		outf.write('<p>There are no genes with positive coefficients that satisfy the p, ' + 
+		outf.write('<p>There are no genes with positive coefficients that satisfy the p, ' +
 		'minimum correlation and size restrictions.</p></ul>')
 	    else:
 		outf.write('<li><a>All genes named</a><ul>\n')
@@ -586,7 +586,7 @@ def printOKRun():
 		outf.write('<li><a href="dend.P.factor2.alllabelsFALSE.html" target="dend_window">Double size</a></ul></ul>')
 	    outf.write('<li><a>Dendrograms for genes with negative coefficients</a><ul>\n')
 	    if os.path.exists(tmpDir + '/NoNegativeCluster'):
-		outf.write('<p>There are no genes with negative coefficients that satisfy the p, ' + 
+		outf.write('<p>There are no genes with negative coefficients that satisfy the p, ' +
 		'minimum correlation and size restrictions.</p></ul></ul>')
 	    else:
 		outf.write('<li><a>All genes named</a><ul>\n')
@@ -597,14 +597,14 @@ def printOKRun():
 		outf.write('<li><a href="dend.N.factor0.5.alllabelsFALSE.html" target="dend_window">Half size</a>')
 		outf.write('<li><a href="dend.N.factor1.alllabelsFALSE.html" target="dend_window">Normal (1200x800) size</a>')
 		outf.write('<li><a href="dend.N.factor2.alllabelsFALSE.html" target="dend_window">Double size</a></ul></ul></ul>')
-            
+
             outf.write("<br /><br /> <hr>")
             outf.write(resultsFile)
 
             #if os.path.exists(tmpDir + '/f1.R'): os.remove(tmpDir + '/f1.R')
             Rresults.close()
             if os.path.exists(tmpDir + '/results.txt'): os.remove(tmpDir + '/results.txt')
-     
+
             allResults = tarfile.open(tmpDir + '/all.results.tar.gz', 'w:gz')
             os.chdir(tmpDir)
             if os.path.exists('correlationMatrixCluters.html'):
@@ -617,18 +617,18 @@ def printOKRun():
                 os.system('html2text -width 200 -nobs  -o single.gene.cox.coef.p.value.txt p.v.sort.name.a.html')
             outf.flush()
             os.system('html2text -width 200 -nobs -o Results.txt pre-results.html')
-            
+
 #             ll1 = glob.glob('*.log')
 #             for dname in ll1:
 #                 try: os.remove(dname)
 #                 except: None
-            
+
             lll = glob.glob('*')
             for flname in lll:
                 allResults.add(flname)
 
             allResults.close()
-            outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')  
+            outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')
             # extract_for_PaLS_from_Signs('Results.txt',
             #                             'Selected.genes.txt',
             #                             all_runs = False)
@@ -663,9 +663,9 @@ def printRKilled():
 
 
 # def printMPIerror(tmpDir, numtries, application = 'SignS'):
-#     if not os.path.exists('/asterias-web-apps/mpi.log/' + application + 'ErrorLog'):
-#         os.system('touch /asterias-web-apps/mpi.log/' + application + 'ErrorLog')
-#     outlog = open('/asterias-web-apps/mpi.log/' + application + 'ErrorLog', mode = 'a')
+#     if not os.path.exists('/home2/ramon/web-apps/mpi.log/' + application + 'ErrorLog'):
+#         os.system('touch /home2/ramon/web-apps/mpi.log/' + application + 'ErrorLog')
+#     outlog = open('/home2/ramon/web-apps/mpi.log/' + application + 'ErrorLog', mode = 'a')
 #     outlog.write('MPI fails on ' + time.ctime(time.time()) +
 #                  ' Directory: ' + tmpDir + '\n')
 #     outlog.close()
@@ -689,9 +689,9 @@ def printRKilled():
 
 
 # def printMPITooBusy(tmpDir, MAX_DURATION_TRY, application = 'SignS'):
-#     if not os.path.exists('/asterias-web-apps/mpi.log/' + application + 'ErrorLog'):
-#         os.system('touch /asterias-web-apps/mpi.log/' + application + 'ErrorLog')
-#     outlog = open('/asterias-web-apps/mpi.log/' + application + 'ErrorLog', mode = 'a')
+#     if not os.path.exists('/home2/ramon/web-apps/mpi.log/' + application + 'ErrorLog'):
+#         os.system('touch /home2/ramon/web-apps/mpi.log/' + application + 'ErrorLog')
+#     outlog = open('/home2/ramon/web-apps/mpi.log/' + application + 'ErrorLog', mode = 'a')
 #     outlog.write('Something fails on ' + time.ctime(time.time()) +
 #                  ' Directory: ' + tmpDir + '\n')
 #     outlog.close()
@@ -715,9 +715,9 @@ def printRKilled():
 #     shutil.copyfile(tmpDir + "/pre-results.html", tmpDir + "/results.html")
 
 def printTooBusy(tmpDir, MAX_DURATION_TRY, application = 'SignS'):
-    if not os.path.exists('/asterias-web-apps/log/' + application + 'ErrorLog'):
-        os.system('touch /asterias-web-apps/log/' + application + 'ErrorLog')
-    outlog = open('/asterias-web-apps/log/' + application + 'ErrorLog', mode = 'a')
+    if not os.path.exists('/home2/ramon/web-apps/log/' + application + 'ErrorLog'):
+        os.system('touch /home2/ramon/web-apps/log/' + application + 'ErrorLog')
+    outlog = open('/home2/ramon/web-apps/log/' + application + 'ErrorLog', mode = 'a')
     outlog.write('Something fails on ' + time.ctime(time.time()) +
                  ' Directory: ' + tmpDir + '\n')
     outlog.close()
@@ -752,7 +752,7 @@ def printTooBusy(tmpDir, MAX_DURATION_TRY, application = 'SignS'):
 #                        os.O_RDWR | os.O_CREAT | os.O_NDELAY)
 #     issue_echo('before fullCommand inside lamboot', tmpDir)
 #     fullCommand = 'export LAM_MPI_SESSION_SUFFIX="' + lamSuffix + \
-#                   '"; /asterias-web-apps/mpi.log/tryBootLAM2.py ' + lamSuffix + \
+#                   '"; /home2/ramon/web-apps/mpi.log/tryBootLAM2.py ' + lamSuffix + \
 #                   ' ' + str(ncpu)
 #     issue_echo('before os.system inside lamboot', tmpDir)
 #     lboot = os.system(fullCommand)
@@ -763,7 +763,7 @@ def printTooBusy(tmpDir, MAX_DURATION_TRY, application = 'SignS'):
 #     """ Use tping to verify LAM universe OK.
 #     tsleep is how long we wait before checking output of tping.
 #     Verify also using 'lamexec C hostname' """
-    
+
 #     tmp2 = os.system('export LAM_MPI_SESSION_SUFFIX="' +\
 #                      lamSuffix + '"; cd ' + tmpDir + \
 #                      '; tping C N -c' + str(nc) + \
@@ -773,7 +773,7 @@ def printTooBusy(tmpDir, MAX_DURATION_TRY, application = 'SignS'):
 #                        '; wc tping.out').readline().split()[0])
 #     os.system('rm ' + tmpDir + '/tping.out')
 #     timeHuman = '##########   ' + \
-#                 str(time.strftime('%d %b %Y %H:%M:%S')) 
+#                 str(time.strftime('%d %b %Y %H:%M:%S'))
 #     os.system('echo "' + timeHuman + \
 #               '" >> ' + tmpDir + '/checkTping.out')
 #     if tmp == 0:
@@ -802,23 +802,23 @@ def printTooBusy(tmpDir, MAX_DURATION_TRY, application = 'SignS'):
 
 # def lam_crash_log(tmpDir, value):
 #     """ Write to the lam crash log, 'recoverFromLAMCrash.out' """
-#     timeHuman = str(time.strftime('%d %b %Y %H:%M:%S')) 
+#     timeHuman = str(time.strftime('%d %b %Y %H:%M:%S'))
 #     os.system('echo "' + value + '  at ' + timeHuman + \
 #               '" >> ' + tmpDir + '/recoverFromLAMCrash.out')
 
 def generic_crash_log(tmpDir, value):
     """ Write to the lam crash log, 'recoverFromLAMCrash.out' """
-    timeHuman = str(time.strftime('%d %b %Y %H:%M:%S')) 
+    timeHuman = str(time.strftime('%d %b %Y %H:%M:%S'))
     os.system('echo "' + value + '  at ' + timeHuman + \
               '" >> ' + tmpDir + '/recoverFromLAMCrash.out')
-    
+
 # def recover_from_lam_crash(tmpDir, NCPU, MAX_NUM_PROCS, lamSuffix,
 #                            runningProcs = runningProcs,
 #                            machine_root = 'karl'):
 #     """Check if lam crashed during R run. If it did, restart R
 #     after possibly rebooting the lam universe.
 #     Leave a trace of what happened."""
-    
+
 #     os.remove(''.join([runningProcs, 'sentinel.lam.', newDir, '.', lamSuffix]))
 #     del_mpi_logs(tmpDir, machine_root)
 #     lam_crash_log(tmpDir, 'Crashed')
@@ -846,7 +846,7 @@ def Rrun(tmpDir, R_bin):
                R_bin + ' --no-readline --no-save --slave <f1.R >>f1.Rout 2>> Status.msg &'
     issue_echo('the Rcommand is ' + Rcommand, tmpDir)
     Rtorun = os.system(Rcommand)
-    
+
 
 
 
@@ -913,7 +913,7 @@ def did_lam_crash(tmpDir, machine_root = 'karl'):
         return True
     else:
         return False
-    
+
 def did_mpi_crash(tmpDir, machine_root = 'karl'):
     """ Either Rmpi or LAM crashed"""
     issue_echo('    did Rmpi or LAM crash (did_mpi_crash)?', tmpDir)
@@ -932,7 +932,7 @@ def del_mpi_logs(tmpDir, machine_root = 'karl'):
         None
     try:
         for lam_log in lam_logs:
-            os.system('rm ' + lam_log)    
+            os.system('rm ' + lam_log)
     except:
         None
 
@@ -946,7 +946,7 @@ def did_run_out_of_time(tmpDir, R_MAX_time):
         return True
     else:
         return False
-                           
+
 
 def cleanups(tmpDir, newDir, newnamepid,
              runningProcs = runningProcs,
@@ -965,7 +965,7 @@ def cleanups(tmpDir, newDir, newnamepid,
     # except:
     #     None
     try:
-        os.system('rm /asterias-web-apps/' + appl + '/www/R.running.procs/R.' + newDir + '*')
+        os.system('rm /home2/ramon/web-apps/' + appl + '/www/R.running.procs/R.' + newDir + '*')
     except:
         None
     try:
@@ -999,13 +999,13 @@ def master_out_of_time(time_start):
         return True
     else:
         return False
-        
+
 
 # def add_to_proc_table(max_num_procs, add_procs = 1):
 #     """Try to add add_procs to the process table. If it can
 #     returns OK, otherwise (e.g., too many procs) return Failed.
 #     Locking would be great ... but it does not work over NFS. """
-    
+
 #     fo = open(procTable, mode = 'r+')
 #     fcntl.flock(fo.fileno(), fcntl.LOCK_EX)
 #     currentProcs = int(fo.read())
@@ -1061,7 +1061,7 @@ def del_from_proc_table(del_procs = 1):
 #     out_value = 'OK'
 #     startTime = time.time()
 #     while True:
-#         killedlamandr = os.system('/asterias-web-apps/mpi.log/killOldLamAllMachines.py')
+#         killedlamandr = os.system('/home2/ramon/web-apps/mpi.log/killOldLamAllMachines.py')
 #         issue_echo('     inside my_queue ', tmpDir)
 #         if (time.time() - startTime) > MAX_DURATION_TRY:
 #             out_value = 'Failed'
@@ -1084,14 +1084,14 @@ def my_queue(MAX_NUM_PROCS,
              CHECK_QUEUE = 23,
              MAX_DURATION_TRY = MAX_DURATION_TRY_Signs):
     """ Wait here until the number of processes is smaller than
-    MAX_NUM_PROCS 
+    MAX_NUM_PROCS
     But only wait for MAX_DURATION. Check
     every CHECK_QUEUE seconds. If able to find an opening, return
     OK, otherwise return Failed"""
     out_value = 'OK'
     startTime = time.time()
     while True:
-#        killedlamandr = os.system('/asterias-web-apps/mpi.log/killOldLamAllMachines.py')
+#        killedlamandr = os.system('/home2/ramon/web-apps/mpi.log/killOldLamAllMachines.py')
         issue_echo('     inside my_queue ', tmpDir)
         if (time.time() - startTime) > MAX_DURATION_TRY:
             out_value = 'Failed'
@@ -1107,7 +1107,7 @@ def my_queue(MAX_NUM_PROCS,
             time.sleep(CHECK_QUEUE + random.uniform(0.1, 5))
     return out_value
 
-    
+
 # def generate_lam_suffix(tmpDir):
 #     """As it says. Generate and write it out"""
 #     lamSuffix = str(int(time.time())) + \
@@ -1124,7 +1124,7 @@ def my_queue(MAX_NUM_PROCS,
 
 issue_echo('starting', tmpDir)
 
-        
+
 ## NCPU, MAX_NUM_PROCS = set_defaults_lam(tmpDir)
 
 try:
@@ -1212,4 +1212,3 @@ while True:
 
 
 issue_echo('at the very end!', tmpDir)
-

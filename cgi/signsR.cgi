@@ -4,7 +4,7 @@ import glob
 import socket
 import sys
 import os
-import cgi 
+import cgi
 import time
 import shutil
 import dircache
@@ -12,12 +12,12 @@ import random
 import subprocess
 from stat import ST_SIZE
 
-# import cgitb
-# cgitb.enable() 
+import cgitb
+cgitb.enable()
 # sys.stderr = sys.stdout
 
 APP_NAME = "signs2"
-sys.path.append("/asterias-web-apps/web-apps-common")
+sys.path.append("/home2/ramon/web-apps/web-apps-common")
 from web_apps_config import *
 from web_apps_common_funcs import *
 
@@ -31,7 +31,7 @@ def valueNumUpload(fieldName, testNumber = 'float', minValue = 0, APP_NAME = APP
     if not fs.has_key(fieldName):
         shutil.rmtree(tmpDir)
         commonOutput(APP_NAME)
-        print "<h1> SignS INPUT ERROR </h1>"    
+        print "<h1> SignS INPUT ERROR </h1>"
         print "<p> ", fieldName, "value required </p>"
         print "<p> Please fill up the required fields and try again</p>"
         print "</body></html>"
@@ -39,7 +39,7 @@ def valueNumUpload(fieldName, testNumber = 'float', minValue = 0, APP_NAME = APP
     if fs[fieldName].filename:
         shutil.rmtree(tmpDir)
         commonOutput(APP_NAME)
-        print "<h1> SignS INPUT ERROR </h1>"    
+        print "<h1> SignS INPUT ERROR </h1>"
         print "<p> ", fieldName, "should not be a file. </p>"
         print "<p> Please fill up the required fields and try again</p>"
         print "</body></html>"
@@ -47,7 +47,7 @@ def valueNumUpload(fieldName, testNumber = 'float', minValue = 0, APP_NAME = APP
     if type(fs[fieldName]) == type([]):
         shutil.rmtree(tmpDir)
         commonOutput(APP_NAME)
-        print "<h1> SignS INPUT ERROR </h1>"    
+        print "<h1> SignS INPUT ERROR </h1>"
         print "<p> ", fieldName, "should be a single value.</p>"
         print "<p> Please fill up the required fields and try again</p>"
         print "</body></html>"
@@ -61,7 +61,7 @@ def valueNumUpload(fieldName, testNumber = 'float', minValue = 0, APP_NAME = APP
             tmpn = float(tmp)
         except:
             commonOutput(APP_NAME)
-            print "<h1> SignS INPUT ERROR </h1>"    
+            print "<h1> SignS INPUT ERROR </h1>"
             print "<p> ", fieldName, "is not a valid numeric value.</p>"
             print "<p> Please fill up the required fields and try again</p>"
             print "</body></html>"
@@ -71,7 +71,7 @@ def valueNumUpload(fieldName, testNumber = 'float', minValue = 0, APP_NAME = APP
             tmpn = int(tmp)
         except:
             commonOutput(APP_NAME)
-            print "<h1> SignS INPUT ERROR </h1>"    
+            print "<h1> SignS INPUT ERROR </h1>"
             print "<p> ", fieldName, "is not a valid numeric value.</p>"
             print "<p> Please fill up the required fields and try again</p>"
             print "</body></html>"
@@ -80,7 +80,7 @@ def valueNumUpload(fieldName, testNumber = 'float', minValue = 0, APP_NAME = APP
     if tmpn < minValue:
         shutil.rmtree(tmpDir)
         commonOutput(APP_NAME)
-        print "<h1> SignS INPUT ERROR </h1>"    
+        print "<h1> SignS INPUT ERROR </h1>"
         print "<p> ", fieldName, "smaller than smallest accepted value (", minValue, "). </p>"
         print "<p> Please fill up the required fields and try again</p>"
         print "</body></html>"
@@ -109,9 +109,9 @@ def valueNumUpload(fieldName, testNumber = 'float', minValue = 0, APP_NAME = APP
 ## NOT needed anymore; delete_old_dirs runs as cron job!
 ## YES, needed: cronjobs are a pain
 currentTime = time.time()
-currentTmp = dircache.listdir("/asterias-web-apps/signs2/www/tmp")
+currentTmp = dircache.listdir("/home2/ramon/web-apps/signs2/www/tmp")
 for directory in currentTmp:
-    tmpS = "/asterias-web-apps/signs2/www/tmp/" + directory
+    tmpS = "/home2/ramon/web-apps/signs2/www/tmp/" + directory
     if (currentTime - os.path.getmtime(tmpS)) > MAX_time:
         shutil.rmtree(tmpS)
 
@@ -119,7 +119,7 @@ for directory in currentTmp:
 ### Creating temporal directories
 newDir = str(random.randint(1, 10000)) + str(os.getpid()) + str(random.randint(1, 100000)) + str(int(currentTime)) + str(random.randint(1, 10000))
 redirectLoc = "/tmp/" + newDir
-tmpDir = "/asterias-web-apps/signs2/www/tmp/" + newDir
+tmpDir = "/home2/ramon/web-apps/signs2/www/tmp/" + newDir
 os.mkdir(tmpDir)
 os.chmod(tmpDir, 0700)
 
@@ -138,7 +138,7 @@ if methodSurv == 'FCMS':
     if minsize >= maxsize:
         shutil.rmtree(tmpDir)
         commonOutput(APP_NAME)
-        print "<h1> SignS INPUT ERROR </h1>"    
+        print "<h1> SignS INPUT ERROR </h1>"
         print "<p> Max number of genes surely must be larger "
         print "than Min number of genes.</p>"
         print "<p> Please fill up the required fields and try again.</p>"
@@ -149,7 +149,7 @@ if methodSurv == 'FCMS':
     if mincor > 1:
         shutil.rmtree(tmpDir)
         commonOutput(APP_NAME)
-        print "<h1> SignS INPUT ERROR </h1>"    
+        print "<h1> SignS INPUT ERROR </h1>"
         print "<p> Min. correlation should of course be between 0 and 1."
         print "<p> Please fill up the required fields and try again.</p>"
         print "mincor " + mincor
@@ -159,7 +159,7 @@ if methodSurv == 'FCMS':
     if Minp > 1:
         shutil.rmtree(tmpDir)
         commonOutput(APP_NAME)
-        print "<h1> SignS INPUT ERROR </h1>"    
+        print "<h1> SignS INPUT ERROR </h1>"
         print "<p> Minimal p for gene-wise Cox should of course be between 0 and 1."
         print "<p> Please fill up the required fields and try again.</p>"
         print "</body></html>"
@@ -171,7 +171,7 @@ if methodSurv == 'TGD':
     if tau > 1:
         shutil.rmtree(tmpDir)
         commonOutput(APP_NAME)
-        print "<h1> SignS INPUT ERROR </h1>"    
+        print "<h1> SignS INPUT ERROR </h1>"
         print "<p> Tau should be between 0 and 1."
         print "<p> Please fill up the required fields and try again.</p>"
         print "</body></html>"
@@ -187,7 +187,7 @@ if methodSurv == 'cforest':
 #         ## an ugly hack, as prep not in this filesystem
 #     os.system('wget http://prep.iib.uam.es/tmp/' + prep_tmpdir +
 #               '/outdata.txt -O ' + tmpDir + '/covariate')
-#     ## shutil.copy("/asterias-web-apps/prep/www/tmp/" + prep_tmpdir +"/outdata.txt",tmpDir + "/covariate")
+#     ## shutil.copy("/home2/ramon/web-apps/prep/www/tmp/" + prep_tmpdir +"/outdata.txt",tmpDir + "/covariate")
 # else:
 ## Uploading files and checking not abusively large
 fileUpload('covariate', fs, tmpDir, APP_NAME)
@@ -250,7 +250,7 @@ if fs.has_key('validation'):
         print "<p> This size is not allowed.</p>"
         print "</body></html>"
         sys.exit()
-    
+
 ## Upload worked OK. We store the original names of the files in the
 ## browser for later report:
 ## We'll need to get this working for the validation data.zz
@@ -270,14 +270,14 @@ fileNamesBrowser.close()
 
 
 ## First, delete any R file left (e.g., from killing procs, etc).
-RrunningFiles = dircache.listdir("/asterias-web-apps/signs2/www/R.running.procs")
+RrunningFiles = dircache.listdir("/home2/ramon/web-apps/signs2/www/R.running.procs")
 for Rtouchfile in RrunningFiles:
-    tmpS = "/asterias-web-apps/signs2/www/R.running.procs/" + Rtouchfile
+    tmpS = "/home2/ramon/web-apps/signs2/www/R.running.procs/" + Rtouchfile
     if (currentTime - os.path.getmtime(tmpS)) > R_MAX_time:
         os.remove(tmpS)
 
 ## Now, verify any processes left
-numRsigns = len(glob.glob("/asterias-web-apps/signs2/www/R.running.procs/R.*@*%*"))
+numRsigns = len(glob.glob("/home2/ramon/web-apps/signs2/www/R.running.procs/R.*@*%*"))
 if numRsigns > MAX_signs:
     shutil.rmtree(tmpDir)
     commonOutput(APP_NAME)
@@ -285,10 +285,10 @@ if numRsigns > MAX_signs:
     print "<p> Because of the popularity of the application "
     print " the maximum number of simultaneous runs of SignS has been reached.</p>"
     print "<p> Please try again later.</p>"
-    print "<p> We apologize for the inconvenience.</p>"    
+    print "<p> We apologize for the inconvenience.</p>"
     print "</body></html>"
     sys.exit()
-    
+
 
 ################        Launching R   ###############
 
@@ -313,9 +313,9 @@ while 1:
             sys.exit()
         arrayfile.write(line)
         arrayfile.write("\n\n")
-    
+
 srvfile.close()
-arrayfile.close()   
+arrayfile.close()
 os.chmod(arrayNames, 0600)
 
 
@@ -339,9 +339,9 @@ if fs.has_key('validation'):
                 sys.exit()
             validationarrayfile.write(line)
             validationarrayfile.write("\n\n")
-        
+
     validationsrvfile.close()
-    validationarrayfile.close()   
+    validationarrayfile.close()
     os.chmod(validationarrayNames, 0600)
 
 
@@ -356,10 +356,10 @@ if fs.has_key('validation'):
 # os.chmod(tmpDir + "/checkpoint.num", 0666)
 
 ## touch Rout, o.w. checkdone can try to open a non-existing file
-touchRout = os.system("/bin/touch " + tmpDir + "/f1.Rout") 
-touchRrunning = os.system("/bin/touch /asterias-web-apps/signs2/www/R.running.procs/R." + newDir +
+touchRout = os.system("/bin/touch " + tmpDir + "/f1.Rout")
+touchRrunning = os.system("/bin/touch /home2/ramon/web-apps/signs2/www/R.running.procs/R." + newDir +
                           "@" + socket.gethostname())
-shutil.copy("/asterias-web-apps/signs2/cgi/f1.R", tmpDir)
+shutil.copy("/home2/ramon/web-apps/signs2/cgi/f1.R", tmpDir)
 createResultsFile = os.system("/bin/touch " + tmpDir + "/results.txt")
 
 
@@ -370,7 +370,7 @@ createResultsFile = os.system("/bin/touch " + tmpDir + "/results.txt")
 ## Copy to tmpDir a results.html that redirects to checkdone.cgi
 ## If communication gets broken, there is always a results.html
 ## that will do the right thing.
-shutil.copy("/asterias-web-apps/signs2/cgi/results-pre.html", tmpDir)
+shutil.copy("/home2/ramon/web-apps/signs2/cgi/results-pre.html", tmpDir)
 os.system('echo copied_results-pre >> ' + tmpDir + '/checkdone2')
 os.system("/bin/sed 's/sustituyeme/" + newDir + "/g' " +
           tmpDir + "/results-pre.html > " +
@@ -380,7 +380,7 @@ os.system("/bin/sed 's/sustituyeme/" + newDir + "/g' " +
 
 
 ## Launch the running and monitoring program
-subprocess.Popen(['/asterias-web-apps/signs2/cgi/runAndCheck.py', tmpDir],
+subprocess.Popen(['/home2/ramon/web-apps/signs2/cgi/runAndCheck.py', tmpDir],
                  stdout = subprocess.PIPE, stdin = subprocess.PIPE, \
                  stderr = subprocess.PIPE)
 
@@ -388,7 +388,3 @@ subprocess.Popen(['/asterias-web-apps/signs2/cgi/runAndCheck.py', tmpDir],
 ##############    Return autorefresing results.hmtl    ##################
 print "Location:"+ getQualifiedURL("/tmp/" + newDir + "/results.html")
 print ""
-
-
-
-

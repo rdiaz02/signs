@@ -3,7 +3,7 @@
 
 import sys
 import os
-import cgi 
+import cgi
 import types
 import time
 import shutil
@@ -15,7 +15,7 @@ import tarfile
 
 import cgitb
 cgitb.enable() ## zz: eliminar for real work?
-sys.stderr = sys.stdout ## eliminar?
+## sys.stderr = sys.stdout ## eliminar?
 
 R_MAX_time = 8 * 3600 ## max duration allowd for any process
 
@@ -23,13 +23,13 @@ R_MAX_time = 8 * 3600 ## max duration allowd for any process
 def issue_echo(fecho, tmpDir):
     """Silly function to output small tracking files"""
     timeHuman = '##########   ' + \
-                str(time.strftime('%d %b %Y %H:%M:%S')) 
+                str(time.strftime('%d %b %Y %H:%M:%S'))
     os.system('echo "' + timeHuman + \
               '" >> ' + tmpDir + '/checkdone.echo')
     os.system('echo "' + fecho + \
               '" >> ' + tmpDir + '/checkdone.echo')
     os.system('echo "    " >> ' + tmpDir + '/checkdone.echo')
-    
+
 
 
 def kill_lamcheck(pid, machine):
@@ -84,9 +84,9 @@ def extract_for_PaLS_from_Signs(file_in, file_out, all_runs = True):
     - keep adding the gene names until either that is done, or a new
     component is added (mark the later when it happens).
     - if the set is done, look again for where a set of results starts.
-    
+
     """
-    
+
     f1 = open(file_in, mode = 'r').readlines()
     f2 = open(file_out, mode = 'w')
 
@@ -178,7 +178,7 @@ def printPalsURL(newDir,
 
     clean_for_PaLS(tmpDir + '/' + f1, tmpDir + '/' + f1)
     clean_for_PaLS(tmpDir + '/' + f2, tmpDir + '/' + f2)
-    
+
     outstr0 = '<br /> <hr> ' + \
               '<h3> Send results to <a href = "http://pals.iib.uam.es">' + \
               '<IMG BORDER="0" SRC="../../palsfavicon40.png" align="middle"></a></h3>'
@@ -188,7 +188,7 @@ def printPalsURL(newDir,
              '">' + s1 + ' to PaLS</a></p>' + \
              '<p> Send set of <a href="http://pals.iib.uam.es?' + \
              url_org_id + 'datafile=' + gl2 + \
-             '">' + s2 + ' to PaLS</a></p>' 
+             '">' + s2 + ' to PaLS</a></p>'
     return(outstr)
 
 
@@ -196,7 +196,7 @@ def printPalsURL(newDir,
 
 def getQualifiedURL(uri = None):
     """ Return a full URL starting with schema, servername and port.
-    
+
     *uri* -- append this server-rooted uri (must start with a slash)
     """
     schema, stdport = ('http', '80')
@@ -205,10 +205,10 @@ def getQualifiedURL(uri = None):
         host = os.environ.get('SERVER_NAME')
         port = os.environ.get('SERVER_PORT', '80')
         if port != stdport: host = host + ":" + port
-        
+
     result = "%s://%s" % (schema, host)
     if uri: result = result + uri
-    
+
     return result
 
 def getScriptname():
@@ -235,7 +235,7 @@ def commonOutput():
     </head>
     <body>
     """
-    
+
 ## to keep executing myself:
 def relaunchCGI():
     issue_echo('inside relaunchCGI', tmpDir)
@@ -251,10 +251,10 @@ def relaunchCGI():
     print '</head> <body>'
     print '<p> This is an autorefreshing page; your results will eventually be displayed here.\n'
     print 'If your browser does not autorefresh, the results will be kept for five days at</p>'
-    print '<p><a href="' + getBaseURL() + '?newDir=' + newDir + '">', 'http://signs2.iib.uam.es/tmp/'+ newDir + '/results.html</a>.' 
+    print '<p><a href="' + getBaseURL() + '?newDir=' + newDir + '">', 'http://signs2.iib.uam.es/tmp/'+ newDir + '/results.html</a>.'
     print '</p> </body> </html>'
     issue_echo('end of relaunchCGI', tmpDir)
-    
+
 
 ## Output-generating functions
 def printErrorRun():
@@ -297,9 +297,9 @@ def printOKRun():
     outf.write('\n <SCRIPT type="text/javascript" SRC="../../aqtree3clickable.js"></SCRIPT> ')
     outf.write('\n <LINK REL="stylesheet" HREF="../../aqtree3clickable.css"> ')
     outf.write('\n <LINK REL="stylesheet" HREF="../../style1.css"> ')
-        
+
     outf.write("\n <title>SignS results </title></head><body>\n")
-     
+
     if os.path.exists(tmpDir + "/ErrorFigure.png"):
         outf.write('<IMG BORDER="0" SRC="ErrorFigure.png">')
         outf.write("<br /><br /> <hr>")
@@ -383,7 +383,7 @@ def printOKRun():
             if os.path.exists(tmpDir + "/kmplot4-validation.pdf"): allResults.add(tmpDir + '/kmplot4-validation.pdf', 'SurvivalPlot4-validation.pdf')
 
             allResults.close()
-            outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')  
+            outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')
             outf.write("</body></html>")
             outf.close()
             Rresults.close()
@@ -391,7 +391,7 @@ def printOKRun():
 
         if (methodUsed == 'FCMS') or (methodUsed == 'FCMS\n'):
             outf.write("<h2> Results using FCMS (filter, cluster, and model selection, as in Dave et al.)</h2> <br /><hr><hr>\n")
-	    
+
 	    outf.write('<h2>1. Single gene statistics and p-values</h2>\n')
             outf.write('<ul class="aqtree3clickable">\n')
 	    outf.write('<li><a>Single-gene Cox model p-values and statistics</a><ul>\n')
@@ -403,7 +403,7 @@ def printOKRun():
 	    outf.write('<li><a href="p.v.sort.abscoef.d.html" target="pv_window">Sorted by absolute value of coefficient, descending</a>')
 	    outf.write('<li><a href="p.v.sort.name.d.html" target="pv_window">Sorted by name, descending</a>')
 	    outf.write('<li><a href="p.v.sort.name.a.html" target="pv_window">Sorted by name, ascending</a></ul></ul></ul>')
-	    
+
             outf.write('<hr><h2>2. Survival plots</h2>')
             outf.write('<h3>2.1. Survival plots using scores from final model</h3>\n')
             outf.write('<h4>Two groups</h4>\n')
@@ -429,13 +429,13 @@ def printOKRun():
 
 	    outf.write('<br /> <br /> <hr>')
 	    outf.write('<h2>3. Dendrograms of gene clusters</h2>')
-            outf.write('<p>(If needed, click on the "+" to expand the list. Then, clik on the figure you want to open. Once a dendrogram is opened, ' + 
+            outf.write('<p>(If needed, click on the "+" to expand the list. Then, clik on the figure you want to open. Once a dendrogram is opened, ' +
 	    'click on the node name, or close to where the name would be placed, ' +
 	    'to see additional information for each gene.)</p>')
 	    outf.write('<ul class="aqtree3clickable">\n')
 	    outf.write('<li><a>Dendrograms for genes with positive coefficients</a><ul>\n')
 	    if os.path.exists(tmpDir + '/NoPositiveCluster'):
-		outf.write('<p>There are no genes with positive coefficients that satisfy the p, ' + 
+		outf.write('<p>There are no genes with positive coefficients that satisfy the p, ' +
 		'minimum correlation and size restrictions.</p></ul>')
 	    else:
 		outf.write('<li><a>All genes named</a><ul>\n')
@@ -448,7 +448,7 @@ def printOKRun():
 		outf.write('<li><a href="dend.P.factor2.alllabelsFALSE.html" target="dend_window">Double size</a></ul></ul>')
 	    outf.write('<li><a>Dendrograms for genes with negative coefficients</a><ul>\n')
 	    if os.path.exists(tmpDir + '/NoNegativeCluster'):
-		outf.write('<p>There are no genes with negative coefficients that satisfy the p, ' + 
+		outf.write('<p>There are no genes with negative coefficients that satisfy the p, ' +
 		'minimum correlation and size restrictions.</p></ul></ul>')
 	    else:
 		outf.write('<li><a>All genes named</a><ul>\n')
@@ -459,14 +459,14 @@ def printOKRun():
 		outf.write('<li><a href="dend.N.factor0.5.alllabelsFALSE.html" target="dend_window">Half size</a>')
 		outf.write('<li><a href="dend.N.factor1.alllabelsFALSE.html" target="dend_window">Normal (1200x800) size</a>')
 		outf.write('<li><a href="dend.N.factor2.alllabelsFALSE.html" target="dend_window">Double size</a></ul></ul></ul>')
-            
+
             outf.write("<br /><br /> <hr>")
             outf.write(resultsFile)
 
             #if os.path.exists(tmpDir + '/f1.R'): os.remove(tmpDir + '/f1.R')
             Rresults.close()
             if os.path.exists(tmpDir + '/results.txt'): os.remove(tmpDir + '/results.txt')
-     
+
             allResults = tarfile.open(tmpDir + '/all.results.tar.gz', 'w:gz')
             os.chdir(tmpDir)
             if os.path.exists('correlationMatrixCluters.html'):
@@ -479,18 +479,18 @@ def printOKRun():
                 os.system('html2text -width 200 -nobs  -o single.gene.cox.coef.p.value.txt p.v.sort.name.a.html')
             outf.flush()
             os.system('html2text -width 200 -nobs -o Results.txt pre-results.html')
-            
+
             ll1 = glob.glob('*.log')
             for dname in ll1:
                 try: os.remove(dname)
                 except: None
-            
+
             lll = glob.glob('*')
             for flname in lll:
                 allResults.add(flname)
 
             allResults.close()
-            outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')  
+            outf.write('<hr> <a href="all.results.tar.gz">Download</a> all figures and text results.')
             extract_for_PaLS_from_Signs('Results.txt',
                                         'Selected.genes.txt',
                                         all_runs = False)
@@ -527,15 +527,15 @@ def printRKilled():
     shutil.copyfile(tmpDir + "/pre-results.html", tmpDir + "/results.html")
 
 
-    
+
 ## Changing to the appropriate directory
-    
+
 form = cgi.FieldStorage()
 if form.has_key('newDir'):
    value=form['newDir']
    if type(value) is types.ListType:
        commonOutput()
-       print "<h1> ERROR </h1>"    
+       print "<h1> ERROR </h1>"
        print "<p> newDir should not be a list. </p>"
        print "<p> Anyone trying to mess with it?</p>"
        print "</body></html>"
@@ -544,7 +544,7 @@ if form.has_key('newDir'):
        newDir = value.value
 else:
     commonOutput()
-    print "<h1> ERROR </h1>"    
+    print "<h1> ERROR </h1>"
     print "<p> newDir is empty. </p>"
     print "</body></html>"
     sys.exit()
@@ -552,23 +552,23 @@ else:
 if re.search(r'[^0-9]', str(newDir)):
 ## newDir can ONLY contain digits.
     commonOutput()
-    print "<h1> ERROR </h1>"    
+    print "<h1> ERROR </h1>"
     print "<p> newDir does not have a valid format. </p>"
     print "<p> Anyone trying to mess with it?</p>"
     print "</body></html>"
     sys.exit()
-    
+
 redirectLoc = "/tmp/" + newDir
 tmpDir = "/asterias-web-apps/signs2/www/tmp/" + newDir
 
 if not os.path.isdir(tmpDir):
     commonOutput()
-    print "<h1> ERROR </h1>"    
+    print "<h1> ERROR </h1>"
     print "<p> newDir is not a valid directory. </p>"
     print "<p> Anyone trying to mess with it?</p>"
     print "</body></html>"
     sys.exit()
-    
+
 
 
 lam_check = open(tmpDir + '/lamCheckPID', mode = 'r'). readline().split()
@@ -668,17 +668,13 @@ elif finishedOK > 0:
         None
     print 'Location: http://signs2.iib.uam.es/tmp/'+ newDir + '/results.html \n\n'
 
-    
+
 else:
     issue_echo('relaunching', tmpDir)
 
-    ## we only end up here if: we were not done in a previous run AND no process was overtime 
+    ## we only end up here if: we were not done in a previous run AND no process was overtime
     ## AND we did not just finish. So we must continue.
     relaunchCGI()
 
 
 issue_echo('END of checkdone.cgi', tmpDir)
-
-
-
-

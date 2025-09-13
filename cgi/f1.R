@@ -8,6 +8,9 @@
 
 ## rm(list = ls())
 
+## We use the default of 10 parallel processes
+
+
 version
 system("hostname")
 
@@ -28,7 +31,7 @@ GDD <- function(file, width = 600, height = 500, ps = 10, type = "png") {
 
 
 ## From: http://ace.acadiau.ca/math/ACMMaC/Rmpi/sample.html
-# In case R exits unexpectedly, have it automatically clean up 
+# In case R exits unexpectedly, have it automatically clean up
 # resources  taken up by Rmpi (slaves, memory, etc...)
 ## But does it really do it??
 .Last <- function(){
@@ -38,17 +41,17 @@ GDD <- function(file, width = 600, height = 500, ps = 10, type = "png") {
     cat("Normal termination\n", file = status)
     flush(status)
     close(status)
-    
+
     RterminatedOK <- file("RterminatedOK", "w")
     cat("\nNormal termination\n", file = RterminatedOK)
     flush(RterminatedOK)
     close(RterminatedOK)
     save.image()
-    ## if (is.loaded("mpi_initialize")){ 
-    ##     if (mpi.comm.size(1) > 0){ 
+    ## if (is.loaded("mpi_initialize")){
+    ##     if (mpi.comm.size(1) > 0){
     ##     try(print("Please use mpi.close.Rslaves() to close slaves."), silent = TRUE)
     ##     try(mpi.close.Rslaves() , silent = TRUE)
-    ##     } 
+    ##     }
     ##     try(print("Please use mpi.quit() to quit R"), silent = TRUE)
     ##     cat("\n\n Normal termination\n")
     ##     try(stopCluster(TheCluster), silent = TRUE)
@@ -130,7 +133,7 @@ imClose <- function (im) {
 ## prevent all the "Closing PNG file ..."
    dev.off(im$Device)
 }
-		
+
 
 
 gdd.width <- png.width <- 480
@@ -156,13 +159,13 @@ nfold <- 10
 caughtUserError <- function(message) {
     GDD("ErrorFigure.png", width = 600,
            height = 500, ps = png.pointsize)
-    plot(x = c(0, 1), y = c(0, 1), 
+    plot(x = c(0, 1), y = c(0, 1),
          type = "n", axes = FALSE, xlab = "", ylab = "")
     box()
     text(0.5, 0.7, "There was a PROBLEM with your data.")
     text(0.5, 0.5,
     "Please read carefully the error messages,")
-    
+
     text(0.5, 0.3, "fix the problem, and try again.")
     dev.off()
     sink(file = "results.txt")
@@ -185,7 +188,7 @@ caughtOurError <- function(message) {
     text(0.5, 0.7, "There was a PROBLEM with the code.")
     text(0.5, 0.5,
     "Please let us know (send us the URL),")
-    
+
     text(0.5, 0.3, "so that we can fix it.")
     dev.off()
     sink(file = "results.txt")
@@ -327,7 +330,7 @@ if(class(trytime) == "try-error")
 ## to prevent problems with a space at end of classes
 if(is.na(Time[length(Time)])) Time <- Time[-length(Time)]
 
-tryevent <- 
+tryevent <-
     try(Event <- scan("event", sep = "\t", strip.white = TRUE, nlines = 1))
 if(class(tryevent) == "try-error")
     caughtUserError("The status file is not of the appropriate format\n")
@@ -354,9 +357,9 @@ tmp <- try(
 
 tmp <- try(
  	       system("sed 's/\"//g' validationcovariate > vcvt; mv vcvt validationcovariate")
-       )   	   
-	  
-## zz: get substitution of ' ' too	   
+       )
+
+## zz: get substitution of ' ' too
 
 num.cols.covariate <- count.fields("covariate", sep = "\t",
                                    quote = "",
@@ -376,8 +379,8 @@ tryxdata <- try(
                 xdata <- read.table("covariate", header = FALSE, sep = "\t",
                                     strip.white = TRUE,
                                     comment.char = "#",
-                                    quote = ""))
-if(class(tryxdata) == "try-error")
+                                    quote = "", stringsAsFactors = TRUE))
+    if(class(tryxdata) == "try-error")
     caughtUserError("The covariate file is not of the appropriate format\n")
 
 geneNames <- xdata[, 1]
@@ -390,7 +393,7 @@ if(length(unique(geneNames)) < length(geneNames)) {
                       "The duplicated names are in rows", dupnames, "\n")
     caughtUserError(message)
 }
-    
+
 rownames(xdata) <- geneNames
 
 arrayNames <- scan("arrayNames", sep = "\t", what = "char", quote ="")
@@ -421,7 +424,7 @@ if(length(Time) != dim(xdata)[1]) {
                       length(Time), " arrays according to the survival time file but \n",
                       dim(xdata)[1], " arrays according to the covariate data.\n",
                       "Please fix this problem and try again.\n")
-    caughtUserError(message)  
+    caughtUserError(message)
 }
 
 if(length(Event) != dim(xdata)[1]) {
@@ -430,7 +433,7 @@ if(length(Event) != dim(xdata)[1]) {
                       length(Event), " arrays according to the survival time file but \n",
                       dim(xdata)[1], " arrays according to the covariate data.\n",
                       "Please fix this problem and try again.\n")
-    caughtUserError(message)  
+    caughtUserError(message)
 }
 
 if(methodSurv == "cforest") {
@@ -477,23 +480,23 @@ if(useValidation == "yes") {
                    validationTime <- scan("validationtime", sep = "\t", strip.white = TRUE, nlines = 1))
     if(class(trytime) == "try-error")
         caughtUserError("The validation time file is not of the appropriate format\n")
-    
+
     ## to prevent problems with a space at end of classes
     if(is.na(validationTime[length(validationTime)])) validationTime <- validationTime[-length(validationTime)]
-    
-    tryevent <- 
+
+    tryevent <-
         try(validationEvent <- scan("validationevent", sep = "\t", strip.white = TRUE, nlines = 1))
     if(class(tryevent) == "try-error")
         caughtUserError("The validation status file is not of the appropriate format\n")
-    
+
     ## to prevent problems with a space at end of classes
     if(is.na(validationEvent[length(validationEvent)])) validationEvent <- validationEvent[-length(validationEvent)]
-    
-    
+
+
     num.cols.validationcovariate <- count.fields("validationcovariate", sep = "\t",
                                        quote = "",
                                        comment.char = "#")
-    
+
     if(length(unique(num.cols.validationcovariate)) > 1) {
         message <-
             paste("The number of columns in your validation covariate file\n",
@@ -502,17 +505,17 @@ if(useValidation == "yes") {
                   paste(num.cols.validationcovariate, collapse = ""))
         caughtUserError(message)
     }
-    
+
     tryxdata <- try(
                     validationxdata <- read.table("validationcovariate", header = FALSE, sep = "\t",
                                         strip.white = TRUE,
                                         comment.char = "#",
-                                        quote = ""))
+                                        quote = "", stringsAsFactors = TRUE))
     if(class(tryxdata) == "try-error")
         caughtUserError("The validation covariate file is not of the appropriate format\n")
     validationgeneNames <- validationxdata[, 1]
     validationxdata <- validationxdata[, -1]
-    
+
     if(length(unique(validationgeneNames)) < length(validationgeneNames)) {
         dupnames <- which(duplicated(validationgeneNames))
         message <- paste("validation Gene names are not unique.\n",
@@ -520,11 +523,11 @@ if(useValidation == "yes") {
                          "The duplicated names are in rows", dupnames, "\n")
         caughtUserError(message)
     }
-    
+
     rownames(validationxdata) <- validationgeneNames
-    
+
     validationarrayNames <- scan("validationarrayNames", sep = "\t", what = "char", quote = "")
-    
+
     if(length(validationarrayNames) > 0) {
         validationarrayNames <- validationarrayNames[-1]
         if(length(unique(validationarrayNames)) < length(validationarrayNames)) {
@@ -537,26 +540,26 @@ if(useValidation == "yes") {
         colnames(validationxdata) <- validationarrayNames
     }
     validationxdata <- t(validationxdata)
-    
-    
+
+
     if(length(validationTime) != dim(validationxdata)[1]) {
         message <- paste("The validation survival time file and the covariate file\n",
                          "do not agree on the number of arrays: \n",
                          length(validationTime), " arrays according to the survival time file but \n",
                          dim(validationxdata)[1], " arrays according to the covariate data.\n",
                          "Please fix this problem and try again.\n")
-        caughtUserError(message)  
+        caughtUserError(message)
     }
-    
+
     if(length(validationEvent) != dim(validationxdata)[1]) {
         message <- paste("The validation survival status file and the covariate file\n",
                          "do not agree on the number of arrays: \n",
                          length(validationEvent), " arrays according to the survival time file but \n",
                          dim(validationxdata)[1], " arrays according to the covariate data.\n",
                          "Please fix this problem and try again.\n")
-        caughtUserError(message)  
+        caughtUserError(message)
     }
-    
+
     if(!(is.numeric(validationxdata))) {
         caughtUserError("Your validation covariate file contains non-numeric data. \n That is not allowed.\n")
     }
@@ -584,7 +587,7 @@ if(useValidation == "yes") {
     if(identical(validationEvent, validationTime)) {
       caughtUserError("User Input ERROR: Your validation survival time and validation survival status are identical. Most likely, that is a mistake.\n")
     }
-    
+
 }
 
 doCheckpoint(1)
@@ -608,22 +611,22 @@ if(checkpoint.num < 2) {
                                             nfold = 10)
                    )
 
-    if(class(trycode) == "try-error")
+    if(inherits(trycode, "try-error"))
         caughtOurError(paste("Function tgdSingleP bombed unexpectedly with error",
                              trycode, ". \n Please let us know so we can fix the code."))
-                       
+
     doCheckpoint(2)
 }
 if(checkpoint.num < 3) {
     trycode <- try(
                    cvTGDResults <- cvTGDP(xdata, Time, Event,
                                           thres = c(u.threshold, u.threshold),
-                                          epi, thresGrid = 1, 
-                                          maxiter, 
-                                          nfold) 
+                                          epi, thresGrid = 1,
+                                          maxiter,
+                                          nfold)
                    )
- 
-    if(class(trycode) == "try-error")
+
+    if(inherits(trycode, "try-error"))
         caughtOurError(paste("Function cvTGDP bombed unexpectedly with error",
                              trycode, ". \n Please let us know so we can fix the code."))
 
@@ -687,7 +690,7 @@ if(checkpoint.num < 4) {
     dev.off()
     pdf(file = "kmplot3-overfitt.pdf", width = png.width,
         height = png.height)
-    KM.visualize3(allDataRun$tgd.alldata$scores, Time,                         
+    KM.visualize3(allDataRun$tgd.alldata$scores, Time,
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
     dev.off()
     GDD(file = "kmplot3-honest.png", width=gdd.width,
@@ -697,11 +700,11 @@ if(checkpoint.num < 4) {
     dev.off()
     GDD(file = "kmplot3-overfitt.png", width=png.width,
         height = gdd.height, ps = png.pointsize)
-    KM.visualize3(allDataRun$tgd.alldata$scores, Time,                         
+    KM.visualize3(allDataRun$tgd.alldata$scores, Time,
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
     dev.off()
 
-    
+
     GDD(file = "cvpl.png", width = png.width,
            height = png.height,ps = png.pointsize)
     plot.cvpl.single(allDataRun$cvpl.mat, epi, tau)                       ####  Fig 3
@@ -717,10 +720,10 @@ if(checkpoint.num < 4) {
 
 
 
-    
+
     sink(file = "results.txt")
     cat("\n <h2>4. Model fitted to all data</h2>\n")
-        
+
 
     trycode <- try(
                    outm <- summaryTGDrun(xdata, Time, Event, allDataRun,
@@ -730,7 +733,7 @@ if(checkpoint.num < 4) {
                                          outfile = "genes.all.out") )          #### Fig 4: fstdgrun
 
 
-    if(class(trycode) == "try-error")
+    if(inherits(trycode, "try-error"))
         caughtOurError(paste("Function summaryTGDrun bombed unexpectedly with error",
                              trycode, ". \n Please let us know so we can fix the code."))
 
@@ -739,20 +742,20 @@ if(checkpoint.num < 4) {
     trycode <- try(
                    summary.cvTGD(cvTGDResults, allDataRun, rownames(xdata))
                    )
-    if(class(trycode) == "try-error")
+    if(inherits(trycode, "try-error"))
         caughtOurError(paste("Function summary.cvTGD bombed unexpectedly with error",
                              trycode, ". \n Please let us know so we can fix the code."))
 
     if(useValidation == "yes") {
         cat("\n <hr><h2>6. Validation data</h2>\n")
-        
+
         valpred <- validationxdata %*% allDataRun$betas
-       
+
         cat("\n\n Scores (linear predictor) for validation data\n")
         print(valpred)
-        
-    }      
-    
+
+    }
+
     sink()
 
     doCheckpoint(4)
@@ -765,7 +768,7 @@ if(checkpoint.num < 4) {
         dev.off()
         GDD(file = "kmplot-validation.png", width = png.width,
                height = png.height, ps = png.pointsize)
-        KM.visualize(valpred, validationTime,                         
+        KM.visualize(valpred, validationTime,
                      validationEvent, ngroups = 2, addmain = NULL)
         dev.off()
 
@@ -773,10 +776,10 @@ if(checkpoint.num < 4) {
             height = png.height)
         KM.visualize4(valpred, validationTime,
                      validationEvent, ngroups = 2, addmain = NULL)
-        dev.off() 
+        dev.off()
         GDD(file = "kmplot4-validation.png", width = png.width,
                height = png.height,ps = png.pointsize)
-        KM.visualize4(valpred, validationTime,                         
+        KM.visualize4(valpred, validationTime,
                      validationEvent, ngroups = 2, addmain = NULL)
         dev.off()
         pdf(file = "kmplot3-validation.pdf", width = png.width,
@@ -786,9 +789,9 @@ if(checkpoint.num < 4) {
         dev.off()
         GDD(file = "kmplot3-validation.png", width=gdd.width,
             height = gdd.height, ps = png.pointsize)
-        KM.visualize3(valpred, validationTime,                         
+        KM.visualize3(valpred, validationTime,
                       validationEvent, ngroups = 2, addmain = NULL)
-        dev.off()    
+        dev.off()
 
 
     }
@@ -797,8 +800,8 @@ if(checkpoint.num < 4) {
     gc()
 ##    stopCluster(TheCluster)
     save.image()
-    
-    
+
+
 } else if(methodSurv == "FCMS") {
 
 
@@ -807,23 +810,23 @@ if(checkpoint.num < 4) {
 
         ## mpi.bcast.Robj2slave(idtype)
         ## mpi.bcast.Robj2slave(organism)
-        
-    
+
+
     MaxIterationsCox <- 200
-    
+
     trycode <- try(
                    all.res1 <- dStep1.serial(xdata, Time, Event,
                                                Minp, MaxIterationsCox)
                    )
-    if(class(trycode) == "try-error")
-        caughtOurError(paste("Function dStep1.serial bombed unexpectedly with error",
-                             trycode, ". \n Please let us know so we can fix the code."))
+        if(inherits(trycode, "try-error"))
+            caughtOurError(paste("Function dStep1.serial bombed unexpectedly with error",
+                                 trycode, ". \n Please let us know so we can fix the code."))
 
-#################    p-value tables      #################            
+#################    p-value tables      #################
 
     p.values.original <- data.frame(Names = geneNames,
                                     p.value = all.res1[, 2],
-                                    coeff = all.res1[, 1], 
+                                    coeff = all.res1[, 1],
                                     abs.coeff = abs(all.res1[, 1]),
                                     fdr = all.res1[, 6],
                                     Warning = all.res1[, 5])
@@ -833,21 +836,21 @@ if(checkpoint.num < 4) {
         cat("Oh, oh, some nas in p.values.originalll",
             file = "nas.in.p.values.WARN")
     }
-    
+
     ## zz: we will need, either here or in python, to generate the links al IDClight
     write.table(file = "p.values.coeffs.txt",
-                p.values.original, row.names = FALSE, 
+                p.values.original, row.names = FALSE,
                 col.names = TRUE,
                 quote = FALSE,
                 sep = "\t")
     system(paste("/asterias-web-apps/signs2/cgi/order.html.py", idtype, organism)) ## call python to generate pre-sorted HTML tables
-    
+
 
 
         doCheckpoint(2)
     }
-        
-#################    step AIC      #################                
+
+#################    step AIC      #################
 
 
     if(checkpoint.num < 3) {
@@ -863,17 +866,17 @@ if(checkpoint.num < 4) {
                                   plot = TRUE,
                                   interactive = TRUE)
                    )
-    if(class(trycode) == "try-error")
-    caughtOurError(paste("Function fitDave.res1Given bombed unexpectedly with error",
-                             trycode, ". \n Please let us know so we can fix the code."))
+        if(inherits(trycode, "try-error"))
+            caughtOurError(paste("Function fitDave.res1Given bombed unexpectedly with error",
+                                 trycode, ". \n Please let us know so we can fix the code."))
 
-    cat("\n\n Final model selected (beware: p-values are biased down!!)\n")
+        cat("\n\n Final model selected (beware: p-values are biased down!!)\n")
 
-    print(all.res3$model)
-    sink()
+        print(all.res3$model)
+        sink()
         pmgc("After fitDave.res1Given")
 
-        
+
     doCheckpoint(3)
 }
 
@@ -893,24 +896,24 @@ if(checkpoint.num < 4) {
                                                  MaxIterationsCox = MaxIterationsCox,
                                                  nfold = nfold)
                    )
-    
-    if(class(trycode) == "try-error")
+
+    if(inherits(trycode, "try-error"))
         caughtOurError(paste("Function cvDaveRun bombed unexpectedly with error",
                              trycode, ". \n Please let us know so we can fix the code."))
             pmgc("After cvDave.parallel3")
 
-            
+
     sink(file = "results.txt")
 
     cat("<h2>4. Model fitted to all data</h2>\n")
-    cat("<h3>4.1. Components, genes, coefficients</h3>\n")	
+    cat("<h3>4.1. Components, genes, coefficients</h3>\n")
     trycode <- try(
                    all.res.out <- selectedSignatures(all.res3, colnames(xdata),
                                                      print = TRUE, out = TRUE,
                                                      html = TRUE)
                    )
-    
-    if(class(trycode) == "try-error")
+
+    if(inherits(trycode, "try-error"))
         caughtOurError(paste("Function selectedSignatures bombed unexpectedly with error",
                              trycode, ". \n Please let us know so we can fix the code."))
 
@@ -920,7 +923,7 @@ if(checkpoint.num < 4) {
 
 }
 
-if(checkpoint.num < 5) {   
+if(checkpoint.num < 5) {
 
     sink(file = "results.txt", append = TRUE)
 
@@ -952,7 +955,7 @@ if(checkpoint.num < 5) {
     write("</pre>", file = "stepAIC.output.html",append = TRUE)
     cleanHTMLtail(file = "stepAIC.output.html")
 
-    
+
     cat("\n <hr align=\"left\" width=80>")
     cat("<h3>4.2. <a href=\"correlationMatrixClusters.html\" target=\"CorMatrix_window\">View</a> correlation matrix of clusters</h3>")
     cat("<h3>4.3. <a href=\"stepAIC.output.html\" target=\"stepAIC_window\">View</a> steps of variable selection</h3>")
@@ -960,13 +963,13 @@ if(checkpoint.num < 5) {
 
 
     cat("\n<hr><h2>5. Cross-validation runs</h2>\n")
-   
+
     trycode <- try(
                    summary.cvDave(cvDaveRun, all.res.out, rownames(xdata),
                                   colnames(xdata), html = TRUE)
                    )
 
-    if(class(trycode) == "try-error")
+    if(inherits(trycode, "try-error"))
         caughtOurError(paste("Function summary.cvDave bombed unexpectedly with error",
                              trycode, ". \n Please let us know so we can fix the code."))
 
@@ -975,7 +978,7 @@ if(checkpoint.num < 5) {
 doCheckpoint(5)
 }
 
-   
+
     if(checkpoint.num < 6) {
         sink(file = "results.txt", append = TRUE)
 
@@ -984,7 +987,7 @@ doCheckpoint(5)
         trycode <- try(
                        valpred <- dPredictNew(all.res3, validationxdata)
                        )
-        if(class(trycode) == "try-error")
+        if(inherits(trycode, "try-error"))
             caughtOurError(paste("Function dPredictNew bombed unexpectedly with error",
                                  trycode, ". \n Please let us know so we can fix the code."))
 
@@ -1005,14 +1008,14 @@ doCheckpoint(5)
         write(wout, file = "scores.validation.html", append = TRUE)
         cleanHTMLtail(file = "scores.validation.html")
 
-       
-    }      
+
+    }
 
     sink()
 
         doCheckpoint(6)
     }
-    
+
 
 #########################################################
 ########
@@ -1031,7 +1034,7 @@ doCheckpoint(5)
     dev.off()
     pdf(file = "kmplot-overfitt.pdf", width = png.width,
         height = png.height)
-    KM.visualize(all.res3$scores, Time,                         
+    KM.visualize(all.res3$scores, Time,
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2
     dev.off()
     GDD(file = "kmplot-honest.png", width = gdd.width,
@@ -1043,7 +1046,7 @@ doCheckpoint(5)
     GDD(file = "kmplot-overfitt.png", width = gdd.width,
         height = gdd.height, ps = png.pointsize,
         type = "png")
-    KM.visualize(all.res3$scores, Time,                         
+    KM.visualize(all.res3$scores, Time,
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2
     dev.off()
     pdf(file = "kmplot4-honest.pdf", width = png.width,
@@ -1053,7 +1056,7 @@ doCheckpoint(5)
     dev.off()
     pdf(file = "kmplot4-overfitt.pdf", width = png.width,
         height = png.height)
-    KM.visualize4(all.res3$scores, Time,                         
+    KM.visualize4(all.res3$scores, Time,
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.4
     dev.off()
     GDD(file = "kmplot4-honest.png", width = gdd.width,
@@ -1065,7 +1068,7 @@ doCheckpoint(5)
     GDD(file = "kmplot4-overfitt.png", width = gdd.width,
         height = gdd.height, ps = png.pointsize,
         type = "png")
-    KM.visualize4(all.res3$scores, Time,                         
+    KM.visualize4(all.res3$scores, Time,
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.4
     dev.off()
 
@@ -1077,7 +1080,7 @@ doCheckpoint(5)
     dev.off()
     pdf(file = "kmplot3-overfitt.pdf", width = png.width,
         height = png.height)
-    KM.visualize3(all.res3$scores, Time,                         
+    KM.visualize3(all.res3$scores, Time,
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
     dev.off()
     GDD(file = "kmplot3-honest.png", width = gdd.width,
@@ -1089,7 +1092,7 @@ doCheckpoint(5)
     GDD(file = "kmplot3-overfitt.png", width = gdd.width,
         height = gdd.height, ps = png.pointsize,
         type = "png")
-    KM.visualize3(all.res3$scores, Time,                         
+    KM.visualize3(all.res3$scores, Time,
                  Event, ngroups = 2) ## Overfitt                   #### Fig 2.3
     dev.off()
 
@@ -1102,9 +1105,9 @@ doCheckpoint(5)
 
 
 
-    
 
-    
+
+
     if(useValidation == "yes") {
         pdf(file = "kmplot-validation.pdf", width = png.width,
             height = png.height)
@@ -1114,7 +1117,7 @@ doCheckpoint(5)
         GDD(file = "kmplot-validation.png", width = gdd.width,
                height = gdd.height, ps = png.pointsize,
                type = "png")
-        KM.visualize(valpred, validationTime,                         
+        KM.visualize(valpred, validationTime,
                      validationEvent, ngroups = 2, addmain = NULL)
         dev.off()
 
@@ -1126,7 +1129,7 @@ doCheckpoint(5)
         GDD(file = "kmplot4-validation.png", width = gdd.width,
                height = gdd.height, ps = png.pointsize,
                type = "png")
-        KM.visualize4(valpred, validationTime,                         
+        KM.visualize4(valpred, validationTime,
                      validationEvent, ngroups = 2, addmain = NULL)
         dev.off()
 
@@ -1139,12 +1142,12 @@ doCheckpoint(5)
         GDD(file = "kmplot3-validation.png", width = gdd.width,
                height = gdd.height, ps = png.pointsize,
                type = "png")
-        KM.visualize3(valpred, validationTime,                         
+        KM.visualize3(valpred, validationTime,
                      validationEvent, ngroups = 2, addmain = NULL)
         dev.off()
     }
-    
-    
+
+
     gc()
     save.image()
 ##    try(mpi.close.Rslaves())
@@ -1163,7 +1166,7 @@ doCheckpoint(5)
                            cf.all <- my.cforest(xdata, Time, Event, ngenes, NULL)
                            )
         }
-        if(class(trycode) == "try-error")
+        if(inherits(trycode, "try-error"))
             caughtOurError(paste("Function my.cforest bombed unexpectedly with error",
                                  trycode, ". \n Please let us know so we can fix the code."))
         doCheckpoint(2)
@@ -1172,9 +1175,9 @@ doCheckpoint(5)
         trycode <- try(
                        cf.cv.output <- my.cforest.cv(xdata, Time, Event, ngenes)
                        )
-        if(class(trycode) == "try-error")
+        if(inherits(trycode, "try-error"))
             caughtOurError(paste("Function my.forest.cv bombed unexpectedly with error",
-                             trycode, ". \n Please let us know so we can fix the code."))
+                                 trycode, ". \n Please let us know so we can fix the code."))
         doCheckpoint(3)
     }
     if(checkpoint.num < 4) { ## plots
@@ -1212,7 +1215,7 @@ doCheckpoint(5)
                            glmb.all <- my.glmboost(xdata, Time, Event, NULL)
                            )
         }
-        if(class(trycode) == "try-error")
+        if(inherits(trycode, "try-error"))
             caughtOurError(paste("Function my.glmboost bombed unexpectedly with error",
                                  trycode, ". \n Please let us know so we can fix the code."))
         doCheckpoint(2)
@@ -1221,9 +1224,9 @@ doCheckpoint(5)
         trycode <- try(
                        gb.cv.output <- my.glmboost.cv(xdata, Time, Event)
                        )
-        if(class(trycode) == "try-error")
+        if(inherits(trycode, "try-error"))
             caughtOurError(paste("Function my.glmboost.cv bombed unexpectedly with error",
-                             trycode, ". \n Please let us know so we can fix the code."))
+                                 trycode, ". \n Please let us know so we can fix the code."))
         doCheckpoint(3)
     }
     if(checkpoint.num < 4) { ## plots
@@ -1250,17 +1253,13 @@ doCheckpoint(5)
     save.image()
 }
 
-    
-    
+
+
 
 ##    try(mpi.close.Rslaves())
 ##    mpi.quit(save = "no")
 
 
 ## turn the html into txt with:
-## html2text -width 200 -nobs -o Results.txt pre-results.html 
+## html2text -width 200 -nobs -o Results.txt pre-results.html
 ## but this is confussing because there exists a results.txt
-
-
-
-
