@@ -17,7 +17,11 @@ import cgitb
 cgitb.enable() ## zz: eliminar for real work?
 ## sys.stderr = sys.stdout ## eliminar?
 
-R_MAX_time = 8 * 3600 ## max duration allowd for any process
+# ## zzWTF : why is this here? And where are we killing?
+# R_MAX_time = 8 * 3600 ## max duration allowd for any process
+
+sys.path.append("/home2/ramon/web-apps/web-apps-common")
+from web_apps_config import R_MAX_time
 
 
 def issue_echo(fecho, tmpDir):
