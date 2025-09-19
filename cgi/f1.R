@@ -1,3 +1,7 @@
+## FIXME: we should pass, properly,
+## the number of cores. it is numCores,
+## in the code in the SignS2 package.
+
 ##############################################
 ##############################################
 ######                              ##########

@@ -28,11 +28,11 @@
 	        var argname = pairs[i].substring(0,pos);  // Extract the name
 	        var value = pairs[i].substring(pos+1);    // Extract the value
 	        args[argname] = unescape(value);          // Store as a property
-       						  // In JavaScript 1.5, use decodeURIComponent(  ) 
+       						  // In JavaScript 1.5, use decodeURIComponent(  )
 					          // instead of escape(  )
     	    }
 	    return args;     // Return the object
-	}	
+	}
 
 </script>
 
@@ -59,7 +59,7 @@ enctype="multipart/form-data" method="POST">
       border=0
       alt="signs">
       </a>
-    </td>  
+    </td>
     <td bgcolor="#7E2217" align=center width="100%">
 <!--     <td bgcolor="#254117" align=center width="100%"> -->
       <a href="http://iib.uam.es" STYLE="text-decoration:none">
@@ -67,7 +67,7 @@ enctype="multipart/form-data" method="POST">
       <!-- <b>Bioinformatics Unit</b> -->
       </font>
       </a>
-        -  
+        -
       <!-- <a href="http://www.cnio.es" STYLE="text-decoration:none"> -->
       <font color=white>
       <!-- <b>CNIO</b> -->
@@ -80,20 +80,20 @@ enctype="multipart/form-data" method="POST">
       </a>
     </td>
   </tr>
-  <tr>  
+  <tr>
 <!--     <td bgcolor="#54C571" align=center valign=middle  STYLE="font-size:12"> -->
     <td bgcolor="#C85A17" align=center valign=middle  STYLE="font-size:12">
       <br>
       <font size=5>
       <b> SignS</b>
       </font>
-      <br> 
+      <br>
     </td>
   </tr>
   <tr>
     <td bgcolor="#7E2217" align=center>
 <!--     <td bgcolor="#254117" align=center> the dark color-->
-       
+
     </td>
   </tr>
 </table>
@@ -153,14 +153,14 @@ overfitting</b>.</p>
 </td></tr>
 <tr><td>
 <b>Survival time file (<a href="./help/signs-help.html#input"
-			  target="help_window">?</a>) </b> 
+			  target="help_window">?</a>) </b>
 </td><td>
 <input type="FILE" name="time", size = "40" maxlength = "200">
 </td></tr>
 <tr><td>
 <b>Survival status (event) file
   (<a href="./help/signs-help.html#input"
-      target="help_window">?</a>) </b> 
+      target="help_window">?</a>) </b>
 </td><td>
 <input type="FILE" name="event", size = "40" maxlength = "200">
 </td></tr>
@@ -181,7 +181,7 @@ overfitting</b>.</p>
 </td><td>
      <input type="FILE" name="validationtime", size = "40" maxlength = "200">
 </td></tr><tr><td>
-<b>Validation survival status (event) file: </b> 
+<b>Validation survival status (event) file: </b>
 </td><td>
 <input type="FILE" name="validationevent", size = "40" maxlength =
        "200">
@@ -213,7 +213,7 @@ and Stepwise model selection (as in Dave et al.).<br>
     cluster</td>
   <td><input type="TEXT" name="MinCor" value="0.5" size="5"
     maxlength="5"></td></tr>
-    
+
 </table>
 
 <br>
@@ -230,7 +230,7 @@ Descent (Li and Gui).<br>
       maxlength="7"></td></tr>
       <tr><td width="100"></td><td>&#8710;&#957; (Delta nu)</td><td> <input type="TEXT" name="epi"
 	value="5e-06" size="7"
-	maxlength="7"></td></tr>	
+	maxlength="7"></td></tr>
 	<tr><td width="100"></td><td>&#964; (tau) [Please, use only large
     values, over 0.8, unless you really know what you are doing!] </td><td> <input type="TEXT" name="tau"
 	  value="0.9" size="7"
@@ -241,19 +241,19 @@ Descent (Li and Gui).<br>
 	COLOR="#CC00FF" SIZE=+1><b>Random forests:</b></FONT> Random
 	forests using conditional inference trees (Hothorn et al., 2006a).<br>
 	<br>
-	
+
 	<table>
 	  <tr><td width="100"></td><td width="270">Number of genes</td><td width="50">
 	    <input type="TEXT" name="ngenes" value="200" size="7"
 	    maxlength="7"></td></tr>
 	  </table>
-	  
+
 <br>
 <input type="RADIO" name="methodSurv" value="glmboost"><FONT
 	COLOR="#CC00FF" SIZE=+1><b>GLMboost:</b></FONT> Boosting of
 	  component-wise Cox models (Hothorn et al., 2006 b).<br>
 	<br>
-	
+
 
 <!-- <p style="font-family: 'Bitstream Vera Sans',Verdana,sans; font-size: 9pt"> -->
 <!-- Please note that, compared to FCMS, this is a <b><FONT color="RED">MUCH SLOWER</FONT></b> method -->
@@ -274,7 +274,7 @@ Descent (Li and Gui).<br>
 <!--     </td><td> -->
 <!--       <input type="RADIO" name="organism" value="Hs">  Human (<i>Homo sapiens</i>)</input> -->
 <!--   </td></tr> -->
-  
+
 <!--   <tr><td></td><td> -->
 <!--       <input type="RADIO" name="idtype" value="clone">  Clone ID (IMAGE Consortium)</input> -->
 <!--     </td><td> -->
@@ -366,11 +366,9 @@ href="http://www.biomedcentral.com/1471-2105/9/30">BMC Bioinformatics
 </a>
 </p>
 <TABLE width="100%"><TR>
-<TD align="right" width="200"><a href="http://asterias.iib.uam.es"><img src="asterias_app.png" width="200" height="40" border="0"></a></TD>
+<!-- <TD align="right" width="200"><a href="http://asterias.iib.uam.es"><img src="asterias_app.png" width="200" height="40" border="0"></a></TD> -->
 </TR>
 </TABLE>
 
 <address>Send comments to <a href="mailto:ramon dot diaz at iib dot uam dot es">webmaster</a></address>
 </body> </html>
-
-

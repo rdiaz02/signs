@@ -360,7 +360,7 @@ my.glmboost <- function(x, time, event, newdata = NULL, mstop = 500,
 }
 
 my.glmboost.cv <- function(x, time, event, mstop = 500, nfold = 10, return.fit = FALSE,
-                           numCores = 10) {
+                           numCores = 3) {
     n <- length(time)
     index.select <- sample(rep(1:nfold, length = n), n, replace = FALSE)
     OOB.scores <- rep(NA, n)
@@ -520,7 +520,7 @@ my.cforest <- function(x, time, event, ngenes, newdata = NULL, return.fit = FALS
 
 my.cforest.cv <- function(x, time, event, ngenes, nfold = 10,
                           universeSize = 10, return.fit = FALSE,
-                          numCores = 10) {
+                          numCores = 3) {
 ### Take care of MPI stuff
 ###     if (mpi.comm.size(comm = 1) == 0) {
 ###         mpiSpawnAll(universeSize)
@@ -1007,7 +1007,7 @@ tauBestP <- function(x, time, event, thres = c(0, 1),
                      maxiter = 5000,
                      nfold = 10,
                      fitWithBest = TRUE,
-                     numCores = 10) {
+                     numCores = 3) {
     ## checkEvery is not used as such
 ##     checkEvery <- maxiter
     if((!is.vector(time)) | (!is.vector(event)))
@@ -1604,7 +1604,7 @@ plot.cvpl.single  <- function(cvpl.mat, epi, thres) {
 summaryTGDrun <- function(x, time, event, z, epi, thres = c(0, 1),
                           thresGrid = 6, plot = TRUE,
                           genesOut = TRUE, outfile = "genes.all.out",
-                          html = TRUE, numCores = 10)  {
+                          html = TRUE, numCores = 3)  {
     ## spit out the selected betas (i.e., for chose threshold)
     ## but also provide a table such as Table 1 in Gui & Li, Pac.Symp...
     ## with CVPL added.
@@ -2089,7 +2089,7 @@ dStep1.serial <- function(x, time, event, p, MaxIterationsCox) {
 
 
 
-dStep1.parallel <- function(x, time, event, p, MaxIterationsCox, numCores = 10) {
+dStep1.parallel <- function(x, time, event, p, MaxIterationsCox, numCores = 3) {
     res.mat <- matrix(NA, nrow = ncol(x), ncol = 6)
     sobject <- Surv(time, event)
     cat("\n Starting dStep1.parallel at ", date(), " \n\n"); ptm <- proc.time()
@@ -2149,7 +2149,7 @@ dStep1.parallel <- function(x, time, event, p, MaxIterationsCox, numCores = 10) 
 
 
 
-dStep1.parallel.old <- function(x, time, event, p, MaxIterationsCox, numCores = 10) {
+dStep1.parallel.old <- function(x, time, event, p, MaxIterationsCox, numCores = 3) {
     res.mat <- matrix(NA, nrow = ncol(x), ncol = 6)
     sobject <- Surv(time,event)
     cat("\n Starting dStep1.parallel at ", date(), " \n\n"); ptm <- proc.time()
@@ -2190,7 +2190,7 @@ dStep1.parallel.old <- function(x, time, event, p, MaxIterationsCox, numCores = 
 dStep2 <- function(x, res.mat, maxSize, minSize,
                    minCor, plot,
                    interactive,
-                   plotSizes = c(0.5, 1, 2), numCores = 10) {
+                   plotSizes = c(0.5, 1, 2), numCores = 3) {
     pmgc("     Starting dStep2")
 
     cat("\n       Starting dStep2 at ", date(), " \n\n"); ptm <- proc.time()
@@ -2904,7 +2904,7 @@ cvDave.parallel3 <- function(x, time, event,
                              MaxIterationsCox,
                              nfold,
                              ## universeSize = 10,
-                             numCores = 10) {
+                             numCores = 3) {
     pmgc("Beginning of cvDave.parallel3")
     cat("\n Starting cvDave.parallel3 at ", date(), " \n\n"); ptm <- proc.time()
 
